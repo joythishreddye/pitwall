@@ -1,0 +1,60 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node/Frontend
+node_modules/
+.next/
+out/
+dist/
+*.log
+.turbo/
+
+# Python/Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ML models (large binary files)
+*.pkl
+*.joblib
+*.onnx
+backend/app/ml/models/*.lgbm
+backend/app/ml/models/*.bin
+
+# FastF1 cache
+fastf1_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Supabase
+supabase/.temp/
+
+# Claude Code local settings
+.claude/settings.local.json
+.claude/agent-memory/
+
+# Temporary
+.tmp/
+temp/
