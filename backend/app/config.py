@@ -18,8 +18,8 @@ class Settings(BaseSettings):
 
     # LLM
     llm_provider: str = "groq"
-    groq_api_key: str = ""
-    anthropic_api_key: str = ""
+    groq_api_key: str | None = None
+    anthropic_api_key: str | None = None
 
     # App
     secret_key: str
