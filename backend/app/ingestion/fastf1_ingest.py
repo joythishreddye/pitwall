@@ -6,6 +6,7 @@ Covers: lap_summaries, pit_stops, weather_readings for 2022-present.
 import logging
 import warnings
 from datetime import datetime
+from pathlib import Path
 
 import fastf1
 import pandas as pd
@@ -34,6 +35,7 @@ def _safe_val(series_row, key, cast=float):
 
 
 def _init_cache() -> None:
+    Path(settings.fastf1_cache_dir).mkdir(exist_ok=True)
     fastf1.Cache.enable_cache(settings.fastf1_cache_dir)
 
 
