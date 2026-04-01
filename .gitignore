@@ -58,6 +58,9 @@ supabase/.temp/
 .claude/settings.local.json
 .claude/agent-memory/
 
+# MCP config (contains secrets)
+.mcp.json
+
 # Temporary
 .tmp/
 temp/

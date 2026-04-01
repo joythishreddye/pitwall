@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "supabase-mcp-server@latest", "--read-only"],
+      "env": {
+        "SUPABASE_URL": "https://your-project.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "your-service-role-key"
+      }
+    }
+  }
+}
