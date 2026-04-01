@@ -4,6 +4,7 @@ Covers: lap_summaries, pit_stops, weather_readings for 2022-present.
 """
 
 import logging
+import time
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -216,24 +217,45 @@ def _process_session(
 ) -> dict[str, int]:
     """Load and ingest one race session."""
     counts = {"lap_summaries": 0, "pit_stops": 0, "weather_readings": 0}
-    try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            session = fastf1.get_session(year, round_num, "R")
-            session.load()
-    except Exception:
-        logger.warning("Could not load session %d round %d, skipping", year, round_num)
+
+    for attempt in range(3):
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                session = fastf1.get_session(year, round_num, "R")
+                session.load()
+            break
+        except fastf1.req.RateLimitExceededError:
+            wait = 120 * (attempt + 1)
+            logger.warning(
+                "FastF1 rate limit hit on %d R%d, waiting %ds (attempt %d/3)",
+                year, round_num, wait, attempt + 1,
+            )
+            time.sleep(wait)
+        except Exception:
+            logger.warning(
+                "Could not load session %d round %d, skipping",
+                year, round_num,
+            )
+            return counts
+    else:
+        logger.error("Rate limit not cleared for %d R%d, skipping", year, round_num)
         return counts
 
-    if session.laps is None or session.laps.empty:
-        logger.warning("No lap data for %d round %d", year, round_num)
+    try:
+        laps = session.laps
+        if laps is None or laps.empty:
+            logger.warning("No lap data for %d round %d", year, round_num)
+            return counts
+    except Exception:
+        logger.warning("Data not loaded for %d round %d, skipping", year, round_num)
         return counts
 
     counts["lap_summaries"] = _ingest_laps(
-        supabase, session.laps, race_id, driver_code_lookup
+        supabase, laps, race_id, driver_code_lookup
     )
     counts["pit_stops"] = _ingest_pit_stops(
-        supabase, session.laps, race_id, driver_code_lookup
+        supabase, laps, race_id, driver_code_lookup
     )
     counts["weather_readings"] = _ingest_weather(supabase, session, race_id)
 
