@@ -1,82 +1,83 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
-import { MOCK_RACES } from "@/lib/mock/races";
+import { useRaceCalendar } from "@/lib/hooks/use-races";
 
 export default function RacesPage() {
-  const races = MOCK_RACES;
+  const { data: races, isLoading, error } = useRaceCalendar(CURRENT_SEASON);
   const now = new Date();
 
   return (
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight">Race Calendar</h1>
-        <p className="text-f1-muted text-sm mt-1">{CURRENT_SEASON} Season — {races.length} races</p>
+        <p className="text-f1-muted text-sm mt-1">
+          {CURRENT_SEASON} Season{races ? ` — ${races.length} races` : ""}
+        </p>
       </div>
 
-      <div className="w-full">
-        {/* Column headers */}
-        <div className="sticky top-0 z-10 grid grid-cols-[3rem_1fr_1fr_7rem_1fr] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
-          <span>Rnd</span>
-          <span>Grand Prix</span>
-          <span>Circuit</span>
-          <span>Date</span>
-          <span>Winner</span>
-        </div>
-
-        {races.map((race, i) => {
-          const raceDate = new Date(race.date);
-          const isPast = raceDate < now;
-          const teamColor = race.winnerConstructor
-            ? getTeamColor(race.winnerConstructor)
-            : undefined;
-
-          return (
-            <Link
-              key={race.id}
-              href={`/races/${race.id}`}
+      {isLoading ? (
+        <div className="space-y-0">
+          {Array.from({ length: 24 }, (_, i) => (
+            <div
+              key={i}
               className={cn(
-                "grid grid-cols-[3rem_1fr_1fr_7rem_1fr] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
+                "h-11 px-4 flex items-center border-b border-f1-grid/50",
                 i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
               )}
             >
-              {/* Round */}
-              <span className="font-mono text-f1-muted">{race.round}</span>
+              <div className="h-3 w-full bg-f1-grid/30 rounded-sm animate-pulse" />
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <p className="text-f1-red text-sm">Failed to load race calendar</p>
+      ) : (
+        <div className="w-full">
+          <div className="sticky top-0 z-10 grid grid-cols-[3rem_1fr_1fr_7rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
+            <span>Rnd</span>
+            <span>Grand Prix</span>
+            <span>Circuit</span>
+            <span>Date</span>
+          </div>
 
-              {/* Race name + country */}
-              <div>
-                <span className="font-medium">{race.raceName}</span>
-                <span className="text-f1-muted text-xs ml-2">{race.country}</span>
-              </div>
+          {races?.map((race, i) => {
+            const raceDate = new Date(race.date + "T00:00:00");
+            const isPast = raceDate < now;
 
-              {/* Circuit */}
-              <span className="text-f1-muted text-xs">{race.circuitName}</span>
+            return (
+              <Link
+                key={race.id}
+                href={`/races/${race.id}`}
+                className={cn(
+                  "grid grid-cols-[3rem_1fr_1fr_7rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
+                  i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
+                )}
+              >
+                <span className="font-mono text-f1-muted">{race.round}</span>
 
-              {/* Date */}
-              <span className="font-mono text-xs text-f1-muted">
-                {raceDate.toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                })}
-              </span>
-
-              {/* Winner */}
-              {isPast && race.winnerName ? (
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-0.5 h-4 rounded-sm shrink-0"
-                    style={{ backgroundColor: teamColor }}
-                  />
-                  <span className="text-xs">{race.winnerName}</span>
+                <div>
+                  <span className={cn("font-medium", isPast ? "text-f1-text" : "text-f1-muted")}>
+                    {race.name}
+                  </span>
+                  <span className="text-f1-muted text-xs ml-2">{race.circuit.country}</span>
                 </div>
-              ) : (
-                <span className="text-xs text-f1-muted italic">Upcoming</span>
-              )}
-            </Link>
-          );
-        })}
-      </div>
+
+                <span className="text-f1-muted text-xs">{race.circuit.name}</span>
+
+                <span className="font-mono text-xs text-f1-muted">
+                  {raceDate.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -5,9 +5,18 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
-import { MOCK_RACES, MOCK_RACE_RESULTS, MOCK_PIT_STOPS } from "@/lib/mock/races";
+import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
+import { formatLapTime, formatGap, formatPitDuration } from "@/lib/format";
+import type { RaceResult, DriverStrategy } from "@/lib/schemas/races";
 
 type Tab = "results" | "pitstops";
+
+function positionColor(pos: number | null): string {
+  if (pos === 1) return "text-f1-gold";
+  if (pos === 2) return "text-f1-silver";
+  if (pos === 3) return "text-f1-bronze";
+  return "text-f1-muted";
+}
 
 export default function RaceDetailPage({
   params,
@@ -15,23 +24,41 @@ export default function RaceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const raceId = Number(id);
   const [activeTab, setActiveTab] = useState<Tab>("results");
 
-  const race = MOCK_RACES.find((r) => r.id === Number(id));
-  const results = MOCK_RACE_RESULTS;
-  const pitStops = MOCK_PIT_STOPS;
+  const { data: race, isLoading, error } = useRaceDetail(raceId);
+  const { data: strategy } = useRaceStrategy(raceId);
 
-  if (!race) {
+  if (isLoading) {
     return (
       <div className="p-8">
+        <div className="h-6 w-48 bg-f1-grid/30 rounded-sm animate-pulse mb-4" />
+        <div className="h-8 w-80 bg-f1-grid/30 rounded-sm animate-pulse mb-2" />
+        <div className="h-4 w-60 bg-f1-grid/30 rounded-sm animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error || !race) {
+    return (
+      <div className="p-8">
+        <Link
+          href="/races"
+          className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Races
+        </Link>
         <p className="text-f1-muted">Race not found.</p>
       </div>
     );
   }
 
+  const winnerMs = race.results[0]?.time_millis ?? null;
+
   return (
     <div className="p-8">
-      {/* Back link */}
       <Link
         href="/races"
         className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6"
@@ -40,13 +67,10 @@ export default function RaceDetailPage({
         Races
       </Link>
 
-      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {race.raceName}
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
         <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted">
-          <span>{race.circuitName}</span>
+          <span>{race.circuit.name}</span>
           <span className="text-f1-grid">|</span>
           <span className="font-mono">{race.date}</span>
           <span className="text-f1-grid">|</span>
@@ -54,7 +78,6 @@ export default function RaceDetailPage({
         </div>
       </div>
 
-      {/* Tab switcher */}
       <div role="tablist" className="flex gap-0 mb-6 border-b border-f1-grid">
         {(["results", "pitstops"] as const).map((tab) => (
           <button
@@ -75,18 +98,24 @@ export default function RaceDetailPage({
       </div>
 
       {activeTab === "results" ? (
-        <ResultsTable results={results} />
+        <ResultsTable results={race.results} winnerMs={winnerMs} />
       ) : (
-        <PitStopsTable pitStops={pitStops} />
+        <PitStopsTable strategy={strategy ?? []} />
       )}
     </div>
   );
 }
 
-function ResultsTable({ results }: { results: typeof MOCK_RACE_RESULTS }) {
+function ResultsTable({
+  results,
+  winnerMs,
+}: {
+  results: RaceResult[];
+  winnerMs: number | null;
+}) {
   return (
     <div className="w-full">
-      <div className="sticky top-0 z-10 grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_5rem_4rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
+      <div className="sticky top-0 z-10 grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
         <span>Pos</span>
         <span>Driver</span>
         <span>Team</span>
@@ -97,84 +126,92 @@ function ResultsTable({ results }: { results: typeof MOCK_RACE_RESULTS }) {
       </div>
 
       {results.map((r, i) => {
-        const teamColor = getTeamColor(r.constructorRef);
-        const gridDelta = r.grid - r.position;
+        const teamColor = getTeamColor(r.constructor.ref);
+        const grid = r.grid ?? 0;
+        const pos = r.position ?? 0;
+        const gridDelta = pos > 0 ? grid - pos : 0;
+        const isDnf = r.position == null || r.status === "Retired" || (r.status && r.status !== "Finished" && !r.status.startsWith("+"));
 
         return (
-          <div
-            key={r.driverRef}
+          <Link
+            key={r.driver.ref}
+            href={`/drivers/${r.driver.ref}`}
             className={cn(
-              "grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_5rem_4rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
+              "grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
             )}
           >
-            {/* Position */}
-            <span
-              className={cn(
-                "font-mono text-base font-bold",
-                r.position <= 3 ? "text-f1-text" : "text-f1-muted"
-              )}
-            >
-              {r.status === "Retired" ? "DNF" : r.position}
+            <span className={cn(
+              "font-mono text-base font-bold",
+              isDnf ? "text-f1-red" : positionColor(r.position)
+            )}>
+              {isDnf ? "DNF" : r.position}
             </span>
 
-            {/* Driver */}
             <div className="flex items-center gap-3">
               <div
                 className="w-0.5 h-5 rounded-sm shrink-0"
                 style={{ backgroundColor: teamColor }}
               />
               <span>
-                <span className="text-f1-muted">{r.givenName} </span>
-                <span className="font-semibold uppercase">{r.familyName}</span>
+                <span className="text-f1-muted">{r.driver.forename} </span>
+                <span className="font-semibold uppercase">{r.driver.surname}</span>
               </span>
             </div>
 
-            {/* Team */}
-            <span className="text-f1-muted text-xs">{r.constructorName}</span>
+            <span className="text-f1-muted text-xs">{r.constructor.name}</span>
 
-            {/* Grid */}
             <div className="text-right flex items-center justify-end gap-1">
-              <span className="font-mono text-f1-muted">{r.grid}</span>
-              {gridDelta !== 0 && r.status !== "Retired" && (
-                <span
-                  className={cn(
-                    "text-[10px] font-mono",
-                    gridDelta > 0 ? "text-f1-green" : "text-f1-red"
-                  )}
-                >
+              <span className="font-mono text-f1-muted">{r.grid ?? "\u2014"}</span>
+              {gridDelta !== 0 && !isDnf && (
+                <span className={cn(
+                  "text-[10px] font-mono",
+                  gridDelta > 0 ? "text-f1-green" : "text-f1-red"
+                )}>
                   {gridDelta > 0 ? `+${gridDelta}` : gridDelta}
                 </span>
               )}
             </div>
 
-            {/* Points */}
             <span className="text-right font-mono font-semibold">
-              {r.points > 0 ? r.points : "\u2014"}
+              {(r.points ?? 0) > 0 ? Math.floor(r.points!) : "\u2014"}
             </span>
 
-            {/* Gap / Status */}
             <span className="text-right font-mono text-xs text-f1-muted">
-              {r.position === 1 ? r.time : r.status}
+              {r.position === 1
+                ? formatLapTime(r.time_millis)
+                : formatGap(r.time_millis, winnerMs, r.status)}
             </span>
 
-            {/* Fastest lap */}
-            <span
-              className={cn(
-                "text-right font-mono text-xs",
-                r.fastestLapRank === 1 ? "text-f1-green" : "text-f1-muted"
-              )}
-            >
-              {r.fastestLapTime ?? "\u2014"}
+            <span className={cn(
+              "text-right font-mono text-xs",
+              r.fastest_lap_rank === 1 ? "text-f1-green" : "text-f1-muted"
+            )}>
+              {r.fastest_lap_rank === 1 ? "FL" : "\u2014"}
             </span>
-          </div>
+          </Link>
         );
       })}
     </div>
   );
 }
 
-function PitStopsTable({ pitStops }: { pitStops: typeof MOCK_PIT_STOPS }) {
+function PitStopsTable({ strategy }: { strategy: DriverStrategy[] }) {
+  if (strategy.length === 0) {
+    return (
+      <p className="text-f1-muted text-sm">
+        Pit stop data not available for this race — FastF1 data covers 2022+ sessions
+      </p>
+    );
+  }
+
+  const allStops = strategy.flatMap((s) =>
+    s.pit_stops.map((ps) => ({
+      ...ps,
+      driver: s.driver,
+    }))
+  ).sort((a, b) => a.lap - b.lap);
+
   return (
     <div className="w-full">
       <div className="sticky top-0 z-10 grid grid-cols-[4rem_1fr_4rem_5rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
@@ -184,20 +221,29 @@ function PitStopsTable({ pitStops }: { pitStops: typeof MOCK_PIT_STOPS }) {
         <span className="text-right">Duration</span>
       </div>
 
-      {pitStops.map((ps, i) => (
-        <div
-          key={`${ps.driverRef}-${ps.stop}`}
-          className={cn(
-            "grid grid-cols-[4rem_1fr_4rem_5rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50",
-            i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
-          )}
-        >
-          <span className="font-mono text-f1-muted">{ps.lap}</span>
-          <span className="font-medium">{ps.driverName}</span>
-          <span className="text-right font-mono text-f1-orange">{ps.stop}</span>
-          <span className="text-right font-mono">{ps.duration}</span>
-        </div>
-      ))}
+      {allStops.map((ps, i) => {
+        const teamColor = getTeamColor(ps.driver.ref);
+        return (
+          <div
+            key={`${ps.driver.ref}-${ps.stop_number}`}
+            className={cn(
+              "grid grid-cols-[4rem_1fr_4rem_5rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50",
+              i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
+            )}
+          >
+            <span className="font-mono text-f1-muted">{ps.lap}</span>
+            <div className="flex items-center gap-3">
+              <div
+                className="w-0.5 h-4 rounded-sm shrink-0"
+                style={{ backgroundColor: teamColor }}
+              />
+              <span className="font-medium">{ps.driver.surname}</span>
+            </div>
+            <span className="text-right font-mono text-f1-orange">{ps.stop_number}</span>
+            <span className="text-right font-mono">{formatPitDuration(ps.duration_ms)}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }

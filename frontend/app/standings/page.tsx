@@ -1,22 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
-import {
-  MOCK_DRIVER_STANDINGS,
-  MOCK_CONSTRUCTOR_STANDINGS,
-} from "@/lib/mock/standings";
+import { useStandings } from "@/lib/hooks/use-standings";
+import type { DriverStanding, ConstructorStanding } from "@/lib/schemas/standings";
 
 type Tab = "drivers" | "constructors";
 
 export default function StandingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("drivers");
-  const drivers = MOCK_DRIVER_STANDINGS;
-  const constructors = MOCK_CONSTRUCTOR_STANDINGS;
+  const { data, isLoading, error } = useStandings(CURRENT_SEASON);
+
+  const drivers = data?.driver_standings ?? [];
+  const constructors = data?.constructor_standings ?? [];
   const maxPoints =
-    activeTab === "drivers" ? drivers[0].points : constructors[0].points;
+    activeTab === "drivers"
+      ? (drivers[0]?.points ?? 0)
+      : (constructors[0]?.points ?? 0);
 
   return (
     <div className="p-8">
@@ -25,7 +28,9 @@ export default function StandingsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">
           Championship Standings
         </h1>
-        <p className="text-f1-muted text-sm mt-1">{CURRENT_SEASON} Season</p>
+        <p className="text-f1-muted text-sm mt-1">
+          {data ? `${data.season} Season — Round ${data.round}` : `${CURRENT_SEASON} Season`}
+        </p>
       </div>
 
       {/* Tab switcher */}
@@ -48,29 +53,54 @@ export default function StandingsPage() {
         ))}
       </div>
 
-      {/* Table */}
-      {activeTab === "drivers" ? (
+      {/* Content */}
+      {isLoading ? (
+        <LoadingSkeleton rows={activeTab === "drivers" ? 20 : 10} />
+      ) : error ? (
+        <p className="text-f1-red text-sm">Failed to load standings data</p>
+      ) : activeTab === "drivers" ? (
         <DriverTable drivers={drivers} maxPoints={maxPoints} />
       ) : (
-        <ConstructorTable
-          constructors={constructors}
-          maxPoints={maxPoints}
-        />
+        <ConstructorTable constructors={constructors} maxPoints={maxPoints} />
       )}
     </div>
   );
+}
+
+function LoadingSkeleton({ rows }: { rows: number }) {
+  return (
+    <div className="w-full space-y-0">
+      {Array.from({ length: rows }, (_, i) => (
+        <div
+          key={i}
+          className={cn(
+            "h-11 px-4 flex items-center border-b border-f1-grid/50",
+            i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
+          )}
+        >
+          <div className="h-3 w-full bg-f1-grid/30 rounded-sm animate-pulse" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function positionColor(pos: number): string {
+  if (pos === 1) return "text-f1-gold";
+  if (pos === 2) return "text-f1-silver";
+  if (pos === 3) return "text-f1-bronze";
+  return "text-f1-muted";
 }
 
 function DriverTable({
   drivers,
   maxPoints,
 }: {
-  drivers: typeof MOCK_DRIVER_STANDINGS;
+  drivers: DriverStanding[];
   maxPoints: number;
 }) {
   return (
     <div className="w-full">
-      {/* Column headers */}
       <div className="sticky top-0 z-10 grid grid-cols-[3rem_2fr_1fr_5rem_4rem_1fr] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
         <span>Pos</span>
         <span>Driver</span>
@@ -81,65 +111,50 @@ function DriverTable({
       </div>
 
       {drivers.map((d, i) => {
-        const teamColor = getTeamColor(d.constructorRef);
+        const teamColor = getTeamColor(d.constructor_name ?? "");
         const barWidth = maxPoints > 0 ? (d.points / maxPoints) * 100 : 0;
 
         return (
-          <div
-            key={d.driverRef}
+          <Link
+            key={d.driver_ref}
+            href={`/drivers/${d.driver_ref}`}
             className={cn(
               "grid grid-cols-[3rem_2fr_1fr_5rem_4rem_1fr] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
             )}
           >
-            {/* Position */}
-            <span
-              className={cn(
-                "font-mono text-base font-bold",
-                d.position <= 3 ? "text-f1-text" : "text-f1-muted"
-              )}
-            >
+            <span className={cn("font-mono text-base font-bold", positionColor(d.position))}>
               {d.position}
             </span>
 
-            {/* Driver name with team color bar */}
             <div className="flex items-center gap-3">
               <div
                 className="w-0.5 h-5 rounded-sm shrink-0"
                 style={{ backgroundColor: teamColor }}
               />
               <span>
-                <span className="text-f1-muted">{d.givenName} </span>
-                <span className="font-semibold uppercase">
-                  {d.familyName}
-                </span>
+                <span className="text-f1-muted">{d.forename} </span>
+                <span className="font-semibold uppercase">{d.surname}</span>
               </span>
             </div>
 
-            {/* Team */}
-            <span className="text-f1-muted text-xs">{d.constructorName}</span>
+            <span className="text-f1-muted text-xs">{d.constructor_name}</span>
 
-            {/* Points */}
             <span className="text-right font-mono font-semibold">
-              {d.points}
+              {Math.floor(d.points)}
             </span>
 
-            {/* Wins */}
             <span className="text-right font-mono text-f1-muted">
               {d.wins > 0 ? d.wins : "\u2014"}
             </span>
 
-            {/* Points bar */}
             <div className="h-1.5 bg-f1-grid/30 rounded-sm overflow-hidden">
               <div
                 className="h-full rounded-sm transition-all duration-300"
-                style={{
-                  width: `${barWidth}%`,
-                  backgroundColor: teamColor,
-                }}
+                style={{ width: `${barWidth}%`, backgroundColor: teamColor }}
               />
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>
@@ -150,12 +165,11 @@ function ConstructorTable({
   constructors,
   maxPoints,
 }: {
-  constructors: typeof MOCK_CONSTRUCTOR_STANDINGS;
+  constructors: ConstructorStanding[];
   maxPoints: number;
 }) {
   return (
     <div className="w-full">
-      {/* Column headers */}
       <div className="sticky top-0 z-10 grid grid-cols-[3rem_2fr_5rem_4rem_1fr] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
         <span>Pos</span>
         <span>Constructor</span>
@@ -165,54 +179,41 @@ function ConstructorTable({
       </div>
 
       {constructors.map((c, i) => {
-        const teamColor = getTeamColor(c.constructorRef);
+        const teamColor = getTeamColor(c.constructor_ref);
         const barWidth = maxPoints > 0 ? (c.points / maxPoints) * 100 : 0;
 
         return (
           <div
-            key={c.constructorRef}
+            key={c.constructor_ref}
             className={cn(
               "grid grid-cols-[3rem_2fr_5rem_4rem_1fr] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
             )}
           >
-            {/* Position */}
-            <span
-              className={cn(
-                "font-mono text-base font-bold",
-                c.position <= 3 ? "text-f1-text" : "text-f1-muted"
-              )}
-            >
+            <span className={cn("font-mono text-base font-bold", positionColor(c.position))}>
               {c.position}
             </span>
 
-            {/* Constructor name with team color bar */}
             <div className="flex items-center gap-3">
               <div
                 className="w-0.5 h-5 rounded-sm shrink-0"
                 style={{ backgroundColor: teamColor }}
               />
-              <span className="font-semibold">{c.constructorName}</span>
+              <span className="font-semibold">{c.name}</span>
             </div>
 
-            {/* Points */}
             <span className="text-right font-mono font-semibold">
-              {c.points}
+              {Math.floor(c.points)}
             </span>
 
-            {/* Wins */}
             <span className="text-right font-mono text-f1-muted">
               {c.wins > 0 ? c.wins : "\u2014"}
             </span>
 
-            {/* Points bar */}
             <div className="h-2 bg-f1-grid/30 rounded-sm overflow-hidden">
               <div
                 className="h-full rounded-sm transition-all duration-300"
-                style={{
-                  width: `${barWidth}%`,
-                  backgroundColor: teamColor,
-                }}
+                style={{ width: `${barWidth}%`, backgroundColor: teamColor }}
               />
             </div>
           </div>

@@ -9,6 +9,11 @@
   --color-f1-text: #E5E5E5;
   --color-f1-muted: #A3A3A3;
 
+  /* Position colors */
+  --color-f1-gold: #FFD700;
+  --color-f1-silver: #C0C0C0;
+  --color-f1-bronze: #CD7F32;
+
   /* F1 semantic colors */
   --color-f1-red: #DC0000;
   --color-f1-green: #00FF00;

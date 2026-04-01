@@ -9,7 +9,20 @@ const TEAM_CSS_VARS: Record<string, string> = {
   "williams": "var(--color-team-williams)",
   "rb": "var(--color-team-rb)",
   "sauber": "var(--color-team-sauber)",
+  "kick_sauber": "var(--color-team-sauber)",
   "haas": "var(--color-team-haas)",
+  // Display name variants (from API constructor_name field)
+  "alpine_f1_team": "var(--color-team-alpine)",
+  "haas_f1_team": "var(--color-team-haas)",
+  "rb_f1_team": "var(--color-team-rb)",
+  "aston_martin_aramco_cognizant_f1_team": "var(--color-team-aston-martin)",
+  "stake_f1_team_kick_sauber": "var(--color-team-sauber)",
+  // Historical teams
+  "alphatauri": "var(--color-team-rb)",
+  "alfa_romeo": "var(--color-team-sauber)",
+  "racing_point": "var(--color-team-aston-martin)",
+  "renault": "var(--color-team-alpine)",
+  "toro_rosso": "var(--color-team-rb)",
 } as const;
 
 export const TEAM_NAMES: Record<string, string> = {
