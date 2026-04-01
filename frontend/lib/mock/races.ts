@@ -1,0 +1,57 @@
+import type { Race, RaceResult, PitStop } from "@/lib/types/races";
+
+export const MOCK_RACES: Race[] = [
+  { id: 1, season: 2024, round: 1, raceName: "Bahrain Grand Prix", circuitName: "Bahrain International Circuit", country: "Bahrain", locality: "Sakhir", date: "2024-03-02", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 2, season: 2024, round: 2, raceName: "Saudi Arabian Grand Prix", circuitName: "Jeddah Corniche Circuit", country: "Saudi Arabia", locality: "Jeddah", date: "2024-03-09", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 3, season: 2024, round: 3, raceName: "Australian Grand Prix", circuitName: "Albert Park Grand Prix Circuit", country: "Australia", locality: "Melbourne", date: "2024-03-24", winnerId: "sainz", winnerName: "Carlos Sainz", winnerConstructor: "ferrari" },
+  { id: 4, season: 2024, round: 4, raceName: "Japanese Grand Prix", circuitName: "Suzuka Circuit", country: "Japan", locality: "Suzuka", date: "2024-04-07", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 5, season: 2024, round: 5, raceName: "Chinese Grand Prix", circuitName: "Shanghai International Circuit", country: "China", locality: "Shanghai", date: "2024-04-21", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 6, season: 2024, round: 6, raceName: "Miami Grand Prix", circuitName: "Miami International Autodrome", country: "USA", locality: "Miami", date: "2024-05-05", winnerId: "norris", winnerName: "Lando Norris", winnerConstructor: "mclaren" },
+  { id: 7, season: 2024, round: 7, raceName: "Emilia Romagna Grand Prix", circuitName: "Autodromo Enzo e Dino Ferrari", country: "Italy", locality: "Imola", date: "2024-05-19", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 8, season: 2024, round: 8, raceName: "Monaco Grand Prix", circuitName: "Circuit de Monaco", country: "Monaco", locality: "Monte-Carlo", date: "2024-05-26", winnerId: "leclerc", winnerName: "Charles Leclerc", winnerConstructor: "ferrari" },
+  { id: 9, season: 2024, round: 9, raceName: "Canadian Grand Prix", circuitName: "Circuit Gilles Villeneuve", country: "Canada", locality: "Montreal", date: "2024-06-09", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 10, season: 2024, round: 10, raceName: "Spanish Grand Prix", circuitName: "Circuit de Barcelona-Catalunya", country: "Spain", locality: "Montmelo", date: "2024-06-23", winnerId: "verstappen", winnerName: "Max Verstappen", winnerConstructor: "red_bull" },
+  { id: 11, season: 2024, round: 11, raceName: "Austrian Grand Prix", circuitName: "Red Bull Ring", country: "Austria", locality: "Spielberg", date: "2024-06-30", winnerId: "russell", winnerName: "George Russell", winnerConstructor: "mercedes" },
+  { id: 12, season: 2024, round: 12, raceName: "British Grand Prix", circuitName: "Silverstone Circuit", country: "UK", locality: "Silverstone", date: "2024-07-07", winnerId: "hamilton", winnerName: "Lewis Hamilton", winnerConstructor: "mercedes" },
+  { id: 13, season: 2024, round: 13, raceName: "Hungarian Grand Prix", circuitName: "Hungaroring", country: "Hungary", locality: "Budapest", date: "2024-07-21", winnerId: "piastri", winnerName: "Oscar Piastri", winnerConstructor: "mclaren" },
+  { id: 14, season: 2024, round: 14, raceName: "Belgian Grand Prix", circuitName: "Circuit de Spa-Francorchamps", country: "Belgium", locality: "Spa", date: "2024-07-28", winnerId: "hamilton", winnerName: "Lewis Hamilton", winnerConstructor: "mercedes" },
+  { id: 15, season: 2024, round: 15, raceName: "Dutch Grand Prix", circuitName: "Circuit Park Zandvoort", country: "Netherlands", locality: "Zandvoort", date: "2024-08-25", winnerId: "norris", winnerName: "Lando Norris", winnerConstructor: "mclaren" },
+  { id: 16, season: 2024, round: 16, raceName: "Italian Grand Prix", circuitName: "Autodromo Nazionale di Monza", country: "Italy", locality: "Monza", date: "2024-09-01", winnerId: "leclerc", winnerName: "Charles Leclerc", winnerConstructor: "ferrari" },
+  { id: 17, season: 2024, round: 17, raceName: "Azerbaijan Grand Prix", circuitName: "Baku City Circuit", country: "Azerbaijan", locality: "Baku", date: "2024-09-15", winnerId: "piastri", winnerName: "Oscar Piastri", winnerConstructor: "mclaren" },
+  { id: 18, season: 2024, round: 18, raceName: "Singapore Grand Prix", circuitName: "Marina Bay Street Circuit", country: "Singapore", locality: "Marina Bay", date: "2024-09-22", winnerId: "norris", winnerName: "Lando Norris", winnerConstructor: "mclaren" },
+  { id: 19, season: 2024, round: 19, raceName: "United States Grand Prix", circuitName: "Circuit of the Americas", country: "USA", locality: "Austin", date: "2024-10-20", winnerId: "leclerc", winnerName: "Charles Leclerc", winnerConstructor: "ferrari" },
+  { id: 20, season: 2024, round: 20, raceName: "Mexico City Grand Prix", circuitName: "Autódromo Hermanos Rodríguez", country: "Mexico", locality: "Mexico City", date: "2024-10-27", winnerId: "sainz", winnerName: "Carlos Sainz", winnerConstructor: "ferrari" },
+];
+
+export const MOCK_RACE_RESULTS: RaceResult[] = [
+  { position: 1, driverRef: "verstappen", givenName: "Max", familyName: "Verstappen", constructorRef: "red_bull", constructorName: "Red Bull Racing", grid: 1, laps: 57, status: "Finished", time: "1:31:44.742", points: 25, fastestLapRank: 1, fastestLapTime: "1:32.608" },
+  { position: 2, driverRef: "norris", givenName: "Lando", familyName: "Norris", constructorRef: "mclaren", constructorName: "McLaren", grid: 4, laps: 57, status: "+22.457s", points: 18 },
+  { position: 3, driverRef: "leclerc", givenName: "Charles", familyName: "Leclerc", constructorRef: "ferrari", constructorName: "Ferrari", grid: 2, laps: 57, status: "+25.110s", points: 15 },
+  { position: 4, driverRef: "piastri", givenName: "Oscar", familyName: "Piastri", constructorRef: "mclaren", constructorName: "McLaren", grid: 5, laps: 57, status: "+39.292s", points: 12 },
+  { position: 5, driverRef: "sainz", givenName: "Carlos", familyName: "Sainz", constructorRef: "ferrari", constructorName: "Ferrari", grid: 3, laps: 57, status: "+42.189s", points: 10 },
+  { position: 6, driverRef: "hamilton", givenName: "Lewis", familyName: "Hamilton", constructorRef: "ferrari", constructorName: "Ferrari", grid: 7, laps: 57, status: "+48.903s", points: 8 },
+  { position: 7, driverRef: "russell", givenName: "George", familyName: "Russell", constructorRef: "mercedes", constructorName: "Mercedes", grid: 6, laps: 57, status: "+53.120s", points: 6 },
+  { position: 8, driverRef: "perez", givenName: "Sergio", familyName: "Perez", constructorRef: "red_bull", constructorName: "Red Bull Racing", grid: 8, laps: 57, status: "+58.441s", points: 4 },
+  { position: 9, driverRef: "alonso", givenName: "Fernando", familyName: "Alonso", constructorRef: "aston_martin", constructorName: "Aston Martin", grid: 9, laps: 57, status: "+62.773s", points: 2 },
+  { position: 10, driverRef: "stroll", givenName: "Lance", familyName: "Stroll", constructorRef: "aston_martin", constructorName: "Aston Martin", grid: 11, laps: 57, status: "+65.890s", points: 1 },
+  { position: 11, driverRef: "hulkenberg", givenName: "Nico", familyName: "Hulkenberg", constructorRef: "haas", constructorName: "Haas", grid: 10, laps: 57, status: "+71.234s", points: 0 },
+  { position: 12, driverRef: "tsunoda", givenName: "Yuki", familyName: "Tsunoda", constructorRef: "rb", constructorName: "RB", grid: 12, laps: 57, status: "+74.891s", points: 0 },
+  { position: 13, driverRef: "gasly", givenName: "Pierre", familyName: "Gasly", constructorRef: "alpine", constructorName: "Alpine", grid: 14, laps: 57, status: "+78.102s", points: 0 },
+  { position: 14, driverRef: "ocon", givenName: "Esteban", familyName: "Ocon", constructorRef: "alpine", constructorName: "Alpine", grid: 13, laps: 57, status: "+82.456s", points: 0 },
+  { position: 15, driverRef: "magnussen", givenName: "Kevin", familyName: "Magnussen", constructorRef: "haas", constructorName: "Haas", grid: 15, laps: 57, status: "+85.789s", points: 0 },
+  { position: 16, driverRef: "albon", givenName: "Alexander", familyName: "Albon", constructorRef: "williams", constructorName: "Williams", grid: 16, laps: 57, status: "+88.234s", points: 0 },
+  { position: 17, driverRef: "ricciardo", givenName: "Daniel", familyName: "Ricciardo", constructorRef: "rb", constructorName: "RB", grid: 17, laps: 57, status: "+91.567s", points: 0 },
+  { position: 18, driverRef: "bottas", givenName: "Valtteri", familyName: "Bottas", constructorRef: "sauber", constructorName: "Kick Sauber", grid: 18, laps: 56, status: "+1 Lap", points: 0 },
+  { position: 19, driverRef: "zhou", givenName: "Guanyu", familyName: "Zhou", constructorRef: "sauber", constructorName: "Kick Sauber", grid: 19, laps: 56, status: "+1 Lap", points: 0 },
+  { position: 20, driverRef: "sargeant", givenName: "Logan", familyName: "Sargeant", constructorRef: "williams", constructorName: "Williams", grid: 20, laps: 0, status: "Retired", points: 0 },
+];
+
+export const MOCK_PIT_STOPS: PitStop[] = [
+  { lap: 14, driverRef: "verstappen", driverName: "Verstappen", duration: "22.1s", stop: 1 },
+  { lap: 15, driverRef: "leclerc", driverName: "Leclerc", duration: "23.4s", stop: 1 },
+  { lap: 16, driverRef: "norris", driverName: "Norris", duration: "22.8s", stop: 1 },
+  { lap: 17, driverRef: "piastri", driverName: "Piastri", duration: "23.1s", stop: 1 },
+  { lap: 34, driverRef: "verstappen", driverName: "Verstappen", duration: "22.3s", stop: 2 },
+  { lap: 35, driverRef: "norris", driverName: "Norris", duration: "22.6s", stop: 2 },
+  { lap: 36, driverRef: "leclerc", driverName: "Leclerc", duration: "23.0s", stop: 2 },
+];
