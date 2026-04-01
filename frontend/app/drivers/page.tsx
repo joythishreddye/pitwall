@@ -1,20 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings } from "@/lib/hooks/use-standings";
+import { SeasonSelector } from "@/components/season-selector";
 import { cn } from "@/lib/utils";
 
 export default function DriversPage() {
-  const { data, isLoading, error } = useStandings(CURRENT_SEASON, "driver");
+  const [season, setSeason] = useState(CURRENT_SEASON);
+  const { data, isLoading, error } = useStandings(season, "driver");
   const drivers = data?.driver_standings ?? [];
 
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Drivers</h1>
-        <p className="text-f1-muted text-sm mt-1">{CURRENT_SEASON} Grid</p>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight">Drivers</h1>
+          <SeasonSelector value={season} onChange={setSeason} />
+        </div>
+        <p className="text-f1-muted text-sm mt-1">
+          {drivers.length > 0 ? `${drivers.length} drivers` : ""}
+        </p>
       </div>
 
       {isLoading ? (

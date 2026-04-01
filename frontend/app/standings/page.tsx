@@ -6,13 +6,15 @@ import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings } from "@/lib/hooks/use-standings";
+import { SeasonSelector } from "@/components/season-selector";
 import type { DriverStanding, ConstructorStanding } from "@/lib/schemas/standings";
 
 type Tab = "drivers" | "constructors";
 
 export default function StandingsPage() {
+  const [season, setSeason] = useState(CURRENT_SEASON);
   const [activeTab, setActiveTab] = useState<Tab>("drivers");
-  const { data, isLoading, error } = useStandings(CURRENT_SEASON);
+  const { data, isLoading, error } = useStandings(season);
 
   const drivers = data?.driver_standings ?? [];
   const constructors = data?.constructor_standings ?? [];
@@ -25,11 +27,14 @@ export default function StandingsPage() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Championship Standings
-        </h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Championship Standings
+          </h1>
+          <SeasonSelector value={season} onChange={setSeason} />
+        </div>
         <p className="text-f1-muted text-sm mt-1">
-          {data ? `${data.season} Season — Round ${data.round}` : `${CURRENT_SEASON} Season`}
+          {data ? `Round ${data.round}` : "Loading..."}
         </p>
       </div>
 

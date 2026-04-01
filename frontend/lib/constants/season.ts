@@ -1,2 +1,2 @@
-/** The latest full season with complete data in the database. */
-export const CURRENT_SEASON = 2025;
+/** The current active season. */
+export const CURRENT_SEASON = 2026;
