@@ -1,0 +1,32 @@
+[project]
+name = "pitwall-backend"
+version = "0.1.0"
+description = "PitWall — AI Race Engineer backend"
+requires-python = ">=3.12,<3.14"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "S",    # flake8-bandit (security)
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "S104",  # binding to all interfaces (needed for Docker)
+    "S603",  # subprocess calls (not used, but ruff flags it)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
