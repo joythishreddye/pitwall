@@ -23,6 +23,37 @@ from app.ingestion._helpers import (
 logger = logging.getLogger(__name__)
 
 BASE_URL = "http://api.jolpi.ca/ergast/f1"
+PAGE_LIMIT = 100  # Jolpica API caps at ~100 results per page
+
+
+def _fetch_all_pages(
+    http: httpx.Client,
+    rl: RateLimiter,
+    url: str,
+    table_key: str,
+    list_key: str,
+) -> list[dict]:
+    """Fetch all pages from a paginated Jolpica endpoint.
+
+    Always increments offset by PAGE_LIMIT (not by len of returned
+    items) because the API's 'total' counts leaf entries, while
+    the list may contain parent objects (e.g. Races with nested
+    Results). Caller should deduplicate if the endpoint nests data.
+    """
+    all_items: list[dict] = []
+    offset = 0
+    while True:
+        data = fetch_json(
+            http, url, rl,
+            params={"limit": PAGE_LIMIT, "offset": offset},
+        )
+        items = data.get(table_key, {}).get(list_key, [])
+        all_items.extend(items)
+        total = int(data.get("total", 0))
+        if not items or offset + PAGE_LIMIT >= total:
+            break
+        offset += PAGE_LIMIT
+    return all_items
 
 
 def _map_circuit(c: dict) -> dict:
@@ -141,8 +172,10 @@ def ingest_circuits(
     supabase: Client, http: httpx.Client, rl: RateLimiter
 ) -> int:
     """Fetch and upsert all circuits."""
-    data = fetch_json(http, f"{BASE_URL}/circuits.json", rl, params={"limit": 1000})
-    circuits = data["CircuitTable"]["Circuits"]
+    circuits = _fetch_all_pages(
+        http, rl, f"{BASE_URL}/circuits.json",
+        "CircuitTable", "Circuits",
+    )
     rows = [_map_circuit(c) for c in circuits]
     count = batch_upsert(supabase, "circuits", rows, on_conflict="ref")
     logger.info("Circuits: %d upserted", count)
@@ -153,19 +186,10 @@ def ingest_drivers(
     supabase: Client, http: httpx.Client, rl: RateLimiter
 ) -> int:
     """Fetch and upsert all drivers (paginated — ~900 total)."""
-    all_drivers: list[dict] = []
-    offset = 0
-    limit = 1000
-    while True:
-        data = fetch_json(
-            http, f"{BASE_URL}/drivers.json", rl,
-            params={"limit": limit, "offset": offset},
-        )
-        drivers = data["DriverTable"]["Drivers"]
-        all_drivers.extend(drivers)
-        if offset + limit >= int(data.get("total", 0)):
-            break
-        offset += limit
+    all_drivers = _fetch_all_pages(
+        http, rl, f"{BASE_URL}/drivers.json",
+        "DriverTable", "Drivers",
+    )
     rows = [_map_driver(d) for d in all_drivers]
     count = batch_upsert(supabase, "drivers", rows, on_conflict="ref")
     logger.info("Drivers: %d upserted", count)
@@ -176,19 +200,10 @@ def ingest_constructors(
     supabase: Client, http: httpx.Client, rl: RateLimiter
 ) -> int:
     """Fetch and upsert all constructors."""
-    all_constructors: list[dict] = []
-    offset = 0
-    limit = 1000
-    while True:
-        data = fetch_json(
-            http, f"{BASE_URL}/constructors.json", rl,
-            params={"limit": limit, "offset": offset},
-        )
-        constructors = data["ConstructorTable"]["Constructors"]
-        all_constructors.extend(constructors)
-        if offset + limit >= int(data.get("total", 0)):
-            break
-        offset += limit
+    all_constructors = _fetch_all_pages(
+        http, rl, f"{BASE_URL}/constructors.json",
+        "ConstructorTable", "Constructors",
+    )
     rows = [_map_constructor(c) for c in all_constructors]
     count = batch_upsert(supabase, "constructors", rows, on_conflict="ref")
     logger.info("Constructors: %d upserted", count)
@@ -205,10 +220,10 @@ def ingest_races(
     """Fetch and upsert race schedules for given seasons."""
     total = 0
     for season in seasons:
-        data = fetch_json(
-            http, f"{BASE_URL}/{season}.json", rl, params={"limit": 100}
+        races = _fetch_all_pages(
+            http, rl, f"{BASE_URL}/{season}.json",
+            "RaceTable", "Races",
         )
-        races = data.get("RaceTable", {}).get("Races", [])
         rows = [r for r in (_map_race(race, circuit_lookup) for race in races) if r]
         count = batch_upsert(supabase, "races", rows, on_conflict="season,round")
         logger.info("Races %d: %d upserted", season, count)
@@ -229,11 +244,17 @@ def ingest_results(
     total = 0
     for season in seasons:
         season_count = 0
-        data = fetch_json(
-            http, f"{BASE_URL}/{season}/results.json", rl, params={"limit": 1000}
+        raw_races = _fetch_all_pages(
+            http, rl, f"{BASE_URL}/{season}/results.json",
+            "RaceTable", "Races",
         )
-        for race in data.get("RaceTable", {}).get("Races", []):
+        # Merge results from duplicate race entries across pages
+        merged: dict[tuple, list] = {}
+        for race in raw_races:
             key = (int(race["season"]), int(race["round"]))
+            merged.setdefault(key, []).extend(race.get("Results", []))
+
+        for key, results in merged.items():
             race_id = race_lookup.get(key)
             if race_id is None:
                 continue
@@ -241,12 +262,13 @@ def ingest_results(
                 r
                 for r in (
                     _map_result(res, race_id, driver_lookup, constructor_lookup)
-                    for res in race.get("Results", [])
+                    for res in results
                 )
                 if r
             ]
             season_count += batch_upsert(
-                supabase, "race_results", rows, on_conflict="race_id,driver_id"
+                supabase, "race_results", rows,
+                on_conflict="race_id,driver_id",
             )
         logger.info("Results %d: %d upserted", season, season_count)
         total += season_count
@@ -267,15 +289,22 @@ def ingest_qualifying(
     for season in seasons:
         season_count = 0
         try:
-            data = fetch_json(
-                http, f"{BASE_URL}/{season}/qualifying.json", rl,
-                params={"limit": 1000},
+            raw_races = _fetch_all_pages(
+                http, rl, f"{BASE_URL}/{season}/qualifying.json",
+                "RaceTable", "Races",
             )
         except Exception:
             logger.warning("No qualifying data for %d", season)
             continue
-        for race in data.get("RaceTable", {}).get("Races", []):
+        # Merge qualifying from duplicate race entries across pages
+        merged: dict[tuple, list] = {}
+        for race in raw_races:
             key = (int(race["season"]), int(race["round"]))
+            merged.setdefault(key, []).extend(
+                race.get("QualifyingResults", [])
+            )
+
+        for key, qual_results in merged.items():
             race_id = race_lookup.get(key)
             if race_id is None:
                 continue
@@ -283,7 +312,7 @@ def ingest_qualifying(
                 r
                 for r in (
                     _map_qualifying(q, race_id, driver_lookup, constructor_lookup)
-                    for q in race.get("QualifyingResults", [])
+                    for q in qual_results
                 )
                 if r
             ]
