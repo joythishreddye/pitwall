@@ -16,6 +16,6 @@ cd backend && pytest -v --cov=app --cov-report=term-missing
 ```
 
 **All tests:**
-Run both sequentially. Report any failures clearly with file paths and error messages.
+Run both frontend and backend test suites sequentially. Report any failures with file paths and error messages.
 
-If no argument is provided, detect which files were recently changed and run the relevant test suite.
+If no argument is provided, detect which files were recently changed (check `git diff --name-only`) and run the relevant test suite. If changes span both frontend/ and backend/, run both.

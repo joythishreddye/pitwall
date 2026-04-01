@@ -37,6 +37,9 @@ backend/app/ml/models/*.bin
 # FastF1 cache
 fastf1_cache/
 
+# Jupyter
+.ipynb_checkpoints/
+
 # IDE
 .vscode/
 .idea/
