@@ -90,6 +90,7 @@ gh issue view <number>               # View specific issue with full details
 - `frontend-expert` — Next.js, React, TypeScript, TailwindCSS, Recharts (Pillars 3, 4 UI)
 - `backend-expert` — FastAPI, Supabase, Redis, data pipelines (Pillars 1-4 backend)
 - `ml-expert` — LightGBM, RAG pipeline, SHAP, Monte Carlo, Whisper (Pillars 1, 2, 3 AI)
+- `code-reviewer` — Run before every commit/push. Checks security, types, tests, conventions.
 
 **Rules** (auto-loaded by file path):
 - `frontend.md` — Next.js conventions (loaded for `frontend/**/*.{ts,tsx}`)
