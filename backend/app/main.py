@@ -26,10 +26,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     ping_supabase()
     ping_redis()
 
-    # Preload ML models (loaded once at startup per backend rules)
+    # Preload embedding model (reranker lazy-loads on first chat request
+    # to stay within Render's 512MB memory limit at startup)
     Embedder.get()
-    from app.rag.retriever import _get_reranker
-    _get_reranker()
 
     logger.info("All connections verified — ready to serve")
 
