@@ -4,17 +4,13 @@ import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getTeamColor } from "@/lib/constants/teams";
+import { positionColor } from "@/lib/format";
+import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useDriverProfile, useDriverResults } from "@/lib/hooks/use-drivers";
+import { useDriverPhotos, findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
+import { DriverPhoto } from "@/components/driver-photo";
 import { SeasonSelector } from "@/components/season-selector";
-
-function positionColor(pos: number | null): string {
-  if (pos === 1) return "text-f1-gold";
-  if (pos === 2) return "text-f1-silver";
-  if (pos === 3) return "text-f1-bronze";
-  return "text-f1-muted";
-}
 
 export default function DriverProfilePage({
   params,
@@ -25,6 +21,7 @@ export default function DriverProfilePage({
   const [season, setSeason] = useState(CURRENT_SEASON);
   const { data: driver, isLoading, error } = useDriverProfile(ref);
   const { data: resultsData } = useDriverResults(ref, season);
+  const { data: photoDrivers } = useDriverPhotos();
 
   if (isLoading) {
     return (
@@ -54,6 +51,13 @@ export default function DriverProfilePage({
   const teamColor = driver.current_constructor
     ? getTeamColor(driver.current_constructor.ref)
     : "var(--color-f1-muted)";
+  const teamHex = driver.current_constructor
+    ? getTeamHexColor(driver.current_constructor.ref)
+    : "#A3A3A3";
+  const headshotUrl = findHeadshotUrl(photoDrivers, {
+    number: driver.number,
+    surname: driver.surname,
+  });
 
   const stats = [
     { label: "Championships", value: driver.career_stats.championships },
@@ -76,9 +80,19 @@ export default function DriverProfilePage({
         Drivers
       </Link>
 
-      <div className="flex items-start gap-4 mb-8">
+      <div
+        className="flex items-start gap-5 mb-8 p-5 rounded-sm"
+        style={{ background: `linear-gradient(135deg, ${teamHex}15 0%, transparent 50%)` }}
+      >
+        <DriverPhoto
+          src={headshotUrl}
+          forename={driver.forename}
+          surname={driver.surname}
+          teamColor={teamColor}
+          size={120}
+        />
         <div
-          className="w-1 h-12 rounded-sm shrink-0"
+          className="w-1 h-12 rounded-sm shrink-0 mt-2"
           style={{ backgroundColor: teamColor }}
         />
         <div>

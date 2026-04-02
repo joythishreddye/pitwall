@@ -1,6 +1,7 @@
 """Standings router — driver and constructor championship standings."""
 
 import logging
+from collections import defaultdict
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -61,6 +62,14 @@ class StandingsResponse(BaseModel):
     constructor_standings: list[ConstructorStandingEntry] | None = None
 
 
+class DriverPointsProgression(BaseModel):
+    driver_ref: str
+    surname: str
+    constructor_ref: str
+    rounds: list[int]
+    points: list[float]
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -108,15 +117,24 @@ def _fetch_driver_standings(
     )
     drivers_map: dict[int, dict] = {d["id"]: d for d in (drivers_result.data or [])}
 
-    # For current constructor we look at the most recent race_result for each driver
-    # in this season and grab the constructor name.
+    # For current constructor we look at race_results for this season's races
+    # and grab the constructor name.
+    season_race_ids_result = (
+        db.table("races")
+        .select("id")
+        .eq("season", season)
+        .execute()
+    )
+    season_race_ids = [r["id"] for r in (season_race_ids_result.data or [])]
+
     constructors_result = (
         db.table("race_results")
         .select("driver_id, constructors(name)")
         .in_("driver_id", driver_ids)
+        .in_("race_id", season_race_ids)
         .execute()
-    )
-    # Build a map: driver_id -> latest constructor name (last row wins, good enough)
+    ) if season_race_ids else type("R", (), {"data": []})()
+    # Build a map: driver_id -> constructor name (last row wins for the season)
     constructor_map: dict[int, str] = {}
     for rr in constructors_result.data or []:
         did = rr["driver_id"]
@@ -234,3 +252,113 @@ def get_standings(
         driver_standings=driver_standings,
         constructor_standings=constructor_standings,
     )
+
+
+@router.get("/{year}/progression", response_model=list[DriverPointsProgression])
+def get_standings_progression(
+    year: int,
+    db: DB,
+    top: Annotated[int, Query(ge=1, le=20)] = 5,
+) -> list[DriverPointsProgression]:
+    """Return round-by-round championship points for the top N drivers in a season.
+
+    Designed to feed a line chart on the frontend.  Each entry contains parallel
+    ``rounds`` and ``points`` arrays (index-aligned) covering every round for
+    which standings data exists in the database.
+
+    Args:
+        year: The F1 season year (e.g. 2024).
+        db:   Injected Supabase client.
+        top:  Number of drivers to include (by final-round championship position).
+              Must be between 1 and 20, defaults to 5.
+
+    Returns:
+        List of ``DriverPointsProgression`` objects sorted by final position
+        (championship leader first).  Returns an empty list when no standings
+        data exists for the requested year.
+    """
+    latest = _latest_round(db, year)
+    if latest is None:
+        return []
+
+    # Single query — fetch all driver standings rows for the entire season.
+    all_rows_result = (
+        db.table("standings")
+        .select("round, entity_id, position, points")
+        .eq("season", year)
+        .eq("type", "driver")
+        .order("round")
+        .execute()
+    )
+    all_rows: list[dict] = all_rows_result.data or []
+    if not all_rows:
+        return []
+
+    # Group rows by driver id, preserving round order (already ordered above).
+    rows_by_driver: dict[int, list[dict]] = defaultdict(list)
+    for row in all_rows:
+        rows_by_driver[int(row["entity_id"])].append(row)
+
+    # Determine top-N driver ids from their position at the latest round.
+    latest_round_rows = [r for r in all_rows if r["round"] == latest]
+    latest_round_rows.sort(key=lambda r: r["position"])
+    top_driver_ids: list[int] = [
+        int(r["entity_id"]) for r in latest_round_rows[:top]
+    ]
+
+    if not top_driver_ids:
+        return []
+
+    # Fetch driver info (ref, surname) for top-N drivers in one query.
+    drivers_result = (
+        db.table("drivers")
+        .select("id, ref, surname")
+        .in_("id", top_driver_ids)
+        .execute()
+    )
+    drivers_map: dict[int, dict] = {
+        int(d["id"]): d for d in (drivers_result.data or [])
+    }
+
+    # Fetch constructor ref for each driver via race_results join.
+    # Filter to this season's races to get the correct constructor.
+    season_race_ids_result = (
+        db.table("races")
+        .select("id")
+        .eq("season", year)
+        .execute()
+    )
+    season_race_ids = [r["id"] for r in (season_race_ids_result.data or [])]
+
+    constructor_result = (
+        db.table("race_results")
+        .select("driver_id, constructors(ref)")
+        .in_("driver_id", top_driver_ids)
+        .in_("race_id", season_race_ids)
+        .execute()
+    ) if season_race_ids else type("R", (), {"data": []})()
+    constructor_ref_map: dict[int, str] = {}
+    for rr in constructor_result.data or []:
+        did = int(rr["driver_id"])
+        c = rr.get("constructors")
+        if c and c.get("ref"):
+            constructor_ref_map[did] = c["ref"]
+
+    # Build progression objects in final-position order.
+    result: list[DriverPointsProgression] = []
+    for driver_id in top_driver_ids:
+        driver_rows = rows_by_driver.get(driver_id, [])
+        driver_info = drivers_map.get(driver_id, {})
+        rounds = [int(r["round"]) for r in driver_rows]
+        points = [float(r["points"]) for r in driver_rows]
+        result.append(
+            DriverPointsProgression(
+                driver_ref=driver_info.get("ref", ""),
+                surname=driver_info.get("surname", ""),
+                constructor_ref=constructor_ref_map.get(driver_id, ""),
+                rounds=rounds,
+                points=points,
+            )
+        )
+
+    return result

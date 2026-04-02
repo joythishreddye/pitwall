@@ -25,6 +25,14 @@ export function formatGap(
   return "\u2014";
 }
 
+/** Position color class: gold for P1, silver for P2, bronze for P3 */
+export function positionColor(pos: number | null): string {
+  if (pos === 1) return "text-f1-gold";
+  if (pos === 2) return "text-f1-silver";
+  if (pos === 3) return "text-f1-bronze";
+  return "text-f1-muted";
+}
+
 /** Format pit stop duration: 22.4s */
 export function formatPitDuration(ms: number | null | undefined): string {
   if (ms == null) return "\u2014";

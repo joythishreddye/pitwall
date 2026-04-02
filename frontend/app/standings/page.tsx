@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getTeamColor } from "@/lib/constants/teams";
+import { positionColor } from "@/lib/format";
+import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings } from "@/lib/hooks/use-standings";
+import { ErrorState } from "@/components/error-state";
 import { SeasonSelector } from "@/components/season-selector";
 import type { DriverStanding, ConstructorStanding } from "@/lib/schemas/standings";
 
@@ -14,7 +16,7 @@ type Tab = "drivers" | "constructors";
 export default function StandingsPage() {
   const [season, setSeason] = useState(CURRENT_SEASON);
   const [activeTab, setActiveTab] = useState<Tab>("drivers");
-  const { data, isLoading, error } = useStandings(season);
+  const { data, isLoading, error, refetch } = useStandings(season);
 
   const drivers = data?.driver_standings ?? [];
   const constructors = data?.constructor_standings ?? [];
@@ -62,7 +64,7 @@ export default function StandingsPage() {
       {isLoading ? (
         <LoadingSkeleton rows={activeTab === "drivers" ? 20 : 10} />
       ) : error ? (
-        <p className="text-f1-red text-sm">Failed to load standings data</p>
+        <ErrorState message="Failed to load standings data" onRetry={refetch} />
       ) : activeTab === "drivers" ? (
         <DriverTable drivers={drivers} maxPoints={maxPoints} />
       ) : (
@@ -88,13 +90,6 @@ function LoadingSkeleton({ rows }: { rows: number }) {
       ))}
     </div>
   );
-}
-
-function positionColor(pos: number): string {
-  if (pos === 1) return "text-f1-gold";
-  if (pos === 2) return "text-f1-silver";
-  if (pos === 3) return "text-f1-bronze";
-  return "text-f1-muted";
 }
 
 function DriverTable({
@@ -185,6 +180,7 @@ function ConstructorTable({
 
       {constructors.map((c, i) => {
         const teamColor = getTeamColor(c.constructor_ref);
+        const hexColor = getTeamHexColor(c.constructor_ref);
         const barWidth = maxPoints > 0 ? (c.points / maxPoints) * 100 : 0;
 
         return (
@@ -194,6 +190,7 @@ function ConstructorTable({
               "grid grid-cols-[3rem_2fr_5rem_4rem_1fr] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
             )}
+            style={{ backgroundColor: `${hexColor}08` }}
           >
             <span className={cn("font-mono text-base font-bold", positionColor(c.position))}>
               {c.position}

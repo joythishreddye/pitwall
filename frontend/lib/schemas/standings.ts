@@ -29,6 +29,15 @@ export const StandingsResponseSchema = z.object({
   constructor_standings: z.array(ConstructorStandingSchema).nullable().optional(),
 });
 
+export const DriverProgressionSchema = z.object({
+  driver_ref: z.string(),
+  surname: z.string(),
+  constructor_ref: z.string(),
+  rounds: z.array(z.number()),
+  points: z.array(z.number()),
+});
+
 export type DriverStanding = z.infer<typeof DriverStandingSchema>;
 export type ConstructorStanding = z.infer<typeof ConstructorStandingSchema>;
 export type StandingsResponse = z.infer<typeof StandingsResponseSchema>;
+export type DriverProgression = z.infer<typeof DriverProgressionSchema>;

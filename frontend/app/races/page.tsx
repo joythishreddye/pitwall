@@ -5,11 +5,12 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
+import { ErrorState } from "@/components/error-state";
 import { SeasonSelector } from "@/components/season-selector";
 
 export default function RacesPage() {
   const [season, setSeason] = useState(CURRENT_SEASON);
-  const { data: races, isLoading, error } = useRaceCalendar(season);
+  const { data: races, isLoading, error, refetch } = useRaceCalendar(season);
   const now = new Date();
 
   return (
@@ -39,7 +40,7 @@ export default function RacesPage() {
           ))}
         </div>
       ) : error ? (
-        <p className="text-f1-red text-sm">Failed to load race calendar</p>
+        <ErrorState message="Failed to load race calendar" onRetry={refetch} />
       ) : (
         <div className="w-full">
           <div className="sticky top-0 z-10 grid grid-cols-[3rem_1fr_1fr_7rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">

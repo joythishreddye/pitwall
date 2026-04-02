@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { Trophy, Flag, Calendar, TrendingUp } from "lucide-react";
+import { Trophy, Flag, Calendar, TrendingUp, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
-import { useStandings } from "@/lib/hooks/use-standings";
+import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar, useRaceDetail } from "@/lib/hooks/use-races";
+import { ChampionshipChart } from "@/components/championship-chart";
 
 export default function HomePage() {
   const { data: standings } = useStandings(CURRENT_SEASON);
   const { data: races } = useRaceCalendar(CURRENT_SEASON);
+  const { data: progression } = useStandingsProgression(CURRENT_SEASON);
 
   const leader = standings?.driver_standings?.[0];
   const constructorLeader = standings?.constructor_standings?.[0];
@@ -118,22 +120,33 @@ export default function HomePage() {
 
         {/* Next Race */}
         {nextRace ? (
-          <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Calendar className="h-4 w-4 text-f1-green" />
-              <span className="text-xs text-f1-muted uppercase tracking-wider">Next Race</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold">{nextRace.name}</p>
-                <p className="text-xs text-f1-muted">{nextRace.circuit.name} — {nextRace.circuit.country}</p>
+          (() => {
+            const raceDate = new Date(nextRace.date + "T00:00:00");
+            const daysUntil = Math.ceil((raceDate.getTime() - now.getTime()) / 86400000);
+            return (
+              <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-f1-green" />
+                  <span className="text-xs text-f1-muted uppercase tracking-wider">Next Race</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold">{nextRace.name}</p>
+                    <p className="text-xs text-f1-muted">{nextRace.circuit.name} — {nextRace.circuit.country}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono text-sm">{nextRace.date}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-f1-muted">Round {nextRace.round}</span>
+                      <span className="text-xs text-f1-green font-mono">
+                        {daysUntil === 0 ? "Today" : daysUntil === 1 ? "Tomorrow" : `in ${daysUntil} days`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="font-mono text-sm">{nextRace.date}</p>
-                <p className="text-xs text-f1-muted">Round {nextRace.round}</p>
-              </div>
-            </div>
-          </div>
+            );
+          })()
         ) : (
           <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
             <div className="flex items-center gap-2 mb-3">
@@ -182,7 +195,62 @@ export default function HomePage() {
           </Link>
         )}
       </div>
+
+      {/* Recent Race Winners */}
+      {pastRaces.length > 1 && (
+        <div className="mt-6 max-w-4xl">
+          <div className="flex items-center gap-2 mb-3">
+            <Flag className="h-4 w-4 text-f1-muted" />
+            <span className="text-xs text-f1-muted uppercase tracking-wider">Recent Results</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {pastRaces.slice(-3).reverse().map((race) => (
+              <RecentWinnerCard key={race.id} raceId={race.id} raceName={race.name} raceDate={race.date ?? ""} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Championship Progression */}
+      {progression && progression.length > 0 && (
+        <div className="mt-6 max-w-4xl">
+          <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 className="h-4 w-4 text-f1-muted" />
+              <span className="text-xs text-f1-muted uppercase tracking-wider">Championship Progression</span>
+            </div>
+            <ChampionshipChart progressions={progression} />
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function RecentWinnerCard({ raceId, raceName, raceDate }: { raceId: number; raceName: string; raceDate: string }) {
+  const { data: race } = useRaceDetail(raceId);
+  const winner = race?.results[0];
+  const teamColor = winner ? getTeamColor(winner.constructor.ref) : undefined;
+
+  return (
+    <Link
+      href={`/races/${raceId}`}
+      className="border border-f1-grid bg-f1-dark-2 p-4 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-medium truncate">{raceName}</span>
+        <span className="font-mono text-[10px] text-f1-muted ml-2 shrink-0">{raceDate}</span>
+      </div>
+      {winner ? (
+        <div className="flex items-center gap-2">
+          <div className="w-0.5 h-4 rounded-sm shrink-0" style={{ backgroundColor: teamColor }} />
+          <span className="text-f1-gold font-mono text-xs font-bold mr-1">P1</span>
+          <span className="text-sm font-semibold uppercase truncate">{winner.driver.surname}</span>
+        </div>
+      ) : (
+        <div className="h-4 bg-f1-grid/30 rounded-sm animate-pulse" />
+      )}
+    </Link>
   );
 }
 

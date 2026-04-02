@@ -42,3 +42,27 @@ export function getTeamColor(constructorRef: string): string {
   const normalized = constructorRef.toLowerCase().replace(/[\s-]+/g, "_");
   return TEAM_CSS_VARS[normalized] ?? "var(--color-f1-muted)";
 }
+
+/** Hex color map for use in gradients/rgba where CSS variables don't work */
+const TEAM_HEX: Record<string, string> = {
+  "red_bull": "#3671C6",
+  "mercedes": "#27F4D2",
+  "ferrari": "#E8002D",
+  "mclaren": "#FF8000",
+  "aston_martin": "#229971",
+  "alpine": "#FF87BC",
+  "williams": "#64C4FF",
+  "rb": "#6692FF",
+  "sauber": "#52E252",
+  "haas": "#B6BABD",
+};
+
+export function getTeamHexColor(constructorRef: string): string {
+  const normalized = constructorRef.toLowerCase().replace(/[\s-]+/g, "_");
+  const cssVar = TEAM_CSS_VARS[normalized];
+  if (cssVar) {
+    const canonical = Object.keys(TEAM_HEX).find(k => TEAM_CSS_VARS[k] === cssVar);
+    if (canonical) return TEAM_HEX[canonical];
+  }
+  return "#A3A3A3";
+}

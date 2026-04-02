@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import {
+  Home,
   Trophy,
   Calendar,
   Users,
@@ -16,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
+  { href: "/", label: "Home", icon: Home },
   { href: "/standings", label: "Standings", icon: Trophy },
   { href: "/races", label: "Races", icon: Calendar },
   { href: "/drivers", label: "Drivers", icon: Users },
@@ -44,8 +46,9 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-2 py-3 space-y-0.5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const isActive =
-            pathname === href || pathname.startsWith(`${href}/`);
+          const isActive = href === "/"
+            ? pathname === "/"
+            : pathname === href || pathname.startsWith(`${href}/`);
 
           return (
             <Link

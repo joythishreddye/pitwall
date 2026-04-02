@@ -6,17 +6,11 @@ import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
-import { formatLapTime, formatGap, formatPitDuration } from "@/lib/format";
+import { formatLapTime, formatGap, formatPitDuration, positionColor } from "@/lib/format";
+import { getCircuitMeta } from "@/lib/constants/circuits";
 import type { RaceResult, DriverStrategy } from "@/lib/schemas/races";
 
 type Tab = "results" | "pitstops";
-
-function positionColor(pos: number | null): string {
-  if (pos === 1) return "text-f1-gold";
-  if (pos === 2) return "text-f1-silver";
-  if (pos === 3) return "text-f1-bronze";
-  return "text-f1-muted";
-}
 
 export default function RaceDetailPage({
   params,
@@ -56,6 +50,7 @@ export default function RaceDetailPage({
   }
 
   const winnerMs = race.results[0]?.time_millis ?? null;
+  const circuitMeta = getCircuitMeta(race.circuit.name);
 
   return (
     <div className="p-8">
@@ -77,6 +72,34 @@ export default function RaceDetailPage({
           <span>Round {race.round}</span>
         </div>
       </div>
+
+      {circuitMeta && (
+        <div className="flex items-center gap-6 mb-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm">
+          <div>
+            <span className="text-[10px] text-f1-muted uppercase tracking-wider">Length</span>
+            <p className="font-mono font-semibold">{circuitMeta.lengthKm} km</p>
+          </div>
+          <div>
+            <span className="text-[10px] text-f1-muted uppercase tracking-wider">Turns</span>
+            <p className="font-mono font-semibold">{circuitMeta.turns}</p>
+          </div>
+          <div>
+            <span className="text-[10px] text-f1-muted uppercase tracking-wider">DRS Zones</span>
+            <p className="font-mono font-semibold">{circuitMeta.drsZones}</p>
+          </div>
+          {circuitMeta.lapRecord && (
+            <div>
+              <span className="text-[10px] text-f1-muted uppercase tracking-wider">Lap Record</span>
+              <p className="font-mono font-semibold">
+                {circuitMeta.lapRecord.time}
+                <span className="text-f1-muted font-normal ml-1.5">
+                  {circuitMeta.lapRecord.driver} ({circuitMeta.lapRecord.year})
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       <div role="tablist" className="flex gap-0 mb-6 border-b border-f1-grid">
         {(["results", "pitstops"] as const).map((tab) => (
