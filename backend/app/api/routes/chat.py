@@ -6,6 +6,7 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Annotated
 
+import groq
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -216,6 +217,18 @@ async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
                 yield (
                     f"data: {json.dumps({'type': 'token', 'data': token})}\n\n"
                 )
+        except groq.APIError as exc:
+            logger.error("Groq API error: %s (status=%s)", exc.message, exc.status_code)
+            err_event = {
+                "type": "error",
+                "data": f"LLM API error ({exc.status_code}) — please try again.",
+            }
+        except groq.APIConnectionError:
+            logger.error("Groq connection error — network unreachable")
+            err_event = {
+                "type": "error",
+                "data": "Could not reach the LLM service — please try again.",
+            }
         except Exception:
             logger.exception("LLM streaming error")
             err_event = {

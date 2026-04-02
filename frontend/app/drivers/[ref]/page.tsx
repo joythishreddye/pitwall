@@ -1,12 +1,13 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useDriverProfile, useDriverResults } from "@/lib/hooks/use-drivers";
+import { SeasonSelector } from "@/components/season-selector";
 
 function positionColor(pos: number | null): string {
   if (pos === 1) return "text-f1-gold";
@@ -21,8 +22,9 @@ export default function DriverProfilePage({
   params: Promise<{ ref: string }>;
 }) {
   const { ref } = use(params);
+  const [season, setSeason] = useState(CURRENT_SEASON);
   const { data: driver, isLoading, error } = useDriverProfile(ref);
-  const { data: resultsData } = useDriverResults(ref, CURRENT_SEASON);
+  const { data: resultsData } = useDriverResults(ref, season);
 
   if (isLoading) {
     return (
@@ -121,11 +123,15 @@ export default function DriverProfilePage({
         ))}
       </div>
 
-      {results.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight mb-4">
-            {CURRENT_SEASON} Results
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {season} Results
           </h2>
+          <SeasonSelector value={season} onChange={setSeason} />
+        </div>
+
+        {results.length > 0 ? (
 
           <div className="w-full">
             <div className="sticky top-0 z-10 grid grid-cols-[3rem_1fr_7rem_3.5rem_3rem_4rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
@@ -190,8 +196,12 @@ export default function DriverProfilePage({
               );
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-f1-muted text-sm py-8 text-center">
+            No results for {season} season
+          </p>
+        )}
+      </div>
     </div>
   );
 }

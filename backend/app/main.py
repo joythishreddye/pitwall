@@ -26,8 +26,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     ping_supabase()
     ping_redis()
 
-    # Preload embedding model (loaded once at startup per backend rules)
+    # Preload ML models (loaded once at startup per backend rules)
     Embedder.get()
+    from app.rag.retriever import _get_reranker
+    _get_reranker()
 
     logger.info("All connections verified — ready to serve")
 

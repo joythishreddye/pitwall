@@ -131,8 +131,8 @@ export function useChat() {
                   ),
                 );
               }
-            } catch {
-              // Skip malformed SSE lines
+            } catch (err) {
+              console.error("SSE parse error:", line, err);
             }
           }
         }

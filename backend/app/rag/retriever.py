@@ -296,4 +296,4 @@ class Retriever:
                 injected.append(entity_best[ref])
                 logger.info("Injected entity chunk for '%s'", ref)
 
-        return injected
+        return injected[:top_k]
