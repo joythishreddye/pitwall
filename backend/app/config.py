@@ -34,6 +34,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:3001",
         "https://pitwall.vercel.app",
+        "https://pitwall-teal.vercel.app",
     ]
 
 
