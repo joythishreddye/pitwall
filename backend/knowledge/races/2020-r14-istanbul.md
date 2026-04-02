@@ -54,12 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Esteban Ocon: +1 Lap (started P7)
-- Daniil Kvyat: +1 Lap (started P16)
-- Pierre Gasly: +1 Lap (started P19)
-- Valtteri Bottas: +1 Lap (started P9)
-- Kimi Räikkönen: +1 Lap (started P8)
-- George Russell: +1 Lap (started P0)
 - Kevin Magnussen: Withdrew (started P13)
 - Romain Grosjean: Collision damage (started P17)
 - Nicholas Latifi: Collision damage (started P0)

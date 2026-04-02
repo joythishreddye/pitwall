@@ -53,7 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Valtteri Bottas: Lapped (started P14)
 - Alexander Albon: Retired (started P17)
 - Lance Stroll: Retired (started P5)
 

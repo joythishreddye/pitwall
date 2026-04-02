@@ -18,7 +18,7 @@ tags:
 **Driver Code:** VER
 **Current Team:** Red Bull (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 77
 - **Wins:** 21

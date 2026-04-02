@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -53,11 +53,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: Lapped (started P7)
-- Yuki Tsunoda: Lapped (started P10)
-- Lance Stroll: Lapped (started P13)
-- Alexander Albon: Lapped (started P14)
-- Valtteri Bottas: Lapped (started P16)
-- Esteban Ocon: Lapped (started P12)
-- Guanyu Zhou: Lapped (started P18)
 - Lewis Hamilton: Retired (started P17)

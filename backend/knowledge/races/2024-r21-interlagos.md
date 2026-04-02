@@ -8,8 +8,8 @@ driver_refs:
   - ocon
   - gasly
 constructor_refs:
-  - red_bull
   - alpine
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos

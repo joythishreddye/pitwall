@@ -18,7 +18,7 @@ tags:
 **Driver Code:** PIA
 **Current Team:** McLaren (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 15
 - **Wins:** 1

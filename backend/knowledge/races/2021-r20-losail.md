@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - alonso
 constructor_refs:
+  - mercedes
   - alpine
   - red_bull
-  - mercedes
 knowledge_level: all
 tags:
   - losail
@@ -54,15 +54,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Lando Norris: +1 Lap (started P4)
-- Sebastian Vettel: +1 Lap (started P10)
-- Pierre Gasly: +1 Lap (started P2)
-- Daniel Ricciardo: +1 Lap (started P14)
-- Yuki Tsunoda: +1 Lap (started P8)
-- Kimi Räikkönen: +1 Lap (started P16)
-- Antonio Giovinazzi: +1 Lap (started P18)
-- Mick Schumacher: +1 Lap (started P19)
-- George Russell: +2 Laps (started P15)
-- Nikita Mazepin: +2 Laps (started P20)
 - Nicholas Latifi: Puncture (started P17)
 - Valtteri Bottas: Damage (started P6)

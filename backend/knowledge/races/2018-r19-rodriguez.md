@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - raikkonen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -53,18 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Valtteri Bottas: +1 Lap (started P5)
-- Nico Hülkenberg: +2 Laps (started P7)
-- Charles Leclerc: +2 Laps (started P9)
-- Stoffel Vandoorne: +2 Laps (started P15)
-- Marcus Ericsson: +2 Laps (started P10)
-- Pierre Gasly: +2 Laps (started P20)
-- Esteban Ocon: +2 Laps (started P11)
-- Lance Stroll: +2 Laps (started P17)
-- Sergey Sirotkin: +2 Laps (started P19)
-- Brendon Hartley: +2 Laps (started P14)
-- Kevin Magnussen: +2 Laps (started P16)
-- Romain Grosjean: +3 Laps (started P18)
 - Daniel Ricciardo: Engine (started P1)
 - Sergio Pérez: Brakes (started P13)
 - Carlos Sainz: Suspension (started P8)

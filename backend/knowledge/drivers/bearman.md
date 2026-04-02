@@ -18,7 +18,7 @@ tags:
 **Driver Code:** BEA
 **Current Team:** Haas F1 Team (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 19
 - **Wins:** 0
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P5
-- **DNFs:** 2
+- **DNFs:** 1
 - **Races Completed:** 3
 
 ## Recent Results (2026)

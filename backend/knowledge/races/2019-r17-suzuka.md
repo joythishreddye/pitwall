@@ -52,18 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Charles Leclerc: +1 Lap (started P2)
-- Pierre Gasly: +1 Lap (started P9)
-- Sergio Pérez: +1 Lap (started P17)
-- Lance Stroll: +1 Lap (started P12)
-- Daniil Kvyat: +1 Lap (started P14)
-- Lando Norris: +1 Lap (started P8)
-- Kimi Räikkönen: +1 Lap (started P13)
-- Romain Grosjean: +1 Lap (started P10)
-- Antonio Giovinazzi: +1 Lap (started P11)
-- Kevin Magnussen: +1 Lap (started P19)
-- George Russell: +2 Laps (started P18)
-- Robert Kubica: +2 Laps (started P0)
 - Max Verstappen: Brakes (started P5)
 - Daniel Ricciardo: Disqualified (started P16)
 - Nico Hülkenberg: Disqualified (started P15)

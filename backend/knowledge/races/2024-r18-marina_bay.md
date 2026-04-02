@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - piastri
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -53,16 +53,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: Lapped (started P7)
-- Nico Hülkenberg: Lapped (started P6)
-- Sergio Pérez: Lapped (started P13)
-- Franco Colapinto: Lapped (started P12)
-- Yuki Tsunoda: Lapped (started P8)
-- Esteban Ocon: Lapped (started P15)
-- Lance Stroll: Lapped (started P17)
-- Guanyu Zhou: Lapped (started P20)
-- Valtteri Bottas: Lapped (started P19)
-- Pierre Gasly: Lapped (started P18)
-- Daniel Ricciardo: Lapped (started P16)
 - Kevin Magnussen: Retired (started P14)
 - Alexander Albon: Retired (started P11)

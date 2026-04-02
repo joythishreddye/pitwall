@@ -22,7 +22,7 @@ tags:
 - **Points:** 18
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 4
+- **DNFs:** 1
 
 ## 2026 Driver Breakdown
 

@@ -40,7 +40,7 @@ Output ONLY valid JSON with this exact schema:
 }
 
 Available metadata_filter keys:
-- "category": document type — "circuit", "regulation", "explainer", "history", \
+- "category": document type — "circuits", "regulations", "explainers", "history", \
 "driver", "team", "race"
 - "driver_ref": lowercase driver reference — e.g. "max_verstappen", "hamilton", \
 "leclerc", "norris", "russell", "antonelli", "sainz", "piastri", "alonso", "gasly"
@@ -60,7 +60,7 @@ so both profiles are retrieved
 Examples:
 Q: "What is DRS?"
 A: {"intent": "explanation", "entities": {"drivers": [], "teams": [], \
-"circuits": [], "seasons": []}, "metadata_filter": {"category": "explainer"}}
+"circuits": [], "seasons": []}, "metadata_filter": {"category": "explainers"}}
 
 Q: "How is Mercedes performing in 2026?"
 A: {"intent": "factual", "entities": {"drivers": [], "teams": ["mercedes"], \

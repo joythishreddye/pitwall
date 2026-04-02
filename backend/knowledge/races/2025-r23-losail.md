@@ -9,8 +9,8 @@ driver_refs:
   - sainz
 constructor_refs:
   - williams
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - losail
@@ -54,9 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Franco Colapinto: Lapped (started P20)
-- Esteban Ocon: Lapped (started P16)
-- Pierre Gasly: Lapped (started P9)
 - Lance Stroll: Retired (started P18)
 - Isack Hadjar: Retired (started P6)
 - Oliver Bearman: Retired (started P13)

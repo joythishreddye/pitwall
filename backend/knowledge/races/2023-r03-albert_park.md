@@ -9,8 +9,8 @@ driver_refs:
   - alonso
 constructor_refs:
   - aston_martin
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - albert_park

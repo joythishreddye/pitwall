@@ -16,6 +16,20 @@ logger = logging.getLogger(__name__)
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "knowledge"
 CURRENT_SEASON = 2026
 
+# Statuses that mean a car didn't finish (retired, accident, etc.)
+_FINISHED_STATUSES = frozenset({"Finished", "Lapped", "+1 Lap", "+2 Laps",
+                                "+3 Laps", "+4 Laps", "+5 Laps", "+6 Laps",
+                                "+7 Laps", "+8 Laps", "+9 Laps"})
+
+
+def _is_dnf(status: str) -> bool:
+    """Return True if the status indicates a retirement/DNF."""
+    if status in _FINISHED_STATUSES:
+        return False
+    if status.startswith("+") and "Lap" in status:
+        return False
+    return True
+
 
 def _format_time(ms: int | None) -> str:
     """Convert milliseconds to M:SS.sss format."""
@@ -97,6 +111,7 @@ def generate_driver_profiles(supabase: Client) -> int:
         supabase.table("race_results")
         .select("driver_id, position, points, status")
         .in_("driver_id", driver_ids)
+        .limit(10000)
         .execute()
     )
 
@@ -171,7 +186,7 @@ def generate_driver_profiles(supabase: Client) -> int:
             (r["position"] for r in results if r["position"]),
             default=None,
         )
-        dnfs = sum(1 for r in results if r["status"] != "Finished")
+        dnfs = sum(1 for r in results if _is_dnf(r["status"]))
 
         # Recent results (last 5)
         recent = results[-5:]
@@ -206,7 +221,7 @@ tags:
 **Driver Code:** {d['code']}
 **Current Team:** {team['name']} ({CURRENT_SEASON} season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** {stats['races']}
 - **Wins:** {stats['wins']}
@@ -306,6 +321,7 @@ def generate_team_profiles(supabase: Client) -> int:
         supabase.table("race_results")
         .select("constructor_id, position, points")
         .in_("constructor_id", constructor_ids)
+        .limit(10000)
         .execute()
     )
     career_stats: dict[int, dict] = {
@@ -340,7 +356,7 @@ def generate_team_profiles(supabase: Client) -> int:
             1 for r in results if r["position"] and r["position"] <= 3
         )
         season_dnfs = sum(
-            1 for r in results if r["status"] != "Finished"
+            1 for r in results if _is_dnf(r["status"])
         )
 
         # Per-driver breakdown
@@ -485,7 +501,7 @@ def generate_race_summaries(supabase: Client) -> int:
         # Sort by position
         finished = [r for r in results if r["position"] is not None]
         finished.sort(key=lambda r: r["position"])
-        dnfs = [r for r in results if r["status"] != "Finished"]
+        dnfs = [r for r in results if _is_dnf(r["status"])]
 
         if not finished:
             continue

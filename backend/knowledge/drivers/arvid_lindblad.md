@@ -18,7 +18,7 @@ tags:
 **Driver Code:** LIN
 **Current Team:** RB F1 Team (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 0
 - **Wins:** 0
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P8
-- **DNFs:** 2
+- **DNFs:** 0
 - **Races Completed:** 3
 
 ## Recent Results (2026)

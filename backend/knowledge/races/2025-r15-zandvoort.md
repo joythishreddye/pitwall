@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hadjar
 constructor_refs:
-  - red_bull
   - rb
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - zandvoort

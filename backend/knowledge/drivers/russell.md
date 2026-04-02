@@ -18,7 +18,7 @@ tags:
 **Driver Code:** RUS
 **Current Team:** Mercedes (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 47
 - **Wins:** 0

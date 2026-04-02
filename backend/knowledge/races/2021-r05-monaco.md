@@ -8,9 +8,9 @@ driver_refs:
   - sainz
   - norris
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -54,16 +54,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Lance Stroll: +1 Lap (started P13)
-- Esteban Ocon: +1 Lap (started P11)
-- Antonio Giovinazzi: +1 Lap (started P10)
-- Kimi Räikkönen: +1 Lap (started P14)
-- Daniel Ricciardo: +1 Lap (started P12)
-- Fernando Alonso: +1 Lap (started P17)
-- George Russell: +1 Lap (started P15)
-- Nicholas Latifi: +1 Lap (started P18)
-- Yuki Tsunoda: +1 Lap (started P16)
-- Nikita Mazepin: +3 Laps (started P19)
-- Mick Schumacher: +3 Laps (started P20)
 - Valtteri Bottas: Wheel nut (started P3)
 - Charles Leclerc: Driveshaft (started P1)

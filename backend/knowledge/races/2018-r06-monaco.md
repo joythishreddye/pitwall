@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -54,10 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Stoffel Vandoorne: +1 Lap (started P12)
-- Romain Grosjean: +1 Lap (started P18)
-- Sergey Sirotkin: +1 Lap (started P13)
-- Lance Stroll: +2 Laps (started P17)
 - Charles Leclerc: Collision (started P14)
 - Brendon Hartley: Collision (started P15)
 - Fernando Alonso: Gearbox (started P7)

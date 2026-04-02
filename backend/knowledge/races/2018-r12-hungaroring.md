@@ -53,17 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kevin Magnussen: +1 Lap (started P9)
-- Fernando Alonso: +1 Lap (started P11)
-- Carlos Sainz: +1 Lap (started P5)
-- Romain Grosjean: +1 Lap (started P10)
-- Brendon Hartley: +1 Lap (started P8)
-- Nico Hülkenberg: +1 Lap (started P13)
-- Esteban Ocon: +1 Lap (started P18)
-- Sergio Pérez: +1 Lap (started P19)
-- Marcus Ericsson: +2 Laps (started P14)
-- Sergey Sirotkin: +2 Laps (started P20)
-- Lance Stroll: +2 Laps (started P15)
 - Stoffel Vandoorne: Gearbox (started P16)
 - Max Verstappen: Power loss (started P7)
 - Charles Leclerc: Suspension (started P17)

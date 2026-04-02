@@ -8,8 +8,8 @@ driver_refs:
   - raikkonen
   - vettel
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -53,17 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Romain Grosjean: +1 Lap (started P5)
-- Kevin Magnussen: +1 Lap (started P8)
-- Esteban Ocon: +1 Lap (started P11)
-- Sergio Pérez: +1 Lap (started P16)
-- Fernando Alonso: +1 Lap (started P13)
-- Charles Leclerc: +1 Lap (started P18)
-- Marcus Ericsson: +1 Lap (started P20)
-- Pierre Gasly: +1 Lap (started P12)
-- Carlos Sainz: +1 Lap (started P9)
-- Sergey Sirotkin: +2 Laps (started P17)
-- Lance Stroll: +2 Laps (started P14)
 - Stoffel Vandoorne: Collision damage (started P15)
 - Lewis Hamilton: Fuel pressure (started P2)
 - Brendon Hartley: Hydraulics (started P19)

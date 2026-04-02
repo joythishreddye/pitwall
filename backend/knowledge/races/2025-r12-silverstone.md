@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - hulkenberg
 constructor_refs:
-  - mclaren
   - sauber
+  - mclaren
 knowledge_level: all
 tags:
   - silverstone
@@ -52,7 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Yuki Tsunoda: Lapped (started P11)
 - Andrea Kimi Antonelli: Retired (started P10)
 - Isack Hadjar: Retired (started P12)
 - Gabriel Bortoleto: Retired (started P16)

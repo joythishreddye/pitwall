@@ -54,10 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kimi Räikkönen: +1 Lap (started P13)
-- Daniel Ricciardo: +1 Lap (started P11)
-- Mick Schumacher: +1 Lap (started P20)
-- Antonio Giovinazzi: +1 Lap (started P0)
 - Nikita Mazepin: Collision (started P19)
 - Lando Norris: Collision (started P6)
 - Valtteri Bottas: Collision (started P2)

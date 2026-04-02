@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
-  - red_bull
-  - mclaren
   - mercedes
+  - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -49,20 +49,6 @@ tags:
 - Carlos Sainz: P18 → P10 (+8 places)
 - Alexander Albon: P20 → P14 (+6 places)
 - Fernando Alonso: P10 → P7 (+3 places)
-
-## Retirements/DNFs
-
-- Carlos Sainz: Lapped (started P18)
-- Isack Hadjar: Lapped (started P8)
-- Yuki Tsunoda: Lapped (started P13)
-- Lance Stroll: Lapped (started P15)
-- Alexander Albon: Lapped (started P20)
-- Liam Lawson: Lapped (started P12)
-- Franco Colapinto: Lapped (started P16)
-- Gabriel Bortoleto: Lapped (started P14)
-- Esteban Ocon: Lapped (started P17)
-- Pierre Gasly: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P11)
 
 ## Pit Strategy
 

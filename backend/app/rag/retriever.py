@@ -16,6 +16,27 @@ from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 
 logger = logging.getLogger(__name__)
 
+# Module-level reranker singleton (matches Embedder.get() pattern)
+_reranker = None
+_reranker_lock = threading.Lock()
+
+
+def _get_reranker():
+    """Return the cross-encoder singleton, loading on first call."""
+    global _reranker
+    if _reranker is None:
+        with _reranker_lock:
+            if _reranker is None:
+                from sentence_transformers import CrossEncoder
+
+                logger.info("Loading cross-encoder reranker")
+                _reranker = CrossEncoder(
+                    "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    max_length=512,
+                )
+                logger.info("Cross-encoder loaded")
+    return _reranker
+
 
 @dataclass
 class RetrievedChunk:
@@ -28,31 +49,12 @@ class RetrievedChunk:
 class Retriever:
     """Three-stage RAG retrieval pipeline."""
 
-    _reranker_lock = threading.Lock()
-
     def __init__(
         self, db: Client, llm: LLMProvider, embedder: Embedder,
     ) -> None:
         self.db = db
         self.llm = llm
         self.embedder = embedder
-        self._reranker = None
-
-    @property
-    def reranker(self):
-        """Lazy-load cross-encoder on first use (thread-safe)."""
-        if self._reranker is None:
-            with self._reranker_lock:
-                if self._reranker is None:
-                    from sentence_transformers import CrossEncoder
-
-                    logger.info("Loading cross-encoder reranker")
-                    self._reranker = CrossEncoder(
-                        "cross-encoder/ms-marco-MiniLM-L-6-v2",
-                        max_length=512,
-                    )
-                    logger.info("Cross-encoder loaded")
-        return self._reranker
 
     async def classify_intent(self, query: str) -> dict:
         """Stage 1: LLM-based intent classification and entity extraction.
@@ -155,7 +157,7 @@ class Retriever:
             return chunks
 
         pairs = [(query, chunk.content) for chunk in chunks]
-        scores = await asyncio.to_thread(self.reranker.predict, pairs)
+        scores = await asyncio.to_thread(_get_reranker().predict, pairs)
 
         scored = list(zip(chunks, scores, strict=True))
         scored.sort(key=lambda x: x[1], reverse=True)

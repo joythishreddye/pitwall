@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - vettel
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -53,19 +53,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: +1 Lap (started P8)
-- Pierre Gasly: +1 Lap (started P6)
-- Kimi Räikkönen: +1 Lap (started P10)
-- Valtteri Bottas: +1 Lap (started P2)
-- Lando Norris: +1 Lap (started P7)
-- Alexander Albon: +1 Lap (started P12)
-- Sergio Pérez: +1 Lap (started P16)
-- Nico Hülkenberg: +1 Lap (started P11)
-- Kevin Magnussen: +1 Lap (started P14)
-- Daniel Ricciardo: +1 Lap (started P20)
-- Daniil Kvyat: +2 Laps (started P13)
-- George Russell: +2 Laps (started P15)
-- Lance Stroll: +2 Laps (started P18)
-- Antonio Giovinazzi: +2 Laps (started P17)
-- Robert Kubica: +3 Laps (started P19)
 - Romain Grosjean: Water pressure (started P9)

@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone
@@ -53,10 +53,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Daniel Ricciardo: +1 Lap (started P5)
-- Kimi Räikkönen: +1 Lap (started P20)
-- Romain Grosjean: +1 Lap (started P13)
-- Antonio Giovinazzi: +1 Lap (started P19)
-- George Russell: +1 Lap (started P15)
-- Nicholas Latifi: +1 Lap (started P18)
 - Kevin Magnussen: Retired (started P17)

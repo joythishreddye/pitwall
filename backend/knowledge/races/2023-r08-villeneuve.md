@@ -9,8 +9,8 @@ driver_refs:
   - hamilton
 constructor_refs:
   - aston_martin
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -54,10 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nico Hülkenberg: Lapped (started P5)
-- Guanyu Zhou: Lapped (started P20)
-- Kevin Magnussen: Lapped (started P13)
-- Nyck de Vries: Lapped (started P17)
 - George Russell: Retired (started P4)
 - Logan Sargeant: Retired (started P18)
 

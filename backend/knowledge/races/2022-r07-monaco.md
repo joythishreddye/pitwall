@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -53,9 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nicholas Latifi: +1 Lap (started P19)
-- Guanyu Zhou: +1 Lap (started P20)
-- Yuki Tsunoda: +1 Lap (started P11)
 - Alexander Albon: Mechanical (started P16)
 - Mick Schumacher: Accident (started P15)
 - Kevin Magnussen: Water pressure (started P13)

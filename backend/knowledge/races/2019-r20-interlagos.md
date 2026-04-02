@@ -8,9 +8,9 @@ driver_refs:
   - gasly
   - sainz
 constructor_refs:
+  - toro_rosso
   - mclaren
   - red_bull
-  - toro_rosso
 knowledge_level: all
 tags:
   - interlagos
@@ -54,7 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Robert Kubica: +1 Lap (started P19)
 - Sebastian Vettel: Collision (started P2)
 - Charles Leclerc: Collision (started P14)
 - Lance Stroll: Suspension (started P17)

@@ -18,7 +18,7 @@ tags:
 **Driver Code:** NOR
 **Current Team:** McLaren (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 50
 - **Wins:** 2

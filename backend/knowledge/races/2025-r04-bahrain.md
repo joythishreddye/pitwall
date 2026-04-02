@@ -8,8 +8,8 @@ driver_refs:
   - russell
   - norris
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - bahrain

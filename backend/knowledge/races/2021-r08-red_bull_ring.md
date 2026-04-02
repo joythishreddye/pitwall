@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -52,19 +52,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Lando Norris: +1 Lap (started P3)
-- Carlos Sainz: +1 Lap (started P12)
-- Charles Leclerc: +1 Lap (started P7)
-- Lance Stroll: +1 Lap (started P9)
-- Fernando Alonso: +1 Lap (started P8)
-- Yuki Tsunoda: +1 Lap (started P11)
-- Kimi Räikkönen: +1 Lap (started P18)
-- Sebastian Vettel: +1 Lap (started P14)
-- Daniel Ricciardo: +1 Lap (started P13)
-- Esteban Ocon: +1 Lap (started P17)
-- Antonio Giovinazzi: +1 Lap (started P15)
-- Mick Schumacher: +2 Laps (started P19)
-- Nicholas Latifi: +3 Laps (started P16)
-- Nikita Mazepin: +3 Laps (started P20)
 - George Russell: Engine (started P10)
 - Pierre Gasly: Collision (started P6)

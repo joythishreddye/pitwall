@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - red_bull
-  - mclaren
   - mercedes
+  - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -48,15 +48,3 @@ tags:
 
 - Sergio Pérez: P11 → P8 (+3 places)
 - Daniel Ricciardo: P18 → P15 (+3 places)
-
-## Retirements/DNFs
-
-- Fernando Alonso: Lapped (started P10)
-- Guanyu Zhou: Lapped (started P15)
-- Lance Stroll: Lapped (started P14)
-- Daniel Ricciardo: Lapped (started P18)
-- Valtteri Bottas: Lapped (started P12)
-- Kevin Magnussen: Lapped (started P16)
-- Alexander Albon: Lapped (started P20)
-- Yuki Tsunoda: Lapped (started P17)
-- Logan Sargeant: Lapped (started P19)

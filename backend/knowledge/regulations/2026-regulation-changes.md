@@ -1,5 +1,5 @@
 ---
-category: regulation
+category: regulations
 knowledge_level: all
 tags:
   - 2026-season

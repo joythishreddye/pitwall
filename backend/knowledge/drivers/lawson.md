@@ -18,7 +18,7 @@ tags:
 **Driver Code:** LAW
 **Current Team:** RB F1 Team (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 10
 - **Wins:** 0
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P7
-- **DNFs:** 1
+- **DNFs:** 0
 - **Races Completed:** 3
 
 ## Recent Results (2026)

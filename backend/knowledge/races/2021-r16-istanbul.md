@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - istanbul
@@ -50,17 +50,3 @@ tags:
 - Lewis Hamilton: P11 → P5 (+6 places)
 - Antonio Giovinazzi: P16 → P11 (+5 places)
 - Kimi Räikkönen: P17 → P12 (+5 places)
-
-## Retirements/DNFs
-
-- Esteban Ocon: +1 Lap (started P12)
-- Antonio Giovinazzi: +1 Lap (started P16)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Daniel Ricciardo: +1 Lap (started P20)
-- Yuki Tsunoda: +1 Lap (started P9)
-- George Russell: +1 Lap (started P13)
-- Fernando Alonso: +1 Lap (started P5)
-- Nicholas Latifi: +1 Lap (started P15)
-- Sebastian Vettel: +1 Lap (started P10)
-- Mick Schumacher: +2 Laps (started P14)
-- Nikita Mazepin: +2 Laps (started P18)

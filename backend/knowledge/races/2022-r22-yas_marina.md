@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - perez
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -53,12 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Guanyu Zhou: +1 Lap (started P15)
-- Alexander Albon: +1 Lap (started P19)
-- Pierre Gasly: +1 Lap (started P17)
-- Valtteri Bottas: +1 Lap (started P18)
-- Mick Schumacher: +1 Lap (started P12)
-- Kevin Magnussen: +1 Lap (started P16)
 - Lewis Hamilton: Hydraulics (started P5)
 - Nicholas Latifi: Collision damage (started P20)
 - Fernando Alonso: Water leak (started P10)

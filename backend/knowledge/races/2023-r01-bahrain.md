@@ -53,12 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Logan Sargeant: Lapped (started P16)
-- Kevin Magnussen: Lapped (started P17)
-- Nyck de Vries: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P10)
-- Guanyu Zhou: Lapped (started P13)
-- Lando Norris: Lapped (started P11)
 - Esteban Ocon: Retired (started P9)
 - Charles Leclerc: Retired (started P3)
 - Oscar Piastri: Retired (started P18)

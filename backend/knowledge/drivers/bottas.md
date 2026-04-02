@@ -18,7 +18,7 @@ tags:
 **Driver Code:** BOT
 **Current Team:** Cadillac F1 Team (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 71
 - **Wins:** 4
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P13
-- **DNFs:** 3
+- **DNFs:** 1
 - **Races Completed:** 3
 
 ## Recent Results (2026)

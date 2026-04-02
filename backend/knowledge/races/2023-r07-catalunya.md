@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -50,17 +50,6 @@ tags:
 - Sergio Pérez: P11 → P4 (+7 places)
 - Guanyu Zhou: P13 → P9 (+4 places)
 - Yuki Tsunoda: P15 → P12 (+3 places)
-
-## Retirements/DNFs
-
-- Oscar Piastri: Lapped (started P9)
-- Nyck de Vries: Lapped (started P14)
-- Nico Hülkenberg: Lapped (started P7)
-- Alexander Albon: Lapped (started P18)
-- Lando Norris: Lapped (started P3)
-- Kevin Magnussen: Lapped (started P17)
-- Valtteri Bottas: Lapped (started P16)
-- Logan Sargeant: Lapped (started P20)
 
 ## Pit Strategy
 

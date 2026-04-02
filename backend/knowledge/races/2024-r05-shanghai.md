@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - perez
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - shanghai

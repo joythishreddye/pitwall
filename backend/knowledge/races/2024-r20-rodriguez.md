@@ -52,15 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nico Hülkenberg: Lapped (started P10)
-- Pierre Gasly: Lapped (started P8)
-- Lance Stroll: Lapped (started P14)
-- Franco Colapinto: Lapped (started P16)
-- Esteban Ocon: Lapped (started P0)
-- Valtteri Bottas: Lapped (started P15)
-- Guanyu Zhou: Lapped (started P19)
-- Liam Lawson: Lapped (started P12)
-- Sergio Pérez: Lapped (started P18)
 - Fernando Alonso: Retired (started P13)
 - Alexander Albon: Retired (started P9)
 - Yuki Tsunoda: Retired (started P11)

@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -51,16 +51,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Lando Norris: +1 Lap (started P9)
-- Esteban Ocon: +1 Lap (started P5)
-- Pierre Gasly: +1 Lap (started P12)
-- Lance Stroll: +1 Lap (started P11)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Sebastian Vettel: +1 Lap (started P13)
-- George Russell: +1 Lap (started P15)
-- Antonio Giovinazzi: +1 Lap (started P14)
-- Nicholas Latifi: +1 Lap (started P19)
-- Fernando Alonso: +1 Lap (started P10)
-- Mick Schumacher: +2 Laps (started P18)
-- Nikita Mazepin: +2 Laps (started P20)
 - Yuki Tsunoda: Electrical (started P16)

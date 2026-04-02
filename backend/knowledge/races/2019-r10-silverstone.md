@@ -53,10 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- George Russell: +1 Lap (started P19)
-- Robert Kubica: +1 Lap (started P20)
-- Sebastian Vettel: +1 Lap (started P6)
-- Sergio Pérez: +1 Lap (started P15)
 - Antonio Giovinazzi: Spun off (started P11)
 - Romain Grosjean: Collision (started P14)
 - Kevin Magnussen: Collision (started P16)

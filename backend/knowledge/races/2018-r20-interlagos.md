@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - raikkonen
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos
@@ -54,14 +54,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Sergio Pérez: +1 Lap (started P12)
-- Brendon Hartley: +1 Lap (started P16)
-- Carlos Sainz: +1 Lap (started P15)
-- Pierre Gasly: +1 Lap (started P9)
-- Stoffel Vandoorne: +1 Lap (started P20)
-- Esteban Ocon: +1 Lap (started P18)
-- Sergey Sirotkin: +2 Laps (started P14)
-- Fernando Alonso: +2 Laps (started P17)
-- Lance Stroll: +2 Laps (started P19)
 - Nico Hülkenberg: Overheating (started P13)
 - Marcus Ericsson: Collision (started P6)

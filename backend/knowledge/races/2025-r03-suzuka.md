@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - piastri
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -46,10 +46,6 @@ tags:
 ## Biggest Movers
 
 - Jack Doohan: P19 → P15 (+4 places)
-
-## Retirements/DNFs
-
-- Lance Stroll: Lapped (started P20)
 
 ## Pit Strategy
 

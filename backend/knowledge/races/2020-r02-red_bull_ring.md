@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -53,15 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: +1 Lap (started P3)
-- Daniil Kvyat: +1 Lap (started P13)
-- Kimi Räikkönen: +1 Lap (started P16)
-- Kevin Magnussen: +1 Lap (started P15)
-- Romain Grosjean: +1 Lap (started P0)
-- Antonio Giovinazzi: +1 Lap (started P19)
-- Pierre Gasly: +1 Lap (started P7)
-- George Russell: +2 Laps (started P11)
-- Nicholas Latifi: +2 Laps (started P18)
 - Esteban Ocon: Overheating (started P5)
 - Charles Leclerc: Collision damage (started P14)
 - Sebastian Vettel: Collision damage (started P10)

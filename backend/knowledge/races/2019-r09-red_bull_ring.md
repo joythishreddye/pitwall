@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - bottas
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -49,21 +49,3 @@ tags:
 - Carlos Sainz: P19 → P8 (+11 places)
 - Sebastian Vettel: P9 → P4 (+5 places)
 - Alexander Albon: P18 → P15 (+3 places)
-
-## Retirements/DNFs
-
-- Lando Norris: +1 Lap (started P5)
-- Pierre Gasly: +1 Lap (started P8)
-- Carlos Sainz: +1 Lap (started P19)
-- Kimi Räikkönen: +1 Lap (started P6)
-- Antonio Giovinazzi: +1 Lap (started P7)
-- Sergio Pérez: +1 Lap (started P13)
-- Daniel Ricciardo: +1 Lap (started P12)
-- Nico Hülkenberg: +1 Lap (started P15)
-- Lance Stroll: +1 Lap (started P14)
-- Alexander Albon: +1 Lap (started P18)
-- Romain Grosjean: +1 Lap (started P11)
-- Daniil Kvyat: +1 Lap (started P16)
-- George Russell: +2 Laps (started P0)
-- Kevin Magnussen: +2 Laps (started P10)
-- Robert Kubica: +3 Laps (started P17)

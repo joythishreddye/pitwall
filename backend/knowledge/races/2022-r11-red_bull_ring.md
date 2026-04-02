@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -54,18 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Mick Schumacher: +1 Lap (started P9)
-- Lando Norris: +1 Lap (started P10)
-- Kevin Magnussen: +1 Lap (started P7)
-- Daniel Ricciardo: +1 Lap (started P11)
-- Fernando Alonso: +1 Lap (started P19)
-- Valtteri Bottas: +1 Lap (started P0)
-- Alexander Albon: +1 Lap (started P15)
-- Lance Stroll: +1 Lap (started P12)
-- Guanyu Zhou: +1 Lap (started P13)
-- Pierre Gasly: +1 Lap (started P14)
-- Yuki Tsunoda: +1 Lap (started P16)
-- Sebastian Vettel: +1 Lap (started P18)
 - Carlos Sainz: Power Unit (started P3)
 - Nicholas Latifi: Undertray (started P17)
 - Sergio Pérez: Collision damage (started P5)

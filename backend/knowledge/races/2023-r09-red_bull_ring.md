@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - perez
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -53,14 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Guanyu Zhou: Lapped (started P17)
-- Logan Sargeant: Lapped (started P18)
-- Esteban Ocon: Lapped (started P12)
-- Valtteri Bottas: Lapped (started P14)
-- Oscar Piastri: Lapped (started P13)
-- Nyck de Vries: Lapped (started P20)
-- Kevin Magnussen: Lapped (started P19)
-- Yuki Tsunoda: Lapped (started P16)
 - Nico Hülkenberg: Retired (started P8)
 
 ## Pit Strategy

@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -53,14 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: +1 Lap (started P13)
-- Pierre Gasly: +1 Lap (started P7)
-- Marcus Ericsson: +1 Lap (started P20)
-- Brendon Hartley: +1 Lap (started P6)
-- Fernando Alonso: +1 Lap (started P18)
-- Stoffel Vandoorne: +1 Lap (started P19)
-- Sergey Sirotkin: +1 Lap (started P17)
-- Lance Stroll: +1 Lap (started P14)
 - Charles Leclerc: Mechanical (started P10)
 - Nico Hülkenberg: Engine (started P16)
 - Kevin Magnussen: Collision damage (started P12)

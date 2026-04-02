@@ -53,13 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kevin Magnussen: Lapped (started P14)
-- Alexander Albon: Lapped (started P12)
-- Daniel Ricciardo: Lapped (started P18)
-- Pierre Gasly: Lapped (started P17)
-- Valtteri Bottas: Lapped (started P13)
-- Guanyu Zhou: Lapped (started P19)
-- Esteban Ocon: Lapped (started P15)
 - George Russell: Retired (started P7)
 - Lewis Hamilton: Retired (started P11)
 - Max Verstappen: Retired (started P1)

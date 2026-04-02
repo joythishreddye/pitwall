@@ -141,7 +141,7 @@ export function useChat() {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMessage.id
-              ? { ...m, content: accumulatedContent || m.content, sources, isStreaming: false }
+              ? { ...m, content: accumulatedContent || m.content, sources, knowledgeLevel, isStreaming: false }
               : m,
           ),
         );

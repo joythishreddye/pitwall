@@ -52,17 +52,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Kimi Räikkönen: +1 Lap (started P12)
-- Nico Hülkenberg: +1 Lap (started P13)
-- Lando Norris: +1 Lap (started P5)
-- Pierre Gasly: +1 Lap (started P9)
-- Daniel Ricciardo: +1 Lap (started P8)
-- Sergio Pérez: +1 Lap (started P14)
-- Lance Stroll: +1 Lap (started P17)
-- Daniil Kvyat: +1 Lap (started P19)
-- Alexander Albon: +1 Lap (started P11)
-- Antonio Giovinazzi: +1 Lap (started P10)
-- Kevin Magnussen: +1 Lap (started P15)
-- Robert Kubica: +2 Laps (started P18)
-- George Russell: +2 Laps (started P20)
 - Romain Grosjean: Retired (started P16)

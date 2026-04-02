@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -53,15 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Esteban Ocon: Lapped (started P14)
-- Carlos Sainz: Lapped (started P16)
-- Oliver Bearman: Lapped (started P13)
-- Yuki Tsunoda: Lapped (started P18)
-- Franco Colapinto: Lapped (started P10)
-- Gabriel Bortoleto: Lapped (started P15)
-- Pierre Gasly: Lapped (started P20)
-- Isack Hadjar: Lapped (started P12)
-- Lance Stroll: Lapped (started P17)
 - Lando Norris: Retired (started P7)
 - Liam Lawson: Retired (started P19)
 - Alexander Albon: Retired (started P9)

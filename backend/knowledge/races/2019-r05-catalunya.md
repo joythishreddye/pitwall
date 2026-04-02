@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -49,7 +49,5 @@ tags:
 
 ## Retirements/DNFs
 
-- George Russell: +1 Lap (started P19)
-- Robert Kubica: +1 Lap (started P17)
 - Lance Stroll: Collision (started P16)
 - Lando Norris: Collision (started P10)

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - raikkonen
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -54,11 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Romain Grosjean: +1 Lap (started P10)
-- Stoffel Vandoorne: +1 Lap (started P17)
-- Marcus Ericsson: +1 Lap (started P15)
-- Brendon Hartley: +1 Lap (started P20)
-- Sergey Sirotkin: +1 Lap (started P18)
 - Fernando Alonso: Wheel (started P16)
 - Lance Stroll: Puncture (started P19)
 - Sergio Pérez: Engine (started P13)

@@ -9,8 +9,8 @@ driver_refs:
   - alonso
 constructor_refs:
   - aston_martin
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos
@@ -54,11 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Esteban Ocon: Lapped (started P14)
-- Logan Sargeant: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P11)
-- Daniel Ricciardo: Lapped (started P17)
-- Oscar Piastri: Lapped (started P10)
 - George Russell: Retired (started P8)
 - Valtteri Bottas: Retired (started P18)
 - Guanyu Zhou: Retired (started P20)

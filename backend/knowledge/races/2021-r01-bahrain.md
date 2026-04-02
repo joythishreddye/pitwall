@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -53,11 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Antonio Giovinazzi: +1 Lap (started P12)
-- Esteban Ocon: +1 Lap (started P16)
-- George Russell: +1 Lap (started P15)
-- Sebastian Vettel: +1 Lap (started P20)
-- Mick Schumacher: +1 Lap (started P18)
 - Pierre Gasly: Retired (started P5)
 - Nicholas Latifi: Retired (started P17)
 - Fernando Alonso: Brakes (started P9)

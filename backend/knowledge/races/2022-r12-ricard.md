@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -51,7 +51,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Guanyu Zhou: +6 Laps (started P16)
 - Nicholas Latifi: Collision damage (started P18)
 - Kevin Magnussen: Collision damage (started P20)
 - Charles Leclerc: Accident (started P1)

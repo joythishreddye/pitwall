@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - zandvoort
@@ -50,18 +50,3 @@ tags:
 - Carlos Sainz: P10 → P5 (+5 places)
 - Alexander Albon: P19 → P14 (+5 places)
 - Charles Leclerc: P6 → P3 (+3 places)
-
-## Retirements/DNFs
-
-- Pierre Gasly: Lapped (started P9)
-- Fernando Alonso: Lapped (started P7)
-- Nico Hülkenberg: Lapped (started P12)
-- Daniel Ricciardo: Lapped (started P13)
-- Lance Stroll: Lapped (started P8)
-- Alexander Albon: Lapped (started P19)
-- Esteban Ocon: Lapped (started P15)
-- Logan Sargeant: Lapped (started P18)
-- Yuki Tsunoda: Lapped (started P11)
-- Kevin Magnussen: Lapped (started P20)
-- Valtteri Bottas: Lapped (started P16)
-- Guanyu Zhou: Lapped (started P17)

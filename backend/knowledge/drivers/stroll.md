@@ -18,7 +18,7 @@ tags:
 **Driver Code:** STR
 **Current Team:** Aston Martin (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 77
 - **Wins:** 0
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P17
-- **DNFs:** 3
+- **DNFs:** 2
 - **Races Completed:** 3
 
 ## Recent Results (2026)

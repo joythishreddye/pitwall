@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - norris
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -48,13 +48,6 @@ tags:
 - Nico Hülkenberg: P18 → P9 (+9 places)
 - Lewis Hamilton: P16 → P8 (+8 places)
 - Lance Stroll: P15 → P10 (+5 places)
-
-## Retirements/DNFs
-
-- Isack Hadjar: Lapped (started P9)
-- Liam Lawson: Lapped (started P13)
-- Pierre Gasly: Lapped (started P19)
-- Franco Colapinto: Lapped (started P20)
 
 ## Pit Strategy
 

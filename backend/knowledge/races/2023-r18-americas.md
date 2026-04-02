@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -54,9 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Guanyu Zhou: Lapped (started P12)
-- Kevin Magnussen: Lapped (started P17)
-- Daniel Ricciardo: Lapped (started P14)
 - Fernando Alonso: Retired (started P19)
 - Oscar Piastri: Retired (started P10)
 - Esteban Ocon: Retired (started P8)

@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -54,9 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Daniel Ricciardo: +1 Lap (started P10)
-- Lance Stroll: +1 Lap (started P13)
-- Mick Schumacher: +1 Lap (started P19)
 - Sergio Pérez: Engine (started P4)
 - Nicholas Latifi: Accident (started P16)
 - Antonio Giovinazzi: Gearbox (started P14)

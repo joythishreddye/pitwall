@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - russell
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - hungaroring
@@ -52,16 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Andrea Kimi Antonelli: Lapped (started P15)
-- Isack Hadjar: Lapped (started P10)
-- Lewis Hamilton: Lapped (started P12)
-- Nico Hülkenberg: Lapped (started P18)
-- Carlos Sainz: Lapped (started P13)
-- Alexander Albon: Lapped (started P19)
-- Esteban Ocon: Lapped (started P17)
-- Yuki Tsunoda: Lapped (started P20)
-- Franco Colapinto: Lapped (started P14)
-- Pierre Gasly: Lapped (started P16)
 - Oliver Bearman: Retired (started P11)
 
 ## Pit Strategy

@@ -53,13 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: Lapped (started P17)
-- Franco Colapinto: Lapped (started P12)
-- Nico Hülkenberg: Lapped (started P11)
-- Arvid Lindblad: Lapped (started P15)
-- Valtteri Bottas: Lapped (started P19)
-- Esteban Ocon: Lapped (started P13)
-- Sergio Pérez: Lapped (started P21)
 - Max Verstappen: Retired (started P8)
 - Fernando Alonso: Retired (started P18)
 - Lance Stroll: Retired (started P20)

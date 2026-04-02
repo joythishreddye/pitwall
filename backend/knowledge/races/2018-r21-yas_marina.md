@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -54,13 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Romain Grosjean: +1 Lap (started P7)
-- Kevin Magnussen: +1 Lap (started P13)
-- Fernando Alonso: +1 Lap (started P15)
-- Brendon Hartley: +1 Lap (started P16)
-- Lance Stroll: +1 Lap (started P20)
-- Stoffel Vandoorne: +1 Lap (started P18)
-- Sergey Sirotkin: +1 Lap (started P19)
 - Pierre Gasly: Engine (started P17)
 - Esteban Ocon: Engine (started P9)
 - Marcus Ericsson: Power loss (started P12)

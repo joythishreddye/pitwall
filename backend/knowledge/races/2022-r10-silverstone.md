@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone

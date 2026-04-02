@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -48,16 +48,3 @@ tags:
 - Guanyu Zhou: P17 → P11 (+6 places)
 - Sergio Pérez: P5 → P2 (+3 places)
 - Kevin Magnussen: P15 → P12 (+3 places)
-
-## Retirements/DNFs
-
-- Guanyu Zhou: Lapped (started P17)
-- Kevin Magnussen: Lapped (started P15)
-- Daniel Ricciardo: Lapped (started P14)
-- Yuki Tsunoda: Lapped (started P11)
-- Alexander Albon: Lapped (started P13)
-- Nico Hülkenberg: Lapped (started P10)
-- Esteban Ocon: Lapped (started P19)
-- Pierre Gasly: Lapped (started P20)
-- Valtteri Bottas: Lapped (started P16)
-- Logan Sargeant: Lapped (started P18)

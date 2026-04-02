@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -52,7 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Lance Stroll: +1 Lap (started P13)
 - Alexander Albon: Collision damage (started P16)
 - Valtteri Bottas: Cooling system (started P8)
 - Fernando Alonso: Water pump (started P7)

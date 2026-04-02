@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -49,15 +49,3 @@ tags:
 - Daniel Ricciardo: P10 → P6 (+4 places)
 - Lando Norris: P8 → P5 (+3 places)
 - Sebastian Vettel: P12 → P9 (+3 places)
-
-## Retirements/DNFs
-
-- George Russell: +1 Lap (started P14)
-- Yuki Tsunoda: +1 Lap (started P0)
-- Esteban Ocon: +1 Lap (started P11)
-- Antonio Giovinazzi: +1 Lap (started P13)
-- Charles Leclerc: +1 Lap (started P7)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Nicholas Latifi: +1 Lap (started P16)
-- Mick Schumacher: +1 Lap (started P15)
-- Nikita Mazepin: +1 Lap (started P18)

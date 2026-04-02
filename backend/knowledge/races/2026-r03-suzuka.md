@@ -9,8 +9,8 @@ driver_refs:
   - leclerc
 constructor_refs:
   - ferrari
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - suzuka
@@ -52,9 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: Lapped (started P21)
-- Valtteri Bottas: Lapped (started P20)
-- Alexander Albon: Lapped (started P17)
 - Lance Stroll: Retired (started P22)
 - Oliver Bearman: Retired (started P18)
 

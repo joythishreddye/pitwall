@@ -18,7 +18,7 @@ tags:
 **Driver Code:** ANT
 **Current Team:** Mercedes (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 7
 - **Wins:** 0

@@ -18,7 +18,7 @@ tags:
 **Driver Code:** PER
 **Current Team:** Cadillac F1 Team (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 69
 - **Wins:** 1
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P15
-- **DNFs:** 2
+- **DNFs:** 0
 - **Races Completed:** 3
 
 ## Recent Results (2026)

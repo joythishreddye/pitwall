@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -51,14 +51,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Yuki Tsunoda: Lapped (started P10)
-- Nico Hülkenberg: Lapped (started P12)
-- Lance Stroll: Lapped (started P16)
-- Kevin Magnussen: Lapped (started P18)
-- Valtteri Bottas: Lapped (started P13)
-- Esteban Ocon: Lapped (started P15)
-- Pierre Gasly: Lapped (started P17)
-- Logan Sargeant: Lapped (started P19)
 - Guanyu Zhou: Retired (started P20)
 - Daniel Ricciardo: Retired (started P11)
 - Alexander Albon: Retired (started P14)

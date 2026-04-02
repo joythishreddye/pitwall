@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -51,16 +51,7 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: +1 Lap (started P7)
-- Nico Hülkenberg: +1 Lap (started P11)
-- Sergio Pérez: +1 Lap (started P0)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Daniil Kvyat: +1 Lap (started P13)
-- Lance Stroll: +1 Lap (started P14)
-- Antonio Giovinazzi: +1 Lap (started P16)
-- Romain Grosjean: +1 Lap (started P15)
 - Pierre Gasly: Suspension (started P10)
-- George Russell: +2 Laps (started P18)
 - Kevin Magnussen: Brakes (started P12)
 - Robert Kubica: Oil leak (started P19)
 - Sebastian Vettel: Suspension (started P2)

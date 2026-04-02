@@ -52,19 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Isack Hadjar: Lapped (started P5)
-- Esteban Ocon: Lapped (started P8)
-- Liam Lawson: Lapped (started P9)
-- Alexander Albon: Lapped (started P10)
-- Carlos Sainz: Lapped (started P11)
-- George Russell: Lapped (started P14)
-- Oliver Bearman: Lapped (started P20)
-- Franco Colapinto: Lapped (started P18)
-- Gabriel Bortoleto: Lapped (started P16)
-- Lance Stroll: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P13)
-- Yuki Tsunoda: Lapped (started P12)
-- Andrea Kimi Antonelli: Lapped (started P15)
 - Fernando Alonso: Retired (started P6)
 - Pierre Gasly: Retired (started P17)
 

@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - raikkonen
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - shanghai

@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos
@@ -51,17 +51,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Pierre Gasly: +1 Lap (started P7)
-- Esteban Ocon: +1 Lap (started P8)
-- Fernando Alonso: +1 Lap (started P12)
-- Lando Norris: +1 Lap (started P5)
-- Sebastian Vettel: +1 Lap (started P9)
-- Kimi Räikkönen: +1 Lap (started P0)
-- George Russell: +1 Lap (started P17)
-- Antonio Giovinazzi: +1 Lap (started P13)
-- Yuki Tsunoda: +1 Lap (started P15)
-- Nicholas Latifi: +1 Lap (started P16)
-- Nikita Mazepin: +2 Laps (started P19)
-- Mick Schumacher: +2 Laps (started P18)
 - Daniel Ricciardo: Power loss (started P11)
 - Lance Stroll: Collision damage (started P14)

@@ -9,8 +9,8 @@ driver_refs:
   - ocon
 constructor_refs:
   - aston_martin
-  - red_bull
   - alpine
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -53,16 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Lando Norris: Lapped (started P10)
-- Oscar Piastri: Lapped (started P11)
-- Valtteri Bottas: Lapped (started P15)
-- Nyck de Vries: Lapped (started P12)
-- Guanyu Zhou: Lapped (started P19)
-- Alexander Albon: Lapped (started P13)
-- Yuki Tsunoda: Lapped (started P9)
-- Sergio Pérez: Lapped (started P20)
-- Nico Hülkenberg: Lapped (started P18)
-- Logan Sargeant: Lapped (started P16)
 - Kevin Magnussen: Retired (started P17)
 - Lance Stroll: Retired (started P14)
 

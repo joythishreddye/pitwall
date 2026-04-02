@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -53,16 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: +1 Lap (started P20)
-- Yuki Tsunoda: +1 Lap (started P13)
-- Sebastian Vettel: +1 Lap (started P16)
-- Daniel Ricciardo: +1 Lap (started P9)
-- Pierre Gasly: +1 Lap (started P14)
-- Mick Schumacher: +1 Lap (started P10)
-- Lance Stroll: +1 Lap (started P17)
-- Nicholas Latifi: +2 Laps (started P19)
-- Kevin Magnussen: +2 Laps (started P8)
-- Alexander Albon: +2 Laps (started P18)
 - Guanyu Zhou: Power loss (started P15)
 - Charles Leclerc: Turbo (started P1)
 

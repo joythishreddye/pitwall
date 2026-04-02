@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -53,10 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nico Hülkenberg: Lapped (started P18)
-- Lance Stroll: Lapped (started P16)
-- Jack Doohan: Lapped (started P17)
-- Gabriel Bortoleto: Lapped (started P20)
 - Yuki Tsunoda: Retired (started P8)
 - Pierre Gasly: Retired (started P9)
 

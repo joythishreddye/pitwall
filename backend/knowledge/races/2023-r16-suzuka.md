@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - piastri
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -52,11 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Liam Lawson: Lapped (started P11)
-- Yuki Tsunoda: Lapped (started P9)
-- Guanyu Zhou: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P18)
-- Kevin Magnussen: Lapped (started P15)
 - Alexander Albon: Retired (started P13)
 - Logan Sargeant: Retired (started P20)
 - Lance Stroll: Retired (started P17)

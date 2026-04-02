@@ -53,11 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Daniil Kvyat: +1 Lap (started P15)
-- Kevin Magnussen: +1 Lap (started P6)
-- Lance Stroll: +1 Lap (started P18)
-- George Russell: +1 Lap (started P19)
-- Robert Kubica: +2 Laps (started P20)
 - Nico Hülkenberg: Engine (started P17)
 - Daniel Ricciardo: Out of fuel (started P10)
 - Carlos Sainz: Collision damage (started P7)

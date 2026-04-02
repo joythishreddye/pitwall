@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -53,17 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nico Hülkenberg: +1 Lap (started P7)
-- Carlos Sainz: +1 Lap (started P9)
-- Esteban Ocon: +1 Lap (started P8)
-- Charles Leclerc: +1 Lap (started P13)
-- Pierre Gasly: +1 Lap (started P16)
-- Romain Grosjean: +1 Lap (started P20)
-- Kevin Magnussen: +1 Lap (started P11)
-- Sergio Pérez: +1 Lap (started P10)
-- Marcus Ericsson: +2 Laps (started P19)
-- Stoffel Vandoorne: +2 Laps (started P15)
-- Sergey Sirotkin: +2 Laps (started P18)
 - Fernando Alonso: Exhaust (started P14)
 - Brendon Hartley: Collision (started P12)
 - Lance Stroll: Collision (started P17)

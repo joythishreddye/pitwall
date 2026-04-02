@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -53,17 +53,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Sergio Pérez: +1 Lap (started P10)
-- Lando Norris: +1 Lap (started P6)
-- Daniil Kvyat: +1 Lap (started P13)
-- Carlos Sainz: +1 Lap (started P8)
-- Daniel Ricciardo: +1 Lap (started P7)
-- Nico Hülkenberg: +1 Lap (started P9)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Kevin Magnussen: +1 Lap (started P14)
-- Romain Grosjean: +1 Lap (started P15)
-- Antonio Giovinazzi: +1 Lap (started P16)
-- George Russell: +1 Lap (started P18)
-- Pierre Gasly: +2 Laps (started P11)
-- Robert Kubica: +2 Laps (started P19)
 - Lance Stroll: Brakes (started P12)

@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - russell
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -54,5 +54,3 @@ tags:
 ## Retirements/DNFs
 
 - Carlos Sainz: Retired (started P16)
-- Valtteri Bottas: Lapped (started P18)
-- Kevin Magnussen: Lapped (started P17)

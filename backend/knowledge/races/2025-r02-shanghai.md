@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - shanghai
@@ -53,9 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Gabriel Bortoleto: Lapped (started P19)
-- Nico Hülkenberg: Lapped (started P12)
-- Yuki Tsunoda: Lapped (started P9)
 - Fernando Alonso: Retired (started P13)
 - Charles Leclerc: Disqualified (started P6)
 - Lewis Hamilton: Disqualified (started P5)

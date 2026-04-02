@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka

@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - albert_park
@@ -52,7 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Brendon Hartley: +1 Lap (started P16)
 - Romain Grosjean: Wheel (started P6)
 - Kevin Magnussen: Wheel (started P5)
 - Pierre Gasly: Engine (started P20)

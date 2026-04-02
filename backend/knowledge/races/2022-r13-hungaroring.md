@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -53,18 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: +1 Lap (started P6)
-- Esteban Ocon: +1 Lap (started P5)
-- Sebastian Vettel: +1 Lap (started P18)
-- Lance Stroll: +1 Lap (started P14)
-- Pierre Gasly: +1 Lap (started P0)
-- Guanyu Zhou: +1 Lap (started P12)
-- Mick Schumacher: +1 Lap (started P15)
-- Daniel Ricciardo: +1 Lap (started P9)
-- Kevin Magnussen: +1 Lap (started P13)
-- Alexander Albon: +1 Lap (started P17)
-- Nicholas Latifi: +1 Lap (started P19)
-- Yuki Tsunoda: +2 Laps (started P16)
 - Valtteri Bottas: Power Unit (started P8)
 
 ## Pit Strategy

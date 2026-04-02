@@ -53,12 +53,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Sergio Pérez: +1 Lap (started P16)
-- Nico Hülkenberg: +1 Lap (started P11)
-- Kevin Magnussen: +1 Lap (started P5)
-- George Russell: +1 Lap (started P19)
-- Lance Stroll: +1 Lap (started P17)
-- Kimi Räikkönen: +1 Lap (started P14)
-- Robert Kubica: +1 Lap (started P20)
-- Antonio Giovinazzi: +2 Laps (started P18)
 - Charles Leclerc: Collision (started P15)

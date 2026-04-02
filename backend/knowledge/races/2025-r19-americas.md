@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -54,9 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Franco Colapinto: Lapped (started P15)
-- Gabriel Bortoleto: Lapped (started P16)
-- Pierre Gasly: Lapped (started P14)
 - Carlos Sainz: Retired (started P9)
 
 ## Pit Strategy

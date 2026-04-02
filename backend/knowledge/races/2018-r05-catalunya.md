@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -53,15 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kevin Magnussen: +1 Lap (started P7)
-- Carlos Sainz: +1 Lap (started P9)
-- Fernando Alonso: +1 Lap (started P8)
-- Sergio Pérez: +2 Laps (started P15)
-- Charles Leclerc: +2 Laps (started P14)
-- Lance Stroll: +2 Laps (started P18)
-- Brendon Hartley: +2 Laps (started P20)
-- Marcus Ericsson: +2 Laps (started P17)
-- Sergey Sirotkin: +3 Laps (started P19)
 - Stoffel Vandoorne: Gearbox (started P11)
 - Esteban Ocon: Oil leak (started P13)
 - Kimi Räikkönen: Turbo (started P4)

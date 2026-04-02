@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - hamilton
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -50,13 +50,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Daniil Kvyat: +1 Lap (started P7)
-- Kimi Räikkönen: +1 Lap (started P15)
-- Charles Leclerc: +1 Lap (started P12)
-- Sebastian Vettel: +1 Lap (started P13)
-- George Russell: +1 Lap (started P16)
-- Antonio Giovinazzi: +1 Lap (started P14)
-- Nicholas Latifi: +1 Lap (started P18)
-- Kevin Magnussen: +1 Lap (started P20)
-- Pietro Fittipaldi: +2 Laps (started P17)
 - Sergio Pérez: Transmission (started P19)

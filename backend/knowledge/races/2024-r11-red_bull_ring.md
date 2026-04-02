@@ -9,8 +9,8 @@ driver_refs:
   - sainz
 constructor_refs:
   - ferrari
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -51,14 +51,3 @@ tags:
 - Lance Stroll: P17 → P13 (+4 places)
 - Nico Hülkenberg: P9 → P6 (+3 places)
 - Pierre Gasly: P13 → P10 (+3 places)
-
-## Retirements/DNFs
-
-- Lance Stroll: Lapped (started P17)
-- Yuki Tsunoda: Lapped (started P14)
-- Alexander Albon: Lapped (started P16)
-- Valtteri Bottas: Lapped (started P18)
-- Guanyu Zhou: Lapped (started P20)
-- Fernando Alonso: Lapped (started P15)
-- Logan Sargeant: Lapped (started P19)
-- Lando Norris: Lapped (started P2)

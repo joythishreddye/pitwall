@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - russell
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - albert_park
@@ -54,11 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Mick Schumacher: +1 Lap (started P15)
-- Kevin Magnussen: +1 Lap (started P16)
-- Yuki Tsunoda: +1 Lap (started P13)
-- Nicholas Latifi: +1 Lap (started P18)
-- Fernando Alonso: +1 Lap (started P10)
 - Max Verstappen: Fuel leak (started P2)
 - Sebastian Vettel: Accident (started P17)
 - Carlos Sainz: Spun off (started P9)

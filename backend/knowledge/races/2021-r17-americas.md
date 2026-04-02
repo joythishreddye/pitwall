@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -51,15 +51,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Yuki Tsunoda: +1 Lap (started P10)
-- Sebastian Vettel: +1 Lap (started P18)
-- Antonio Giovinazzi: +1 Lap (started P12)
-- Lance Stroll: +1 Lap (started P13)
-- Kimi Räikkönen: +1 Lap (started P15)
-- George Russell: +1 Lap (started P20)
-- Nicholas Latifi: +1 Lap (started P14)
-- Mick Schumacher: +2 Laps (started P16)
-- Nikita Mazepin: +2 Laps (started P17)
 - Fernando Alonso: Rear wing (started P19)
 - Esteban Ocon: Mechanical (started P11)
 - Pierre Gasly: Suspension (started P8)

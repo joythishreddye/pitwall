@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -54,11 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Alexander Albon: Lapped (started P17)
-- Isack Hadjar: Lapped (started P8)
-- Lance Stroll: Lapped (started P19)
-- Pierre Gasly: Lapped (started P18)
-- Franco Colapinto: Lapped (started P20)
 - Carlos Sainz: Retired (started P12)
 - Fernando Alonso: Retired (started P14)
 - Nico Hülkenberg: Retired (started P13)

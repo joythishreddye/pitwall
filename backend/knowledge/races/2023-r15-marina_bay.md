@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
+  - mercedes
   - ferrari
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - marina_bay

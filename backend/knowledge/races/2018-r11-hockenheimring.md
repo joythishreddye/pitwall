@@ -53,8 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Pierre Gasly: +1 Lap (started P16)
-- Charles Leclerc: +1 Lap (started P9)
 - Fernando Alonso: Retired (started P11)
 - Lance Stroll: Engine (started P18)
 - Sebastian Vettel: Accident (started P1)

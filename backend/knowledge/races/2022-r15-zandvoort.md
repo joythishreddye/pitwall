@@ -8,9 +8,9 @@ driver_refs:
   - russell
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - zandvoort
@@ -54,7 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nicholas Latifi: +1 Lap (started P20)
 - Valtteri Bottas: Engine (started P16)
 - Yuki Tsunoda: Differential (started P9)
 

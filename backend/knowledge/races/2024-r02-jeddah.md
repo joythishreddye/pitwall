@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -52,11 +52,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Esteban Ocon: Lapped (started P17)
-- Logan Sargeant: Lapped (started P19)
-- Yuki Tsunoda: Lapped (started P9)
-- Daniel Ricciardo: Lapped (started P14)
-- Valtteri Bottas: Lapped (started P16)
-- Guanyu Zhou: Lapped (started P20)
 - Lance Stroll: Retired (started P10)
 - Pierre Gasly: Retired (started P18)

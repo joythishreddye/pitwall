@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - vettel
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -54,16 +54,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Carlos Sainz: +1 Lap (started P12)
-- Charles Leclerc: +1 Lap (started P13)
-- Nico Hülkenberg: +1 Lap (started P10)
-- Marcus Ericsson: +1 Lap (started P14)
-- Stoffel Vandoorne: +1 Lap (started P18)
-- Pierre Gasly: +1 Lap (started P15)
-- Lance Stroll: +1 Lap (started P20)
-- Romain Grosjean: +1 Lap (started P8)
-- Sergio Pérez: +1 Lap (started P7)
-- Brendon Hartley: +1 Lap (started P17)
-- Kevin Magnussen: +2 Laps (started P16)
-- Sergey Sirotkin: +2 Laps (started P19)
 - Esteban Ocon: Collision (started P9)

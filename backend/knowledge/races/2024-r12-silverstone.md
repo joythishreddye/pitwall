@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
-  - red_bull
-  - mclaren
   - mercedes
+  - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone
@@ -52,11 +52,5 @@ tags:
 
 ## Retirements/DNFs
 
-- Daniel Ricciardo: Lapped (started P15)
-- Charles Leclerc: Lapped (started P11)
-- Valtteri Bottas: Lapped (started P16)
-- Esteban Ocon: Lapped (started P18)
-- Sergio Pérez: Lapped (started P20)
-- Guanyu Zhou: Lapped (started P14)
 - George Russell: Retired (started P1)
 - Pierre Gasly: Did not start (started P19)

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -54,12 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Brendon Hartley: +1 Lap (started P20)
-- Marcus Ericsson: +1 Lap (started P16)
-- Stoffel Vandoorne: +1 Lap (started P17)
-- Pierre Gasly: +1 Lap (started P19)
-- Sergey Sirotkin: +1 Lap (started P14)
-- Lance Stroll: +2 Laps (started P15)
 - Charles Leclerc: Collision damage (started P9)
 - Daniel Ricciardo: Battery (started P4)
 - Romain Grosjean: Collision damage (started P8)

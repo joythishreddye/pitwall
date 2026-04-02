@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - perez
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -53,14 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Lance Stroll: Lapped (started P14)
-- Alexander Albon: Lapped (started P16)
-- Valtteri Bottas: Lapped (started P7)
-- Daniel Ricciardo: Lapped (started P13)
-- Nico Hülkenberg: Lapped (started P10)
-- Yuki Tsunoda: Lapped (started P17)
-- Guanyu Zhou: Lapped (started P5)
-- Kevin Magnussen: Lapped (started P19)
 - Logan Sargeant: Retired (started P20)
 - Esteban Ocon: Retired (started P12)
 - Pierre Gasly: Retired (started P15)

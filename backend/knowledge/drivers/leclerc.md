@@ -18,7 +18,7 @@ tags:
 **Driver Code:** LEC
 **Current Team:** Ferrari (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 69
 - **Wins:** 2

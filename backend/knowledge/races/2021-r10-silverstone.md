@@ -52,12 +52,5 @@ tags:
 
 ## Retirements/DNFs
 
-- George Russell: +1 Lap (started P12)
-- Antonio Giovinazzi: +1 Lap (started P15)
-- Nicholas Latifi: +1 Lap (started P17)
-- Kimi Räikkönen: +1 Lap (started P13)
-- Sergio Pérez: +1 Lap (started P0)
-- Nikita Mazepin: +1 Lap (started P19)
-- Mick Schumacher: +1 Lap (started P18)
 - Sebastian Vettel: Retired (started P8)
 - Max Verstappen: Collision (started P1)

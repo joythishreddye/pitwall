@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - bahrain
@@ -53,17 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: +1 Lap (started P13)
-- Stoffel Vandoorne: +1 Lap (started P14)
-- Marcus Ericsson: +1 Lap (started P17)
-- Esteban Ocon: +1 Lap (started P8)
-- Carlos Sainz: +1 Lap (started P10)
-- Charles Leclerc: +1 Lap (started P19)
-- Romain Grosjean: +1 Lap (started P16)
-- Lance Stroll: +1 Lap (started P20)
-- Sergey Sirotkin: +1 Lap (started P18)
-- Sergio Pérez: +1 Lap (started P12)
-- Brendon Hartley: +1 Lap (started P11)
 - Kimi Räikkönen: Wheel (started P2)
 - Max Verstappen: Puncture (started P15)
 - Daniel Ricciardo: Electrical (started P4)

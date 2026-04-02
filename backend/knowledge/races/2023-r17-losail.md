@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - norris
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - losail
@@ -53,10 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kevin Magnussen: Lapped (started P18)
-- Yuki Tsunoda: Lapped (started P11)
-- Nico Hülkenberg: Lapped (started P14)
-- Liam Lawson: Lapped (started P17)
 - Logan Sargeant: Retired (started P15)
 - Lewis Hamilton: Retired (started P3)
 - Carlos Sainz: Did not start (started P12)

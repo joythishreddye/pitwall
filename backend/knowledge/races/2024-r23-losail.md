@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
-  - red_bull
   - ferrari
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - losail
@@ -53,7 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Alexander Albon: Lapped (started P16)
 - Nico Hülkenberg: Retired (started P18)
 - Sergio Pérez: Retired (started P9)
 - Lance Stroll: Retired (started P15)

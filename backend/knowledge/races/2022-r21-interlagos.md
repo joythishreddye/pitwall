@@ -53,7 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Yuki Tsunoda: +1 Lap (started P0)
 - Lando Norris: Gearbox (started P6)
 - Kevin Magnussen: Collision (started P8)
 - Daniel Ricciardo: Collision (started P11)

@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -52,8 +52,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Mick Schumacher: +1 Lap (started P12)
-- George Russell: +2 Laps (started P0)
 - Yuki Tsunoda: Accident (started P10)
 - Esteban Ocon: Engine (started P17)
 - Alexander Albon: Collision damage (started P18)

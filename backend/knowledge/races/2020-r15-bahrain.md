@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - albon
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -51,14 +51,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Charles Leclerc: +1 Lap (started P12)
-- Daniil Kvyat: +1 Lap (started P10)
-- George Russell: +1 Lap (started P14)
-- Sebastian Vettel: +1 Lap (started P11)
-- Nicholas Latifi: +1 Lap (started P20)
-- Kimi Räikkönen: +1 Lap (started P17)
-- Antonio Giovinazzi: +1 Lap (started P16)
-- Kevin Magnussen: +1 Lap (started P18)
 - Sergio Pérez: Engine (started P5)
 - Lance Stroll: Collision (started P13)
 - Romain Grosjean: Collision (started P19)

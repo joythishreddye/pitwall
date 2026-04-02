@@ -68,7 +68,7 @@ def _window_chunks(text: str, heading: str) -> list[str]:
         full = f"{heading}\n\n{chunk_text}" if heading else chunk_text
         chunks.append(full.strip())
         start = end - OVERLAP_TOKENS
-        if start + MIN_TOKENS >= len(words):
+        if start + MIN_TOKENS > len(words):
             break
 
     return chunks

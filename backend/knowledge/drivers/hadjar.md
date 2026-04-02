@@ -18,7 +18,7 @@ tags:
 **Driver Code:** HAD
 **Current Team:** Red Bull (2026 season)
 
-## Career Statistics
+## Career Statistics (in database)
 
 - **Races:** 8
 - **Wins:** 0

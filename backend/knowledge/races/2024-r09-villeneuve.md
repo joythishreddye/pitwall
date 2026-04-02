@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
-  - red_bull
-  - mclaren
   - mercedes
+  - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -54,7 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Guanyu Zhou: Lapped (started P20)
 - Carlos Sainz: Retired (started P12)
 - Alexander Albon: Retired (started P10)
 - Sergio Pérez: Retired (started P16)

@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -53,9 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Fernando Alonso: +1 Lap (started P13)
-- Yuki Tsunoda: +1 Lap (started P8)
-- Kimi Räikkönen: +1 Lap (started P12)
 - Sebastian Vettel: Collision damage (started P17)
 - Sergio Pérez: Collision (started P5)
 - Nikita Mazepin: Collision (started P20)

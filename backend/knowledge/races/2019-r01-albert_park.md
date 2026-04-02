@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - albert_park
@@ -53,17 +53,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Nico Hülkenberg: +1 Lap (started P11)
-- Kimi Räikkönen: +1 Lap (started P9)
-- Lance Stroll: +1 Lap (started P16)
-- Daniil Kvyat: +1 Lap (started P15)
-- Pierre Gasly: +1 Lap (started P17)
-- Lando Norris: +1 Lap (started P8)
-- Sergio Pérez: +1 Lap (started P10)
-- Alexander Albon: +1 Lap (started P13)
-- Antonio Giovinazzi: +1 Lap (started P14)
-- George Russell: +2 Laps (started P19)
-- Robert Kubica: +3 Laps (started P20)
 - Romain Grosjean: Wheel (started P6)
 - Daniel Ricciardo: Damage (started P12)
 - Carlos Sainz: Engine (started P18)

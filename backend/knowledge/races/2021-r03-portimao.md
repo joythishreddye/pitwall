@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - portimao
@@ -51,12 +51,4 @@ tags:
 
 ## Retirements/DNFs
 
-- Antonio Giovinazzi: +1 Lap (started P12)
-- Sebastian Vettel: +1 Lap (started P10)
-- Lance Stroll: +1 Lap (started P17)
-- Yuki Tsunoda: +1 Lap (started P14)
-- George Russell: +1 Lap (started P11)
-- Mick Schumacher: +2 Laps (started P19)
-- Nicholas Latifi: +2 Laps (started P18)
-- Nikita Mazepin: +2 Laps (started P20)
 - Kimi Räikkönen: Collision damage (started P15)

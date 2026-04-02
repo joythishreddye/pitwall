@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone
@@ -54,7 +54,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Kimi Räikkönen: +1 Lap (started P16)
 - Daniil Kvyat: Accident (started P19)
 - Kevin Magnussen: Collision (started P14)
 - Nico Hülkenberg: Power Unit (started P13)

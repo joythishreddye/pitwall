@@ -51,12 +51,6 @@ tags:
 
 ## Retirements/DNFs
 
-- Alexander Albon: Lapped (started P18)
-- Yuki Tsunoda: Lapped (started P11)
-- Guanyu Zhou: Lapped (started P15)
-- Lance Stroll: Lapped (started P13)
-- Jack Doohan: Lapped (started P17)
-- Kevin Magnussen: Lapped (started P14)
 - Liam Lawson: Retired (started P12)
 - Valtteri Bottas: Retired (started P9)
 - Franco Colapinto: Retired (started P20)
