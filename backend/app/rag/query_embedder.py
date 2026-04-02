@@ -14,8 +14,8 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 _MODEL_URL = (
-    "https://api-inference.huggingface.co"
-    "/models/BAAI/bge-base-en-v1.5"
+    "https://router.huggingface.co"
+    "/hf-inference/models/BAAI/bge-base-en-v1.5"
 )
 _QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 

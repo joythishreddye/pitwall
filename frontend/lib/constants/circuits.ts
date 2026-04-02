@@ -34,11 +34,11 @@ export const CIRCUIT_META: Record<string, CircuitMeta> = {
 };
 
 /** Match circuit by name substring (e.g. "Albert Park Grand Prix Circuit" matches "albert_park") */
-export function getCircuitMeta(circuitName: string): CircuitMeta | undefined {
+export function getCircuitMeta(circuitName: string): (CircuitMeta & { key: string }) | undefined {
   const lower = circuitName.toLowerCase();
   for (const [key, meta] of Object.entries(CIRCUIT_META)) {
     const words = key.split("_");
-    if (words.every(w => lower.includes(w))) return meta;
+    if (words.every(w => lower.includes(w))) return { ...meta, key };
   }
   return undefined;
 }

@@ -31,7 +31,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Championship Leader */}
         <Link
           href="/standings"
@@ -198,7 +198,7 @@ export default function HomePage() {
 
       {/* Recent Race Winners */}
       {pastRaces.length > 1 && (
-        <div className="mt-6 max-w-4xl">
+        <div className="mt-6">
           <div className="flex items-center gap-2 mb-3">
             <Flag className="h-4 w-4 text-f1-muted" />
             <span className="text-xs text-f1-muted uppercase tracking-wider">Recent Results</span>
@@ -213,7 +213,7 @@ export default function HomePage() {
 
       {/* Championship Progression */}
       {progression && progression.length > 0 && (
-        <div className="mt-6 max-w-4xl">
+        <div className="mt-6">
           <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="h-4 w-4 text-f1-muted" />

@@ -28,6 +28,11 @@ export function useDriverPhotos() {
   });
 }
 
+/** Upgrade F1 CDN URL to higher resolution (2col instead of 1col) */
+function upgradeResolution(url: string): string {
+  return url.replace("/1col/", "/2col/");
+}
+
 export function findHeadshotUrl(
   drivers: OpenF1Driver[] | undefined,
   opts: { surname?: string; number?: string | null },
@@ -36,7 +41,7 @@ export function findHeadshotUrl(
 
   if (opts.number) {
     const match = drivers.find(d => d.driver_number === Number(opts.number));
-    if (match?.headshot_url) return match.headshot_url;
+    if (match?.headshot_url) return upgradeResolution(match.headshot_url);
   }
 
   if (opts.surname) {
@@ -44,7 +49,7 @@ export function findHeadshotUrl(
     const match = drivers.find(d =>
       d.full_name.toLowerCase().includes(lower)
     );
-    if (match?.headshot_url) return match.headshot_url;
+    if (match?.headshot_url) return upgradeResolution(match.headshot_url);
   }
 
   return null;

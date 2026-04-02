@@ -58,10 +58,10 @@ export default function DriversPage() {
 
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <div className="flex items-baseline">
-                      <span className="text-f1-muted text-sm">{d.forename} </span>
-                      <span className="font-semibold uppercase text-sm">{d.surname}</span>
-                    </div>
+                    <p className="text-sm">
+                      <span className="text-f1-muted">{d.forename} </span>
+                      <span className="font-semibold uppercase">{d.surname}</span>
+                    </p>
                     <span className={cn(
                       "font-mono text-base font-bold",
                       d.position === 1 ? "text-f1-gold" : d.position <= 3 ? "text-f1-text" : "text-f1-muted/30"

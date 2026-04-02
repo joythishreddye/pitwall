@@ -38,9 +38,8 @@ export function DriverPhoto({
     <img
       src={src}
       alt={`${forename} ${surname}`}
-      width={size}
-      height={size}
       className="rounded-sm object-cover shrink-0"
+      style={{ width: size, height: size }}
       onError={() => setFailed(true)}
     />
   );

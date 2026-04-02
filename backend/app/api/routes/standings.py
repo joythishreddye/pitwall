@@ -260,56 +260,65 @@ def get_standings_progression(
     db: DB,
     top: Annotated[int, Query(ge=1, le=20)] = 5,
 ) -> list[DriverPointsProgression]:
-    """Return round-by-round championship points for the top N drivers in a season.
+    """Return round-by-round cumulative championship points for the top N drivers.
 
-    Designed to feed a line chart on the frontend.  Each entry contains parallel
-    ``rounds`` and ``points`` arrays (index-aligned) covering every round for
-    which standings data exists in the database.
+    Computes progression from race_results (which has per-race points for every
+    round including sprints) rather than standings (which may only store the
+    final round).
 
     Args:
         year: The F1 season year (e.g. 2024).
         db:   Injected Supabase client.
-        top:  Number of drivers to include (by final-round championship position).
+        top:  Number of drivers to include (by total season points).
               Must be between 1 and 20, defaults to 5.
-
-    Returns:
-        List of ``DriverPointsProgression`` objects sorted by final position
-        (championship leader first).  Returns an empty list when no standings
-        data exists for the requested year.
     """
-    latest = _latest_round(db, year)
-    if latest is None:
-        return []
-
-    # Single query — fetch all driver standings rows for the entire season.
-    all_rows_result = (
-        db.table("standings")
-        .select("round, entity_id, position, points")
+    # Fetch race IDs for the season, then get all results for those races.
+    season_races_result = (
+        db.table("races")
+        .select("id, round")
         .eq("season", year)
-        .eq("type", "driver")
         .order("round")
         .execute()
     )
-    all_rows: list[dict] = all_rows_result.data or []
-    if not all_rows:
+    season_races = season_races_result.data or []
+    if not season_races:
         return []
 
-    # Group rows by driver id, preserving round order (already ordered above).
-    rows_by_driver: dict[int, list[dict]] = defaultdict(list)
-    for row in all_rows:
-        rows_by_driver[int(row["entity_id"])].append(row)
+    season_race_ids = [r["id"] for r in season_races]
+    race_id_to_round: dict[int, int] = {r["id"]: r["round"] for r in season_races}
 
-    # Determine top-N driver ids from their position at the latest round.
-    latest_round_rows = [r for r in all_rows if r["round"] == latest]
-    latest_round_rows.sort(key=lambda r: r["position"])
-    top_driver_ids: list[int] = [
-        int(r["entity_id"]) for r in latest_round_rows[:top]
-    ]
+    race_results_data = (
+        db.table("race_results")
+        .select("driver_id, race_id, points")
+        .in_("race_id", season_race_ids)
+        .execute()
+    )
+    season_rows: list[dict] = race_results_data.data or []
+    if not season_rows:
+        return []
+
+    # Sum points per driver per round (sprints + race in same round).
+    points_by_driver: dict[int, dict[int, float]] = defaultdict(
+        lambda: defaultdict(float)
+    )
+    for row in season_rows:
+        did = row["driver_id"]
+        rnd = race_id_to_round[row["race_id"]]
+        pts = float(row.get("points") or 0)
+        points_by_driver[did][rnd] += pts
+
+    # Total points per driver to find the top N.
+    driver_totals = {
+        did: sum(rounds.values()) for did, rounds in points_by_driver.items()
+    }
+    top_driver_ids = sorted(
+        driver_totals, key=lambda d: driver_totals[d], reverse=True
+    )[:top]
 
     if not top_driver_ids:
         return []
 
-    # Fetch driver info (ref, surname) for top-N drivers in one query.
+    # Fetch driver info (ref, surname).
     drivers_result = (
         db.table("drivers")
         .select("id, ref, surname")
@@ -320,44 +329,42 @@ def get_standings_progression(
         int(d["id"]): d for d in (drivers_result.data or [])
     }
 
-    # Fetch constructor ref for each driver via race_results join.
-    # Filter to this season's races to get the correct constructor.
-    season_race_ids_result = (
-        db.table("races")
-        .select("id")
-        .eq("season", year)
-        .execute()
-    )
-    season_race_ids = [r["id"] for r in (season_race_ids_result.data or [])]
-
-    constructor_result = (
-        db.table("race_results")
-        .select("driver_id, constructors(ref)")
-        .in_("driver_id", top_driver_ids)
-        .in_("race_id", season_race_ids)
-        .execute()
-    ) if season_race_ids else type("R", (), {"data": []})()
+    # Fetch constructor ref for each driver (season-scoped, reuse season_race_ids).
     constructor_ref_map: dict[int, str] = {}
-    for rr in constructor_result.data or []:
-        did = int(rr["driver_id"])
-        c = rr.get("constructors")
-        if c and c.get("ref"):
-            constructor_ref_map[did] = c["ref"]
+    if season_race_ids:
+        constructor_result = (
+            db.table("race_results")
+            .select("driver_id, constructors(ref)")
+            .in_("driver_id", top_driver_ids)
+            .in_("race_id", season_race_ids)
+            .execute()
+        )
+        for rr in constructor_result.data or []:
+            did = int(rr["driver_id"])
+            c = rr.get("constructors")
+            if c and c.get("ref"):
+                constructor_ref_map[did] = c["ref"]
 
-    # Build progression objects in final-position order.
+    # Build cumulative progression for each top driver.
     result: list[DriverPointsProgression] = []
     for driver_id in top_driver_ids:
-        driver_rows = rows_by_driver.get(driver_id, [])
         driver_info = drivers_map.get(driver_id, {})
-        rounds = [int(r["round"]) for r in driver_rows]
-        points = [float(r["points"]) for r in driver_rows]
+        round_points = points_by_driver[driver_id]
+        sorted_rounds = sorted(round_points.keys())
+
+        cumulative: list[float] = []
+        running = 0.0
+        for rnd in sorted_rounds:
+            running += round_points[rnd]
+            cumulative.append(running)
+
         result.append(
             DriverPointsProgression(
                 driver_ref=driver_info.get("ref", ""),
                 surname=driver_info.get("surname", ""),
                 constructor_ref=constructor_ref_map.get(driver_id, ""),
-                rounds=rounds,
-                points=points,
+                rounds=sorted_rounds,
+                points=cumulative,
             )
         )
 

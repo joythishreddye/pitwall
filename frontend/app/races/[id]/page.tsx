@@ -75,6 +75,11 @@ export default function RaceDetailPage({
 
       {circuitMeta && (
         <div className="flex items-center gap-6 mb-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm">
+          <img
+            src={`/circuits/${circuitMeta.key}.svg`}
+            alt={`${race.circuit.name} layout`}
+            className="h-16 w-auto opacity-60 shrink-0"
+          />
           <div>
             <span className="text-[10px] text-f1-muted uppercase tracking-wider">Length</span>
             <p className="font-mono font-semibold">{circuitMeta.lengthKm} km</p>
