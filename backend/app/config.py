@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     debug: bool = False
     cors_origins: list[str] = [
         "http://localhost:3000",
+        "http://localhost:3001",
         "https://pitwall.vercel.app",
     ]
 

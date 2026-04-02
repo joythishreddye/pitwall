@@ -5,11 +5,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import drivers, races, seasons, standings
+from app.api.routes import chat, drivers, races, seasons, standings
 from app.config import settings
 from app.db.redis import get_redis, ping_redis
 from app.db.supabase import get_supabase, ping_supabase
 from app.llm.factory import create_llm
+from app.rag.embedder import Embedder
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Validate connections before accepting traffic
     ping_supabase()
     ping_redis()
+
+    # Preload embedding model (loaded once at startup per backend rules)
+    Embedder.get()
+
     logger.info("All connections verified — ready to serve")
 
     yield
@@ -51,6 +56,7 @@ app.include_router(seasons.router, prefix=API_PREFIX)
 app.include_router(races.router, prefix=API_PREFIX)
 app.include_router(standings.router, prefix=API_PREFIX)
 app.include_router(drivers.router, prefix=API_PREFIX)
+app.include_router(chat.router, prefix=API_PREFIX)
 
 
 @app.get("/health")

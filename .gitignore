@@ -34,6 +34,9 @@ htmlcov/
 backend/app/ml/models/*.lgbm
 backend/app/ml/models/*.bin
 
+# Sentence-transformers / HuggingFace model cache
+backend/models/
+
 # FastF1 cache
 fastf1_cache/
 

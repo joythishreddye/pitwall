@@ -9,7 +9,7 @@ from app.llm.base import LLMProvider, Message
 class GroqProvider(LLMProvider):
     """LLM provider backed by Groq's inference API."""
 
-    def __init__(self, model: str = "llama-3.1-70b-versatile") -> None:
+    def __init__(self, model: str = "llama-3.3-70b-versatile") -> None:
         self.client = AsyncGroq(api_key=settings.groq_api_key)
         self.model = model
 
