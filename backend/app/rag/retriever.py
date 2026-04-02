@@ -7,16 +7,23 @@ import json
 import logging
 import threading
 from dataclasses import dataclass
+from typing import Protocol
 
 from supabase import Client
 
 from app.llm.base import LLMProvider, Message
-from app.rag.embedder import Embedder
 from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 
 logger = logging.getLogger(__name__)
 
-# Module-level reranker singleton (matches Embedder.get() pattern)
+
+class SupportsEmbedQuery(Protocol):
+    """Any embedder that can embed a query string."""
+
+    def embed_query(self, query: str) -> list[float]: ...
+
+
+# Module-level reranker singleton
 _reranker = None
 _reranker_lock = threading.Lock()
 
@@ -50,7 +57,7 @@ class Retriever:
     """Three-stage RAG retrieval pipeline."""
 
     def __init__(
-        self, db: Client, llm: LLMProvider, embedder: Embedder,
+        self, db: Client, llm: LLMProvider, embedder: SupportsEmbedQuery,
     ) -> None:
         self.db = db
         self.llm = llm

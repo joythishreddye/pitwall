@@ -10,7 +10,6 @@ from app.config import settings
 from app.db.redis import get_redis, ping_redis
 from app.db.supabase import get_supabase, ping_supabase
 from app.llm.factory import create_llm
-from app.rag.embedder import Embedder
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +24,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Validate connections before accepting traffic
     ping_supabase()
     ping_redis()
-
-    # Preload embedding model (reranker lazy-loads on first chat request
-    # to stay within Render's 512MB memory limit at startup)
-    Embedder.get()
 
     logger.info("All connections verified — ready to serve")
 

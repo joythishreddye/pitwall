@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     groq_api_key: str | None = None
     anthropic_api_key: str | None = None
 
+    # Embeddings (HuggingFace Inference API for query-time embedding)
+    huggingface_api_token: str | None = None
+
     # Data ingestion
     fastf1_cache_dir: str = "fastf1_cache"
 

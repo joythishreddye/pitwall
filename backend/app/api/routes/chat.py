@@ -14,8 +14,8 @@ from supabase import Client
 
 from app.db.supabase import get_supabase
 from app.llm.base import LLMProvider, Message
-from app.rag.embedder import Embedder
 from app.rag.prompt import build_rag_prompt
+from app.rag.query_embedder import QueryEmbedder
 from app.rag.retriever import Retriever
 
 logger = logging.getLogger(__name__)
@@ -163,7 +163,7 @@ def _detect_knowledge_level(message: str) -> str:
 @router.post("")
 async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
     """Stream a RAG-powered chat response via SSE."""
-    embedder = Embedder.get()
+    embedder = QueryEmbedder()
     retriever = Retriever(db=db, llm=llm, embedder=embedder)
 
     # 1. Retrieve relevant context via 3-stage RAG
