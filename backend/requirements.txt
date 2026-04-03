@@ -24,8 +24,8 @@ groq==0.25.0
 fastf1==3.5.3
 httpx==0.28.1
 
-# Embeddings & RAG
-sentence-transformers==4.1.0
+# Embeddings & RAG (installed locally for ingestion, not on Render)
+# sentence-transformers==4.1.0
 
 # Testing
 pytest==8.3.5

@@ -5,44 +5,28 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import threading
 from dataclasses import dataclass
 from typing import Protocol
 
+import httpx
 from supabase import Client
 
+from app.config import settings
 from app.llm.base import LLMProvider, Message
 from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 
 logger = logging.getLogger(__name__)
+
+_RERANKER_URL = (
+    "https://router.huggingface.co"
+    "/hf-inference/models/BAAI/bge-reranker-base"
+)
 
 
 class SupportsEmbedQuery(Protocol):
     """Any embedder that can embed a query string."""
 
     def embed_query(self, query: str) -> list[float]: ...
-
-
-# Module-level reranker singleton
-_reranker = None
-_reranker_lock = threading.Lock()
-
-
-def _get_reranker():
-    """Return the cross-encoder singleton, loading on first call."""
-    global _reranker
-    if _reranker is None:
-        with _reranker_lock:
-            if _reranker is None:
-                from sentence_transformers import CrossEncoder
-
-                logger.info("Loading cross-encoder reranker")
-                _reranker = CrossEncoder(
-                    "cross-encoder/ms-marco-MiniLM-L-6-v2",
-                    max_length=512,
-                )
-                logger.info("Cross-encoder loaded")
-    return _reranker
 
 
 @dataclass
@@ -156,20 +140,25 @@ class Retriever:
         chunks: list[RetrievedChunk],
         top_k: int = 5,
     ) -> list[RetrievedChunk]:
-        """Stage 3: Cross-encoder reranking of candidate chunks."""
+        """Stage 3: Cross-encoder reranking via HuggingFace Inference API."""
         if not chunks:
             return []
 
         if len(chunks) <= top_k:
             return chunks
 
-        pairs = [(query, chunk.content) for chunk in chunks]
-        scores = await asyncio.to_thread(_get_reranker().predict, pairs)
+        try:
+            scores = await self._hf_rerank(query, chunks)
+        except (httpx.HTTPError, KeyError, ValueError) as exc:
+            logger.warning(
+                "HuggingFace reranker unavailable (%s), skipping rerank", exc,
+            )
+            return chunks[:top_k]
 
         scored = list(zip(chunks, scores, strict=True))
         scored.sort(key=lambda x: x[1], reverse=True)
 
-        reranked = [chunk for chunk, _ in scored[:top_k]]
+        reranked = [chunk for chunk, _score in scored[:top_k]]
         logger.info(
             "Reranked %d → %d chunks (top score: %.3f)",
             len(chunks),
@@ -177,6 +166,32 @@ class Retriever:
             scored[0][1] if scored else 0,
         )
         return reranked
+
+    async def _hf_rerank(
+        self, query: str, chunks: list[RetrievedChunk],
+    ) -> list[float]:
+        """Call HuggingFace Inference API for cross-encoder scoring."""
+        token = settings.huggingface_api_token
+        headers = {"Authorization": f"Bearer {token}"}
+        payload = {
+            "inputs": [
+                {"text": query, "text_pair": c.content}
+                for c in chunks
+            ],
+        }
+
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.post(
+                _RERANKER_URL, headers=headers, json=payload,
+            )
+            resp.raise_for_status()
+
+        # Response: [[{"label": "LABEL_0", "score": float}, ...]]
+        data = resp.json()
+        results = data[0] if isinstance(data[0], list) else data
+        if len(results) != len(chunks):
+            raise ValueError(f"Unexpected reranker response length: {len(results)}")
+        return [item["score"] for item in results]
 
     async def retrieve(self, query: str) -> list[RetrievedChunk]:
         """Full 3-stage pipeline: classify → search → rerank."""
