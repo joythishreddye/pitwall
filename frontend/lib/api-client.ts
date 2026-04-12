@@ -28,6 +28,7 @@ class ApiClient {
     const response = await fetch(url, {
       ...fetchOptions,
       method: "GET",
+      signal: fetchOptions.signal ?? AbortSignal.timeout(5000),
       headers: {
         "Content-Type": "application/json",
         ...fetchOptions.headers,
@@ -48,6 +49,7 @@ class ApiClient {
     const response = await fetch(url, {
       ...fetchOptions,
       method: "POST",
+      signal: fetchOptions.signal ?? AbortSignal.timeout(5000),
       headers: {
         "Content-Type": "application/json",
         ...fetchOptions.headers,
