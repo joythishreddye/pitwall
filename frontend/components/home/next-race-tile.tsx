@@ -2,8 +2,9 @@
 
 import { Calendar } from "lucide-react";
 import { StatusDot } from "@/components/ui/status-dot";
+import { DrawPath } from "@/components/ui/draw-path";
 import { useCountdown } from "@/lib/hooks/use-countdown";
-import { getCircuitMeta } from "@/lib/constants/circuits";
+import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import type { RaceCalendarItem } from "@/lib/schemas/races";
 
 interface NextRaceTileProps {
@@ -24,14 +25,15 @@ export function NextRaceTile({ race }: NextRaceTileProps) {
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid h-full">
-      {/* Circuit SVG ambient background — centered vertically, bleeds ~10% off the right edge */}
-      {circuitKey && (
-        <img
-          src={`/circuits/${circuitKey}.svg`}
-          alt=""
-          aria-hidden="true"
-          className="absolute right-0 top-1/2 h-[100%] w-auto pointer-events-none select-none"
-          style={{ opacity: 0.15, transform: "translateY(-50%) translateX(-5%)" }}
+      {/* DrawPath circuit outline — draws itself as ambient background */}
+      {circuitKey && circuitPaths[circuitKey] && (
+        <DrawPath
+          d={circuitPaths[circuitKey].d}
+          viewBox={circuitPaths[circuitKey].viewBox}
+          color="var(--color-f1-cyan)"
+          duration={2.5}
+          delay={0.6}
+          className="absolute inset-0 w-full h-full opacity-[0.13] pointer-events-none"
         />
       )}
 

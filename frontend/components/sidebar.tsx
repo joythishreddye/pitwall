@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CURRENT_SEASON } from "@/lib/constants/season";
@@ -15,6 +16,7 @@ import {
   Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home", shortLabel: "Home", icon: Home },
@@ -35,11 +37,72 @@ function isActive(pathname: string, href: string): boolean {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const sidebarRef = useRef<HTMLElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const hasPositioned = useRef(false);
+
+  // Entrance stagger — runs once on mount
+  useGSAP(
+    () => {
+      if (respectsReducedMotion()) return;
+      gsap.from(".nav-item", {
+        x: -20,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 0.4,
+        ease: "pitwall-accel",
+        delay: 0.1,
+      });
+    },
+    { scope: sidebarRef }
+  );
+
+  // Sliding active indicator — follows route changes
+  useGSAP(
+    () => {
+      if (!navRef.current || !indicatorRef.current) return;
+
+      const activeIndex = NAV_ITEMS.findIndex(({ href }) => isActive(pathname, href));
+      if (activeIndex === -1) return;
+
+      const items = navRef.current.querySelectorAll(".nav-item");
+      const activeItem = items[activeIndex] as HTMLElement | undefined;
+      if (!activeItem) return;
+
+      const newTop = activeItem.offsetTop;
+      const newHeight = activeItem.offsetHeight;
+
+      // Always snap height immediately — only top slides
+      gsap.set(indicatorRef.current, { height: newHeight });
+
+      if (!hasPositioned.current) {
+        gsap.set(indicatorRef.current, { top: newTop });
+        hasPositioned.current = true;
+        return;
+      }
+
+      if (respectsReducedMotion()) {
+        gsap.set(indicatorRef.current, { top: newTop });
+        return;
+      }
+
+      gsap.to(indicatorRef.current, {
+        top: newTop,
+        duration: 0.25,
+        ease: "pitwall-accel",
+      });
+    },
+    { scope: sidebarRef, dependencies: [pathname] }
+  );
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="fixed left-0 top-0 z-30 h-screen w-56 border-r border-f1-grid bg-f1-dark-2 flex-col hidden md:flex">
+      <aside
+        ref={sidebarRef}
+        className="fixed left-0 top-0 z-30 h-screen w-56 border-r border-f1-grid bg-f1-dark-2 flex-col hidden md:flex"
+      >
         {/* Logo / wordmark */}
         <Link
           href="/"
@@ -61,8 +124,18 @@ export function Sidebar() {
           <p className="text-[10px] font-data text-f1-muted tracking-widest uppercase">Navigation</p>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-2 py-1 space-y-px overflow-y-auto">
+        {/* Navigation — relative so the absolute indicator positions against it */}
+        <nav
+          ref={navRef}
+          className="flex-1 px-2 py-1 space-y-px overflow-y-auto relative"
+        >
+          {/* Sliding active indicator — absolutely positioned 2px left bar */}
+          <div
+            ref={indicatorRef}
+            className="absolute left-0 w-0.5 bg-f1-red pointer-events-none z-10"
+            aria-hidden="true"
+          />
+
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = isActive(pathname, href);
             return (
@@ -71,10 +144,10 @@ export function Sidebar() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group flex items-center gap-3 px-3 py-2 text-sm transition-colors duration-100 cursor-pointer border-l-2",
+                  "nav-item group flex items-center gap-3 px-3 py-2 text-sm transition-colors duration-100 cursor-pointer border-l-2 border-transparent",
                   active
-                    ? "bg-f1-dark-3 text-f1-text border-f1-red"
-                    : "text-f1-muted hover:text-f1-text hover:bg-f1-dark-3 border-transparent"
+                    ? "bg-f1-dark-3 text-f1-text"
+                    : "text-f1-muted hover:text-f1-text hover:bg-f1-dark-3"
                 )}
               >
                 <Icon

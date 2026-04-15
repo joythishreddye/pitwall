@@ -1,10 +1,51 @@
+"use client";
+
+import { useRef } from "react";
 import Link from "next/link";
-import { Flag } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
+import { DrawPath } from "@/components/ui/draw-path";
+import { SplitReveal } from "@/components/ui/split-reveal";
+import { circuitPaths } from "@/lib/constants/circuits";
 
 export default function NotFound() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // GSAP master timeline — subtitle, error code, CTA enter after DNF reveal
+  useGSAP(
+    () => {
+      if (respectsReducedMotion()) return;
+
+      // Set initial hidden/offset state, then gsap.to animates to final
+      gsap.set(".error-subtitle", { opacity: 0, y: 8 });
+      gsap.set(".error-code", { opacity: 0 });
+      gsap.set(".error-cta", { opacity: 0, x: -8 });
+
+      const tl = gsap.timeline({ delay: 1.2 });
+      tl.to(".error-subtitle", { opacity: 1, y: 0, duration: 0.3, ease: "pitwall-accel" })
+        .to(".error-code", { opacity: 1, duration: 0.2 }, "-=0.1")
+        .to(".error-cta", { opacity: 1, x: 0, duration: 0.25, ease: "pitwall-accel" }, "-=0.05");
+    },
+    { scope: containerRef }
+  );
+
   return (
-    <div className="flex flex-col items-start justify-center min-h-[60vh] p-8 relative overflow-hidden">
-      {/* Background: circuit grid SVG watermark */}
+    <div
+      ref={containerRef}
+      className="flex flex-col items-start justify-center min-h-[60vh] p-8 relative overflow-hidden"
+    >
+      {/* Suzuka circuit — draws itself over 4s as ambient background */}
+      <DrawPath
+        d={circuitPaths.suzuka.d}
+        viewBox={circuitPaths.suzuka.viewBox}
+        color="var(--color-f1-cyan)"
+        duration={4}
+        delay={0}
+        loop={false}
+        className="absolute inset-0 w-full h-full opacity-[0.18] pointer-events-none"
+      />
+
+      {/* Background grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
         aria-hidden="true"
@@ -17,45 +58,32 @@ export default function NotFound() {
         }}
       />
 
-      {/* DNF badge */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="h-8 w-8 border border-f1-red bg-f1-red/10 flex items-center justify-center shrink-0">
-          <Flag className="h-4 w-4 text-f1-red" />
-        </div>
-        <div>
-          <p className="text-[10px] font-data text-f1-red tracking-widest uppercase">
-            404 — Did Not Finish
-          </p>
-          <h1 className="text-4xl font-heading font-bold text-f1-text tracking-tight leading-none">
-            DNF
-          </h1>
-        </div>
-      </div>
+      {/* DNF — SplitReveal char by char, large display text */}
+      <SplitReveal
+        text="DNF"
+        type="chars"
+        stagger={0.1}
+        delay={0.5}
+        tag="h1"
+        className="font-heading text-[20vw] font-black text-f1-text leading-none relative z-10 mb-4"
+      />
 
-      {/* Message */}
-      <div className="border border-f1-grid bg-f1-dark-2 p-4 mb-6 max-w-md">
-        <p className="text-[10px] font-data text-f1-muted tracking-widest uppercase mb-1">
-          Race Control
-        </p>
-        <p className="text-sm text-f1-text">
-          This page did not finish the race. It may have been retired, moved, or never
-          made it to the grid.
-        </p>
-      </div>
+      {/* PAGE NOT FOUND subtitle */}
+      <p className="error-subtitle font-heading text-lg font-semibold text-f1-muted tracking-widest uppercase relative z-10 mb-2">
+        Page Not Found
+      </p>
 
-      {/* Telemetry lines */}
-      <div className="space-y-1 mb-8 font-data text-[11px] text-f1-muted">
-        <p>▸ Route not found in system</p>
-        <p>▸ Safety car deployed</p>
-        <p>▸ Race engineer recommends returning to home</p>
-      </div>
+      {/* Error code */}
+      <p className="error-code font-data text-xs text-f1-muted/70 tracking-widest relative z-10 mb-8">
+        ERR_404 // SESSION_ABORTED
+      </p>
 
-      {/* Back to home */}
+      {/* Return to pits CTA */}
       <Link
         href="/"
-        className="flex items-center gap-2 px-4 py-2 border border-f1-red bg-f1-red/10 text-f1-red text-sm font-data tracking-wide transition-colors duration-100 hover:bg-f1-red/20 cursor-pointer"
+        className="error-cta flex items-center gap-2 px-4 py-2 border border-f1-red bg-f1-red/10 text-f1-red text-sm font-data tracking-wide transition-colors duration-100 hover:bg-f1-red/20 cursor-pointer relative z-10"
       >
-        <Flag className="h-3.5 w-3.5" />
+        <ArrowLeft className="h-3.5 w-3.5" />
         RETURN TO PITS
       </Link>
     </div>

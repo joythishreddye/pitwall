@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { NumberCounter } from "@/components/ui/number-counter";
+import { SplitReveal } from "@/components/ui/split-reveal";
 import { getTeamHexColor } from "@/lib/constants/teams";
 import { useDriverPhotos, findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
 import type { DriverStanding } from "@/lib/schemas/standings";
@@ -75,10 +76,17 @@ export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) 
             <span className="text-f1-muted text-sm font-sans">{leader.constructor_name}</span>
           </div>
 
-          {/* Name */}
+          {/* Name — forename static, surname SplitReveal char-by-char */}
           <div className="mb-3">
             <span className="text-f1-muted font-heading text-xl font-medium">{leader.forename} </span>
-            <span className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight">{leader.surname}</span>
+            <SplitReveal
+              text={leader.surname.toUpperCase()}
+              type="chars"
+              stagger={0.04}
+              delay={0.4}
+              tag="span"
+              className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight"
+            />
           </div>
 
           {/* Points + wins */}
