@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useMotionValue, animate } from "motion/react";
+import { useRef, useState } from "react";
+import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 
 interface NumberCounterProps {
@@ -19,24 +19,32 @@ export function NumberCounter({
   duration = 0.8,
   className,
 }: NumberCounterProps) {
-  // Starts at 0 — animates to value on mount, then between values on updates
-  const count = useMotionValue(0);
-  const [display, setDisplay] = useState("0");
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(value.toFixed(decimals));
+  const obj = useRef({ val: value });
 
-  useEffect(() => {
-    return count.on("change", (v) => setDisplay(v.toFixed(decimals)));
-  }, [count, decimals]);
+  useGSAP(
+    () => {
+      if (respectsReducedMotion()) {
+        setDisplay(value.toFixed(decimals));
+        obj.current.val = value;
+        return;
+      }
 
-  useEffect(() => {
-    const controls = animate(count, value, {
-      duration,
-      ease: "easeOut",
-    });
-    return () => controls.stop();
-  }, [value, duration, count]);
+      gsap.to(obj.current, {
+        val: value,
+        duration,
+        ease: "pitwall-accel",
+        onUpdate() {
+          setDisplay(obj.current.val.toFixed(decimals));
+        },
+      });
+    },
+    { scope: containerRef, dependencies: [value, decimals, duration] }
+  );
 
   return (
-    <span className={cn("font-data", className)}>
+    <span ref={containerRef} className={cn("font-data", className)}>
       {display}
     </span>
   );

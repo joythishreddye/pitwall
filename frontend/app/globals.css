@@ -94,16 +94,6 @@ body {
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
-/* ── Scanner line animation ── */
-@keyframes scanner-sweep {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(400%); }
-}
-
-.scanner-line {
-  animation: scanner-sweep 2s ease-in-out infinite;
-}
-
 /* ── Grid-line background (engineering drawing aesthetic) ── */
 @utility bg-grid-lines {
   background-image:

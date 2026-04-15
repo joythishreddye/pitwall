@@ -222,22 +222,98 @@ Fallback: f1-muted when team not found
 
 ## Animation
 
-### Engine: Framer Motion
+### Engine Split: GSAP (primary) + Framer Motion (secondary)
 
-- Use `LazyMotion` with `domAnimation` feature bundle (not `domMax`) for smaller bundles
-- Wrap app in `<LazyMotion features={domAnimation}>` in layout
+| Library | Owns |
+|---------|------|
+| **GSAP** | DrawSVG circuit outlines, SplitText character reveals, CustomEase counters, Flip layout reordering, ScrollTrigger scroll choreography, complex timelines, MotionPath |
+| **Framer Motion** | `AnimatePresence` route exit animations, `whileHover`/`whileTap` micro-states on the `Card` primitive only |
+
+Never use Framer Motion for new complex animations — add them to GSAP timelines.
+
+---
+
+### GSAP Animation System
+
+**Plugin registration:** `frontend/lib/gsap.ts` — always import from here, never directly from `gsap/*`.
+
+```ts
+import { gsap, useGSAP, DrawSVGPlugin, SplitText, ScrollTrigger, Flip, CustomEase } from "@/lib/gsap"
+```
+
+**Registered plugins:** `DrawSVGPlugin`, `SplitText`, `ScrollTrigger`, `Flip`, `MotionPathPlugin`, `CustomEase`, `useGSAP`
+
+#### Custom Eases (F1 physics metaphors)
+
+| Name | SVG curve | F1 metaphor |
+|------|-----------|-------------|
+| `pitwall-accel` | `M0,0 C0.05,0 0.133,0.6 0.3,0.8 0.467,1 0.667,1 1,1` | Engine on-throttle — fast start, smooth settle at rev limiter |
+| `pitwall-brake` | `M0,0 C0.333,0 0.533,0.4 0.6,0.7 0.733,1 1,1` | Trail braking — gradual start, sharp end into corner |
+| `pitwall-pulse` | `M0,0.5 C0.25,0.5 0.4,0 0.5,0 0.6,0 0.75,0.5 1,0.5` | Symmetric pulse for status indicators |
+
+#### useGSAP pattern (mandatory)
+
+Every GSAP animation inside a React component **must** use `useGSAP` with a `scope` ref. This ensures automatic cleanup on unmount.
+
+```ts
+const containerRef = useRef<HTMLDivElement>(null)
+useGSAP(() => {
+  gsap.from(".my-element", { opacity: 0, duration: 0.3, ease: "pitwall-accel" })
+}, { scope: containerRef, dependencies: [value] })
+```
+
+Never call `gsap.to/from/timeline()` directly inside `useEffect` — memory leaks.
+
+#### Reduced motion
+
+Always check before running animations:
+
+```ts
+import { respectsReducedMotion } from "@/lib/gsap"
+
+useGSAP(() => {
+  if (respectsReducedMotion()) return   // skip — browser already handles static state
+  // ... animation
+})
+```
+
+Fallbacks by type:
+- **SplitReveal**: text visible immediately, no stagger
+- **DrawPath**: path drawn immediately at full opacity
+- **NumberCounter**: snaps to final value instantly
+- **ScannerLine**: stopped via `paused={true}` prop
+
+#### Rules
+
+- **Transforms only** — never animate `width`, `height`, `top`, `left` (causes layout reflow)
+- **useGSAP everywhere** — no GSAP calls outside `useGSAP` hooks
+- **ScrollTrigger.refresh()** after dynamic content loads that shifts layout
+- **Cleanup**: `useGSAP` ctx.revert() handles kills automatically; SplitText must call `split.revert()` in the cleanup return
+
+#### Reusable GSAP primitives
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `DrawPath` | `components/ui/draw-path.tsx` | DrawSVG circuit outline animation |
+| `SplitReveal` | `components/ui/split-reveal.tsx` | SplitText character/word/line reveal |
+| `NumberCounter` | `components/ui/number-counter.tsx` | GSAP pitwall-accel counter |
+| `ScannerLine` | `components/ui/scanner-line.tsx` | GSAP timeline scanner (pausable) |
+
+---
 
 ### Timing
 
 | Type | Duration | Easing | Notes |
 |------|----------|--------|-------|
-| Page transition | 200ms | ease-out | opacity + translateY(8px → 0) |
-| Data update | 150ms | ease-out | Number counter, stat changes |
-| Hover/focus | 100ms | ease-out | Background color, border color |
-| Scanner line | 2000ms | ease-in-out | Continuous loop |
-| StatusDot pulse | 2000ms | ease-in-out | Continuous loop |
+| Page transition | 200ms | ease-out | Framer Motion AnimatePresence |
+| Data update | 150ms | pitwall-accel | GSAP NumberCounter |
+| Hover/focus | 100ms | ease-out | CSS / Framer whileHover |
+| Scanner line | 1800ms | none (linear) | GSAP timeline, repeat -1 |
+| StatusDot pulse | 2000ms | sine.inOut | GSAP, repeat -1 |
+| Circuit DrawSVG | 2500ms | pitwall-accel | GSAP DrawSVGPlugin |
+| Text reveal | 300ms + stagger | pitwall-accel | GSAP SplitText |
 
-### Page Transition Variant
+### Page Transition Variant (Framer Motion — unchanged)
 
 ```typescript
 const pageTransition = {
@@ -254,6 +330,8 @@ const pageTransition = {
 - No bounce (too casual)
 - No overshoot (too dramatic)
 - No stagger delays > 50ms per item (feels slow)
+- No GSAP outside `useGSAP` (memory leaks)
+- No `width`/`height` animation (layout reflow)
 
 ---
 
