@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { NumberCounter } from "@/components/ui/number-counter";
-import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
+import { getTeamHexColor } from "@/lib/constants/teams";
 import { useDriverPhotos, findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
 import type { DriverStanding } from "@/lib/schemas/standings";
 
@@ -13,7 +13,6 @@ interface ChampionshipLeaderTileProps {
 
 export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) {
   const { data: driverPhotos } = useDriverPhotos();
-  const teamColor = getTeamColor(leader.constructor_name ?? "");
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
   const photoUrl = findHeadshotUrl(driverPhotos, {
@@ -24,42 +23,30 @@ export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) 
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid group cursor-pointer h-full">
       <Link href="/standings" className="absolute inset-0 z-10" aria-label={`Championship leader: ${leader.forename} ${leader.surname}`} />
 
-      {/* Team color top bar */}
-      <div className="absolute top-0 left-0 right-0 h-0.5" style={{ backgroundColor: teamHex }} />
+      {/* Team color top bar — z-[6] to sit above the photo layer */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 z-[6]" style={{ backgroundColor: teamHex }} />
 
-      {/* Photo background — fills right side */}
+      {/* Driver photo — bottom-anchored portrait, natural proportions */}
       {photoUrl && (
-        <div className="absolute right-0 top-0 bottom-0 w-2/3 overflow-hidden pointer-events-none">
-          {/* Grayscale driver image */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Image sits at bottom-right, full natural height, no stretching */}
           <img
             src={photoUrl}
             alt={`${leader.forename} ${leader.surname}`}
-            className="absolute right-0 top-0 h-full w-full object-cover object-top"
-            style={{ filter: "grayscale(100%) contrast(1.1) brightness(0.85)" }}
+            className="absolute bottom-0 right-0 max-h-[90%] w-auto h-auto"
+            style={{ opacity: 0.65 }}
           />
-          {/* Team color duotone overlay */}
+          {/* Left gradient — blends into card text area */}
           <div
             className="absolute inset-0"
             style={{
-              backgroundColor: teamHex,
-              mixBlendMode: "multiply",
-              opacity: 0.25,
+              background: "linear-gradient(to right, #1A1A1A 0%, #1A1A1A 20%, rgba(26,26,26,0.75) 50%, transparent 75%)",
             }}
           />
-          {/* Scan-line texture */}
+          {/* Bottom gradient — grounds the image into the card */}
           <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.12) 1px, rgba(0,0,0,0.12) 2px)",
-              backgroundSize: "100% 2px",
-            }}
-          />
-          {/* Left gradient fade */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to right, #1A1A1A 0%, #1A1A1A 15%, transparent 55%)",
-            }}
+            className="absolute inset-x-0 bottom-0 h-1/4"
+            style={{ background: "linear-gradient(to top, #1A1A1A, transparent)" }}
           />
         </div>
       )}

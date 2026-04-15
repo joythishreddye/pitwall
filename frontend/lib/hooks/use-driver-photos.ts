@@ -28,9 +28,9 @@ export function useDriverPhotos() {
   });
 }
 
-/** Upgrade F1 CDN URL to higher resolution (2col instead of 1col) */
+/** Upgrade F1 CDN URL to higher resolution (4col for dashboard use) */
 function upgradeResolution(url: string): string {
-  return url.replace("/1col/", "/2col/");
+  return url.replace("/1col/", "/4col/").replace("/2col/", "/4col/");
 }
 
 export function findHeadshotUrl(

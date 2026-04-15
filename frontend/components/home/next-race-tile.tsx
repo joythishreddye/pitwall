@@ -24,14 +24,14 @@ export function NextRaceTile({ race }: NextRaceTileProps) {
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid h-full">
-      {/* Circuit SVG ambient background */}
+      {/* Circuit SVG ambient background — centered vertically, bleeds ~10% off the right edge */}
       {circuitKey && (
         <img
           src={`/circuits/${circuitKey}.svg`}
           alt=""
           aria-hidden="true"
-          className="absolute right-0 bottom-0 h-[130%] w-auto pointer-events-none select-none"
-          style={{ opacity: 0.06, transform: "translate(15%, 15%)" }}
+          className="absolute right-0 top-1/2 h-[100%] w-auto pointer-events-none select-none"
+          style={{ opacity: 0.15, transform: "translateY(-50%) translateX(-5%)" }}
         />
       )}
 
