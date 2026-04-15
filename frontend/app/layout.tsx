@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { Sidebar } from "@/components/sidebar";
+import { Topbar } from "@/components/topbar";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -38,9 +39,14 @@ export default function RootLayout({
     >
       <body className="h-full bg-f1-dark text-f1-text">
         <Providers>
+          {/* Sidebar: fixed on desktop, bottom tab bar on mobile (rendered inside Sidebar) */}
           <Sidebar />
-          <main className="ml-56 min-h-screen">
-            {children}
+          {/* Main content: offset by sidebar on desktop, bottom tab bar on mobile */}
+          <main className="ml-0 md:ml-56 min-h-screen pb-14 md:pb-0 flex flex-col">
+            <Topbar />
+            <div className="flex-1">
+              {children}
+            </div>
           </main>
         </Providers>
       </body>
