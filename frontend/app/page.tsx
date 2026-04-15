@@ -1,276 +1,135 @@
 "use client";
 
-import Link from "next/link";
-import { Trophy, Flag, Calendar, TrendingUp, BarChart3 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { getTeamColor } from "@/lib/constants/teams";
+import { m } from "motion/react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
-import { useRaceCalendar, useRaceDetail } from "@/lib/hooks/use-races";
-import { ChampionshipChart } from "@/components/championship-chart";
+import { useRaceCalendar } from "@/lib/hooks/use-races";
+import { ScannerLine } from "@/components/ui/scanner-line";
+import {
+  ChampionshipLeaderTile,
+  ConstructorLeaderTile,
+  NextRaceTile,
+  Top5Strip,
+  RecentResultsTimeline,
+  ChartPreview,
+} from "@/components/home";
+
+/** Stagger container — direct m.div children pick up staggerChildren timing */
+const gridVariants = {
+  initial: {},
+  animate: {
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+/** Shared per-tile enter animation — applied to each m.div wrapper in the grid */
+const tileVariant = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" as const } },
+};
 
 export default function HomePage() {
-  const { data: standings } = useStandings(CURRENT_SEASON);
-  const { data: races } = useRaceCalendar(CURRENT_SEASON);
+  const { data: standings, isLoading: standingsLoading } = useStandings(CURRENT_SEASON);
+  const { data: races, isLoading: racesLoading } = useRaceCalendar(CURRENT_SEASON);
   const { data: progression } = useStandingsProgression(CURRENT_SEASON);
+
+  const isLoading = standingsLoading || racesLoading;
 
   const leader = standings?.driver_standings?.[0];
   const constructorLeader = standings?.constructor_standings?.[0];
 
   const now = new Date();
-  const pastRaces = races?.filter((r) => new Date(r.date + "T00:00:00") < now) ?? [];
-  const lastRace = pastRaces[pastRaces.length - 1];
-  const nextRace = races?.find((r) => new Date(r.date + "T00:00:00") >= now);
+  const pastRaces = races?.filter((r) => r.date && new Date(r.date + "T00:00:00") < now) ?? [];
+  const nextRace = races?.find((r) => r.date && new Date(r.date + "T00:00:00") >= now);
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">PitWall</h1>
-        <p className="text-f1-muted text-sm mt-1">
-          {CURRENT_SEASON} Season{standings ? ` — Round ${standings.round}` : ""}
-        </p>
-      </div>
+    <div className="relative min-h-screen">
+      {/* Grid-line background */}
+      <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Championship Leader */}
-        <Link
-          href="/standings"
-          className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150"
+      {/* Content */}
+      <div className="relative p-6 md:p-8 space-y-3">
+        {/* Page header */}
+        <div className="mb-6">
+          <h1 className="font-heading text-2xl font-bold text-f1-text tracking-tight">Race Control</h1>
+          <p className="text-f1-muted text-sm mt-0.5 font-data">
+            {CURRENT_SEASON} Season
+            {standings ? ` — After Round ${standings.round}` : ""}
+          </p>
+        </div>
+
+        {/* Global loading scanner */}
+        {isLoading && <ScannerLine className="mb-4" />}
+
+        {/* Bento grid — each m.div is a direct child so staggerChildren works */}
+        <m.div
+          variants={gridVariants}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 md:grid-cols-4 gap-3"
         >
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="h-4 w-4 text-f1-gold" />
-            <span className="text-xs text-f1-muted uppercase tracking-wider">Championship Leader</span>
-          </div>
+          {/* Championship Leader — 2 cols wide, 2 rows tall */}
           {leader ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-0.5 h-8 rounded-sm"
-                  style={{ backgroundColor: getTeamColor(leader.constructor_name ?? "") }}
-                />
-                <div>
-                  <p className="font-semibold">
-                    <span className="text-f1-muted font-normal">{leader.forename} </span>
-                    <span className="uppercase">{leader.surname}</span>
-                  </p>
-                  <p className="text-xs text-f1-muted">{leader.constructor_name}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono text-2xl font-bold">{Math.floor(leader.points)}</p>
-                <p className="text-xs text-f1-muted font-mono">{leader.wins} wins</p>
-              </div>
-            </div>
+            <m.div variants={tileVariant} className="md:col-span-2 md:row-span-2">
+              <ChampionshipLeaderTile leader={leader} />
+            </m.div>
           ) : (
-            <div className="h-10 bg-f1-grid/30 rounded-sm animate-pulse" />
+            <SkeletonTile className="md:col-span-2 md:row-span-2 min-h-[200px]" />
           )}
-        </Link>
 
-        {/* Constructor Leader */}
-        <Link
-          href="/standings"
-          className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-f1-cyan" />
-            <span className="text-xs text-f1-muted uppercase tracking-wider">Constructor Leader</span>
-          </div>
+          {/* Constructor Leader */}
           {constructorLeader ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-0.5 h-8 rounded-sm"
-                  style={{ backgroundColor: getTeamColor(constructorLeader.constructor_ref) }}
-                />
-                <div>
-                  <p className="font-semibold">{constructorLeader.name}</p>
-                  <p className="text-xs text-f1-muted">{constructorLeader.nationality}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-mono text-2xl font-bold">{Math.floor(constructorLeader.points)}</p>
-                <p className="text-xs text-f1-muted font-mono">{constructorLeader.wins} wins</p>
-              </div>
-            </div>
+            <m.div variants={tileVariant} className="md:col-span-2">
+              <ConstructorLeaderTile leader={constructorLeader} />
+            </m.div>
           ) : (
-            <div className="h-10 bg-f1-grid/30 rounded-sm animate-pulse" />
+            <SkeletonTile className="md:col-span-2" />
           )}
-        </Link>
 
-        {/* Last Race */}
-        {lastRace && (
-          <Link
-            href={`/races/${lastRace.id}`}
-            className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Flag className="h-4 w-4 text-f1-red" />
-              <span className="text-xs text-f1-muted uppercase tracking-wider">Last Race</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold">{lastRace.name}</p>
-                <p className="text-xs text-f1-muted">{lastRace.circuit.name} — Round {lastRace.round}</p>
-              </div>
-              <span className="font-mono text-xs text-f1-muted">{lastRace.date}</span>
-            </div>
-            <LastRaceWinner raceId={lastRace.id} />
-          </Link>
-        )}
+          {/* Next Race */}
+          {nextRace ? (
+            <m.div variants={tileVariant} className="md:col-span-2">
+              <NextRaceTile race={nextRace} />
+            </m.div>
+          ) : (
+            <SkeletonTile className="md:col-span-2" />
+          )}
 
-        {/* Next Race */}
-        {nextRace ? (
-          (() => {
-            const raceDate = new Date(nextRace.date + "T00:00:00");
-            const daysUntil = Math.ceil((raceDate.getTime() - now.getTime()) / 86400000);
-            return (
-              <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <Calendar className="h-4 w-4 text-f1-green" />
-                  <span className="text-xs text-f1-muted uppercase tracking-wider">Next Race</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold">{nextRace.name}</p>
-                    <p className="text-xs text-f1-muted">{nextRace.circuit.name} — {nextRace.circuit.country}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono text-sm">{nextRace.date}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-f1-muted">Round {nextRace.round}</span>
-                      <span className="text-xs text-f1-green font-mono">
-                        {daysUntil === 0 ? "Today" : daysUntil === 1 ? "Tomorrow" : `in ${daysUntil} days`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()
-        ) : (
-          <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Calendar className="h-4 w-4 text-f1-muted" />
-              <span className="text-xs text-f1-muted uppercase tracking-wider">Season Complete</span>
-            </div>
-            <p className="text-f1-muted text-sm">All {races?.length ?? 0} rounds completed</p>
-          </div>
-        )}
+          {/* Top 5 strip — full width */}
+          {standings?.driver_standings ? (
+            <m.div variants={tileVariant} className="md:col-span-4">
+              <Top5Strip standings={standings.driver_standings} />
+            </m.div>
+          ) : (
+            <SkeletonTile className="md:col-span-4 min-h-[80px]" />
+          )}
 
-        {/* Top 5 Drivers */}
-        {standings?.driver_standings && (
-          <Link
-            href="/standings"
-            className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150 md:col-span-2"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Trophy className="h-4 w-4 text-f1-muted" />
-              <span className="text-xs text-f1-muted uppercase tracking-wider">Top 5 Drivers</span>
-            </div>
-            <div className="grid grid-cols-5 gap-3">
-              {standings.driver_standings.slice(0, 5).map((d) => {
-                const teamColor = getTeamColor(d.constructor_name ?? "");
-                return (
-                  <div key={d.driver_ref} className="flex items-center gap-2">
-                    <div
-                      className="w-0.5 h-6 rounded-sm shrink-0"
-                      style={{ backgroundColor: teamColor }}
-                    />
-                    <div className="min-w-0">
-                      <p className="font-semibold text-xs uppercase truncate">{d.surname}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-bold">{Math.floor(d.points)}</span>
-                        <span className={cn(
-                          "font-mono text-[10px]",
-                          d.position === 1 ? "text-f1-gold" : "text-f1-muted"
-                        )}>
-                          P{d.position}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Link>
-        )}
+          {/* Recent Results — full width */}
+          {pastRaces.length > 0 && (
+            <m.div variants={tileVariant} className="md:col-span-4">
+              <RecentResultsTimeline races={pastRaces} />
+            </m.div>
+          )}
+
+          {/* Championship Progression chart — full width */}
+          {progression && progression.length > 0 && (
+            <m.div variants={tileVariant} className="md:col-span-4">
+              <ChartPreview progressions={progression} />
+            </m.div>
+          )}
+        </m.div>
       </div>
-
-      {/* Recent Race Winners */}
-      {pastRaces.length > 1 && (
-        <div className="mt-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Flag className="h-4 w-4 text-f1-muted" />
-            <span className="text-xs text-f1-muted uppercase tracking-wider">Recent Results</span>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {pastRaces.slice(-3).reverse().map((race) => (
-              <RecentWinnerCard key={race.id} raceId={race.id} raceName={race.name} raceDate={race.date ?? ""} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Championship Progression */}
-      {progression && progression.length > 0 && (
-        <div className="mt-6">
-          <div className="border border-f1-grid bg-f1-dark-2 p-5 rounded-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="h-4 w-4 text-f1-muted" />
-              <span className="text-xs text-f1-muted uppercase tracking-wider">Championship Progression</span>
-            </div>
-            <ChampionshipChart progressions={progression} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function RecentWinnerCard({ raceId, raceName, raceDate }: { raceId: number; raceName: string; raceDate: string }) {
-  const { data: race } = useRaceDetail(raceId);
-  const winner = race?.results[0];
-  const teamColor = winner ? getTeamColor(winner.constructor.ref) : undefined;
-
+function SkeletonTile({ className }: { className?: string }) {
   return (
-    <Link
-      href={`/races/${raceId}`}
-      className="border border-f1-grid bg-f1-dark-2 p-4 rounded-sm hover:bg-f1-dark-3 transition-colors duration-150"
+    <m.div
+      variants={tileVariant}
+      className={`bg-f1-dark-2 border border-f1-grid min-h-[120px] relative overflow-hidden${className ? ` ${className}` : ""}`}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium truncate">{raceName}</span>
-        <span className="font-mono text-[10px] text-f1-muted ml-2 shrink-0">{raceDate}</span>
-      </div>
-      {winner ? (
-        <div className="flex items-center gap-2">
-          <div className="w-0.5 h-4 rounded-sm shrink-0" style={{ backgroundColor: teamColor }} />
-          <span className="text-f1-gold font-mono text-xs font-bold mr-1">P1</span>
-          <span className="text-sm font-semibold uppercase truncate">{winner.driver.surname}</span>
-        </div>
-      ) : (
-        <div className="h-4 bg-f1-grid/30 rounded-sm animate-pulse" />
-      )}
-    </Link>
-  );
-}
-
-function LastRaceWinner({ raceId }: { raceId: number }) {
-  const { data: race } = useRaceDetail(raceId);
-  const winner = race?.results[0];
-
-  if (!winner) return null;
-
-  const teamColor = getTeamColor(winner.constructor.ref);
-
-  return (
-    <div className="mt-3 pt-3 border-t border-f1-grid/50 flex items-center gap-3">
-      <div className="w-0.5 h-5 rounded-sm" style={{ backgroundColor: teamColor }} />
-      <span className="text-xs">
-        <span className="text-f1-gold font-mono font-bold mr-1">P1</span>
-        <span className="text-f1-muted">{winner.driver.forename} </span>
-        <span className="font-semibold uppercase">{winner.driver.surname}</span>
-      </span>
-      <span className="text-xs text-f1-muted ml-auto">{winner.constructor.name}</span>
-    </div>
+      <ScannerLine className="absolute top-0 left-0 right-0" />
+    </m.div>
   );
 }

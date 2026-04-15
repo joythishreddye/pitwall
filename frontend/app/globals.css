@@ -104,6 +104,14 @@ body {
   animation: scanner-sweep 2s ease-in-out infinite;
 }
 
+/* ── Grid-line background (engineering drawing aesthetic) ── */
+@utility bg-grid-lines {
+  background-image:
+    linear-gradient(to right, var(--color-f1-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-f1-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *,
