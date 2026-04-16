@@ -82,8 +82,9 @@ export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) 
             <SplitReveal
               text={leader.surname.toUpperCase()}
               type="chars"
-              stagger={0.04}
-              delay={0.4}
+              stagger={0.08}
+              duration={0.4}
+              delay={0.5}
               tag="span"
               className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight"
             />

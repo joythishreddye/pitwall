@@ -20,8 +20,11 @@ export function NumberCounter({
   className,
 }: NumberCounterProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
-  const [display, setDisplay] = useState(value.toFixed(decimals));
-  const obj = useRef({ val: value });
+  // Start from 0 so the counter always counts up to the value on mount.
+  // The ref persists the current position between renders, so live updates
+  // count from the last animated value (not from 0 again).
+  const [display, setDisplay] = useState(() => (0).toFixed(decimals));
+  const obj = useRef({ val: 0 });
 
   useGSAP(
     () => {
