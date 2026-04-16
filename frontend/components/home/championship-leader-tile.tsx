@@ -10,9 +10,11 @@ import type { DriverStanding } from "@/lib/schemas/standings";
 
 interface ChampionshipLeaderTileProps {
   leader: DriverStanding;
+  /** Set to true once the scanner has passed this tile to fire internal animations */
+  revealed?: boolean;
 }
 
-export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) {
+export function ChampionshipLeaderTile({ leader, revealed = false }: ChampionshipLeaderTileProps) {
   const { data: driverPhotos } = useDriverPhotos();
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
@@ -84,9 +86,10 @@ export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) 
               type="chars"
               stagger={0.08}
               duration={0.4}
-              delay={0.5}
+              delay={0.2}
               tag="span"
               className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight"
+              paused={!revealed}
             />
           </div>
 
@@ -94,13 +97,13 @@ export function ChampionshipLeaderTile({ leader }: ChampionshipLeaderTileProps) 
           <div className="flex items-baseline gap-4">
             <div>
               <span className="font-data text-5xl font-bold" style={{ color: teamHex }}>
-                <NumberCounter value={leader.points} duration={1} />
+                <NumberCounter value={leader.points} duration={1} paused={!revealed} />
               </span>
               <span className="text-f1-muted text-xs font-data ml-1.5">PTS</span>
             </div>
             <div className="border-l border-f1-grid pl-4">
               <span className="font-data text-2xl font-bold text-f1-text">
-                <NumberCounter value={leader.wins} duration={0.8} />
+                <NumberCounter value={leader.wins} duration={0.8} paused={!revealed} />
               </span>
               <span className="text-f1-muted text-xs font-data ml-1">WIN{leader.wins !== 1 ? "S" : ""}</span>
             </div>

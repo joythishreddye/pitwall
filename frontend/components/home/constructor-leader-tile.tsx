@@ -8,9 +8,10 @@ import type { ConstructorStanding } from "@/lib/schemas/standings";
 
 interface ConstructorLeaderTileProps {
   leader: ConstructorStanding;
+  revealed?: boolean;
 }
 
-export function ConstructorLeaderTile({ leader }: ConstructorLeaderTileProps) {
+export function ConstructorLeaderTile({ leader, revealed = false }: ConstructorLeaderTileProps) {
   const teamColor = getTeamColor(leader.constructor_ref);
   const teamHex = getTeamHexColor(leader.constructor_ref);
 
@@ -48,13 +49,13 @@ export function ConstructorLeaderTile({ leader }: ConstructorLeaderTileProps) {
         <div className="flex items-baseline gap-4">
           <div>
             <span className="font-data text-3xl font-bold" style={{ color: teamHex }}>
-              <NumberCounter value={leader.points} duration={1} />
+              <NumberCounter value={leader.points} duration={1} paused={!revealed} />
             </span>
             <span className="text-f1-muted text-xs font-data ml-1.5">PTS</span>
           </div>
           <div className="border-l border-f1-grid pl-4">
             <span className="font-data text-xl font-bold text-f1-text">
-              <NumberCounter value={leader.wins} duration={0.8} />
+              <NumberCounter value={leader.wins} duration={0.8} paused={!revealed} />
             </span>
             <span className="text-f1-muted text-xs font-data ml-1">WIN{leader.wins !== 1 ? "S" : ""}</span>
           </div>

@@ -11,6 +11,11 @@ interface NumberCounterProps {
   /** Duration of animation in seconds */
   duration?: number;
   className?: string;
+  /**
+   * When true the counter stays at 0 and does not animate.
+   * Flip to false to fire the count-up (e.g. after a tile reveal).
+   */
+  paused?: boolean;
 }
 
 export function NumberCounter({
@@ -18,6 +23,7 @@ export function NumberCounter({
   decimals = 0,
   duration = 0.8,
   className,
+  paused = false,
 }: NumberCounterProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
   // Start from 0 so the counter always counts up to the value on mount.
@@ -28,6 +34,9 @@ export function NumberCounter({
 
   useGSAP(
     () => {
+      // Don't animate until the tile containing this counter is revealed
+      if (paused) return;
+
       if (respectsReducedMotion()) {
         setDisplay(value.toFixed(decimals));
         obj.current.val = value;
@@ -43,7 +52,7 @@ export function NumberCounter({
         },
       });
     },
-    { scope: containerRef, dependencies: [value, decimals, duration] }
+    { scope: containerRef, dependencies: [value, decimals, duration, paused] }
   );
 
   return (

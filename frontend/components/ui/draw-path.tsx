@@ -26,6 +26,11 @@ interface DrawPathProps {
   outlined?: boolean;
   /** Animation duration in seconds (default: 2.5) */
   duration?: number;
+  /**
+   * When true the circuit is hidden and the draw animation does not start.
+   * Flip to false to trigger the drawing (e.g. after a tile reveal).
+   */
+  paused?: boolean;
   /** Delay before start in seconds (default: 0) */
   delay?: number;
   className?: string;
@@ -48,6 +53,7 @@ export function DrawPath({
   trigger = "mount",
   loop = false,
   onComplete,
+  paused = false,
 }: DrawPathProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   // Single-stroke mode
@@ -69,6 +75,12 @@ export function DrawPath({
       ).filter((el): el is SVGPathElement => el !== null);
 
       if (targets.length === 0) return;
+
+      // Keep circuit hidden until the tile is revealed
+      if (paused) {
+        gsap.set(targets, { drawSVG: "0%" });
+        return;
+      }
 
       if (respectsReducedMotion()) {
         gsap.set(targets, { drawSVG: "100%" });
@@ -93,7 +105,7 @@ export function DrawPath({
 
       gsap.fromTo(targets, { drawSVG: "0%" }, animProps);
     },
-    { scope: svgRef, dependencies: [d, duration, delay, trigger, loop, outlined] }
+    { scope: svgRef, dependencies: [d, duration, delay, trigger, loop, outlined, paused] }
   );
 
   // Outer stroke is 2.5× the base width; inner (dark) is 1.2× — the gap
@@ -107,6 +119,7 @@ export function DrawPath({
       viewBox={viewBox}
       xmlns="http://www.w3.org/2000/svg"
       className={cn("overflow-visible", className)}
+      style={paused ? { opacity: 0 } : undefined}
       aria-hidden="true"
     >
       {outlined ? (

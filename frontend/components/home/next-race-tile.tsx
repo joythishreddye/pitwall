@@ -9,9 +9,10 @@ import type { RaceCalendarItem } from "@/lib/schemas/races";
 
 interface NextRaceTileProps {
   race: RaceCalendarItem;
+  revealed?: boolean;
 }
 
-export function NextRaceTile({ race }: NextRaceTileProps) {
+export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
   const countdown = useCountdown(race.date ?? undefined);
   const circuitMeta = getCircuitMeta(race.circuit.name);
   const circuitKey = circuitMeta?.key;
@@ -38,7 +39,8 @@ export function NextRaceTile({ race }: NextRaceTileProps) {
             strokeWidth={5}
             outlined
             duration={2.5}
-            delay={0.6}
+            delay={0.15}
+            paused={!revealed}
             className="w-full h-full"
           />
         </div>

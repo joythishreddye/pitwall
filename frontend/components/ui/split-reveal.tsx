@@ -20,6 +20,11 @@ interface SplitRevealProps {
   className?: string;
   /** Wrapper element tag (default: "span") */
   tag?: "h1" | "h2" | "h3" | "p" | "span";
+  /**
+   * When true the text stays hidden and does not reveal.
+   * Flip to false to trigger the reveal (e.g. after a tile reveal).
+   */
+  paused?: boolean;
 }
 
 export function SplitReveal({
@@ -30,6 +35,7 @@ export function SplitReveal({
   duration = 0.3,
   className,
   tag: Tag = "span",
+  paused = false,
 }: SplitRevealProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -37,8 +43,10 @@ export function SplitReveal({
     () => {
       if (!ref.current) return;
 
+      // Don't reveal until the tile is shown
+      if (paused) return;
+
       if (respectsReducedMotion()) {
-        // Text already visible — no animation needed
         return;
       }
 
@@ -59,17 +67,16 @@ export function SplitReveal({
         ease: "pitwall-accel",
       });
 
-      // Cleanup is handled automatically by useGSAP ctx.revert()
-      // which also reverts SplitText DOM changes
       return () => split.revert();
     },
-    { scope: ref, dependencies: [text, type, stagger, delay, duration] }
+    { scope: ref, dependencies: [text, type, stagger, delay, duration, paused] }
   );
 
   return (
     <Tag
       ref={ref as React.RefObject<HTMLHeadingElement & HTMLParagraphElement & HTMLSpanElement>}
       className={cn(className)}
+      style={paused ? { opacity: 0 } : undefined}
     >
       {text}
     </Tag>
