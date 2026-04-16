@@ -12,6 +12,7 @@ export const DriverStandingSchema = z.object({
   nationality: z.string().nullable(),
   constructor_name: z.string().nullable(),
   constructor_ref: z.string().nullable().optional(),
+  has_fastest_lap: z.boolean().optional(),
 });
 
 export const ConstructorStandingSchema = z.object({
