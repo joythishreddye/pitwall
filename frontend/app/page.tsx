@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
@@ -35,14 +35,20 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const scannerRef = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
 
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
+  // shouldAnimate latches true the first time allLoaded becomes true.
+  // useGSAP depends only on this — not on allLoaded — so TanStack Query
+  // background refetches (which briefly flip isLoading back to true) cannot
+  // re-run or revert the animation after it has already played.
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  useEffect(() => {
+    if (allLoaded && !shouldAnimate) setShouldAnimate(true);
+  }, [allLoaded, shouldAnimate]);
 
   useGSAP(
     () => {
-      if (!allLoaded || hasAnimated.current) return;
-      hasAnimated.current = true;
+      if (!shouldAnimate) return;
 
       const gridEl = gridRef.current;
       const scannerEl = scannerRef.current;
@@ -102,33 +108,12 @@ export default function HomePage() {
       // 4. Scanner beam fades out after completing the sweep
       tl.to(scannerEl, { opacity: 0, duration: 0.25 });
     },
-    { scope: containerRef, dependencies: [allLoaded] }
+    { scope: containerRef, dependencies: [shouldAnimate] }
   );
 
-  // ── Loading state ──────────────────────────────────────────────────────────
-  if (!allLoaded) {
-    return (
-      <div className="relative min-h-screen">
-        <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
-        <div className="relative p-6 md:p-8">
-          <div className="mb-6">
-            <h1 className="font-heading text-2xl font-bold text-f1-text tracking-tight">
-              Race Control
-            </h1>
-            <p className="text-f1-muted text-sm mt-0.5 font-data">{CURRENT_SEASON} Season</p>
-          </div>
-          <div className="flex flex-col items-center justify-center py-32 gap-3">
-            <ScannerLine className="w-48" />
-            <p className="font-data text-[10px] text-f1-muted tracking-widest uppercase">
-              Acquiring Race Data...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Loaded — scanner reveal grid ───────────────────────────────────────────
+  // ── Always render the grid — loading state overlays it ────────────────────
+  // Never early-return: the grid DOM must stay mounted so GSAP can measure
+  // offsetTop on both first visit (fresh fetch) and return visits (cached data).
   return (
     <div ref={containerRef} className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
@@ -144,6 +129,16 @@ export default function HomePage() {
             {standings ? ` — After Round ${standings.round}` : ""}
           </p>
         </div>
+
+        {/* Loading overlay — shown until data is ready, sits above the (empty) grid */}
+        {!allLoaded && (
+          <div className="flex flex-col items-center justify-center py-32 gap-3">
+            <ScannerLine className="w-48" />
+            <p className="font-data text-[10px] text-f1-muted tracking-widest uppercase">
+              Acquiring Race Data...
+            </p>
+          </div>
+        )}
 
         {/* Grid — relative so the scanner beam positions against it */}
         <div ref={gridRef} className="relative grid grid-cols-1 md:grid-cols-4 gap-3">
