@@ -25,16 +25,23 @@ export function NextRaceTile({ race }: NextRaceTileProps) {
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid h-full">
-      {/* DrawPath circuit outline — draws itself as ambient background */}
+      {/* DrawPath circuit — right-anchored, outlined road-edge style */}
       {circuitKey && circuitPaths[circuitKey] && (
-        <DrawPath
-          d={circuitPaths[circuitKey].d}
-          viewBox={circuitPaths[circuitKey].viewBox}
-          color="var(--color-f1-cyan)"
-          duration={2.5}
-          delay={0.6}
-          className="absolute inset-0 w-full h-full opacity-[0.13] pointer-events-none"
-        />
+        <div
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[12%] h-[130%] w-[60%] opacity-[0.28] pointer-events-none"
+          aria-hidden="true"
+        >
+          <DrawPath
+            d={circuitPaths[circuitKey].d}
+            viewBox={circuitPaths[circuitKey].viewBox}
+            color="var(--color-f1-cyan)"
+            strokeWidth={5}
+            outlined
+            duration={2.5}
+            delay={0.6}
+            className="w-full h-full"
+          />
+        </div>
       )}
 
       {/* Content */}

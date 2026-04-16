@@ -17,6 +17,13 @@ interface DrawPathProps {
   color?: string;
   /** Stroke width in px (default: 1.5) */
   strokeWidth?: number;
+  /**
+   * Cased-lines / "outlined track" mode.
+   * Renders two stacked paths: a wide outer stroke (colored) and a narrower
+   * inner stroke (#0F0F0F) that punches a dark channel through the middle,
+   * producing a road-edge appearance at any opacity.
+   */
+  outlined?: boolean;
   /** Animation duration in seconds (default: 2.5) */
   duration?: number;
   /** Delay before start in seconds (default: 0) */
@@ -34,6 +41,7 @@ export function DrawPath({
   viewBox = "0 0 200 200",
   color = "var(--color-f1-cyan)",
   strokeWidth = 1.5,
+  outlined = false,
   duration = 2.5,
   delay = 0,
   className,
@@ -42,19 +50,28 @@ export function DrawPath({
   onComplete,
 }: DrawPathProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  // Single-stroke mode
   const pathRef = useRef<SVGPathElement>(null);
-  // Store callback in a ref so the useGSAP closure always calls the latest version
-  // without needing to re-create the animation when the callback identity changes.
+  // Outlined / cased-lines mode
+  const outerPathRef = useRef<SVGPathElement>(null);
+  const innerPathRef = useRef<SVGPathElement>(null);
+
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
   useGSAP(
     () => {
-      if (!pathRef.current) return;
+      // Collect whichever path refs are active
+      const targets = (
+        outlined
+          ? [outerPathRef.current, innerPathRef.current]
+          : [pathRef.current]
+      ).filter((el): el is SVGPathElement => el !== null);
+
+      if (targets.length === 0) return;
 
       if (respectsReducedMotion()) {
-        // Show path immediately without animation
-        gsap.set(pathRef.current, { drawSVG: "100%" });
+        gsap.set(targets, { drawSVG: "100%" });
         return;
       }
 
@@ -74,10 +91,15 @@ export function DrawPath({
         };
       }
 
-      gsap.fromTo(pathRef.current, { drawSVG: "0%" }, animProps);
+      gsap.fromTo(targets, { drawSVG: "0%" }, animProps);
     },
-    { scope: svgRef, dependencies: [d, duration, delay, trigger, loop] }
+    { scope: svgRef, dependencies: [d, duration, delay, trigger, loop, outlined] }
   );
+
+  // Outer stroke is 2.5× the base width; inner (dark) is 1.2× — the gap
+  // between them creates visible road edges on each side of the center line.
+  const outerWidth = strokeWidth * 2.5;
+  const innerWidth = strokeWidth * 1.2;
 
   return (
     <svg
@@ -87,15 +109,40 @@ export function DrawPath({
       className={cn("overflow-visible", className)}
       aria-hidden="true"
     >
-      <path
-        ref={pathRef}
-        d={d}
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+      {outlined ? (
+        <>
+          {/* Outer / border stroke — colored, wider */}
+          <path
+            ref={outerPathRef}
+            d={d}
+            stroke={color}
+            strokeWidth={outerWidth}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          {/* Inner / road stroke — dark, punches a channel through the center */}
+          <path
+            ref={innerPathRef}
+            d={d}
+            stroke="#0F0F0F"
+            strokeWidth={innerWidth}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </>
+      ) : (
+        <path
+          ref={pathRef}
+          d={d}
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      )}
     </svg>
   );
 }

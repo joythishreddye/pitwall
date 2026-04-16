@@ -34,16 +34,23 @@ export default function NotFound() {
       ref={containerRef}
       className="flex flex-col items-start justify-center min-h-[60vh] p-8 relative overflow-hidden"
     >
-      {/* Suzuka circuit — draws itself over 4s as ambient background */}
-      <DrawPath
-        d={circuitPaths.suzuka.d}
-        viewBox={circuitPaths.suzuka.viewBox}
-        color="var(--color-f1-cyan)"
-        duration={4}
-        delay={0}
-        loop={false}
-        className="absolute inset-0 w-full h-full opacity-[0.18] pointer-events-none"
-      />
+      {/* Suzuka circuit — right half of viewport, outlined road-edge style */}
+      <div
+        className="absolute right-[-8%] top-1/2 -translate-y-1/2 h-[90%] w-[55%] opacity-[0.28] pointer-events-none"
+        aria-hidden="true"
+      >
+        <DrawPath
+          d={circuitPaths.suzuka.d}
+          viewBox={circuitPaths.suzuka.viewBox}
+          color="var(--color-f1-cyan)"
+          strokeWidth={5}
+          outlined
+          duration={4}
+          delay={0}
+          loop={false}
+          className="w-full h-full"
+        />
+      </div>
 
       {/* Background grid */}
       <div
