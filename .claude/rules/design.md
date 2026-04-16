@@ -20,8 +20,8 @@ You are building PitWall, a product for Formula 1 fans. Every UI element must fe
 - Every color must have a data meaning. No decorative color usage.
 
 ### Typography
-- ALL numbers (lap times, positions, points, gaps, speeds) use `font-mono` (Geist Mono)
-- Text (names, descriptions, labels) uses the default sans font (Geist)
+- ALL numbers (lap times, positions, points, gaps, speeds) use `font-data` (JetBrains Mono via `@utility font-data` in globals.css)
+- Text (names, descriptions, labels) uses the default sans font
 - Never use decorative or novelty fonts
 
 ### Layout & Spacing
@@ -43,10 +43,18 @@ You are building PitWall, a product for Formula 1 fans. Every UI element must fe
 - No empty states that just say "No data" — show a meaningful message about why and what's coming
 
 ### Animations
-- Only on data changes (position swap, new fastest lap)
-- Duration: 150-200ms maximum
-- Easing: ease-out only. No bounce, no elastic.
-- No page transition animations, no fade-in reveals
+**Phase 1.5+: GSAP is the primary animation library. See `frontend/design-system/MASTER.md` for the full spec.**
+
+Animation ownership:
+- **GSAP:** DrawSVG circuit outlines, SplitText reveals, ScrollTrigger scroll choreography, Flip layout reordering, CustomEase counters, complex timelines
+- **Framer Motion (keep):** `AnimatePresence` route transitions, `whileHover`/`whileTap` on Card micro-states only
+
+Rules:
+- All GSAP animations inside `useGSAP(() => { ... }, { scope: ref })` — never bare `gsap.to()` in components
+- CustomEase curves: `pitwall-accel` (entrance), `pitwall-brake` (exit), `pitwall-pulse` (status)
+- Duration caps: entrance 300-400ms, micro-interactions 150-200ms, DrawSVG 1.8-3.5s
+- Transforms only — never animate `width`, `height`, or layout properties
+- Always provide `prefers-reduced-motion` fallback via `respectsReducedMotion()` from `lib/gsap.ts`
 
 ### What "Rich and Classy" Means for F1
 - Subtle depth: use slightly different background shades to create visual layers

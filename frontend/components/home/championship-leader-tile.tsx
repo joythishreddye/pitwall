@@ -38,13 +38,13 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
             src={photoUrl}
             alt={`${leader.forename} ${leader.surname}`}
             className="absolute top-0 right-0 h-full w-auto"
-            style={{ opacity: 0.65 }}
+            style={{ opacity: 0.75 }}
           />
           {/* Left gradient — blends into card text area */}
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, #1A1A1A 0%, #1A1A1A 20%, rgba(26,26,26,0.75) 50%, transparent 75%)",
+              background: "linear-gradient(to right, #1A1A1A 0%, #1A1A1A 30%, rgba(26,26,26,0.6) 50%, transparent 65%)",
             }}
           />
           {/* Bottom gradient — grounds the image into the card */}
