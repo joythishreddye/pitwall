@@ -5,6 +5,7 @@ import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
 import { ScannerLine } from "@/components/ui/scanner-line";
+import { SplitReveal } from "@/components/ui/split-reveal";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import {
   ChampionshipLeaderTile,
@@ -19,7 +20,9 @@ const ALL_TILE_IDS = ["leader", "constructor", "next-race", "top5", "recent", "c
 type TileId = (typeof ALL_TILE_IDS)[number];
 
 // Stagger between each tile reveal (seconds)
-const TILE_STAGGER = 0.08;
+const TILE_STAGGER = 0.1;
+// Delay before first tile starts (after data loads)
+const TILE_INITIAL_DELAY = 0.15;
 
 export default function HomePage() {
   const { data: standings, isLoading: standingsLoading } = useStandings(CURRENT_SEASON);
@@ -39,13 +42,12 @@ export default function HomePage() {
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
 
   // Latches true the first time allLoaded becomes true — never flips back.
-  // This means TanStack Query background refetches (isLoading briefly true)
-  // cannot re-run or revert the animation after it has played.
   const [shouldAnimate, setShouldAnimate] = useState(false);
   useEffect(() => {
     if (allLoaded && !shouldAnimate) setShouldAnimate(true);
   }, [allLoaded, shouldAnimate]);
 
+  // Phase 2 — tile cascade after data loads
   useGSAP(
     () => {
       if (!shouldAnimate) return;
@@ -53,34 +55,45 @@ export default function HomePage() {
       const tiles = gsap.utils.toArray<HTMLElement>("[data-tile-id]");
       if (tiles.length === 0) return;
 
-      // Reduced motion — reveal everything instantly
       if (respectsReducedMotion()) {
-        gsap.set(tiles, { opacity: 1, y: 0 });
+        gsap.set(tiles, { opacity: 1, y: 0, scale: 1 });
+        gsap.set(".home-subtext", { opacity: 1 });
         setRevealedTiles(new Set(ALL_TILE_IDS));
         return;
       }
 
-      // Hold all tiles invisible before the timeline starts
-      gsap.set(tiles, { opacity: 0, y: 8 });
-
       const tl = gsap.timeline();
+
+      // Subheading fades in first — signals data is ready
+      tl.fromTo(
+        ".home-subtext",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.35, ease: "pitwall-accel" },
+        0
+      );
 
       tiles.forEach((el, i) => {
         const tileId = el.dataset.tileId as TileId;
+        const isHero = tileId === "leader";
+
         tl.fromTo(
           el,
-          { opacity: 0, y: 8 },
+          {
+            opacity: 0,
+            y: isHero ? 0 : 10,
+            scale: isHero ? 0.97 : 1,
+          },
           {
             opacity: 1,
             y: 0,
-            duration: 0.3,
+            scale: 1,
+            duration: isHero ? 0.45 : 0.3,
             ease: "pitwall-accel",
             onStart() {
-              // Unpauses NumberCounter, DrawPath, SplitReveal inside this tile
               setRevealedTiles((prev) => new Set([...prev, tileId]));
             },
           },
-          i * TILE_STAGGER
+          TILE_INITIAL_DELAY + i * TILE_STAGGER
         );
       });
     },
@@ -92,18 +105,24 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
 
       <div className="relative p-6 md:p-8 space-y-3">
-        {/* Page header */}
+        {/* Page header — heading sweeps in on mount; subtext reveals after data */}
         <div className="mb-6">
-          <h1 className="font-heading text-2xl font-bold text-f1-text tracking-tight">
-            Race Control
-          </h1>
-          <p className="text-f1-muted text-sm mt-0.5 font-data">
+          <SplitReveal
+            text="Race Control"
+            type="chars"
+            stagger={0.035}
+            delay={0}
+            duration={0.3}
+            tag="h1"
+            className="font-heading text-2xl font-bold text-f1-text tracking-tight"
+          />
+          <p className="home-subtext text-f1-muted text-sm mt-0.5 font-data" style={{ opacity: 0 }}>
             {CURRENT_SEASON} Season
             {standings ? ` — After Round ${standings.round}` : ""}
           </p>
         </div>
 
-        {/* Loading indicator — full-width scanner, shown while any data pending */}
+        {/* Loading indicator */}
         {!allLoaded && (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
             <ScannerLine className="w-full max-w-md" />
@@ -116,7 +135,6 @@ export default function HomePage() {
         {/* Grid — always mounted so GSAP can measure tiles on cached return visits */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
 
-          {/* Championship Leader — 2 cols wide, 2 rows tall */}
           {leader && (
             <div data-tile-id="leader" className="md:col-span-2 md:row-span-2" style={{ opacity: 0 }}>
               <ChampionshipLeaderTile
@@ -126,7 +144,6 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Constructor Leader */}
           {constructorLeader && (
             <div data-tile-id="constructor" className="md:col-span-2" style={{ opacity: 0 }}>
               <ConstructorLeaderTile
@@ -136,7 +153,6 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Next Race */}
           {nextRace && (
             <div data-tile-id="next-race" className="md:col-span-2" style={{ opacity: 0 }}>
               <NextRaceTile
@@ -146,21 +162,18 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Top 5 strip — full width */}
           {standings?.driver_standings && (
             <div data-tile-id="top5" className="md:col-span-4" style={{ opacity: 0 }}>
               <Top5Strip standings={standings.driver_standings} />
             </div>
           )}
 
-          {/* Recent Results — full width */}
           {pastRaces.length > 0 && (
             <div data-tile-id="recent" className="md:col-span-4" style={{ opacity: 0 }}>
               <RecentResultsTimeline races={pastRaces} />
             </div>
           )}
 
-          {/* Championship Progression chart — full width */}
           {progression && progression.length > 0 && (
             <div data-tile-id="chart" className="md:col-span-4" style={{ opacity: 0 }}>
               <ChartPreview progressions={progression} />
