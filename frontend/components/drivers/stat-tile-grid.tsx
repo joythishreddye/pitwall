@@ -191,8 +191,6 @@ export function StatTileGrid({
   const podiumRate = races > 0 ? (podiums / races) * 100 : null;
   const poleRate = races > 0 ? (poles / races) * 100 : null;
 
-  const GOLD = "#FFD700";
-
   return (
     <div
       ref={containerRef}
@@ -208,15 +206,13 @@ export function StatTileGrid({
         gridTemplateRows: "repeat(3, minmax(72px, auto)) minmax(190px, auto)",
       }}
     >
-      {/* Championships — gold accent if driver has won */}
       <StatTile
         label="Championships"
         value={championships}
         paused={paused}
         large
         gridArea="champ"
-        accentColor={championships > 0 ? GOLD : "var(--color-f1-grid)"}
-        valueClassName={championships > 0 ? "text-f1-gold" : "text-f1-muted/40"}
+        accentColor={teamHex}
         className="tile-championships"
       />
 
