@@ -118,7 +118,7 @@ export default function HomePage() {
 
           {/* Championship Leader — 2 cols wide, 2 rows tall */}
           {leader && (
-            <div data-tile-id="leader" className="md:col-span-2 md:row-span-2">
+            <div data-tile-id="leader" className="md:col-span-2 md:row-span-2" style={{ opacity: 0 }}>
               <ChampionshipLeaderTile
                 leader={leader}
                 revealed={revealedTiles.has("leader")}
@@ -128,7 +128,7 @@ export default function HomePage() {
 
           {/* Constructor Leader */}
           {constructorLeader && (
-            <div data-tile-id="constructor" className="md:col-span-2">
+            <div data-tile-id="constructor" className="md:col-span-2" style={{ opacity: 0 }}>
               <ConstructorLeaderTile
                 leader={constructorLeader}
                 revealed={revealedTiles.has("constructor")}
@@ -138,7 +138,7 @@ export default function HomePage() {
 
           {/* Next Race */}
           {nextRace && (
-            <div data-tile-id="next-race" className="md:col-span-2">
+            <div data-tile-id="next-race" className="md:col-span-2" style={{ opacity: 0 }}>
               <NextRaceTile
                 race={nextRace}
                 revealed={revealedTiles.has("next-race")}
@@ -148,21 +148,21 @@ export default function HomePage() {
 
           {/* Top 5 strip — full width */}
           {standings?.driver_standings && (
-            <div data-tile-id="top5" className="md:col-span-4">
+            <div data-tile-id="top5" className="md:col-span-4" style={{ opacity: 0 }}>
               <Top5Strip standings={standings.driver_standings} />
             </div>
           )}
 
           {/* Recent Results — full width */}
           {pastRaces.length > 0 && (
-            <div data-tile-id="recent" className="md:col-span-4">
+            <div data-tile-id="recent" className="md:col-span-4" style={{ opacity: 0 }}>
               <RecentResultsTimeline races={pastRaces} />
             </div>
           )}
 
           {/* Championship Progression chart — full width */}
           {progression && progression.length > 0 && (
-            <div data-tile-id="chart" className="md:col-span-4">
+            <div data-tile-id="chart" className="md:col-span-4" style={{ opacity: 0 }}>
               <ChartPreview progressions={progression} />
             </div>
           )}
