@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { gsap, useGSAP, DrawSVGPlugin, respectsReducedMotion } from "@/lib/gsap";
 import { getTeamHexColor } from "@/lib/constants/teams";
 import { cn } from "@/lib/utils";
@@ -9,16 +9,19 @@ import type { DriverProgression } from "@/lib/schemas/standings";
 void DrawSVGPlugin;
 
 // ---------------------------------------------------------------------------
-// SVG coordinate system
+// SVG coordinate system — height is fixed, width tracks the container.
+// All x-coordinates are computed from the live svgW value so the chart
+// always fills its parent with no blank space on either side.
 // ---------------------------------------------------------------------------
-const SVG_W = 760;
 const SVG_H = 240;
 const PAD = { t: 20, r: 24, b: 44, l: 48 };
-const INNER_W = SVG_W - PAD.l - PAD.r;
 const INNER_H = SVG_H - PAD.t - PAD.b;
 
-function xScale(round: number, maxRound: number): number {
-  return PAD.l + ((round - 1) / Math.max(maxRound - 1, 1)) * INNER_W;
+function innerW(svgW: number) {
+  return svgW - PAD.l - PAD.r;
+}
+function xScale(round: number, maxRound: number, svgW: number): number {
+  return PAD.l + ((round - 1) / Math.max(maxRound - 1, 1)) * innerW(svgW);
 }
 function yScale(pts: number, maxPts: number): number {
   return PAD.t + INNER_H - (pts / Math.max(maxPts, 1)) * INNER_H;
@@ -27,12 +30,13 @@ function buildPath(
   rounds: number[],
   points: number[],
   maxRound: number,
-  maxPts: number
+  maxPts: number,
+  svgW: number
 ): string {
   return rounds
     .map(
       (r, i) =>
-        `${i === 0 ? "M" : "L"}${xScale(r, maxRound).toFixed(1)} ${yScale(points[i], maxPts).toFixed(1)}`
+        `${i === 0 ? "M" : "L"}${xScale(r, maxRound, svgW).toFixed(1)} ${yScale(points[i], maxPts).toFixed(1)}`
     )
     .join(" ");
 }
@@ -138,7 +142,8 @@ function ChartSkeleton() {
   return (
     <div className="relative w-full overflow-hidden h-[240px] flex items-center justify-center">
       <svg
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        viewBox="0 0 760 240"
+        preserveAspectRatio="none"
         className="absolute inset-0 w-full h-full"
         aria-hidden="true"
       >
@@ -147,7 +152,7 @@ function ChartSkeleton() {
             key={i}
             x1={PAD.l}
             y1={PAD.t + INNER_H * (1 - frac)}
-            x2={PAD.l + INNER_W * 0.35}
+            x2={PAD.l + 266}
             y2={PAD.t + INNER_H * (1 - frac)}
             stroke="var(--color-f1-grid)"
             strokeWidth={1.5}
@@ -176,6 +181,19 @@ export function ChampionshipChart({
 
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  // svgW tracks the container's actual CSS pixel width so the SVG coordinate
+  // system matches 1:1 — no scaling, no blank space on either side.
+  const [svgW, setSvgW] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => setSvgW(el.getBoundingClientRect().width || 760);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // -------------------------------------------------------------------------
   // Compute chart lines from progressions
@@ -242,14 +260,15 @@ export function ChampionshipChart({
       const svgRect = svgRef.current.getBoundingClientRect();
       const containerRect = containerRef.current.getBoundingClientRect();
 
+      // svgW === CSS pixel width of the SVG element, so mouse offset maps 1:1
       const mouseXInSvg = e.clientX - svgRect.left;
-      const svgX = (mouseXInSvg / svgRect.width) * SVG_W;
-      const clampedX = Math.max(PAD.l, Math.min(PAD.l + INNER_W, svgX));
-      const rawRound = ((clampedX - PAD.l) / INNER_W) * (maxRound - 1) + 1;
+      const iW = innerW(svgW);
+      const clampedX = Math.max(PAD.l, Math.min(PAD.l + iW, mouseXInSvg));
+      const rawRound = ((clampedX - PAD.l) / iW) * (maxRound - 1) + 1;
       const round = Math.round(Math.max(1, Math.min(maxRound, rawRound)));
 
       gsap.to(scannerRef.current, {
-        attr: { x1: xScale(round, maxRound), x2: xScale(round, maxRound) },
+        attr: { x1: xScale(round, maxRound, svgW), x2: xScale(round, maxRound, svgW) },
         duration: 0.08,
         ease: "none",
       });
@@ -261,7 +280,7 @@ export function ChampionshipChart({
         py: e.clientY - containerRect.top,
       });
     },
-    [compact, maxRound]
+    [compact, maxRound, svgW]
   );
 
   const handleMouseLeave = useCallback(() => setTooltip(null), []);
@@ -319,10 +338,12 @@ export function ChampionshipChart({
   // Render
   // -------------------------------------------------------------------------
   if (!progressions.length) return <ChartSkeleton />;
+  // Don't render the SVG until the container width is known — prevents the
+  // "centered at 760px" flash caused by the old fixed-viewBox approach.
+  if (svgW === 0) return <div ref={containerRef} className="relative w-full h-[240px]" />;
 
   // Tooltip flips sides at the midpoint
-  const containerWidth = containerRef.current?.offsetWidth ?? 800;
-  const isLeftHalf = (tooltip?.px ?? 0) < containerWidth / 2;
+  const isLeftHalf = (tooltip?.px ?? 0) < svgW / 2;
 
   const tooltipRoundLabel =
     tooltip && roundLabels?.[tooltip.round]
@@ -336,10 +357,9 @@ export function ChampionshipChart({
       {/* SVG chart */}
       <svg
         ref={svgRef}
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-        preserveAspectRatio="xMidYMid meet"
-        className="w-full"
-        style={{ height: compact ? 180 : 240 }}
+        viewBox={`0 0 ${svgW} ${SVG_H}`}
+        width="100%"
+        height={compact ? 180 : SVG_H}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         aria-label="Championship points progression"
@@ -355,7 +375,7 @@ export function ChampionshipChart({
                 <line
                   x1={PAD.l}
                   y1={y}
-                  x2={PAD.l + INNER_W}
+                  x2={PAD.l + innerW(svgW)}
                   y2={y}
                   stroke="var(--color-f1-grid)"
                   strokeWidth={0.5}
@@ -379,7 +399,7 @@ export function ChampionshipChart({
         <line
           x1={PAD.l}
           y1={PAD.t + INNER_H}
-          x2={PAD.l + INNER_W}
+          x2={PAD.l + innerW(svgW)}
           y2={PAD.t + INNER_H}
           stroke="var(--color-f1-grid)"
           strokeWidth={0.5}
@@ -388,7 +408,7 @@ export function ChampionshipChart({
         {/* ---- X-axis ticks & labels ---- */}
         {!compact &&
           ticks.map((r) => {
-            const x = xScale(r, maxRound);
+            const x = xScale(r, maxRound, svgW);
             const label = roundLabels?.[r] ?? String(r);
             return (
               <g key={r}>
@@ -417,7 +437,7 @@ export function ChampionshipChart({
         {/* ---- Lines ---- */}
         {lines.map((l) => {
           const hex = getTeamHexColor(l.teamRef);
-          const d = buildPath(l.rounds, l.points, maxRound, maxPts);
+          const d = buildPath(l.rounds, l.points, maxRound, maxPts, svgW);
           if (!d) return null;
           return (
             <path

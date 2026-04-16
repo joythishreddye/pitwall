@@ -81,9 +81,16 @@ body {
 }
 
 /* ── Focus ring ── */
-:focus-visible {
+/* 1. Strip browser-default blue rings globally (click / programmatic focus) */
+*:focus {
+  outline: none;
+  box-shadow: none;
+}
+/* 2. Restore a themed ring only for keyboard navigation */
+*:focus-visible {
   outline: 2px solid var(--color-f1-cyan);
   outline-offset: 2px;
+  box-shadow: none;
 }
 
 /* ── Status dot pulse (opacity only — no scale) ── */

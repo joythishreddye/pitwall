@@ -51,7 +51,7 @@ function Select({
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "bg-transparent text-f1-text text-xs font-mono appearance-none cursor-pointer",
-          "outline-none focus:outline-none pr-4 min-w-0"
+          "pr-4 min-w-0"
         )}
         aria-label={label}
       >

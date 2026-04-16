@@ -196,7 +196,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about F1..."
-              className="flex-1 h-10 bg-f1-dark-3 border border-f1-grid rounded-sm px-3 text-sm text-f1-text placeholder:text-f1-muted focus:outline-none focus:border-f1-red/50 transition-colors"
+              className="flex-1 h-10 bg-f1-dark-3 border border-f1-grid rounded-sm px-3 text-sm text-f1-text placeholder:text-f1-muted transition-colors"
               disabled={isLoading}
             />
             {isLoading ? (

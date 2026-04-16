@@ -16,7 +16,7 @@ export function SeasonSelector({
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
       aria-label="Select season"
-      className="bg-f1-dark-2 border border-f1-grid text-f1-text text-sm font-mono px-3 py-1.5 rounded-sm cursor-pointer hover:border-f1-muted/50 transition-colors duration-150 focus:outline-none focus:border-f1-red"
+      className="bg-f1-dark-2 border border-f1-grid text-f1-text text-sm font-mono px-3 py-1.5 rounded-sm cursor-pointer hover:border-f1-muted/50 transition-colors duration-150"
     >
       {seasons
         ? seasons.map((s) => (
