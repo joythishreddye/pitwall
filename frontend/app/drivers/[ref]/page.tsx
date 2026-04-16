@@ -82,6 +82,8 @@ export default function DriverProfilePage({
         poles={driver.career_stats.poles}
         races={driver.career_stats.races}
         points={Math.floor(driver.career_stats.points)}
+        teamHex={teamHex}
+        careerSeasons={driver.career_seasons}
       />
 
       {/* Season results */}

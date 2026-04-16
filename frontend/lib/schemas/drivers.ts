@@ -1,5 +1,14 @@
 import { z } from "zod/v4";
 
+export const SeasonStatSchema = z.object({
+  season: z.number(),
+  points: z.number(),
+  wins: z.number(),
+  races: z.number(),
+});
+
+export type SeasonStat = z.infer<typeof SeasonStatSchema>;
+
 const ConstructorBriefSchema = z.object({
   id: z.number(),
   ref: z.string(),
@@ -28,6 +37,7 @@ export const DriverProfileSchema = z.object({
   url: z.string().nullable(),
   current_constructor: ConstructorBriefSchema.nullable(),
   career_stats: CareerStatsSchema,
+  career_seasons: z.array(SeasonStatSchema).default([]),
 });
 
 export const DriverResultSchema = z.object({

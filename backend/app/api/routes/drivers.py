@@ -41,6 +41,13 @@ class CareerStats(BaseModel):
     championships: int
 
 
+class SeasonStat(BaseModel):
+    season: int
+    points: float
+    wins: int
+    races: int
+
+
 class ConstructorBrief(BaseModel):
     id: int
     ref: str
@@ -60,6 +67,7 @@ class DriverProfile(BaseModel):
     url: str | None = None
     current_constructor: ConstructorBrief | None = None
     career_stats: CareerStats
+    career_seasons: list[SeasonStat] = []
 
 
 class RaceResultEntry(BaseModel):
@@ -93,29 +101,65 @@ class PaginatedDriverResults(BaseModel):
 
 def _compute_career_stats(
     db: Client, driver_id: int
-) -> CareerStats:
-    """Aggregate career stats for a driver from race_results and standings.
+) -> tuple[CareerStats, list[SeasonStat]]:
+    """Aggregate career stats and per-season breakdown for a driver.
+
+    Fetches race_results once (with races.season join) and computes both
+    career totals and a chronological per-season summary in a single pass.
 
     Args:
         db:        Supabase client.
         driver_id: Primary key of the driver.
 
     Returns:
-        CareerStats with aggregated wins, podiums, poles, points, and races.
+        Tuple of (CareerStats, list[SeasonStat]) sorted by season ascending.
     """
-    # Fetch all race results for career totals
+    # Single query — join races to get season for per-season breakdown
     results = (
         db.table("race_results")
-        .select("position, points")
+        .select("position, points, races(season)")
         .eq("driver_id", driver_id)
         .execute()
     )
     rows = results.data or []
 
-    total_races = len(rows)
-    wins = sum(1 for r in rows if r.get("position") == 1)
-    podiums = sum(1 for r in rows if r.get("position") in (1, 2, 3))
-    total_points = sum(float(r["points"]) for r in rows if r.get("points") is not None)
+    total_races = 0
+    wins = 0
+    podiums = 0
+    total_points = 0.0
+
+    # Per-season accumulators: {season: {points, wins, races}}
+    season_agg: dict[int, dict[str, float | int]] = {}
+
+    for r in rows:
+        pos = r.get("position")
+        pts = float(r["points"]) if r.get("points") is not None else 0.0
+        season = (r.get("races") or {}).get("season")
+
+        total_races += 1
+        total_points += pts
+        if pos == 1:
+            wins += 1
+        if pos in (1, 2, 3):
+            podiums += 1
+
+        if season is not None:
+            if season not in season_agg:
+                season_agg[season] = {"points": 0.0, "wins": 0, "races": 0}
+            season_agg[season]["races"] = int(season_agg[season]["races"]) + 1
+            season_agg[season]["points"] = float(season_agg[season]["points"]) + pts
+            if pos == 1:
+                season_agg[season]["wins"] = int(season_agg[season]["wins"]) + 1
+
+    career_seasons = [
+        SeasonStat(
+            season=s,
+            points=round(float(d["points"]), 1),
+            wins=int(d["wins"]),
+            races=int(d["races"]),
+        )
+        for s, d in sorted(season_agg.items())
+    ]
 
     # Poles come from qualifying_results where position = 1
     poles_result = (
@@ -170,7 +214,7 @@ def _compute_career_stats(
             if season_max.get(season) == p1_round:
                 championships += 1
 
-    return CareerStats(
+    career_stats = CareerStats(
         races=total_races,
         wins=wins,
         podiums=podiums,
@@ -178,6 +222,7 @@ def _compute_career_stats(
         points=total_points,
         championships=championships,
     )
+    return career_stats, career_seasons
 
 
 # ---------------------------------------------------------------------------
@@ -235,7 +280,7 @@ def get_driver(driver_ref: str, db: DB) -> DriverProfile:
                 nationality=c.get("nationality"),
             )
 
-    career_stats = _compute_career_stats(db, driver_id)
+    career_stats, career_seasons = _compute_career_stats(db, driver_id)
 
     raw_number = driver_row.get("number")
     return DriverProfile(
@@ -250,6 +295,7 @@ def get_driver(driver_ref: str, db: DB) -> DriverProfile:
         url=driver_row.get("url"),
         current_constructor=current_constructor,
         career_stats=career_stats,
+        career_seasons=career_seasons,
     )
 
 
