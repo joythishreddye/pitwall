@@ -35,6 +35,8 @@
   --color-team-rb: #6692FF;
   --color-team-sauber: #52E252;
   --color-team-haas: #B6BABD;
+  --color-team-audi: #BB0022;
+  --color-team-cadillac: #FFFFFF;
 
   /* ── Fonts ── */
   --font-sans: var(--font-inter);

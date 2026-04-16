@@ -6,6 +6,7 @@ export const DriverStandingSchema = z.object({
   wins: z.number(),
   driver_id: z.number(),
   driver_ref: z.string(),
+  driver_code: z.string().nullable().optional(),
   forename: z.string(),
   surname: z.string(),
   nationality: z.string().nullable(),

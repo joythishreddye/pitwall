@@ -86,7 +86,10 @@ function PhotoHero({
 export function DriverCard({ driver, photoDrivers }: DriverCardProps) {
   const teamColor = getTeamColor(driver.constructor_name ?? "");
   const teamHex = getTeamHexColor(driver.constructor_name ?? "");
-  const headshotUrl = findHeadshotUrl(photoDrivers, { surname: driver.surname });
+  const headshotUrl = findHeadshotUrl(photoDrivers, {
+    acronym: driver.driver_code,
+    surname: driver.surname,
+  });
 
   return (
     <Link

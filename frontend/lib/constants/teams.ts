@@ -11,6 +11,9 @@ const TEAM_CSS_VARS: Record<string, string> = {
   "sauber": "var(--color-team-sauber)",
   "kick_sauber": "var(--color-team-sauber)",
   "haas": "var(--color-team-haas)",
+  "audi": "var(--color-team-audi)",
+  "cadillac": "var(--color-team-cadillac)",
+  "cadillac_f1_team": "var(--color-team-cadillac)",
   // Display name variants (from API constructor_name field)
   "alpine_f1_team": "var(--color-team-alpine)",
   "haas_f1_team": "var(--color-team-haas)",
@@ -33,9 +36,11 @@ export const TEAM_NAMES: Record<string, string> = {
   "aston_martin": "Aston Martin Aramco",
   "alpine": "Alpine F1 Team",
   "williams": "Williams Racing",
-  "rb": "Visa Cash App RB",
+  "rb": "Racing Bulls",
   "sauber": "Stake F1 Team Kick Sauber",
-  "haas": "MoneyGram Haas F1 Team",
+  "haas": "Haas F1 Team",
+  "audi": "Audi F1 Team",
+  "cadillac": "Cadillac F1 Team",
 } as const;
 
 export function getTeamColor(constructorRef: string): string {
@@ -55,6 +60,8 @@ const TEAM_HEX: Record<string, string> = {
   "rb": "#6692FF",
   "sauber": "#52E252",
   "haas": "#B6BABD",
+  "audi": "#BB0022",
+  "cadillac": "#FFFFFF",
 };
 
 export function getTeamHexColor(constructorRef: string): string {

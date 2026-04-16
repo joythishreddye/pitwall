@@ -39,6 +39,7 @@ class DriverStandingEntry(BaseModel):
     wins: int
     driver_id: int
     driver_ref: str
+    driver_code: str | None = None
     forename: str
     surname: str
     nationality: str | None = None
@@ -111,7 +112,7 @@ def _fetch_driver_standings(
     driver_ids = [row["entity_id"] for row in standing_rows]
     drivers_result = (
         db.table("drivers")
-        .select("id, ref, forename, surname, nationality")
+        .select("id, ref, code, forename, surname, nationality")
         .in_("id", driver_ids)
         .execute()
     )
@@ -153,6 +154,7 @@ def _fetch_driver_standings(
                 wins=int(row.get("wins") or 0),
                 driver_id=did,
                 driver_ref=driver.get("ref", ""),
+                driver_code=driver.get("code"),
                 forename=driver.get("forename", ""),
                 surname=driver.get("surname", ""),
                 nationality=driver.get("nationality"),
