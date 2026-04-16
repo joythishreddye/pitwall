@@ -44,6 +44,7 @@ class DriverStandingEntry(BaseModel):
     surname: str
     nationality: str | None = None
     constructor_name: str | None = None
+    constructor_ref: str | None = None
 
 
 class ConstructorStandingEntry(BaseModel):
@@ -130,18 +131,22 @@ def _fetch_driver_standings(
 
     constructors_result = (
         db.table("race_results")
-        .select("driver_id, constructors(name)")
+        .select("driver_id, constructors(name, ref)")
         .in_("driver_id", driver_ids)
         .in_("race_id", season_race_ids)
         .execute()
     ) if season_race_ids else type("R", (), {"data": []})()
-    # Build a map: driver_id -> constructor name (last row wins for the season)
-    constructor_map: dict[int, str] = {}
+    # Build maps: driver_id -> constructor name/ref (last row wins for the season)
+    constructor_name_map: dict[int, str] = {}
+    constructor_ref_map: dict[int, str] = {}
     for rr in constructors_result.data or []:
         did = rr["driver_id"]
         c = rr.get("constructors")
-        if c and c.get("name"):
-            constructor_map[did] = c["name"]
+        if c:
+            if c.get("name"):
+                constructor_name_map[did] = c["name"]
+            if c.get("ref"):
+                constructor_ref_map[did] = c["ref"]
 
     entries: list[DriverStandingEntry] = []
     for row in standing_rows:
@@ -158,7 +163,8 @@ def _fetch_driver_standings(
                 forename=driver.get("forename", ""),
                 surname=driver.get("surname", ""),
                 nationality=driver.get("nationality"),
-                constructor_name=constructor_map.get(did),
+                constructor_name=constructor_name_map.get(did),
+                constructor_ref=constructor_ref_map.get(did),
             )
         )
     return entries

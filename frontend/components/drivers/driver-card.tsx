@@ -89,6 +89,7 @@ export function DriverCard({ driver, photoDrivers }: DriverCardProps) {
   const headshotUrl = findHeadshotUrl(photoDrivers, {
     acronym: driver.driver_code,
     surname: driver.surname,
+    constructorRef: driver.constructor_ref,
   });
 
   return (

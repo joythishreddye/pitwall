@@ -11,6 +11,7 @@ export const DriverStandingSchema = z.object({
   surname: z.string(),
   nationality: z.string().nullable(),
   constructor_name: z.string().nullable(),
+  constructor_ref: z.string().nullable().optional(),
 });
 
 export const ConstructorStandingSchema = z.object({
