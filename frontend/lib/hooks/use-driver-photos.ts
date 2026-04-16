@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod/v4";
-import { CURRENT_SEASON } from "@/lib/constants/season";
 
 const OpenF1DriverSchema = z.object({
   driver_number: z.number(),
@@ -13,24 +12,18 @@ export type OpenF1Driver = z.infer<typeof OpenF1DriverSchema>;
 
 async function fetchOpenF1Drivers(): Promise<OpenF1Driver[]> {
   const res = await fetch(
-    `https://api.openf1.org/v1/drivers?year=${CURRENT_SEASON}`
+    "https://api.openf1.org/v1/drivers?session_key=latest"
   );
   if (!res.ok) return [];
   const raw = await res.json();
-  const all = z.array(OpenF1DriverSchema).parse(raw);
-
-  // Deduplicate by name_acronym; last entry wins (most recent session = freshest headshot URL).
-  // year= returns one entry per driver per session, so there can be many duplicates.
-  const seen = new Map<string, OpenF1Driver>();
-  for (const d of all) {
-    if (d.name_acronym) seen.set(d.name_acronym, d);
-  }
-  return Array.from(seen.values());
+  // OpenF1 returns {"detail":"No results found."} (not an array) on empty results
+  if (!Array.isArray(raw)) return [];
+  return z.array(OpenF1DriverSchema).parse(raw);
 }
 
 export function useDriverPhotos() {
   return useQuery<OpenF1Driver[]>({
-    queryKey: ["openf1-driver-photos", CURRENT_SEASON],
+    queryKey: ["openf1-driver-photos"],
     queryFn: fetchOpenF1Drivers,
     staleTime: 60 * 60 * 1000, // 1 hour — headshots update mid-season
     retry: 1,
