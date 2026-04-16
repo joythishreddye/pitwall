@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { SplitReveal } from "@/components/ui/split-reveal";
-import { DriverPhoto } from "@/components/driver-photo";
 import type { DriverProfile } from "@/lib/schemas/drivers";
 
 interface ProfileHeaderProps {
@@ -18,6 +17,7 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: ProfileHeaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const [photoFailed, setPhotoFailed] = useState(false);
 
   // Team-color glow fades in on load
   useGSAP(
@@ -37,13 +37,15 @@ export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: Profi
   );
 
   const fullName = `${driver.forename.toUpperCase()} ${driver.surname.toUpperCase()}`;
+  const initials = `${driver.forename[0] ?? "?"}${driver.surname[0] ?? "?"}`;
+  const showPhoto = headshotUrl && !photoFailed;
 
   return (
     <div ref={containerRef} className="relative mb-8">
       {/* Ambient team-color radial glow */}
       <div
         ref={glowRef}
-        className="absolute inset-x-0 top-0 h-48 pointer-events-none"
+        className="absolute inset-x-0 top-0 h-64 pointer-events-none"
         style={{
           background: `radial-gradient(ellipse 80% 100% at 50% 0%, ${teamHex}, transparent)`,
           opacity: 0,
@@ -60,22 +62,48 @@ export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: Profi
           Drivers
         </Link>
 
-        <div className="flex items-start gap-5 p-5 border border-f1-grid bg-f1-dark-2/60 rounded-sm backdrop-blur-none overflow-hidden">
-          <DriverPhoto
-            src={headshotUrl}
-            forename={driver.forename}
-            surname={driver.surname}
-            teamColor={teamHex}
-            size={160}
-          />
+        <div className="flex items-stretch border border-f1-grid bg-f1-dark-2/60 overflow-hidden rounded-sm">
 
-          {/* Team-color vertical accent line */}
+          {/* ── Full-body portrait ─────────────────────── */}
           <div
-            className="w-0.5 h-16 shrink-0 mt-2 rounded-none"
+            className="relative w-44 shrink-0 overflow-hidden"
+            style={{ minHeight: 280, backgroundColor: `${teamHex}10` }}
+          >
+            {showPhoto ? (
+              <img
+                src={headshotUrl}
+                alt={`${driver.forename} ${driver.surname}`}
+                className="absolute inset-0 w-full h-full object-contain object-bottom"
+                onError={() => setPhotoFailed(true)}
+              />
+            ) : (
+              /* Fallback: large initials centred vertically */
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className="font-mono font-black text-5xl select-none"
+                  style={{ color: teamHex, opacity: 0.4 }}
+                >
+                  {initials}
+                </span>
+              </div>
+            )}
+
+            {/* Bottom-to-card gradient to blend photo edge into card body */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+              style={{ background: "linear-gradient(to top, #1A1A1A, transparent)" }}
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* ── Vertical team-color accent line ────────── */}
+          <div
+            className="w-0.5 shrink-0 self-stretch"
             style={{ backgroundColor: teamColor }}
           />
 
-          <div className="flex-1 min-w-0">
+          {/* ── Driver info ─────────────────────────────── */}
+          <div className="flex-1 min-w-0 p-5 flex flex-col justify-center">
             <div className="flex items-baseline gap-3 flex-wrap">
               <SplitReveal
                 text={fullName}
@@ -112,6 +140,7 @@ export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: Profi
               )}
             </div>
           </div>
+
         </div>
       </div>
     </div>

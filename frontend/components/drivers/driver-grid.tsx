@@ -5,7 +5,6 @@ import { gsap, useGSAP, Flip, ScrollTrigger, respectsReducedMotion } from "@/lib
 import { DriverCard } from "./driver-card";
 import { FilterBar, type FilterState } from "./filter-bar";
 import type { DriverStanding } from "@/lib/schemas/standings";
-import type { OpenF1Driver } from "@/lib/hooks/use-driver-photos";
 
 // Ensure plugin side-effects
 void Flip;
@@ -13,7 +12,6 @@ void ScrollTrigger;
 
 interface DriverGridProps {
   drivers: DriverStanding[];
-  photoDrivers: OpenF1Driver[] | undefined;
 }
 
 function sortDrivers(drivers: DriverStanding[], sort: FilterState["sort"]): DriverStanding[] {
@@ -24,7 +22,7 @@ function sortDrivers(drivers: DriverStanding[], sort: FilterState["sort"]): Driv
   });
 }
 
-export function DriverGrid({ drivers, photoDrivers }: DriverGridProps) {
+export function DriverGrid({ drivers }: DriverGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const hasEnteredRef = useRef(false);
 
@@ -118,7 +116,6 @@ export function DriverGrid({ drivers, photoDrivers }: DriverGridProps) {
           <DriverCard
             key={driver.driver_ref}
             driver={driver}
-            photoDrivers={photoDrivers}
           />
         ))}
         {visible.length === 0 && (

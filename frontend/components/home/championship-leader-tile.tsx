@@ -19,7 +19,9 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
   const photoUrl = findHeadshotUrl(driverPhotos, {
+    acronym: leader.driver_code,
     surname: leader.surname,
+    constructorRef: leader.constructor_ref,
   });
 
   return (

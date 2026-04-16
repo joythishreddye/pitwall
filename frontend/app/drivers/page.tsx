@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings } from "@/lib/hooks/use-standings";
-import { useDriverPhotos } from "@/lib/hooks/use-driver-photos";
 import { DriverGrid } from "@/components/drivers";
 import { ErrorState } from "@/components/error-state";
 import { SeasonSelector } from "@/components/season-selector";
@@ -11,7 +10,6 @@ import { SeasonSelector } from "@/components/season-selector";
 export default function DriversPage() {
   const [season, setSeason] = useState(CURRENT_SEASON);
   const { data, isLoading, error, refetch } = useStandings(season, "driver");
-  const { data: photoDrivers } = useDriverPhotos();
   const drivers = data?.driver_standings ?? [];
 
   return (
@@ -31,14 +29,14 @@ export default function DriversPage() {
           {Array.from({ length: 9 }, (_, i) => (
             <div
               key={i}
-              className="border border-f1-grid bg-f1-dark-2 rounded-sm h-36 animate-pulse"
+              className="border border-f1-grid bg-f1-dark-2 rounded-sm h-28 animate-pulse"
             />
           ))}
         </div>
       ) : error ? (
         <ErrorState message="Failed to load drivers" onRetry={refetch} />
       ) : (
-        <DriverGrid drivers={drivers} photoDrivers={photoDrivers} />
+        <DriverGrid drivers={drivers} />
       )}
     </div>
   );
