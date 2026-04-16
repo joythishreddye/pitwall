@@ -101,72 +101,73 @@ export default function StandingsPage() {
   );
 
   return (
-    <div className="p-8 max-w-screen-xl">
-      {/* ---- Header ---- */}
-      <div className="mb-6">
-        <div className="flex items-center gap-4 flex-wrap">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Championship Standings
-          </h1>
-          <SeasonSelector value={season} onChange={setSeason} />
+    <>
+      {/* ---- Padded content: header + tabs + table ---- */}
+      <div className="px-8 pt-8 pb-0">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4 flex-wrap">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Championship Standings
+            </h1>
+            <SeasonSelector value={season} onChange={setSeason} />
+          </div>
+          <p className="text-f1-muted text-sm mt-1 font-data tabular-nums">
+            {data ? `Round ${data.round} · ${season} season` : "Loading..."}
+          </p>
         </div>
-        <p className="text-f1-muted text-sm mt-1 font-data tabular-nums">
-          {data ? `Round ${data.round} · ${season} season` : "Loading..."}
-        </p>
-      </div>
 
-      {/* ---- Tab bar ---- */}
-      <div
-        ref={tabBarRef}
-        role="tablist"
-        className="relative flex gap-0 mb-0 border-b border-f1-grid"
-      >
-        {TABS.map((tab, i) => (
-          <button
-            key={tab}
-            ref={(el) => { tabRefs.current[i] = el; }}
-            role="tab"
-            aria-selected={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 cursor-pointer",
-              activeTab === tab ? "text-f1-text" : "text-f1-muted hover:text-f1-text"
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-        {/* Sliding indicator — 2px bar anchored to bottom of tab bar */}
+        {/* Tab bar */}
         <div
-          ref={indicatorRef}
-          className="absolute bottom-0 left-0 h-[2px] bg-f1-red"
-          aria-hidden="true"
-        />
+          ref={tabBarRef}
+          role="tablist"
+          className="relative flex gap-0 mb-0 border-b border-f1-grid"
+        >
+          {TABS.map((tab, i) => (
+            <button
+              key={tab}
+              ref={(el) => { tabRefs.current[i] = el; }}
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 cursor-pointer",
+                activeTab === tab ? "text-f1-text" : "text-f1-muted hover:text-f1-text"
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+          <div
+            ref={indicatorRef}
+            className="absolute bottom-0 left-0 h-[2px] bg-f1-red"
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Table */}
+        <div ref={contentRef}>
+          {isLoading ? (
+            <LoadingSkeleton rows={activeTab === "drivers" ? 20 : 10} />
+          ) : error ? (
+            <ErrorState message="Failed to load standings data" onRetry={refetch} />
+          ) : activeTab === "drivers" ? (
+            <DriversTable drivers={drivers} maxPoints={maxPoints} />
+          ) : (
+            <ConstructorsTable constructors={constructors} maxPoints={maxPoints} />
+          )}
+        </div>
       </div>
 
-      {/* ---- Table content ---- */}
-      <div ref={contentRef}>
-        {isLoading ? (
-          <LoadingSkeleton rows={activeTab === "drivers" ? 20 : 10} />
-        ) : error ? (
-          <ErrorState message="Failed to load standings data" onRetry={refetch} />
-        ) : activeTab === "drivers" ? (
-          <DriversTable drivers={drivers} maxPoints={maxPoints} />
-        ) : (
-          <ConstructorsTable constructors={constructors} maxPoints={maxPoints} />
-        )}
-      </div>
-
-      {/* ---- Championship Progression Chart — full-width breakout ---- */}
-      <section className="mt-10 -mx-8">
+      {/* ---- Championship Progression — true full-width section ---- */}
+      <section className="mt-10 w-full">
         <div className="flex items-center gap-2 mb-4 px-8">
           <TrendingUp className="h-4 w-4 text-f1-muted" aria-hidden="true" />
           <h2 className="text-sm text-f1-muted uppercase tracking-widest">
             Championship Progression
           </h2>
         </div>
-
-        <div className="bg-f1-dark-2 border-y border-f1-grid px-8 py-5 relative">
+        <div className="w-full bg-f1-dark-2 border-y border-f1-grid py-5 px-6 relative">
           {!progressions.length && (
             <div className="absolute inset-x-0 top-0">
               <ScannerLine />
@@ -179,7 +180,9 @@ export default function StandingsPage() {
           />
         </div>
       </section>
-    </div>
+
+      <div className="pb-8" />
+    </>
   );
 }
 

@@ -202,20 +202,32 @@ export function ChampionshipChart({
   if (!ticks.includes(1)) ticks.unshift(1);
 
   // -------------------------------------------------------------------------
-  // GSAP DrawSVG
+  // GSAP animation
+  // Solid lines: DrawSVG draw-in (GSAP overwrites strokeDasharray, so we
+  //   cannot use DrawSVG on dashed paths — they get a fade-in instead).
+  // Dashed lines: opacity fade (preserves the strokeDasharray="6 4" we set).
   // -------------------------------------------------------------------------
   useGSAP(
     () => {
       if (!lines.length) return;
       if (respectsReducedMotion()) {
-        gsap.set(".chart-line", { drawSVG: "100%" });
+        gsap.set(".chart-line, .chart-line-dash", { opacity: 0.85 });
         return;
       }
+      // Solid lines — draw in left-to-right
       gsap.from(".chart-line", {
         drawSVG: "0%",
         duration: 1.8,
         ease: "pitwall-accel",
         stagger: 0.04,
+      });
+      // Dashed lines — fade in (DrawSVG would destroy the dash pattern)
+      gsap.from(".chart-line-dash", {
+        opacity: 0,
+        duration: 1.0,
+        ease: "pitwall-accel",
+        stagger: 0.04,
+        delay: 0.5,
       });
     },
     { scope: svgRef, dependencies: [progressions, mode] }
@@ -261,8 +273,8 @@ export function ChampionshipChart({
     (id: string) => {
       if (!svgRef.current) return;
       const isHiding = !hiddenIds.has(id);
-      const pathEl = svgRef.current.querySelector(`.chart-line[data-id="${id}"]`);
-      if (pathEl) gsap.to(pathEl, { opacity: isHiding ? 0 : 1, duration: 0.25, ease: "pitwall-accel" });
+      const pathEl = svgRef.current.querySelector(`[data-id="${id}"]`);
+      if (pathEl) gsap.to(pathEl, { opacity: isHiding ? 0 : 0.85, duration: 0.25, ease: "pitwall-accel" });
       setHiddenIds((prev) => {
         const next = new Set(prev);
         if (isHiding) next.add(id);
@@ -410,7 +422,7 @@ export function ChampionshipChart({
           return (
             <path
               key={l.id}
-              className="chart-line"
+              className={l.dash ? "chart-line-dash" : "chart-line"}
               data-id={l.id}
               d={d}
               stroke={hex}
