@@ -15,9 +15,11 @@ import {
   ChartPreview,
 } from "@/components/home";
 
-// All tile IDs used in the scanner sweep
 const ALL_TILE_IDS = ["leader", "constructor", "next-race", "top5", "recent", "chart"] as const;
 type TileId = (typeof ALL_TILE_IDS)[number];
+
+// Stagger between each tile reveal (seconds)
+const TILE_STAGGER = 0.08;
 
 export default function HomePage() {
   const { data: standings, isLoading: standingsLoading } = useStandings(CURRENT_SEASON);
@@ -33,14 +35,12 @@ export default function HomePage() {
   const nextRace = races?.find((r) => r.date && new Date(r.date + "T00:00:00") >= now);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const scannerRef = useRef<HTMLDivElement>(null);
 
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
-  // shouldAnimate latches true the first time allLoaded becomes true.
-  // useGSAP depends only on this — not on allLoaded — so TanStack Query
-  // background refetches (which briefly flip isLoading back to true) cannot
-  // re-run or revert the animation after it has already played.
+
+  // Latches true the first time allLoaded becomes true — never flips back.
+  // This means TanStack Query background refetches (isLoading briefly true)
+  // cannot re-run or revert the animation after it has played.
   const [shouldAnimate, setShouldAnimate] = useState(false);
   useEffect(() => {
     if (allLoaded && !shouldAnimate) setShouldAnimate(true);
@@ -50,70 +50,43 @@ export default function HomePage() {
     () => {
       if (!shouldAnimate) return;
 
-      const gridEl = gridRef.current;
-      const scannerEl = scannerRef.current;
-      if (!gridEl || !scannerEl) return;
+      const tiles = gsap.utils.toArray<HTMLElement>("[data-tile-id]");
+      if (tiles.length === 0) return;
 
-      // Reduced motion: skip sweep, reveal everything immediately
+      // Reduced motion — reveal everything instantly
       if (respectsReducedMotion()) {
-        gsap.set("[data-tile-id]", { opacity: 1 });
+        gsap.set(tiles, { opacity: 1, y: 0 });
         setRevealedTiles(new Set(ALL_TILE_IDS));
         return;
       }
 
-      const gridHeight = gridEl.offsetHeight;
-      const scanDuration = 0.9; // total sweep time in seconds
-      const scanStart = 0.12;   // brief pause before sweep begins
-
-      // Hide all tile wrappers before first paint
-      gsap.set("[data-tile-id]", { opacity: 0, y: 0 });
-      gsap.set(scannerEl, { y: 0, opacity: 0 });
+      // Hold all tiles invisible before the timeline starts
+      gsap.set(tiles, { opacity: 0, y: 8 });
 
       const tl = gsap.timeline();
 
-      // 1. Scanner fades in at the top of the grid
-      tl.to(scannerEl, { opacity: 1, duration: 0.15, ease: "none" });
-
-      // 2. Scanner sweeps to the bottom at constant speed
-      tl.to(
-        scannerEl,
-        { y: gridHeight, duration: scanDuration, ease: "none" },
-        scanStart
-      );
-
-      // 3. Each tile reveals as the scanner beam crosses its vertical midpoint
-      gridEl.querySelectorAll("[data-tile-id]").forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        const tileId = (htmlEl.dataset.tileId ?? "") as TileId;
-        const midY = htmlEl.offsetTop + htmlEl.offsetHeight / 2;
-        const revealAt = scanStart + (midY / gridHeight) * scanDuration;
-
+      tiles.forEach((el, i) => {
+        const tileId = el.dataset.tileId as TileId;
         tl.fromTo(
-          htmlEl,
+          el,
           { opacity: 0, y: 8 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.35,
+            duration: 0.3,
             ease: "pitwall-accel",
             onStart() {
-              // Fire per-tile child animations (counters, DrawPath, SplitReveal)
+              // Unpauses NumberCounter, DrawPath, SplitReveal inside this tile
               setRevealedTiles((prev) => new Set([...prev, tileId]));
             },
           },
-          revealAt
+          i * TILE_STAGGER
         );
       });
-
-      // 4. Scanner beam fades out after completing the sweep
-      tl.to(scannerEl, { opacity: 0, duration: 0.25 });
     },
     { scope: containerRef, dependencies: [shouldAnimate] }
   );
 
-  // ── Always render the grid — loading state overlays it ────────────────────
-  // Never early-return: the grid DOM must stay mounted so GSAP can measure
-  // offsetTop on both first visit (fresh fetch) and return visits (cached data).
   return (
     <div ref={containerRef} className="relative min-h-screen">
       <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
@@ -130,30 +103,18 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Loading overlay — shown until data is ready, sits above the (empty) grid */}
+        {/* Loading indicator — full-width scanner, shown while any data pending */}
         {!allLoaded && (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
-            <ScannerLine className="w-48" />
+            <ScannerLine className="w-full max-w-md" />
             <p className="font-data text-[10px] text-f1-muted tracking-widest uppercase">
-              Acquiring Race Data...
+              Loading Race Data...
             </p>
           </div>
         )}
 
-        {/* Grid — relative so the scanner beam positions against it */}
-        <div ref={gridRef} className="relative grid grid-cols-1 md:grid-cols-4 gap-3">
-
-          {/* Scanner beam — sweeps from top to bottom of the grid */}
-          <div
-            ref={scannerRef}
-            className="absolute left-0 right-0 h-px z-50 pointer-events-none col-span-full"
-            style={{
-              top: 0,
-              background: "linear-gradient(to right, transparent 0%, var(--color-f1-cyan) 20%, var(--color-f1-cyan) 80%, transparent 100%)",
-              boxShadow: "0 0 10px 2px rgba(0, 192, 255, 0.55)",
-            }}
-            aria-hidden="true"
-          />
+        {/* Grid — always mounted so GSAP can measure tiles on cached return visits */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
 
           {/* Championship Leader — 2 cols wide, 2 rows tall */}
           {leader && (
