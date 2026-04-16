@@ -60,13 +60,13 @@ export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: Profi
           Drivers
         </Link>
 
-        <div className="flex items-start gap-5 p-5 border border-f1-grid bg-f1-dark-2/60 rounded-sm backdrop-blur-none">
+        <div className="flex items-start gap-5 p-5 border border-f1-grid bg-f1-dark-2/60 rounded-sm backdrop-blur-none overflow-hidden">
           <DriverPhoto
             src={headshotUrl}
             forename={driver.forename}
             surname={driver.surname}
             teamColor={teamHex}
-            size={120}
+            size={160}
           />
 
           {/* Team-color vertical accent line */}

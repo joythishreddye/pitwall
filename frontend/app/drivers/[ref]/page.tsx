@@ -59,13 +59,13 @@ export default function DriverProfilePage({
     ? getTeamHexColor(driver.current_constructor.ref)
     : "#A3A3A3";
   const headshotUrl = findHeadshotUrl(photoDrivers, {
-    number: driver.number,
+    acronym: driver.code,
     surname: driver.surname,
   });
   const results = resultsData?.results ?? [];
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8">
       {/* Profile header: photo + SplitReveal name + team color glow */}
       <ProfileHeader
         driver={driver}

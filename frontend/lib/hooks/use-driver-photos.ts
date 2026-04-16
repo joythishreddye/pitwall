@@ -33,21 +33,49 @@ function upgradeResolution(url: string): string {
   return url.replace("/1col/", "/4col/").replace("/2col/", "/4col/");
 }
 
+/**
+ * Strip Unicode diacritics for accent-insensitive matching.
+ * "Hülkenberg" → "hulkenberg", "Pérez" → "perez"
+ */
+function normalizeForMatch(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+/**
+ * Find a driver headshot URL from the OpenF1 drivers list.
+ *
+ * Match priority:
+ *   1. name_acronym (3-letter code e.g. "NOR", "LEC") — exact, most reliable
+ *   2. surname — normalized for diacritics, substring of full_name
+ *
+ * Driver number is intentionally NOT used: numbers change between seasons and
+ * can cause cross-season false matches (e.g. Ricciardo #3 → Verstappen #3).
+ */
 export function findHeadshotUrl(
   drivers: OpenF1Driver[] | undefined,
-  opts: { surname?: string; number?: string | null },
+  opts: {
+    surname?: string;
+    /** 3-letter driver code (e.g. "NOR"). Takes priority over surname. */
+    acronym?: string | null;
+  },
 ): string | null {
   if (!drivers?.length) return null;
 
-  if (opts.number) {
-    const match = drivers.find(d => d.driver_number === Number(opts.number));
+  // 1. Acronym match — exact and season-safe
+  if (opts.acronym) {
+    const upper = opts.acronym.toUpperCase();
+    const match = drivers.find((d) => d.name_acronym.toUpperCase() === upper);
     if (match?.headshot_url) return upgradeResolution(match.headshot_url);
   }
 
+  // 2. Surname match — normalized to handle diacritics (Hülkenberg, Pérez, etc.)
   if (opts.surname) {
-    const lower = opts.surname.toLowerCase();
-    const match = drivers.find(d =>
-      d.full_name.toLowerCase().includes(lower)
+    const needle = normalizeForMatch(opts.surname);
+    const match = drivers.find((d) =>
+      normalizeForMatch(d.full_name).includes(needle)
     );
     if (match?.headshot_url) return upgradeResolution(match.headshot_url);
   }

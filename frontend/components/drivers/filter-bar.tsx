@@ -36,8 +36,14 @@ function Select({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="relative flex items-center gap-1.5 border border-f1-grid bg-f1-dark-2 px-3 h-8">
-      <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted/60 select-none">
+    <div
+      className={cn(
+        "relative flex items-center gap-1.5 h-8 px-3",
+        "border border-f1-grid bg-f1-dark-2",
+        "focus-within:border-f1-cyan/40 transition-colors duration-100"
+      )}
+    >
+      <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted/60 select-none shrink-0">
         {label}
       </span>
       <select
@@ -45,7 +51,7 @@ function Select({
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "bg-transparent text-f1-text text-xs font-mono appearance-none cursor-pointer",
-          "focus:outline-none pr-4 min-w-0"
+          "outline-none focus:outline-none pr-4 min-w-0"
         )}
         aria-label={label}
       >
