@@ -3,10 +3,8 @@
 import { useRef, useState, useCallback } from "react";
 import { gsap, useGSAP, DrawSVGPlugin, respectsReducedMotion } from "@/lib/gsap";
 import { getTeamHexColor } from "@/lib/constants/teams";
-import { findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
 import { cn } from "@/lib/utils";
 import type { DriverProgression } from "@/lib/schemas/standings";
-import type { OpenF1Driver } from "@/lib/hooks/use-driver-photos";
 
 void DrawSVGPlugin;
 
@@ -40,63 +38,125 @@ function buildPath(
 }
 
 // ---------------------------------------------------------------------------
+// Normalised line shape — shared by driver-mode and constructor-mode
+// ---------------------------------------------------------------------------
+interface ChartLine {
+  id: string;
+  label: string;
+  teamRef: string;
+  rounds: number[];
+  points: number[];
+  /** Second driver per team gets a dashed stroke */
+  dash: boolean;
+}
+
+/** Return this driver's cumulative points as of a given round */
+function getPointsAtRound(driver: DriverProgression, round: number): number {
+  let pts = 0;
+  for (let i = 0; i < driver.rounds.length; i++) {
+    if (driver.rounds[i] <= round) pts = driver.points[i];
+    else break;
+  }
+  return pts;
+}
+
+/** One line per driver; leading scorer per team = solid, second = dashed */
+function toDriverLines(progressions: DriverProgression[]): ChartLine[] {
+  const byTeam = new Map<string, DriverProgression[]>();
+  for (const p of progressions) {
+    const arr = byTeam.get(p.constructor_ref) ?? [];
+    arr.push(p);
+    byTeam.set(p.constructor_ref, arr);
+  }
+  const lines: ChartLine[] = [];
+  for (const [teamRef, drivers] of byTeam.entries()) {
+    const sorted = [...drivers].sort((a, b) => {
+      const aLast = a.points[a.points.length - 1] ?? 0;
+      const bLast = b.points[b.points.length - 1] ?? 0;
+      return bLast - aLast;
+    });
+    sorted.forEach((d, i) => {
+      lines.push({
+        id: d.driver_ref,
+        label: d.surname.toUpperCase(),
+        teamRef,
+        rounds: d.rounds,
+        points: d.points,
+        dash: i >= 1,
+      });
+    });
+  }
+  return lines;
+}
+
+/** One line per team — sum both drivers' cumulative points at each round */
+function toConstructorLines(progressions: DriverProgression[]): ChartLine[] {
+  const byTeam = new Map<string, DriverProgression[]>();
+  for (const p of progressions) {
+    const arr = byTeam.get(p.constructor_ref) ?? [];
+    arr.push(p);
+    byTeam.set(p.constructor_ref, arr);
+  }
+  return Array.from(byTeam.entries()).map(([teamRef, drivers]) => {
+    const allRounds = [...new Set(drivers.flatMap((d) => d.rounds))].sort(
+      (a, b) => a - b
+    );
+    const points = allRounds.map((round) =>
+      drivers.reduce((sum, d) => sum + getPointsAtRound(d, round), 0)
+    );
+    const label = teamRef
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+    return { id: teamRef, label, teamRef, rounds: allRounds, points, dash: false };
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 interface TooltipState {
   round: number;
-  // Pixel position relative to the SVG container div (for tooltip placement)
-  px: number;
-  py: number;
+  px: number; // mouse X in px, relative to container
+  py: number; // mouse Y in px, relative to container
 }
 
-interface ChampionshipChartProps {
+export interface ChampionshipChartProps {
   progressions: DriverProgression[];
-  /** Optional headshot data from useDriverPhotos — used for tooltip */
-  photos?: OpenF1Driver[];
-  /** Compact mode: no scanner, no toggles, no tooltip (used on home preview) */
+  /** Map of round number → label (country or circuit name) for x-axis / tooltip */
+  roundLabels?: Record<number, string>;
+  /** "constructors" aggregates driver points into team totals */
+  mode?: "drivers" | "constructors";
+  /** Compact mode: DrawSVG only, no scanner / toggles / tooltip (home preview) */
   compact?: boolean;
 }
 
 // ---------------------------------------------------------------------------
-// Loading / empty skeleton
+// Loading skeleton
 // ---------------------------------------------------------------------------
 function ChartSkeleton() {
   return (
-    <div className="relative w-full overflow-hidden bg-f1-dark-2 border border-f1-grid">
-      <div className="h-[240px] flex flex-col items-center justify-center gap-3">
-        {/* Three flat placeholder lines */}
-        <svg
-          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-          className="absolute inset-0 w-full h-full"
-          aria-hidden="true"
-        >
-          {[0.3, 0.55, 0.75].map((frac, i) => (
-            <line
-              key={i}
-              x1={PAD.l}
-              y1={PAD.t + INNER_H * (1 - frac)}
-              x2={PAD.l + INNER_W * 0.4}
-              y2={PAD.t + INNER_H * (1 - frac)}
-              stroke="var(--color-f1-grid)"
-              strokeWidth={1.5}
-            />
-          ))}
-        </svg>
-        {/* Scanner sweep */}
-        <div className="relative w-full h-[1px] overflow-hidden">
-          <div
-            className="absolute inset-y-0 w-32"
-            style={{
-              background:
-                "linear-gradient(to right, transparent, var(--color-f1-cyan), transparent)",
-              animation: "scannerSweep 2s ease-in-out infinite",
-            }}
+    <div className="relative w-full overflow-hidden h-[240px] flex items-center justify-center">
+      <svg
+        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        className="absolute inset-0 w-full h-full"
+        aria-hidden="true"
+      >
+        {[0.3, 0.55, 0.75].map((frac, i) => (
+          <line
+            key={i}
+            x1={PAD.l}
+            y1={PAD.t + INNER_H * (1 - frac)}
+            x2={PAD.l + INNER_W * 0.35}
+            y2={PAD.t + INNER_H * (1 - frac)}
+            stroke="var(--color-f1-grid)"
+            strokeWidth={1.5}
           />
-        </div>
-        <span className="relative font-data text-xs text-f1-muted tracking-widest uppercase">
-          Loading progression data...
-        </span>
-      </div>
+        ))}
+      </svg>
+      <span className="relative font-data text-xs text-f1-muted tracking-widest uppercase z-10">
+        Loading progression data...
+      </span>
     </div>
   );
 }
@@ -106,49 +166,47 @@ function ChartSkeleton() {
 // ---------------------------------------------------------------------------
 export function ChampionshipChart({
   progressions,
-  photos,
+  roundLabels,
+  mode = "drivers",
   compact = false,
 }: ChampionshipChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const scannerRef = useRef<SVGLineElement>(null);
 
-  const [hiddenDrivers, setHiddenDrivers] = useState<Set<string>>(new Set());
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   // -------------------------------------------------------------------------
-  // Derived geometry
+  // Compute chart lines from progressions
   // -------------------------------------------------------------------------
-  const allRounds = progressions.flatMap((p) => p.rounds);
+  const lines =
+    mode === "constructors"
+      ? toConstructorLines(progressions)
+      : toDriverLines(progressions);
+
+  // -------------------------------------------------------------------------
+  // Geometry bounds
+  // -------------------------------------------------------------------------
+  const allRounds = lines.flatMap((l) => l.rounds);
   const maxRound = allRounds.length ? Math.max(...allRounds) : 20;
-  const allPts = progressions.flatMap((p) => p.points);
+  const allPts = lines.flatMap((l) => l.points);
   const maxPts = allPts.length ? Math.max(...allPts) : 400;
 
-  // Leader = most points at their last recorded round
-  const leader =
-    progressions.length > 0
-      ? progressions.reduce((a, b) => {
-          const aLast = a.points[a.points.length - 1] ?? 0;
-          const bLast = b.points[b.points.length - 1] ?? 0;
-          return bLast > aLast ? b : a;
-        })
-      : null;
-
-  // X-axis ticks (round labels) — show every N rounds to avoid crowding
+  // X-axis ticks — show every N rounds to avoid crowding
   const tickStep = maxRound <= 10 ? 1 : maxRound <= 20 ? 2 : 5;
   const ticks = Array.from(
     { length: Math.ceil(maxRound / tickStep) },
-    (_, i) => (i + 1) * tickStep
-  ).filter((r) => r <= maxRound);
-  // Always include round 1
+    (_, i) => Math.min((i + 1) * tickStep, maxRound)
+  ).filter((r, i, arr) => arr.indexOf(r) === i);
   if (!ticks.includes(1)) ticks.unshift(1);
 
   // -------------------------------------------------------------------------
-  // GSAP DrawSVG — lines draw in on mount / when data changes
+  // GSAP DrawSVG
   // -------------------------------------------------------------------------
   useGSAP(
     () => {
-      if (!progressions.length) return;
+      if (!lines.length) return;
       if (respectsReducedMotion()) {
         gsap.set(".chart-line", { drawSVG: "100%" });
         return;
@@ -160,18 +218,20 @@ export function ChampionshipChart({
         stagger: 0.04,
       });
     },
-    { scope: svgRef, dependencies: [progressions] }
+    { scope: svgRef, dependencies: [progressions, mode] }
   );
 
   // -------------------------------------------------------------------------
-  // Cursor scanner (full mode only)
+  // Cursor scanner
   // -------------------------------------------------------------------------
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<SVGSVGElement>) => {
-      if (compact || !svgRef.current || !scannerRef.current) return;
-      const rect = svgRef.current.getBoundingClientRect();
-      const mouseXPx = e.clientX - rect.left;
-      const svgX = (mouseXPx / rect.width) * SVG_W;
+      if (compact || !svgRef.current || !scannerRef.current || !containerRef.current) return;
+      const svgRect = svgRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      const mouseXInSvg = e.clientX - svgRect.left;
+      const svgX = (mouseXInSvg / svgRect.width) * SVG_W;
       const clampedX = Math.max(PAD.l, Math.min(PAD.l + INNER_W, svgX));
       const rawRound = ((clampedX - PAD.l) / INNER_W) * (maxRound - 1) + 1;
       const round = Math.round(Math.max(1, Math.min(maxRound, rawRound)));
@@ -182,10 +242,11 @@ export function ChampionshipChart({
         ease: "none",
       });
 
+      // px/py relative to the container div (for tooltip absolute positioning)
       setTooltip({
         round,
-        px: mouseXPx,
-        py: e.clientY - rect.top,
+        px: e.clientX - containerRect.left,
+        py: e.clientY - containerRect.top,
       });
     },
     [compact, maxRound]
@@ -194,66 +255,69 @@ export function ChampionshipChart({
   const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   // -------------------------------------------------------------------------
-  // Driver toggle
+  // Toggle visibility
   // -------------------------------------------------------------------------
-  const toggleDriver = useCallback(
-    (driverRef: string) => {
+  const toggleLine = useCallback(
+    (id: string) => {
       if (!svgRef.current) return;
-      const isHiding = !hiddenDrivers.has(driverRef);
-
-      // Animate opacity on the path
-      const pathEl = svgRef.current.querySelector(
-        `.chart-line[data-driver="${driverRef}"]`
-      );
-      const glowEl = svgRef.current.querySelector(
-        `.chart-glow[data-driver="${driverRef}"]`
-      );
-      const targets = [pathEl, glowEl].filter(Boolean);
-      gsap.to(targets, {
-        opacity: isHiding ? 0 : 1,
-        duration: 0.25,
-        ease: "pitwall-accel",
-      });
-
-      setHiddenDrivers((prev) => {
+      const isHiding = !hiddenIds.has(id);
+      const pathEl = svgRef.current.querySelector(`.chart-line[data-id="${id}"]`);
+      if (pathEl) gsap.to(pathEl, { opacity: isHiding ? 0 : 1, duration: 0.25, ease: "pitwall-accel" });
+      setHiddenIds((prev) => {
         const next = new Set(prev);
-        if (isHiding) next.add(driverRef);
-        else next.delete(driverRef);
+        if (isHiding) next.add(id);
+        else next.delete(id);
         return next;
       });
     },
-    [hiddenDrivers]
+    [hiddenIds]
   );
 
   // -------------------------------------------------------------------------
-  // Tooltip data computation
+  // Tooltip data
   // -------------------------------------------------------------------------
   const tooltipRows =
     tooltip && !compact
-      ? progressions
-          .filter((p) => !hiddenDrivers.has(p.driver_ref))
-          .map((p) => {
-            const rIdx = p.rounds.indexOf(tooltip.round);
-            const prevIdx = tooltip.round > 1 ? p.rounds.indexOf(tooltip.round - 1) : -1;
-            const pts = rIdx >= 0 ? p.points[rIdx] : null;
-            const prev = prevIdx >= 0 ? p.points[prevIdx] : rIdx >= 0 ? (p.points[rIdx - 1] ?? 0) : 0;
-            const scored = pts != null ? pts - prev : null;
-            return { ...p, pts, scored };
+      ? lines
+          .filter((l) => !hiddenIds.has(l.id))
+          .map((l) => {
+            const rIdx = l.rounds.indexOf(tooltip.round);
+            // For drivers, also look for prev round
+            const prevIdx = rIdx > 0 ? rIdx - 1 : -1;
+            const prevRoundIdx =
+              prevIdx >= 0
+                ? prevIdx
+                : l.rounds.findIndex((r) => r < tooltip.round) >= 0
+                ? l.rounds.reduce(
+                    (best, r, i) => (r < tooltip.round ? i : best),
+                    -1
+                  )
+                : -1;
+            const pts = rIdx >= 0 ? l.points[rIdx] : null;
+            const prevPts = prevRoundIdx >= 0 ? l.points[prevRoundIdx] : 0;
+            const scored = pts != null ? pts - prevPts : null;
+            return { ...l, pts, scored };
           })
-          .filter((p) => p.pts != null)
+          .filter((l) => l.pts != null)
           .sort((a, b) => (b.pts ?? 0) - (a.pts ?? 0))
-          .slice(0, 5)
+          .slice(0, mode === "constructors" ? 11 : 5)
       : [];
-
-  // -------------------------------------------------------------------------
-  // Show skeleton when no data
-  // -------------------------------------------------------------------------
-  if (!progressions.length) return <ChartSkeleton />;
 
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
-  const isLeftHalf = (tooltip?.px ?? 0) < SVG_W / 2;
+  if (!progressions.length) return <ChartSkeleton />;
+
+  // Tooltip flips sides at the midpoint
+  const containerWidth = containerRef.current?.offsetWidth ?? 800;
+  const isLeftHalf = (tooltip?.px ?? 0) < containerWidth / 2;
+
+  const tooltipRoundLabel =
+    tooltip && roundLabels?.[tooltip.round]
+      ? roundLabels[tooltip.round]
+      : tooltip
+      ? `Round ${tooltip.round}`
+      : "";
 
   return (
     <div ref={containerRef} className="relative w-full select-none">
@@ -269,17 +333,6 @@ export function ChampionshipChart({
         aria-label="Championship points progression"
         role="img"
       >
-        <defs>
-          {/* Glow filter for leader line */}
-          <filter id="chart-leader-glow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
         {/* ---- Grid lines ---- */}
         {!compact &&
           [0.25, 0.5, 0.75, 1].map((frac) => {
@@ -324,6 +377,7 @@ export function ChampionshipChart({
         {!compact &&
           ticks.map((r) => {
             const x = xScale(r, maxRound);
+            const label = roundLabels?.[r] ?? String(r);
             return (
               <g key={r}>
                 <line
@@ -338,72 +392,42 @@ export function ChampionshipChart({
                   x={x}
                   y={PAD.t + INNER_H + 14}
                   fill="var(--color-f1-muted)"
-                  fontSize={10}
+                  fontSize={9}
                   textAnchor="middle"
                   fontFamily="var(--font-mono)"
                 >
-                  {r}
+                  {label}
                 </text>
               </g>
             );
           })}
 
-        {/* ---- Driver lines ---- */}
-        {progressions.map((p) => {
-          const isLeader = p.driver_ref === leader?.driver_ref;
-          const hex = getTeamHexColor(p.constructor_ref);
-          const d = buildPath(p.rounds, p.points, maxRound, maxPts);
+        {/* ---- Lines ---- */}
+        {lines.map((l) => {
+          const hex = getTeamHexColor(l.teamRef);
+          const d = buildPath(l.rounds, l.points, maxRound, maxPts);
           if (!d) return null;
-
           return (
-            <g key={p.driver_ref}>
-              {/* Glow layer for leader (rendered below main line) */}
-              {isLeader && (
-                <path
-                  className="chart-glow"
-                  data-driver={p.driver_ref}
-                  d={d}
-                  stroke={hex}
-                  strokeWidth={6}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  opacity={0.35}
-                  filter="url(#chart-leader-glow)"
-                />
-              )}
-              {/* Main line */}
-              <path
-                className="chart-line"
-                data-driver={p.driver_ref}
-                d={d}
-                stroke={hex}
-                strokeWidth={isLeader ? 2.5 : 1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                opacity={isLeader ? 1 : 0.55}
-              />
-              {/* Leader's latest data point marker */}
-              {isLeader && p.rounds.length > 0 && (
-                <circle
-                  cx={xScale(p.rounds[p.rounds.length - 1], maxRound)}
-                  cy={yScale(p.points[p.points.length - 1], maxPts)}
-                  r={4}
-                  fill={hex}
-                  stroke="#0F0F0F"
-                  strokeWidth={1.5}
-                />
-              )}
-            </g>
+            <path
+              key={l.id}
+              className="chart-line"
+              data-id={l.id}
+              d={d}
+              stroke={hex}
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={l.dash ? "6 4" : undefined}
+              fill="none"
+              opacity={0.85}
+            />
           );
         })}
 
-        {/* ---- Cursor scanner line (full mode only) ---- */}
+        {/* ---- Cursor scanner line ---- */}
         {!compact && (
           <line
             ref={scannerRef}
-            className="chart-scanner"
             x1={PAD.l}
             y1={PAD.t}
             x2={PAD.l}
@@ -419,69 +443,59 @@ export function ChampionshipChart({
       {/* ---- Hover tooltip ---- */}
       {!compact && tooltip && tooltipRows.length > 0 && (
         <div
-          className={cn(
-            "pointer-events-none absolute top-0 z-20 min-w-[160px] max-w-[220px]",
-            "bg-f1-dark-2 border border-f1-grid",
-            isLeftHalf ? "left-[calc(var(--tx)+12px)]" : "right-[calc(100%-var(--tx)+12px)]"
-          )}
-          style={
-            {
-              "--tx": `${tooltip.px}px`,
-              top: Math.max(8, tooltip.py - 20),
-            } as React.CSSProperties
-          }
+          className="pointer-events-none absolute z-20 min-w-[160px] max-w-[200px] bg-f1-dark-2 border border-f1-grid"
+          style={{
+            ...(isLeftHalf
+              ? { left: `${tooltip.px + 14}px` }
+              : { right: `calc(100% - ${tooltip.px}px + 14px)` }),
+            top: `${Math.max(4, tooltip.py - 10)}px`,
+          }}
         >
           {/* Header */}
           <div className="px-3 py-1.5 border-b border-f1-grid">
             <span className="font-data text-xs text-f1-muted tabular-nums">
-              Round {tooltip.round}
+              {tooltipRoundLabel}
             </span>
           </div>
-          {/* Driver rows */}
+          {/* Rows */}
           <div className="py-1">
             {tooltipRows.map((row, idx) => {
-              const hex = getTeamHexColor(row.constructor_ref);
-              const photoUrl = photos
-                ? findHeadshotUrl(photos, { surname: row.surname })
-                : null;
-
+              const hex = getTeamHexColor(row.teamRef);
               return (
                 <div
-                  key={row.driver_ref}
+                  key={row.id}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-1",
+                    "flex items-center gap-2 px-3 py-[3px]",
                     idx === 0 && "bg-white/[0.02]"
                   )}
                 >
-                  {/* Position indicator */}
                   <span className="font-data tabular-nums text-[10px] text-f1-muted w-3 shrink-0">
                     {idx + 1}
                   </span>
-                  {/* Team color dot */}
                   <div
-                    className="w-1.5 h-1.5 shrink-0"
-                    style={{ backgroundColor: hex }}
+                    className="shrink-0"
+                    style={{
+                      width: 8,
+                      height: 8,
+                      backgroundColor: hex,
+                      ...(row.dash
+                        ? { background: `repeating-linear-gradient(90deg, ${hex} 0 4px, transparent 4px 8px)`, height: 2, marginTop: 3 }
+                        : {}),
+                    }}
                   />
-                  {/* Headshot (if available) */}
-                  {photoUrl && idx === 0 && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={photoUrl}
-                      alt={row.surname}
-                      className="w-6 h-6 object-cover object-top shrink-0"
-                    />
-                  )}
-                  {/* Name */}
                   <span className="text-[11px] font-semibold uppercase truncate flex-1">
-                    {row.surname}
+                    {row.label}
                   </span>
-                  {/* Points */}
                   <span className="font-data tabular-nums text-[11px] text-f1-text shrink-0">
                     {row.pts}
                   </span>
-                  {/* Delta */}
-                  {row.scored != null && row.scored > 0 && (
-                    <span className="font-data tabular-nums text-[10px] text-f1-green shrink-0">
+                  {row.scored != null && (
+                    <span
+                      className={cn(
+                        "font-data tabular-nums text-[10px] shrink-0",
+                        row.scored > 0 ? "text-f1-green" : "text-f1-muted"
+                      )}
+                    >
                       +{row.scored}
                     </span>
                   )}
@@ -492,34 +506,45 @@ export function ChampionshipChart({
         </div>
       )}
 
-      {/* ---- Driver toggles (full mode only) ---- */}
-      {!compact && progressions.length > 0 && (
+      {/* ---- Toggle controls ---- */}
+      {!compact && lines.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 px-1">
-          {progressions.map((p) => {
-            const hex = getTeamHexColor(p.constructor_ref);
-            const hidden = hiddenDrivers.has(p.driver_ref);
+          {lines.map((l) => {
+            const hex = getTeamHexColor(l.teamRef);
+            const hidden = hiddenIds.has(l.id);
             return (
               <button
-                key={p.driver_ref}
-                onClick={() => toggleDriver(p.driver_ref)}
+                key={l.id}
+                onClick={() => toggleLine(l.id)}
                 className={cn(
                   "flex items-center gap-1.5 text-[11px] font-semibold uppercase transition-opacity duration-150 cursor-pointer",
                   hidden ? "opacity-30" : "opacity-100"
                 )}
-                aria-label={`${hidden ? "Show" : "Hide"} ${p.surname}`}
+                aria-label={`${hidden ? "Show" : "Hide"} ${l.label}`}
               >
-                {/* StatusDot styled toggle */}
+                {/* Swatch — solid rect or dashed bar matching line style */}
                 <span
-                  className="w-2 h-2 shrink-0"
-                  style={{
-                    backgroundColor: hidden ? "var(--color-f1-muted)" : hex,
-                    boxShadow: hidden ? "none" : `0 0 6px ${hex}99`,
-                  }}
+                  className="shrink-0"
+                  style={
+                    l.dash
+                      ? {
+                          display: "inline-block",
+                          width: 16,
+                          height: 2,
+                          marginBottom: 1,
+                          background: `repeating-linear-gradient(90deg, ${hidden ? "var(--color-f1-muted)" : hex} 0 4px, transparent 4px 8px)`,
+                        }
+                      : {
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          backgroundColor: hidden ? "var(--color-f1-muted)" : hex,
+                          boxShadow: hidden ? "none" : `0 0 5px ${hex}88`,
+                        }
+                  }
                 />
-                <span
-                  className={cn(hidden ? "text-f1-muted" : "text-f1-text")}
-                >
-                  {p.surname}
+                <span className={hidden ? "text-f1-muted" : "text-f1-text"}>
+                  {l.label}
                 </span>
               </button>
             );

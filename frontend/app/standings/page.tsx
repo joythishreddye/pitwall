@@ -5,7 +5,7 @@ import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
-import { useDriverPhotos } from "@/lib/hooks/use-driver-photos";
+import { useRaceCalendar } from "@/lib/hooks/use-races";
 import { ErrorState } from "@/components/error-state";
 import { SeasonSelector } from "@/components/season-selector";
 import { DriversTable, ConstructorsTable } from "@/components/standings";
@@ -22,7 +22,12 @@ export default function StandingsPage() {
 
   const { data, isLoading, error, refetch } = useStandings(season);
   const { data: progressions = [] } = useStandingsProgression(season);
-  const { data: photos } = useDriverPhotos();
+  const { data: races = [] } = useRaceCalendar(season);
+
+  // Build round → country label map from race calendar
+  const roundLabels = Object.fromEntries(
+    races.map((r) => [r.round, r.circuit.country ?? `R${r.round}`])
+  ) as Record<number, string>;
 
   const drivers = data?.driver_standings ?? [];
   const constructors = data?.constructor_standings ?? [];
@@ -152,17 +157,16 @@ export default function StandingsPage() {
         )}
       </div>
 
-      {/* ---- Championship Progression Chart ---- */}
-      <section className="mt-10">
-        <div className="flex items-center gap-2 mb-4">
+      {/* ---- Championship Progression Chart — full-width breakout ---- */}
+      <section className="mt-10 -mx-8">
+        <div className="flex items-center gap-2 mb-4 px-8">
           <TrendingUp className="h-4 w-4 text-f1-muted" aria-hidden="true" />
           <h2 className="text-sm text-f1-muted uppercase tracking-widest">
             Championship Progression
           </h2>
         </div>
 
-        <div className="bg-f1-dark-2 border border-f1-grid p-4 relative overflow-hidden">
-          {/* Scanner stripe during load */}
+        <div className="bg-f1-dark-2 border-y border-f1-grid px-8 py-5 relative">
           {!progressions.length && (
             <div className="absolute inset-x-0 top-0">
               <ScannerLine />
@@ -170,7 +174,8 @@ export default function StandingsPage() {
           )}
           <ChampionshipChart
             progressions={progressions}
-            photos={photos}
+            roundLabels={roundLabels}
+            mode={activeTab === "constructors" ? "constructors" : "drivers"}
           />
         </div>
       </section>

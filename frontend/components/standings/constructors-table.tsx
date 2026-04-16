@@ -42,7 +42,7 @@ export function ConstructorsTable({
         className={cn(
           "sticky top-0 z-10 grid gap-x-4 items-center py-2",
           "text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark",
-          "border-l-4 border-l-transparent pr-4 pl-3 select-none",
+          "px-4 select-none",
           COLS
         )}
       >
@@ -63,14 +63,12 @@ export function ConstructorsTable({
           <div
             key={c.constructor_ref}
             className={cn(
-              "standings-row-constructor grid gap-x-4 items-center h-11 text-sm",
-              "border-b border-f1-grid/50 border-l-4 pr-4 pl-3",
+              "standings-row-constructor grid gap-x-4 items-center h-11 text-sm px-4",
+              "border-b border-f1-grid/50",
               "transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3",
-              isLeader && "bg-white/[0.03]",
               COLS
             )}
-            style={{ borderLeftColor: isLeader ? hexColor : "transparent" }}
           >
             {/* Position */}
             <span
