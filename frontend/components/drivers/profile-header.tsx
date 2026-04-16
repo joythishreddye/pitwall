@@ -17,130 +17,168 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: ProfileHeaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
   const [photoFailed, setPhotoFailed] = useState(false);
 
-  // Team-color glow fades in on load
   useGSAP(
     () => {
-      if (!glowRef.current) return;
       if (respectsReducedMotion()) {
-        gsap.set(glowRef.current, { opacity: 0.12 });
+        if (glowRef.current) gsap.set(glowRef.current, { opacity: 0.18 });
         return;
       }
-      gsap.fromTo(
-        glowRef.current,
-        { opacity: 0 },
-        { opacity: 0.12, duration: 0.8, ease: "pitwall-accel" }
-      );
+      const tl = gsap.timeline();
+      if (glowRef.current) {
+        tl.fromTo(
+          glowRef.current,
+          { opacity: 0 },
+          { opacity: 0.18, duration: 0.9, ease: "pitwall-accel" }
+        );
+      }
+      if (photoRef.current) {
+        tl.fromTo(
+          photoRef.current,
+          { opacity: 0, scale: 0.96 },
+          { opacity: 1, scale: 1, duration: 0.45, ease: "pitwall-accel" },
+          "-=0.6"
+        );
+      }
     },
     { scope: containerRef, dependencies: [teamHex] }
   );
 
-  const fullName = `${driver.forename.toUpperCase()} ${driver.surname.toUpperCase()}`;
-  const initials = `${driver.forename[0] ?? "?"}${driver.surname[0] ?? "?"}`;
   const showPhoto = headshotUrl && !photoFailed;
+  const initials = `${driver.forename[0] ?? "?"}${driver.surname[0] ?? "?"}`;
 
   return (
-    <div ref={containerRef} className="relative mb-8">
-      {/* Ambient team-color radial glow */}
+    <div ref={containerRef} className="relative mb-8 bg-f1-dark-2 border border-f1-grid overflow-hidden">
+      {/* 2px team-color top bar */}
+      <div className="h-0.5 w-full" style={{ backgroundColor: teamHex }} />
+
+      {/* Ambient glow — radiates from top-right corner where the headshot sits */}
       <div
         ref={glowRef}
-        className="absolute inset-x-0 top-0 h-64 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 80% 100% at 50% 0%, ${teamHex}, transparent)`,
+          background: `radial-gradient(ellipse 60% 85% at 100% 0%, ${teamHex}, transparent)`,
           opacity: 0,
         }}
         aria-hidden="true"
       />
 
-      <div className="relative z-10">
-        <Link
-          href="/drivers"
-          className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6 cursor-pointer"
+      {/* Driver number — huge faint watermark anchored bottom-left */}
+      {driver.number && (
+        <span
+          className="absolute left-4 bottom-0 font-mono font-black leading-[0.85] select-none pointer-events-none tabular-nums"
+          style={{
+            fontSize: "clamp(96px, 16vw, 192px)",
+            color: teamHex,
+            opacity: 0.05,
+          }}
+          aria-hidden="true"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Drivers
-        </Link>
+          {driver.number}
+        </span>
+      )}
 
-        <div className="flex items-stretch border border-f1-grid bg-f1-dark-2/60 overflow-hidden rounded-sm">
+      {/* Content */}
+      <div className="relative z-10 p-6 flex items-start gap-4 justify-between">
 
-          {/* ── Full-body portrait ─────────────────────── */}
-          <div
-            className="relative w-44 shrink-0 overflow-hidden"
-            style={{ minHeight: 280, backgroundColor: `${teamHex}10` }}
+        {/* ── Left: back link + name + metadata ──────────────── */}
+        <div className="flex flex-col min-w-0 flex-1">
+          <Link
+            href="/drivers"
+            className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-5 cursor-pointer w-fit"
           >
-            {showPhoto ? (
-              <img
-                src={headshotUrl}
-                alt={`${driver.forename} ${driver.surname}`}
-                className="absolute inset-0 w-full h-full object-contain object-bottom"
-                onError={() => setPhotoFailed(true)}
-              />
-            ) : (
-              /* Fallback: large initials centred vertically */
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span
-                  className="font-mono font-black text-5xl select-none"
-                  style={{ color: teamHex, opacity: 0.4 }}
-                >
-                  {initials}
-                </span>
-              </div>
-            )}
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Drivers
+          </Link>
 
-            {/* Bottom-to-card gradient to blend photo edge into card body */}
-            <div
-              className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
-              style={{ background: "linear-gradient(to top, #1A1A1A, transparent)" }}
-              aria-hidden="true"
+          {/* Name */}
+          <div className="mb-5">
+            <span className="block text-sm text-f1-muted font-normal mb-1 tracking-wide">
+              {driver.forename}
+            </span>
+            <SplitReveal
+              text={driver.surname.toUpperCase()}
+              type="chars"
+              stagger={0.03}
+              delay={0.1}
+              tag="h1"
+              className="font-heading font-black tracking-tight uppercase text-3xl sm:text-5xl lg:text-6xl leading-none"
             />
           </div>
 
-          {/* ── Vertical team-color accent line ────────── */}
-          <div
-            className="w-0.5 shrink-0 self-stretch"
-            style={{ backgroundColor: teamColor }}
-          />
+          {/* Metadata */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {driver.current_constructor && (
+              <span
+                className="text-xs font-medium px-2 py-0.5 border"
+                style={{ color: teamHex, borderColor: `${teamHex}50` }}
+              >
+                {driver.current_constructor.name}
+              </span>
+            )}
 
-          {/* ── Driver info ─────────────────────────────── */}
-          <div className="flex-1 min-w-0 p-5 flex flex-col justify-center">
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <SplitReveal
-                text={fullName}
-                type="chars"
-                stagger={0.03}
-                delay={0.2}
-                tag="h1"
-                className="font-heading text-2xl font-black tracking-wide uppercase"
-              />
-              {driver.number && (
-                <span className="font-mono text-2xl text-f1-muted/25 font-black tabular-nums">
-                  {driver.number}
+            {driver.nationality && (
+              <span className="text-f1-muted text-xs">{driver.nationality}</span>
+            )}
+
+            {driver.dob && (
+              <>
+                <span className="text-f1-grid text-xs">·</span>
+                <span className="font-mono text-[11px] text-f1-muted/70">
+                  b. {driver.dob}
                 </span>
-              )}
-            </div>
+              </>
+            )}
 
-            <div className="flex items-center gap-3 mt-2 text-sm text-f1-muted flex-wrap">
-              {driver.current_constructor && (
-                <>
-                  <span className="font-medium" style={{ color: teamColor }}>
-                    {driver.current_constructor.name}
-                  </span>
-                  <span className="text-f1-grid">|</span>
-                </>
-              )}
-              {driver.nationality && <span>{driver.nationality}</span>}
-              {driver.dob && (
-                <>
-                  <span className="text-f1-grid">|</span>
-                  <span className="font-mono text-xs">
-                    DOB: {driver.dob}
-                  </span>
-                </>
-              )}
-            </div>
+            {driver.code && (
+              <>
+                <span className="text-f1-grid text-xs">·</span>
+                <span
+                  className="font-mono text-xs font-bold tracking-widest"
+                  style={{ color: teamHex }}
+                >
+                  {driver.code}
+                </span>
+              </>
+            )}
           </div>
+        </div>
 
+        {/* ── Right: headshot ─────────────────────────────────── */}
+        <div
+          ref={photoRef}
+          className="relative flex-shrink-0 w-28 h-28 sm:w-44 sm:h-44 overflow-hidden border"
+          style={{
+            borderColor: `${teamHex}55`,
+            backgroundColor: `${teamHex}0d`,
+          }}
+        >
+          {showPhoto ? (
+            <img
+              src={headshotUrl}
+              alt={`${driver.forename} ${driver.surname}`}
+              className="w-full h-full object-cover object-top"
+              onError={() => setPhotoFailed(true)}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                className="font-mono font-black text-3xl select-none"
+                style={{ color: teamHex, opacity: 0.4 }}
+              >
+                {initials}
+              </span>
+            </div>
+          )}
+
+          {/* Subtle bottom fade to blend headshot into card background */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-8 pointer-events-none"
+            style={{ background: "linear-gradient(to top, #1A1A1A, transparent)" }}
+            aria-hidden="true"
+          />
         </div>
       </div>
     </div>

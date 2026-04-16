@@ -61,7 +61,6 @@ export default function DriverProfilePage({
   const headshotUrl = findHeadshotUrl(photoDrivers, {
     acronym: driver.code,
     surname: driver.surname,
-    constructorRef: driver.current_constructor?.ref ?? null,
   });
   const results = resultsData?.results ?? [];
 

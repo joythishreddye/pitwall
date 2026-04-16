@@ -21,7 +21,6 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
   const photoUrl = findHeadshotUrl(driverPhotos, {
     acronym: leader.driver_code,
     surname: leader.surname,
-    constructorRef: leader.constructor_ref,
   });
 
   return (
@@ -34,11 +33,11 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
       {/* Driver photo — bottom-anchored portrait, natural proportions */}
       {photoUrl && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Image sits at bottom-right, full natural height, no stretching */}
+          {/* Headshot anchored top-right — face visible from the top */}
           <img
             src={photoUrl}
             alt={`${leader.forename} ${leader.surname}`}
-            className="absolute bottom-0 right-0 max-h-[90%] w-auto h-auto"
+            className="absolute top-0 right-0 h-full w-auto"
             style={{ opacity: 0.65 }}
           />
           {/* Left gradient — blends into card text area */}
