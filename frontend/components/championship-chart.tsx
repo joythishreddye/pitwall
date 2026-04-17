@@ -507,12 +507,40 @@ export function ChampionshipChart({
             </div>
           )}
 
-          {/* Driver/team toggles — interactive mode only */}
-          {!compact && lines.length > 0 && (
+          {/* Legend — always shown. Compact = static labels; full = clickable toggles */}
+          {lines.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 px-1">
               {lines.map((l) => {
                 const hex = getTeamHexColor(l.teamRef);
                 const hidden = hiddenIds.has(l.id);
+                const swatch = l.dash
+                  ? {
+                      display: "inline-block" as const,
+                      width: 16,
+                      height: 2,
+                      marginBottom: 1,
+                      background: `repeating-linear-gradient(90deg, ${hex} 0 4px, transparent 4px 8px)`,
+                    }
+                  : {
+                      display: "inline-block" as const,
+                      width: 8,
+                      height: 8,
+                      backgroundColor: hex,
+                      boxShadow: `0 0 5px ${hex}88`,
+                    };
+
+                if (compact) {
+                  return (
+                    <div
+                      key={l.id}
+                      className="flex items-center gap-1.5 text-[11px] font-semibold uppercase"
+                    >
+                      <span className="shrink-0" style={swatch} />
+                      <span className="text-f1-muted">{l.label}</span>
+                    </div>
+                  );
+                }
+
                 return (
                   <button
                     key={l.id}
@@ -526,21 +554,11 @@ export function ChampionshipChart({
                     <span
                       className="shrink-0"
                       style={
-                        l.dash
-                          ? {
-                              display: "inline-block",
-                              width: 16,
-                              height: 2,
-                              marginBottom: 1,
-                              background: `repeating-linear-gradient(90deg, ${hidden ? "var(--color-f1-muted)" : hex} 0 4px, transparent 4px 8px)`,
-                            }
-                          : {
-                              display: "inline-block",
-                              width: 8,
-                              height: 8,
-                              backgroundColor: hidden ? "var(--color-f1-muted)" : hex,
-                              boxShadow: hidden ? "none" : `0 0 5px ${hex}88`,
-                            }
+                        hidden
+                          ? l.dash
+                            ? { ...swatch, background: `repeating-linear-gradient(90deg, var(--color-f1-muted) 0 4px, transparent 4px 8px)` }
+                            : { ...swatch, backgroundColor: "var(--color-f1-muted)", boxShadow: "none" }
+                          : swatch
                       }
                     />
                     <span className={hidden ? "text-f1-muted" : "text-f1-text"}>

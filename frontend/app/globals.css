@@ -81,12 +81,23 @@ body {
 }
 
 /* ── Focus ring ── */
-/* 1. Strip browser-default blue rings globally (click / programmatic focus) */
+/* 1. Strip browser-default blue rings globally */
 *:focus {
   outline: none;
   box-shadow: none;
 }
-/* 2. Restore a themed ring only for keyboard navigation */
+/* 2. Form controls need a higher-specificity rule (0,1,1) to beat the
+      browser UA stylesheet's select:focus / input:focus rules (also 0,1,1).
+      Keep border-color the same as the unfocused state — plain, no flash. */
+select:focus,
+input:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--color-f1-grid);
+}
+/* 3. Restore a themed ring only for keyboard navigation */
 *:focus-visible {
   outline: 2px solid var(--color-f1-cyan);
   outline-offset: 2px;
