@@ -28,7 +28,7 @@ export function ChartPreview({ progressions }: ChartPreviewProps) {
 
       {/* Chart */}
       <div className="p-4">
-        <ChampionshipChart progressions={progressions} compact />
+        <ChampionshipChart progressions={progressions} />
       </div>
     </div>
   );
