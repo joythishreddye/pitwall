@@ -176,7 +176,12 @@ export default function HomePage() {
 
           {progression && progression.length > 0 && (
             <div data-tile-id="chart" className="md:col-span-4" style={{ opacity: 0 }}>
-              <ChartPreview progressions={progression} />
+              <ChartPreview
+                progressions={progression}
+                roundLabels={Object.fromEntries(
+                  (races ?? []).map((r) => [r.round, r.circuit.country ?? `R${r.round}`])
+                )}
+              />
             </div>
           )}
         </div>

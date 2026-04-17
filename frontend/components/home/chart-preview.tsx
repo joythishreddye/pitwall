@@ -7,9 +7,10 @@ import type { DriverProgression } from "@/lib/schemas/standings";
 
 interface ChartPreviewProps {
   progressions: DriverProgression[];
+  roundLabels?: Record<number, string>;
 }
 
-export function ChartPreview({ progressions }: ChartPreviewProps) {
+export function ChartPreview({ progressions, roundLabels }: ChartPreviewProps) {
   return (
     <div className="bg-f1-dark-2 border border-f1-grid">
       {/* Header */}
@@ -28,7 +29,7 @@ export function ChartPreview({ progressions }: ChartPreviewProps) {
 
       {/* Chart */}
       <div className="p-4">
-        <ChampionshipChart progressions={progressions} />
+        <ChampionshipChart progressions={progressions} roundLabels={roundLabels} />
       </div>
     </div>
   );
