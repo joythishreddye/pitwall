@@ -2,11 +2,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
-import { DrawPath } from "@/components/ui/draw-path";
 import { StatusDot } from "@/components/ui/status-dot";
 import { ChatMessage, FrequencyPresets, TransmitInput } from "@/components/chat";
 import { useChat } from "@/lib/hooks/use-chat";
-import { circuitPaths } from "@/lib/constants/circuits";
 
 // ---------------------------------------------------------------------------
 // Empty state — shown when there are no messages
@@ -18,7 +16,6 @@ interface EmptyStateProps {
 
 function EmptyState({ onSelect }: EmptyStateProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const suzuka = circuitPaths.suzuka;
 
   useGSAP(
     () => {
@@ -37,23 +34,10 @@ function EmptyState({ onSelect }: EmptyStateProps) {
   return (
     <div
       ref={containerRef}
-      className="relative flex flex-col items-center justify-center h-full min-h-[380px] select-none"
+      className="flex flex-col items-center justify-center h-full min-h-[380px] select-none"
     >
-      {/* Suzuka circuit ambient background */}
-      {suzuka && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          <DrawPath
-            d={suzuka.d}
-            viewBox={suzuka.viewBox}
-            duration={8}
-            loop
-            className="w-full max-w-xs opacity-[0.08]"
-          />
-        </div>
-      )}
-
       {/* Content */}
-      <div className="standby-content relative z-10 flex flex-col items-center">
+      <div className="standby-content flex flex-col items-center">
         <div className="flex items-center gap-2.5 mb-4">
           <StatusDot variant="live" pulse />
           <span className="font-mono text-[10px] text-f1-muted tracking-[0.2em]">
