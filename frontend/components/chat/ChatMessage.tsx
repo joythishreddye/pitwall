@@ -26,13 +26,14 @@ const LEVEL_STYLES: Record<KnowledgeLevel, string> = {
 
 interface ChatMessageProps {
   message: ChatMessageType;
+  /** When false, skip all GSAP animations (message existed before this page mount) */
+  animate?: boolean;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, animate = true }: ChatMessageProps) {
   const isAssistant = message.role === "assistant";
   const containerRef = useRef<HTMLDivElement>(null);
   const messageTextRef = useRef<HTMLParagraphElement>(null);
-  // Expand knowledge level badge on click (no sources)
   const [levelExpanded, setLevelExpanded] = useState(false);
 
   // Strip markdown from content at render time so streaming text is always clean
@@ -41,10 +42,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
   // Text is visible when not actively streaming
   const showText = !isAssistant || !message.isStreaming;
 
-  // Entrance animation on mount
+  // Entrance animation on mount — skip for pre-existing messages
   useGSAP(
     () => {
-      if (respectsReducedMotion() || !containerRef.current) return;
+      if (!animate || respectsReducedMotion() || !containerRef.current) return;
       gsap.from(containerRef.current, {
         opacity: 0,
         y: 8,
@@ -55,13 +56,18 @@ export function ChatMessage({ message }: ChatMessageProps) {
     { scope: containerRef, dependencies: [] }
   );
 
-  // Telex reveal fires once when isStreaming flips false
+  // Telex reveal — only for new messages in this session, fires once when streaming ends.
+  // Setting display:inline on each split char preserves the original text flow so layout
+  // during animation is identical to the final rendered state.
   useGSAP(
     () => {
-      if (message.isStreaming || !isAssistant || !messageTextRef.current) return;
+      if (!animate || message.isStreaming || !isAssistant || !messageTextRef.current) return;
       if (!message.content || respectsReducedMotion()) return;
 
       const split = new SplitText(messageTextRef.current, { type: "chars" });
+      // Force inline display so word-wrap is unchanged vs plain text
+      split.chars.forEach((c) => ((c as HTMLElement).style.display = "inline"));
+
       gsap.from(split.chars, {
         opacity: 0,
         duration: 0.01,

@@ -96,6 +96,12 @@ export default function ChatPage() {
   const errorRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Track IDs that were already in history when this page instance mounted.
+  // Messages in this set get no telex animation — they've already been seen.
+  const mountedIdsRef = useRef<Set<string>>(
+    new Set(messages.map((m) => m.id))
+  );
+
   // Smooth-scroll to newest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -136,6 +142,7 @@ export default function ChatPage() {
     >
       {/* ── Header ── */}
       <div className="shrink-0 flex items-center gap-3 px-5 py-3 border-b border-f1-grid bg-f1-dark">
+        <StatusDot variant="live" pulse />
         <div className="flex-1 min-w-0">
           <h1 className="font-heading text-sm font-semibold tracking-[0.15em] text-f1-text uppercase">
             Pitwall Radio
@@ -144,6 +151,11 @@ export default function ChatPage() {
             {'SECURE CHANNEL // STRATEGY COMMS'}
           </p>
         </div>
+        {hasMessages && (
+          <span className="shrink-0 font-mono text-[10px] text-f1-muted tabular-nums tracking-widest">
+            {Math.ceil(messages.length / 2)} TRANSMISSIONS
+          </span>
+        )}
       </div>
 
       {/* ── Messages area ── */}
@@ -151,7 +163,11 @@ export default function ChatPage() {
         {hasMessages ? (
           <div className="py-1">
             {messages.map((msg) => (
-              <ChatMessage key={msg.id} message={msg} />
+              <ChatMessage
+                key={msg.id}
+                message={msg}
+                animate={!mountedIdsRef.current.has(msg.id)}
+              />
             ))}
             <div ref={messagesEndRef} />
           </div>
