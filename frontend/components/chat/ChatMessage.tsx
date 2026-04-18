@@ -1,13 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
 import { gsap, useGSAP, SplitText, respectsReducedMotion } from "@/lib/gsap";
 import { WaveformIndicator } from "./WaveformIndicator";
+import { stripMarkdown } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ChatMessage as ChatMessageType, KnowledgeLevel } from "@/lib/hooks/use-chat";
 
-// Ensure SplitText is imported for side-effect registration
 void SplitText;
 
 function formatTimestamp(ts: number): string {
@@ -32,16 +31,17 @@ interface ChatMessageProps {
 export function ChatMessage({ message }: ChatMessageProps) {
   const isAssistant = message.role === "assistant";
   const containerRef = useRef<HTMLDivElement>(null);
-  // Ref for the desktop text paragraph — SplitText targets this
   const messageTextRef = useRef<HTMLParagraphElement>(null);
-  const [sourcesExpanded, setSourcesExpanded] = useState(false);
+  // Expand knowledge level badge on click (no sources)
+  const [levelExpanded, setLevelExpanded] = useState(false);
 
-  // Text is visible when the message is not actively streaming.
-  // For user messages this is always true; for AI messages it flips when
-  // the SSE stream fires the "done" event and isStreaming becomes false.
+  // Strip markdown from content at render time so streaming text is always clean
+  const displayContent = isAssistant ? stripMarkdown(message.content) : message.content;
+
+  // Text is visible when not actively streaming
   const showText = !isAssistant || !message.isStreaming;
 
-  // Entrance: slide-up on mount
+  // Entrance animation on mount
   useGSAP(
     () => {
       if (respectsReducedMotion() || !containerRef.current) return;
@@ -55,9 +55,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
     { scope: containerRef, dependencies: [] }
   );
 
-  // Telex: character-by-character reveal fires when isStreaming flips false.
-  // messageTextRef points to the desktop <p> which only mounts when showText=true,
-  // so the ref is guaranteed to be set before this effect runs.
+  // Telex reveal fires once when isStreaming flips false
   useGSAP(
     () => {
       if (message.isStreaming || !isAssistant || !messageTextRef.current) return;
@@ -79,127 +77,78 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   const timestamp = formatTimestamp(message.timestamp);
 
-  // Shared text block — used in the desktop layout only
-  const TextContent = (
-    <>
-      {isAssistant && message.isStreaming ? (
-        <span className="font-mono text-[11px] text-f1-muted/50 tracking-widest">
-          receiving transmission...
-        </span>
-      ) : showText ? (
-        <>
-          <p
-            ref={isAssistant ? messageTextRef : undefined}
-            className={cn(
-              "text-sm leading-relaxed break-words whitespace-pre-wrap text-f1-text",
-              isAssistant && "font-mono"
-            )}
-          >
-            {message.content}
-          </p>
-
-          {/* Metadata row — knowledge level + sources */}
-          {isAssistant && !message.isStreaming && (
-            <div className="mt-2 flex items-center gap-2 flex-wrap">
-              {message.knowledgeLevel && (
-                <span
-                  className={cn(
-                    "inline-flex px-2 py-0.5 border font-mono text-[9px] tracking-widest uppercase",
-                    LEVEL_STYLES[message.knowledgeLevel]
-                  )}
-                >
-                  {message.knowledgeLevel}
-                </span>
-              )}
-              {message.sources && message.sources.length > 0 && (
-                <button
-                  onClick={() => setSourcesExpanded((v) => !v)}
-                  className="flex items-center gap-1 font-mono text-[10px] text-f1-muted hover:text-f1-text transition-colors cursor-pointer"
-                >
-                  {sourcesExpanded ? (
-                    <ChevronDown className="h-3 w-3" />
-                  ) : (
-                    <ChevronRight className="h-3 w-3" />
-                  )}
-                  {message.sources.length} SOURCE
-                  {message.sources.length !== 1 ? "S" : ""}
-                </button>
-              )}
-            </div>
+  // Metadata row — knowledge level only (sources removed)
+  const MetaRow =
+    isAssistant && !message.isStreaming && message.knowledgeLevel ? (
+      <div className="mt-2">
+        <button
+          onClick={() => setLevelExpanded((v) => !v)}
+          className={cn(
+            "inline-flex px-2 py-0.5 border font-mono text-[9px] tracking-widest uppercase transition-opacity cursor-pointer",
+            LEVEL_STYLES[message.knowledgeLevel],
+            !levelExpanded && "opacity-50 hover:opacity-100"
           )}
-          {sourcesExpanded && message.sources && message.sources.length > 0 && (
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {message.sources.map((s, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 bg-f1-dark-3 border border-f1-grid font-mono text-[10px] text-f1-muted"
-                  title={s.content}
-                >
-                  {s.source.replace("knowledge/", "")}
-                </span>
-              ))}
-            </div>
-          )}
-        </>
-      ) : null}
-    </>
-  );
+        >
+          {message.knowledgeLevel}
+        </button>
+      </div>
+    ) : null;
 
   return (
     <div ref={containerRef}>
-      {/* ── Desktop: terminal table row ── */}
-      <div className="hidden md:flex items-start px-4 py-2.5 border-b border-f1-grid/20 last:border-b-0 hover:bg-white/[0.015] transition-colors">
-        {/* Timestamp */}
-        <span className="w-20 shrink-0 font-mono text-[11px] text-f1-muted tabular-nums mt-0.5 select-none">
-          {timestamp}
-        </span>
-
-        {/* Separator */}
-        <span className="w-4 shrink-0 text-f1-grid/60 text-xs flex justify-center mt-0.5 select-none">
-          ┃
-        </span>
-
-        {/* Sender badge */}
-        <div className="w-[112px] shrink-0 mt-0.5">
+      {/* ── Desktop ── */}
+      <div className="hidden md:flex gap-4 px-5 py-3 border-b border-f1-grid/20 hover:bg-white/[0.015] transition-colors">
+        {/* Left column: sender badge + timestamp stacked */}
+        <div className="shrink-0 w-28 flex flex-col gap-1 pt-0.5">
           {isAssistant ? (
-            <span className="inline-flex px-2 py-0.5 border border-f1-red/50 font-mono text-[10px] text-f1-text tracking-widest shadow-[0_0_6px_rgba(220,0,0,0.2)]">
+            <span className="inline-flex w-fit px-2 py-0.5 border border-f1-red/50 font-mono text-[10px] text-f1-text tracking-widest shadow-[0_0_6px_rgba(220,0,0,0.2)]">
               RACE ENGINEER
             </span>
           ) : (
-            <span className="inline-flex px-2 py-0.5 border border-f1-grid font-mono text-[10px] text-f1-muted tracking-widest">
+            <span className="inline-flex w-fit px-2 py-0.5 border border-f1-grid font-mono text-[10px] text-f1-muted tracking-widest">
               YOU
             </span>
           )}
-        </div>
-
-        {/* Separator */}
-        <span className="w-4 shrink-0 text-f1-grid/60 text-xs flex justify-center mt-0.5 select-none">
-          ┃
-        </span>
-
-        {/* Waveform column */}
-        <div className="w-10 shrink-0 flex items-start pt-1">
-          {isAssistant ? (
+          <span className="font-mono text-[10px] text-f1-muted/50 tabular-nums select-none">
+            {timestamp}
+          </span>
+          {isAssistant && (
             <WaveformIndicator
               isAnimating={!!message.isStreaming}
               barCount={8}
               className={cn(
-                "h-3 w-8",
-                message.isStreaming ? "text-f1-red/70" : "text-f1-grid/60"
+                "h-2.5 w-8 mt-0.5",
+                message.isStreaming ? "text-f1-red/70" : "text-f1-grid/50"
               )}
             />
-          ) : (
-            // Empty spacer keeps text columns aligned
-            <span className="w-8 h-3 inline-block" />
           )}
         </div>
 
-        {/* Text content */}
-        <div className="flex-1 min-w-0">{TextContent}</div>
+        {/* Right column: text */}
+        <div className="flex-1 min-w-0">
+          {isAssistant && message.isStreaming ? (
+            <span className="font-mono text-[11px] text-f1-muted/50 tracking-widest">
+              receiving transmission...
+            </span>
+          ) : showText ? (
+            <>
+              <p
+                ref={isAssistant ? messageTextRef : undefined}
+                className={cn(
+                  "text-sm leading-relaxed break-words whitespace-pre-wrap text-f1-text",
+                  isAssistant && "font-mono"
+                )}
+              >
+                {displayContent}
+              </p>
+              {MetaRow}
+            </>
+          ) : null}
+        </div>
       </div>
 
-      {/* ── Mobile: simplified card ── */}
-      <div className="md:hidden flex flex-col gap-1.5 px-4 py-3 border-b border-f1-grid/20 last:border-b-0 hover:bg-white/[0.015] transition-colors">
+      {/* ── Mobile ── */}
+      <div className="md:hidden flex flex-col gap-1.5 px-4 py-3 border-b border-f1-grid/20 hover:bg-white/[0.015] transition-colors">
         <div className="flex items-center gap-2">
           {isAssistant ? (
             <span className="inline-flex px-2 py-0.5 border border-f1-red/50 font-mono text-[10px] text-f1-text tracking-widest shadow-[0_0_4px_rgba(220,0,0,0.2)]">
@@ -215,31 +164,33 @@ export function ChatMessage({ message }: ChatMessageProps) {
               isAnimating={!!message.isStreaming}
               barCount={8}
               className={cn(
-                "h-3 w-8 ml-1",
-                message.isStreaming ? "text-f1-red/70" : "text-f1-grid/60"
+                "h-2.5 w-8",
+                message.isStreaming ? "text-f1-red/70" : "text-f1-grid/50"
               )}
             />
           )}
-          <span className="ml-auto font-mono text-[10px] text-f1-muted tabular-nums">
+          <span className="ml-auto font-mono text-[10px] text-f1-muted/50 tabular-nums">
             {timestamp}
           </span>
         </div>
 
-        {/* Mobile text (no telex — animation is desktop-only) */}
         <div>
           {isAssistant && message.isStreaming ? (
             <span className="font-mono text-[11px] text-f1-muted/50 tracking-widest">
               receiving transmission...
             </span>
           ) : showText ? (
-            <p
-              className={cn(
-                "text-sm leading-relaxed break-words whitespace-pre-wrap text-f1-text",
-                isAssistant && "font-mono"
-              )}
-            >
-              {message.content}
-            </p>
+            <>
+              <p
+                className={cn(
+                  "text-sm leading-relaxed break-words whitespace-pre-wrap text-f1-text",
+                  isAssistant && "font-mono"
+                )}
+              >
+                {displayContent}
+              </p>
+              {MetaRow}
+            </>
           ) : null}
         </div>
       </div>

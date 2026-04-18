@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { API_BASE } from "@/lib/api-client";
 
 interface ChatSource {
@@ -26,13 +26,44 @@ interface SSEEvent {
   knowledge_level?: KnowledgeLevel;
 }
 
+const SESSION_KEY = "pitwall_chat_history";
+
+function loadSession(): ChatMessage[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as ChatMessage[];
+    // Drop any message that was still streaming when the tab navigated away
+    return parsed.filter((m) => !m.isStreaming);
+  } catch {
+    return [];
+  }
+}
+
+function saveSession(messages: ChatMessage[]) {
+  if (typeof window === "undefined") return;
+  try {
+    // Only persist completed messages
+    const completed = messages.filter((m) => !m.isStreaming);
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(completed));
+  } catch {
+    // sessionStorage can throw if storage is full — fail silently
+  }
+}
+
 export function useChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(loadSession);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const clearError = useCallback(() => setError(null), []);
+
+  // Persist completed messages to sessionStorage whenever messages change
+  useEffect(() => {
+    saveSession(messages);
+  }, [messages]);
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -95,7 +126,6 @@ export function useChat() {
 
           buffer += decoder.decode(value, { stream: true });
 
-          // Parse SSE events from buffer
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
 
@@ -119,7 +149,7 @@ export function useChat() {
                 );
               } else if (event.type === "error") {
                 const errMsg = (event.data as string) || "Stream interrupted";
-                accumulatedContent += `\n\n_${errMsg}_`;
+                accumulatedContent += `\n\n${errMsg}`;
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantMessage.id
@@ -156,7 +186,6 @@ export function useChat() {
         const errorMsg = err instanceof Error ? err.message : "Something went wrong";
         setError(errorMsg);
 
-        // Remove the empty assistant message on error
         setMessages((prev) => prev.filter((m) => m.id !== assistantMessage.id));
       } finally {
         setIsLoading(false);
