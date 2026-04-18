@@ -4,7 +4,7 @@ import { use, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
@@ -22,46 +22,60 @@ export default function RaceDetailPage({
   const { id } = use(params);
   const raceId = Number(id);
   const [activeTab, setActiveTab] = useState<Tab>("results");
-  const [drawDocked, setDrawDocked] = useState(false);
+  const [drawComplete, setDrawComplete] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
-  const inlineCircuitRef = useRef<HTMLDivElement>(null);
+  const inlineRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
 
   const { data: race, isLoading, error } = useRaceDetail(raceId);
   const { data: strategy } = useRaceStrategy(raceId);
 
-  // Fade in the inline circuit after the hero draw completes
+  // After draw completes: ScrollTrigger scrub cross-fades hero → inline as user scrolls.
+  // Scrub reverses on scroll-up, so the hero reappears if the user scrolls back to the top.
   useGSAP(
     () => {
-      if (!drawDocked || !inlineCircuitRef.current) return;
-      gsap.fromTo(
-        inlineCircuitRef.current,
+      if (!drawComplete || !heroRef.current || !inlineRef.current) return;
+
+      if (respectsReducedMotion()) {
+        gsap.set(heroRef.current, { opacity: 0 });
+        gsap.set(inlineRef.current, { opacity: 1 });
+        return;
+      }
+
+      const tl = gsap.timeline({ defaults: { ease: "none" } });
+      // Hero fades out and scales down slightly — sense of "compressing" into the title row
+      tl.to(heroRef.current, { opacity: 0, scale: 0.72, transformOrigin: "top center" }, 0);
+      // Inline fades in during the second half of the scroll range
+      tl.fromTo(
+        inlineRef.current,
         { opacity: 0, scale: 0.85 },
-        { opacity: 1, scale: 1, duration: 0.45, ease: "pitwall-accel" }
+        { opacity: 1, scale: 1 },
+        0.4 // starts at 40% progress
       );
+
+      ScrollTrigger.create({
+        trigger: pageRef.current,
+        start: "top top",
+        end: "+=280",
+        scrub: 1.2,
+        animation: tl,
+      });
+
+      ScrollTrigger.refresh();
     },
-    { dependencies: [drawDocked] }
+    { scope: pageRef, dependencies: [drawComplete] }
   );
 
   const handleDrawComplete = useCallback(() => {
-    if (respectsReducedMotion()) {
-      setDrawDocked(true);
-      return;
-    }
-    if (!heroRef.current) return;
-    gsap.to(heroRef.current, {
-      opacity: 0,
-      duration: 0.5,
-      ease: "pitwall-brake",
-      onComplete: () => setDrawDocked(true),
-    });
+    setDrawComplete(true);
   }, []);
 
   if (isLoading) {
     return (
       <div className="p-8">
         <div className="h-6 w-48 bg-f1-grid/30 rounded-sm animate-pulse mb-4" />
-        <div className="h-64 max-w-2xl mx-auto bg-f1-grid/10 animate-pulse mb-8" />
+        <div className="h-52 max-w-2xl mx-auto bg-f1-grid/10 animate-pulse mb-6" />
         <div className="h-8 w-80 bg-f1-grid/30 rounded-sm animate-pulse mb-2" />
         <div className="h-4 w-60 bg-f1-grid/30 rounded-sm animate-pulse" />
       </div>
@@ -88,33 +102,39 @@ export default function RaceDetailPage({
   const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;
 
   return (
-    <div className="p-8">
-      {/* Back button — uses browser history to restore the correct season */}
+    <div className="p-8" ref={pageRef}>
+      {/* Back button — restores previous season via browser history */}
       <button
         onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-8 cursor-pointer"
+        className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6 cursor-pointer"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Races
       </button>
 
-      {/* Phase 1: large hero circuit — visible until draw completes */}
-      {!drawDocked && circuitPath && (
-        <div ref={heroRef} className="flex justify-center mb-8">
+      {/* Hero circuit — height-constrained so content is immediately accessible.
+          The SVG viewBox is square (500×500) so without a height cap it would
+          render at full width × full width height, blocking the entire viewport. */}
+      {circuitPath && (
+        <div
+          ref={heroRef}
+          className="flex justify-center mb-6 max-h-56 overflow-hidden"
+        >
           <DrawPath
             d={circuitPath.d}
             viewBox={circuitPath.viewBox}
             color="var(--color-f1-cyan)"
             strokeWidth={2}
+            outlined
             duration={3.5}
             trigger="mount"
             onComplete={handleDrawComplete}
-            className="w-full max-w-2xl opacity-[0.22]"
+            className="h-full w-auto max-w-2xl opacity-[0.22]"
           />
         </div>
       )}
 
-      {/* Race title row — inline circuit docks here after draw */}
+      {/* Title row — inline circuit docks here as user scrolls */}
       <div className="mb-6 flex items-start justify-between gap-6">
         <div className="min-w-0">
           <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
@@ -127,23 +147,33 @@ export default function RaceDetailPage({
           </div>
         </div>
 
-        {/* Phase 2: inline circuit — fades in after hero draw */}
-        {drawDocked && circuitPath && (
+        {/* Inline circuit — starts invisible, ScrollTrigger fades it in */}
+        {circuitPath && (
           <div
-            ref={inlineCircuitRef}
+            ref={inlineRef}
             className="shrink-0 w-28 h-20"
+            style={{ opacity: 0 }}
             aria-hidden="true"
-            style={{ opacity: 0 }} // starts hidden; GSAP fades in
           >
             <svg
               viewBox={circuitPath.viewBox}
-              className="w-full h-full opacity-30"
+              className="w-full h-full"
             >
+              {/* Outlined double-stroke (matches hero style) */}
               <path
                 d={circuitPath.d}
                 fill="none"
                 stroke="var(--color-f1-cyan)"
-                strokeWidth={2}
+                strokeWidth={10}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.28}
+              />
+              <path
+                d={circuitPath.d}
+                fill="none"
+                stroke="#0F0F0F"
+                strokeWidth={4.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />

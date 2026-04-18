@@ -33,10 +33,10 @@ export function RaceCard({ race, isNext, index }: RaceCardProps) {
 
   const formattedDate = raceDate
     ? raceDate.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "TBC";
 
   // Above-fold cards (0-5): mount trigger with staggered delay so user sees the cascade.
@@ -60,12 +60,12 @@ export function RaceCard({ race, isNext, index }: RaceCardProps) {
           d={circuitPath.d}
           viewBox={circuitPath.viewBox}
           color="var(--color-f1-cyan)"
-          strokeWidth={2}
+          strokeWidth={4}
           outlined
           duration={1.8}
           trigger={drawTrigger}
           delay={drawDelay}
-          className="absolute inset-0 w-full h-full opacity-[0.20] pointer-events-none"
+          className="absolute inset-0 left-[30%] opacity-[0.20] pointer-events-none"
         />
       )}
 
