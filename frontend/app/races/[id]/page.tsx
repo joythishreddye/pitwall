@@ -136,24 +136,57 @@ export default function RaceDetailPage({
 
       {/* Content section — starts below the hero */}
       <div className="px-8 pb-8">
-        {/* Title row — inline circuit docks here on scroll */}
-        <div className="mb-6 flex items-start justify-between gap-6 pt-6 border-t border-f1-grid">
-          <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
-            <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
-              <span>{race.circuit.name}</span>
-              <span className="text-f1-grid" aria-hidden="true">|</span>
-              <span className="font-data">{race.date}</span>
-              <span className="text-f1-grid" aria-hidden="true">|</span>
-              <span>Round {race.round}</span>
+        {/* Two-column block: left = title + meta strip, right = inline circuit
+            spanning the full combined height of both rows. */}
+        <div className="mb-6 pt-6 border-t border-f1-grid grid grid-cols-2 gap-8 items-stretch">
+
+          {/* Left column: title row + meta strip stacked */}
+          <div className="flex flex-col gap-4 min-w-0">
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
+              <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
+                <span>{race.circuit.name}</span>
+                <span className="text-f1-grid" aria-hidden="true">|</span>
+                <span className="font-data">{race.date}</span>
+                <span className="text-f1-grid" aria-hidden="true">|</span>
+                <span>Round {race.round}</span>
+              </div>
             </div>
+
+            {circuitMeta && (
+              <div className="flex items-center gap-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap mt-auto">
+                <div>
+                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
+                  <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
+                </div>
+                <div>
+                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
+                  <p className="font-data font-semibold">{circuitMeta.turns}</p>
+                </div>
+                <div>
+                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
+                  <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
+                </div>
+                {circuitMeta.lapRecord && (
+                  <div>
+                    <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
+                    <p className="font-data font-semibold">
+                      {circuitMeta.lapRecord.time}
+                      <span className="text-f1-muted font-normal ml-1.5">
+                        {circuitMeta.lapRecord.driver} ({circuitMeta.lapRecord.year})
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Inline circuit — solid single stroke, clearly visible at small size */}
+          {/* Right column: inline circuit spanning the full height of both left rows */}
           {circuitPath && (
             <div
               ref={inlineRef}
-              className="shrink-0 w-40 h-28"
+              className="min-h-[180px]"
               style={{ opacity: 0 }}
               aria-hidden="true"
             >
@@ -165,7 +198,7 @@ export default function RaceDetailPage({
                   d={circuitPath.d}
                   fill="none"
                   stroke="var(--color-f1-cyan)"
-                  strokeWidth={16}
+                  strokeWidth={8}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   opacity={0.65}
@@ -174,35 +207,6 @@ export default function RaceDetailPage({
             </div>
           )}
         </div>
-
-        {/* Circuit metadata strip */}
-        {circuitMeta && (
-          <div className="flex items-center gap-6 mb-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap">
-            <div>
-              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
-              <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
-            </div>
-            <div>
-              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
-              <p className="font-data font-semibold">{circuitMeta.turns}</p>
-            </div>
-            <div>
-              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
-              <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
-            </div>
-            {circuitMeta.lapRecord && (
-              <div>
-                <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
-                <p className="font-data font-semibold">
-                  {circuitMeta.lapRecord.time}
-                  <span className="text-f1-muted font-normal ml-1.5">
-                    {circuitMeta.lapRecord.driver} ({circuitMeta.lapRecord.year})
-                  </span>
-                </p>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Tabs */}
         <div role="tablist" className="flex gap-0 mb-6 border-b border-f1-grid">
