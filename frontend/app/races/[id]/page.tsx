@@ -31,8 +31,9 @@ export default function RaceDetailPage({
   const { data: race, isLoading, error } = useRaceDetail(raceId);
   const { data: strategy } = useRaceStrategy(raceId);
 
-  // After draw completes: ScrollTrigger scrub cross-fades hero → inline as user scrolls.
-  // Scrub reverses on scroll-up, so the hero reappears if the user scrolls back to the top.
+  // ScrollTrigger runs over the full hero height (top-top → bottom-top).
+  // As user scrolls the hero out of view the circuit fades; inline fades in.
+  // Scrub reverses on scroll-up so the circuit reappears.
   useGSAP(
     () => {
       if (!drawComplete || !heroRef.current || !inlineRef.current) return;
@@ -44,20 +45,18 @@ export default function RaceDetailPage({
       }
 
       const tl = gsap.timeline({ defaults: { ease: "none" } });
-      // Hero fades out and scales down slightly — sense of "compressing" into the title row
-      tl.to(heroRef.current, { opacity: 0, scale: 0.72, transformOrigin: "top center" }, 0);
-      // Inline fades in during the second half of the scroll range
+      tl.to(heroRef.current, { opacity: 0, scale: 0.95, transformOrigin: "top center" }, 0);
       tl.fromTo(
         inlineRef.current,
-        { opacity: 0, scale: 0.85 },
+        { opacity: 0, scale: 0.9 },
         { opacity: 1, scale: 1 },
-        0.4 // starts at 40% progress
+        0.55
       );
 
       ScrollTrigger.create({
-        trigger: pageRef.current,
+        trigger: heroRef.current,
         start: "top top",
-        end: "+=280",
+        end: "bottom top",
         scrub: 1.2,
         animation: tl,
       });
@@ -73,11 +72,14 @@ export default function RaceDetailPage({
 
   if (isLoading) {
     return (
-      <div className="p-8">
-        <div className="h-6 w-48 bg-f1-grid/30 rounded-sm animate-pulse mb-4" />
-        <div className="h-52 max-w-2xl mx-auto bg-f1-grid/10 animate-pulse mb-6" />
-        <div className="h-8 w-80 bg-f1-grid/30 rounded-sm animate-pulse mb-2" />
-        <div className="h-4 w-60 bg-f1-grid/30 rounded-sm animate-pulse" />
+      <div className="relative">
+        <div className="h-screen flex items-center justify-center bg-f1-dark">
+          <div className="w-72 h-72 bg-f1-grid/10 animate-pulse" />
+        </div>
+        <div className="px-8 pb-8 pt-6">
+          <div className="h-8 w-80 bg-f1-grid/30 rounded-sm animate-pulse mb-2" />
+          <div className="h-4 w-60 bg-f1-grid/30 rounded-sm animate-pulse" />
+        </div>
       </div>
     );
   }
@@ -102,23 +104,21 @@ export default function RaceDetailPage({
   const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;
 
   return (
-    <div className="p-8" ref={pageRef}>
-      {/* Back button — restores previous season via browser history */}
+    <div ref={pageRef} className="relative">
+      {/* Back button — absolute on top of hero, always visible */}
       <button
         onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6 cursor-pointer"
+        className="absolute top-8 left-8 z-20 inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 cursor-pointer"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Races
       </button>
 
-      {/* Hero circuit — fixed h-56 (224px) so content is immediately accessible.
-          No overflow-hidden: minor stroke bleed at 22% opacity is invisible.
-          The SVG viewBox is square (500×500); h-full + w-auto renders it 224×224px. */}
+      {/* Full-viewport hero circuit — scrolled past to reach content */}
       {circuitPath && (
         <div
           ref={heroRef}
-          className="flex justify-center mb-6 h-56"
+          className="h-screen flex items-center justify-center px-8"
         >
           <DrawPath
             d={circuitPath.d}
@@ -129,113 +129,107 @@ export default function RaceDetailPage({
             duration={3.5}
             trigger="mount"
             onComplete={handleDrawComplete}
-            className="h-full w-auto max-w-2xl opacity-[0.22]"
+            className="w-full max-w-4xl opacity-[0.28]"
           />
         </div>
       )}
 
-      {/* Title row — inline circuit docks here as user scrolls */}
-      <div className="mb-6 flex items-start justify-between gap-6">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
-          <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
-            <span>{race.circuit.name}</span>
-            <span className="text-f1-grid" aria-hidden="true">|</span>
-            <span className="font-data">{race.date}</span>
-            <span className="text-f1-grid" aria-hidden="true">|</span>
-            <span>Round {race.round}</span>
+      {/* Content section — starts below the hero */}
+      <div className="px-8 pb-8">
+        {/* Title row — inline circuit docks here on scroll */}
+        <div className="mb-6 flex items-start justify-between gap-6 pt-6 border-t border-f1-grid">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
+            <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
+              <span>{race.circuit.name}</span>
+              <span className="text-f1-grid" aria-hidden="true">|</span>
+              <span className="font-data">{race.date}</span>
+              <span className="text-f1-grid" aria-hidden="true">|</span>
+              <span>Round {race.round}</span>
+            </div>
           </div>
-        </div>
 
-        {/* Inline circuit — starts invisible, ScrollTrigger fades it in */}
-        {circuitPath && (
-          <div
-            ref={inlineRef}
-            className="shrink-0 w-28 h-20"
-            style={{ opacity: 0 }}
-            aria-hidden="true"
-          >
-            <svg
-              viewBox={circuitPath.viewBox}
-              className="w-full h-full"
+          {/* Inline circuit — solid single stroke, clearly visible at small size */}
+          {circuitPath && (
+            <div
+              ref={inlineRef}
+              className="shrink-0 w-40 h-28"
+              style={{ opacity: 0 }}
+              aria-hidden="true"
             >
-              {/* Outlined double-stroke (matches hero style) */}
-              <path
-                d={circuitPath.d}
-                fill="none"
-                stroke="var(--color-f1-cyan)"
-                strokeWidth={10}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                opacity={0.28}
-              />
-              <path
-                d={circuitPath.d}
-                fill="none"
-                stroke="#0F0F0F"
-                strokeWidth={4.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        )}
-      </div>
-
-      {/* Circuit metadata strip */}
-      {circuitMeta && (
-        <div className="flex items-center gap-6 mb-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap">
-          <div>
-            <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
-            <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
-          </div>
-          <div>
-            <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
-            <p className="font-data font-semibold">{circuitMeta.turns}</p>
-          </div>
-          <div>
-            <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
-            <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
-          </div>
-          {circuitMeta.lapRecord && (
-            <div>
-              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
-              <p className="font-data font-semibold">
-                {circuitMeta.lapRecord.time}
-                <span className="text-f1-muted font-normal ml-1.5">
-                  {circuitMeta.lapRecord.driver} ({circuitMeta.lapRecord.year})
-                </span>
-              </p>
+              <svg
+                viewBox={circuitPath.viewBox}
+                className="w-full h-full"
+              >
+                <path
+                  d={circuitPath.d}
+                  fill="none"
+                  stroke="var(--color-f1-cyan)"
+                  strokeWidth={16}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={0.65}
+                />
+              </svg>
             </div>
           )}
         </div>
-      )}
 
-      {/* Tabs */}
-      <div role="tablist" className="flex gap-0 mb-6 border-b border-f1-grid">
-        {(["results", "pitstops"] as const).map((tab) => (
-          <button
-            key={tab}
-            role="tab"
-            aria-selected={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 cursor-pointer",
-              activeTab === tab
-                ? "text-f1-text border-b-2 border-f1-red"
-                : "text-f1-muted hover:text-f1-text"
+        {/* Circuit metadata strip */}
+        {circuitMeta && (
+          <div className="flex items-center gap-6 mb-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap">
+            <div>
+              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
+              <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
+            </div>
+            <div>
+              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
+              <p className="font-data font-semibold">{circuitMeta.turns}</p>
+            </div>
+            <div>
+              <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
+              <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
+            </div>
+            {circuitMeta.lapRecord && (
+              <div>
+                <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
+                <p className="font-data font-semibold">
+                  {circuitMeta.lapRecord.time}
+                  <span className="text-f1-muted font-normal ml-1.5">
+                    {circuitMeta.lapRecord.driver} ({circuitMeta.lapRecord.year})
+                  </span>
+                </p>
+              </div>
             )}
-          >
-            {tab === "pitstops" ? "Pit Stops" : "Results"}
-          </button>
-        ))}
-      </div>
+          </div>
+        )}
 
-      {activeTab === "results" ? (
-        <RaceResultsTable results={race.results} winnerMs={winnerMs} />
-      ) : (
-        <PitStopsTable strategy={strategy ?? []} />
-      )}
+        {/* Tabs */}
+        <div role="tablist" className="flex gap-0 mb-6 border-b border-f1-grid">
+          {(["results", "pitstops"] as const).map((tab) => (
+            <button
+              key={tab}
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "px-4 py-2 text-sm font-medium capitalize transition-colors duration-150 cursor-pointer",
+                activeTab === tab
+                  ? "text-f1-text border-b-2 border-f1-red"
+                  : "text-f1-muted hover:text-f1-text"
+              )}
+            >
+              {tab === "pitstops" ? "Pit Stops" : "Results"}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "results" ? (
+          <RaceResultsTable results={race.results} winnerMs={winnerMs} />
+        ) : (
+          <PitStopsTable strategy={strategy ?? []} />
+        )}
+      </div>
     </div>
   );
 }
