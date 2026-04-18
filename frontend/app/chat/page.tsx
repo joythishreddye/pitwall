@@ -96,11 +96,19 @@ export default function ChatPage() {
   const errorRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Track IDs that were already in history when this page instance mounted.
-  // Messages in this set get no telex animation — they've already been seen.
-  const mountedIdsRef = useRef<Set<string>>(
-    new Set(messages.map((m) => m.id))
-  );
+  // Track IDs that existed before this page session (restored from sessionStorage).
+  // Messages in this set skip telex/entrance animations — they've already been seen.
+  const mountedIdsRef = useRef<Set<string>>(new Set<string>());
+
+  // Populate mountedIdsRef once the session restoration effect fires.
+  // We compare message count: the first non-zero batch after mount is the restore.
+  const sessionRestoredRef = useRef(false);
+  useEffect(() => {
+    if (!sessionRestoredRef.current && messages.length > 0) {
+      sessionRestoredRef.current = true;
+      messages.forEach((m) => mountedIdsRef.current.add(m.id));
+    }
+  }, [messages]);
 
   // Smooth-scroll to newest message
   useEffect(() => {

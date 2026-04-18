@@ -53,12 +53,20 @@ function saveSession(messages: ChatMessage[]) {
 }
 
 export function useChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>(loadSession);
+  // Start with [] on both server and client so hydration always matches.
+  // Load from sessionStorage in a useEffect after hydration completes.
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const clearError = useCallback(() => setError(null), []);
+
+  // Restore session after hydration
+  useEffect(() => {
+    const stored = loadSession();
+    if (stored.length > 0) setMessages(stored);
+  }, []);
 
   // Persist completed messages to sessionStorage whenever messages change
   useEffect(() => {
