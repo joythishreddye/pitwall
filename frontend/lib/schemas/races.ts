@@ -9,6 +9,13 @@ const CircuitSchema = z.object({
   lng: z.number().nullable(),
 });
 
+const WinnerSchema = z.object({
+  surname: z.string(),
+  forename: z.string(),
+  constructor_ref: z.string(),
+  constructor_name: z.string(),
+});
+
 export const RaceCalendarItemSchema = z.object({
   id: z.number(),
   season: z.number(),
@@ -18,6 +25,7 @@ export const RaceCalendarItemSchema = z.object({
   time: z.string().nullable(),
   url: z.string().nullable(),
   circuit: CircuitSchema,
+  winner: WinnerSchema.nullable().optional(),
 });
 
 export const RaceCalendarSchema = z.array(RaceCalendarItemSchema);

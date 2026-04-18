@@ -45,6 +45,13 @@ class CircuitInfo(BaseModel):
     lng: float | None = None
 
 
+class WinnerInfo(BaseModel):
+    surname: str
+    forename: str
+    constructor_ref: str
+    constructor_name: str
+
+
 class RaceCalendarEntry(BaseModel):
     id: int
     season: int
@@ -54,6 +61,7 @@ class RaceCalendarEntry(BaseModel):
     time: str | None = None
     url: str | None = None
     circuit: CircuitInfo | None = None
+    winner: WinnerInfo | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +117,7 @@ def get_season_races(year: int, db: DB) -> list[RaceCalendarEntry]:
         raise HTTPException(status_code=404, detail=f"Season {year} not found")
 
     entries: list[RaceCalendarEntry] = []
+    race_ids: list[int] = []
     for row in rows:
         circuit_data = row.get("circuits")
         circuit = CircuitInfo(**circuit_data) if circuit_data else None
@@ -124,4 +133,29 @@ def get_season_races(year: int, db: DB) -> list[RaceCalendarEntry]:
                 circuit=circuit,
             )
         )
+        race_ids.append(row["id"])
+
+    # Fetch P1 results for all races in one indexed query and merge
+    if race_ids:
+        winners_result = (
+            db.table("race_results")
+            .select("race_id, drivers(forename, surname), constructors(ref, name)")
+            .in_("race_id", race_ids)
+            .eq("position", 1)
+            .execute()
+        )
+        winners_by_race: dict[int, WinnerInfo] = {}
+        for w in winners_result.data or []:
+            driver = w.get("drivers") or {}
+            constructor = w.get("constructors") or {}
+            if driver and constructor:
+                winners_by_race[w["race_id"]] = WinnerInfo(
+                    surname=driver.get("surname", ""),
+                    forename=driver.get("forename", ""),
+                    constructor_ref=constructor.get("ref", ""),
+                    constructor_name=constructor.get("name", ""),
+                )
+        for entry in entries:
+            entry.winner = winners_by_race.get(entry.id)
+
     return entries

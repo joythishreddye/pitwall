@@ -50,6 +50,7 @@ export function RacesList({ races }: RacesListProps) {
           key={race.id}
           race={race}
           isNext={index === nextRaceIndex}
+          index={index}
         />
       ))}
     </div>

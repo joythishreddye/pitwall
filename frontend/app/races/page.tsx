@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
@@ -8,8 +9,19 @@ import { ErrorState } from "@/components/error-state";
 import { SeasonSelector } from "@/components/season-selector";
 import { RacesList } from "@/components/races";
 
-export default function RacesPage() {
-  const [season, setSeason] = useState(CURRENT_SEASON);
+function RacesPageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const season = Number(searchParams.get("season")) || CURRENT_SEASON;
+
+  const setSeason = (year: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("season", String(year));
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   const { data: races, isLoading, error, refetch } = useRaceCalendar(season);
 
   return (
@@ -30,7 +42,7 @@ export default function RacesPage() {
             <div
               key={i}
               className={cn(
-                "min-h-48 border border-f1-grid bg-f1-dark-2 animate-pulse",
+                "min-h-52 border border-f1-grid bg-f1-dark-2 animate-pulse",
                 i % 3 === 0 && "opacity-60"
               )}
             />
@@ -42,5 +54,13 @@ export default function RacesPage() {
         <RacesList races={races} />
       ) : null}
     </div>
+  );
+}
+
+export default function RacesPage() {
+  return (
+    <Suspense>
+      <RacesPageContent />
+    </Suspense>
   );
 }

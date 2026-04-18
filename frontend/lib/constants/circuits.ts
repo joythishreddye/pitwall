@@ -221,10 +221,31 @@ export const circuitPaths: Record<string, CircuitPath> = {
 };
 
 // ---------------------------------------------------------------------------
+// Explicit overrides for circuits whose API names don't contain the key words.
+// E.g. "Autódromo José Carlos Pace" never mentions "interlagos".
+// Each entry: a substring that appears in the API circuit name → our key.
+// ---------------------------------------------------------------------------
+
+const CIRCUIT_NAME_OVERRIDES: Array<{ match: string; key: string }> = [
+  { match: "josé carlos pace",  key: "interlagos" }, // São Paulo / Brazil
+  { match: "jose carlos pace",  key: "interlagos" }, // ASCII fallback
+  { match: "hermanos rodr",     key: "rodriguez"  }, // Mexico City (handles accent)
+  { match: "enzo e dino",       key: "imola"      }, // Imola / Emilia Romagna
+];
 
 /** Match circuit by name substring (e.g. "Albert Park Grand Prix Circuit" matches "albert_park") */
 export function getCircuitMeta(circuitName: string): (CircuitMeta & { key: string }) | undefined {
   const lower = circuitName.toLowerCase();
+
+  // Check explicit overrides first (handles accented characters and non-obvious names)
+  for (const { match, key } of CIRCUIT_NAME_OVERRIDES) {
+    if (lower.includes(match)) {
+      const meta = CIRCUIT_META[key];
+      if (meta) return { ...meta, key };
+    }
+  }
+
+  // Fall back to key-word matching
   for (const [key, meta] of Object.entries(CIRCUIT_META)) {
     const words = key.split("_");
     if (words.every(w => lower.includes(w))) return { ...meta, key };
