@@ -118,7 +118,7 @@ export default function RaceDetailPage({
       {circuitPath && (
         <div
           ref={heroRef}
-          className="h-screen flex items-center justify-center px-8"
+          className="h-[calc(100vh-40px)] flex items-center justify-center px-8 overflow-hidden"
         >
           <DrawPath
             d={circuitPath.d}
@@ -129,19 +129,21 @@ export default function RaceDetailPage({
             duration={3.5}
             trigger="mount"
             onComplete={handleDrawComplete}
-            className="w-full max-w-4xl opacity-[0.28]"
+            className="w-full h-full max-w-4xl max-h-full opacity-[0.28]"
           />
         </div>
       )}
 
       {/* Content section — starts below the hero */}
       <div className="px-8 pb-8">
-        {/* Two-column block: left = title + meta strip, right = inline circuit
-            spanning the full combined height of both rows. */}
-        <div className="mb-6 pt-6 border-t border-f1-grid grid grid-cols-2 gap-8 items-stretch">
+        {/* Flex row: left col (flex-1) = title + meta strip stacked.
+            Right col = circuit. items-stretch gives circuit definite height
+            = left col height; aspect-ratio:1 resolves width from that height.
+            No gap hacks, no mt-auto, no grid circular dependency. */}
+        <div className="mb-6 pt-6 border-t border-f1-grid flex items-stretch gap-8">
 
-          {/* Left column: title row + meta strip stacked */}
-          <div className="flex flex-col gap-4 min-w-0">
+          {/* Left: title row + meta strip, stacked with gap-4 */}
+          <div className="flex-1 min-w-0 flex flex-col gap-4">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
               <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
@@ -154,7 +156,7 @@ export default function RaceDetailPage({
             </div>
 
             {circuitMeta && (
-              <div className="flex items-center gap-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap mt-auto">
+              <div className="flex items-center gap-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap">
                 <div>
                   <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
                   <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
@@ -182,18 +184,16 @@ export default function RaceDetailPage({
             )}
           </div>
 
-          {/* Right column: inline circuit spanning the full height of both left rows */}
+          {/* Right: circuit — height = left col height (via stretch).
+              aspect-ratio:1 makes width = height. shrink-0 prevents compression. */}
           {circuitPath && (
             <div
               ref={inlineRef}
-              className="min-h-[180px]"
-              style={{ opacity: 0 }}
+              className="shrink-0 w-36 h-36"
+              style={{ opacity: 0, aspectRatio: '1 / 1' }}
               aria-hidden="true"
             >
-              <svg
-                viewBox={circuitPath.viewBox}
-                className="w-full h-full"
-              >
+              <svg viewBox={circuitPath.viewBox} className="w-full h-full">
                 <path
                   d={circuitPath.d}
                   fill="none"
