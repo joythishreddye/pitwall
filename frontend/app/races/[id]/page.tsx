@@ -112,13 +112,13 @@ export default function RaceDetailPage({
         Races
       </button>
 
-      {/* Hero circuit — height-constrained so content is immediately accessible.
-          The SVG viewBox is square (500×500) so without a height cap it would
-          render at full width × full width height, blocking the entire viewport. */}
+      {/* Hero circuit — fixed h-56 (224px) so content is immediately accessible.
+          No overflow-hidden: minor stroke bleed at 22% opacity is invisible.
+          The SVG viewBox is square (500×500); h-full + w-auto renders it 224×224px. */}
       {circuitPath && (
         <div
           ref={heroRef}
-          className="flex justify-center mb-6 max-h-56 overflow-hidden"
+          className="flex justify-center mb-6 h-56"
         >
           <DrawPath
             d={circuitPath.d}

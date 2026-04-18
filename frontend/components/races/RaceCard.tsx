@@ -54,19 +54,22 @@ export function RaceCard({ race, isNext, index }: RaceCardProps) {
         isPast && "opacity-85"
       )}
     >
-      {/* Circuit SVG — absolute background, outlined double-stroke road-edge style */}
+      {/* Circuit SVG — wrapped in a div so its overflow-hidden clips the SVG's
+          overflow-visible strokes at the container boundary, not at the card edge */}
       {circuitPath && (
-        <DrawPath
-          d={circuitPath.d}
-          viewBox={circuitPath.viewBox}
-          color="var(--color-f1-cyan)"
-          strokeWidth={4}
-          outlined
-          duration={1.8}
-          trigger={drawTrigger}
-          delay={drawDelay}
-          className="absolute inset-0 left-[30%] opacity-[0.20] pointer-events-none"
-        />
+        <div className="absolute inset-0 left-[28%] overflow-hidden pointer-events-none">
+          <DrawPath
+            d={circuitPath.d}
+            viewBox={circuitPath.viewBox}
+            color="var(--color-f1-cyan)"
+            strokeWidth={4}
+            outlined
+            duration={1.8}
+            trigger={drawTrigger}
+            delay={drawDelay}
+            className="w-full h-full opacity-[0.20]"
+          />
+        </div>
       )}
 
       {/* Top row: round + state badge */}
