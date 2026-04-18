@@ -17,6 +17,7 @@ export interface ChatMessage {
   sources?: ChatSource[];
   knowledgeLevel?: KnowledgeLevel;
   isStreaming?: boolean;
+  timestamp: number;
 }
 
 interface SSEEvent {
@@ -31,16 +32,20 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
+  const clearError = useCallback(() => setError(null), []);
+
   const sendMessage = useCallback(
     async (content: string) => {
       if (!content.trim() || isLoading) return;
 
       setError(null);
 
+      const now = Date.now();
       const userMessage: ChatMessage = {
         id: crypto.randomUUID(),
         role: "user",
         content: content.trim(),
+        timestamp: now,
       };
 
       const assistantMessage: ChatMessage = {
@@ -48,6 +53,7 @@ export function useChat() {
         role: "assistant",
         content: "",
         isStreaming: true,
+        timestamp: now + 1,
       };
 
       setMessages((prev) => [...prev, userMessage, assistantMessage]);
@@ -164,5 +170,5 @@ export function useChat() {
     abortRef.current?.abort();
   }, []);
 
-  return { messages, sendMessage, isLoading, error, stop };
+  return { messages, sendMessage, isLoading, error, clearError, stop };
 }
