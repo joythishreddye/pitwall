@@ -6,7 +6,7 @@ import { AlertTriangle } from "lucide-react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
-import { formatLapTime, formatGap, positionColor } from "@/lib/format";
+import { formatLapTime, formatGap, formatLapsDown, positionColor } from "@/lib/format";
 import type { RaceResult } from "@/lib/schemas/races";
 
 interface RaceResultsTableProps {
@@ -48,15 +48,18 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
         <span className="text-right">FL</span>
       </div>
 
-      {results.map((r, i) => {
+      {(() => {
+        const winnerLaps = results[0]?.laps ?? null;
+        return results.map((r, i) => {
         const teamColor = getTeamColor(r.constructor.ref);
         const grid = r.grid ?? 0;
+        // position_text is numeric ("1"-"20") for classified, "R"/"W"/"D" for non-classified
+        const isClassified =
+          r.position_text != null && /^\d+$/.test(r.position_text);
+        const isDnf = !isClassified;
+        const isLapped = isClassified && r.status === "Lapped";
         const pos = r.position ?? 0;
-        const gridDelta = pos > 0 ? grid - pos : 0;
-        const isDnf =
-          r.position == null ||
-          r.status === "Retired" ||
-          (r.status && r.status !== "Finished" && !r.status.startsWith("+"));
+        const gridDelta = pos > 0 && !isDnf ? grid - pos : 0;
         const isFl = r.fastest_lap_rank === 1;
 
         return (
@@ -125,6 +128,8 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             <span className="text-right font-data text-xs text-f1-muted">
               {r.position === 1
                 ? formatLapTime(r.time_millis)
+                : isLapped
+                ? formatLapsDown(r.laps, winnerLaps)
                 : formatGap(r.time_millis, winnerMs, r.status)}
             </span>
 
@@ -141,7 +146,8 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             </span>
           </Link>
         );
-      })}
+        });
+      })()}
     </div>
   );
 }

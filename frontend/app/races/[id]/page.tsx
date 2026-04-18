@@ -2,7 +2,7 @@
 
 import { use, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
@@ -12,6 +12,23 @@ import { RaceResultsTable } from "@/components/races/RaceResultsTable";
 import { PitStopsTable } from "@/components/races/PitStopsTable";
 
 type Tab = "results" | "pitstops";
+
+function UpcomingRaceMessage({ date }: { date: string | null }) {
+  const isFuture = date != null && new Date(date) > new Date();
+  return (
+    <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+      <Clock className="h-8 w-8 text-f1-muted opacity-40" />
+      <p className="text-f1-muted text-sm">
+        {isFuture
+          ? "This race hasn't taken place yet. Results will appear here after the chequered flag."
+          : "Results for this race are not yet available."}
+      </p>
+      {isFuture && date && (
+        <p className="font-data text-sm text-f1-muted">{date}</p>
+      )}
+    </div>
+  );
+}
 
 export default function RaceDetailPage({
   params,
@@ -229,7 +246,11 @@ export default function RaceDetailPage({
         </div>
 
         {activeTab === "results" ? (
-          <RaceResultsTable results={race.results} winnerMs={winnerMs} />
+          race.results.length === 0 ? (
+            <UpcomingRaceMessage date={race.date} />
+          ) : (
+            <RaceResultsTable results={race.results} winnerMs={winnerMs} />
+          )
         ) : (
           <PitStopsTable strategy={strategy ?? []} />
         )}

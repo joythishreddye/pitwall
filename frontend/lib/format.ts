@@ -38,3 +38,14 @@ export function formatPitDuration(ms: number | null | undefined): string {
   if (ms == null) return "\u2014";
   return `${(ms / 1000).toFixed(1)}s`;
 }
+
+/** Format laps behind race leader: +1 Lap, +2 Laps, etc. */
+export function formatLapsDown(
+  driverLaps: number | null | undefined,
+  winnerLaps: number | null | undefined,
+): string {
+  if (driverLaps == null || winnerLaps == null) return "\u2014";
+  const diff = winnerLaps - driverLaps;
+  if (diff <= 0) return "\u2014";
+  return diff === 1 ? "+1 Lap" : `+${diff} Laps`;
+}
