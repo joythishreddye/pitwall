@@ -49,18 +49,18 @@ export default function PredictionsPage() {
 
       // Page entrance
       const tl = gsap.timeline();
-      tl.from(".pred-header",   { opacity: 0, y: -8, duration: 0.3, ease: "pitwall-accel" })
-        .from(".pred-status",   { opacity: 0, duration: 0.25 }, "-=0.1")
-        .from(".pred-chart",    { opacity: 0, y: 12, duration: 0.35, ease: "pitwall-accel" }, "-=0.05")
-        .from(".pred-card",     { opacity: 0, y: 8, stagger: 0.07, duration: 0.3, ease: "pitwall-accel" }, "-=0.15")
+      tl.from(".pred-header", { opacity: 0, y: -8, duration: 0.3, ease: "pitwall-accel" })
+        .from(".pred-status", { opacity: 0, duration: 0.25 }, "-=0.1")
+        .from(".pred-chart", { opacity: 0, y: 12, duration: 0.35, ease: "pitwall-accel" }, "-=0.05")
+        .from(".pred-card", { opacity: 0, y: 8, stagger: 0.07, duration: 0.3, ease: "pitwall-accel" }, "-=0.15")
         .from(".pred-strategy", { opacity: 0, y: 8, duration: 0.3, ease: "pitwall-accel" }, "-=0.1")
-        .to(".pred-notify",     { opacity: 1, y: 0, duration: 0.3, ease: "pitwall-accel" }, "-=0.05");
+        .to(".pred-notify", { opacity: 1, y: 0, duration: 0.3, ease: "pitwall-accel" }, "-=0.05");
     },
     { scope: containerRef }
   );
 
   return (
-    <div ref={containerRef} className="p-6 lg:p-8 space-y-6">
+    <div ref={containerRef} className="p-6 lg:p-8 space-y-4">
       {/* Header */}
       <div className="pred-header flex items-start justify-between gap-4">
         <div>
@@ -187,16 +187,19 @@ export default function PredictionsPage() {
               </div>
             </div>
 
-            <div className="absolute inset-0 flex items-center justify-center bg-f1-dark-2/40">
-              <LockIcon className="text-f1-grid" />
+            <div className="absolute inset-0 flex items-end justify-end p-3 bg-f1-dark-2/40">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted flex items-center gap-1">
+                <LockIcon />
+                Phase 2
+              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Strategy Recommendation panel */}
-      <div className="pred-strategy border border-f1-grid bg-f1-dark-2 p-4 relative overflow-hidden">
-        <div className="flex items-center justify-between mb-3">
+      {/* Strategy Recommendation panel — compact so notify form is visible without scrolling */}
+      <div className="pred-strategy border border-f1-grid bg-f1-dark-2 px-4 py-3 relative overflow-hidden">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-mono uppercase tracking-widest text-f1-muted">
             Strategy Recommendation
           </span>
@@ -206,22 +209,14 @@ export default function PredictionsPage() {
         <div
           style={{ filter: "blur(5px) brightness(0.5) saturate(0.3)" }}
           aria-hidden="true"
-          className="space-y-2"
+          className="flex items-center gap-3"
         >
-          {[
-            { lap: "Lap 28", color: "text-f1-orange", text: "Undercut window opens — pit for mediums" },
-            { lap: "Lap 41", color: "text-f1-cyan", text: "Alternative: stay out, target fastest lap on fresh softs at end" },
-            { lap: "Delta", color: "text-f1-green", text: "+4.2s net gain on 1-stop vs 2-stop" },
-          ].map(row => (
-            <div key={row.lap} className="flex items-center gap-3">
-              <span className={`text-[10px] font-mono uppercase tracking-wider w-16 ${row.color}`}>{row.lap}</span>
-              <div className="h-px flex-1 bg-f1-grid" />
-              <span className={`text-[10px] font-mono ${row.color === "text-f1-green" ? "text-f1-green" : "text-f1-muted"}`}>{row.text}</span>
-            </div>
-          ))}
+          <span className="text-[10px] font-mono uppercase tracking-wider w-16 text-f1-orange">Lap 28</span>
+          <div className="h-px flex-1 bg-f1-grid" />
+          <span className="text-[10px] font-mono text-f1-muted">Undercut window opens — pit for mediums</span>
         </div>
 
-        <div className="absolute inset-0 flex items-end justify-end p-3 bg-f1-dark-2/30">
+        <div className="absolute inset-0 flex items-end justify-end p-2 bg-f1-dark-2/30">
           <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted flex items-center gap-1">
             <LockIcon />
             Phase 2

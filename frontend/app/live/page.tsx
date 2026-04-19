@@ -11,17 +11,17 @@ void MotionPathPlugin;
 // Gap to Leader: team-color bars at varying lengths
 const GAP_BARS = [
   { color: "#3671C6", width: "100%", label: "VER" },
-  { color: "#FF8000", width: "74%",  label: "NOR" },
-  { color: "#27F4D2", width: "61%",  label: "ANT" },
-  { color: "#FF8000", width: "48%",  label: "PIA" },
-  { color: "#E8002D", width: "35%",  label: "HAM" },
+  { color: "#FF8000", width: "74%", label: "NOR" },
+  { color: "#27F4D2", width: "61%", label: "ANT" },
+  { color: "#FF8000", width: "48%", label: "PIA" },
+  { color: "#E8002D", width: "35%", label: "HAM" },
 ] as const;
 
 // Tyre Strategy: compound-color dots with driver counts
 const TYRE_ROWS = [
-  { color: "#DC0000", label: "SOFT",   count: 8 },
+  { color: "#DC0000", label: "SOFT", count: 8 },
   { color: "#FFED00", label: "MEDIUM", count: 7 },
-  { color: "#E5E5E5", label: "HARD",   count: 5 },
+  { color: "#E5E5E5", label: "HARD", count: 5 },
 ] as const;
 
 // Position Changes: mock +/- deltas
@@ -124,7 +124,7 @@ function PanelMockContent({ id }: { id: string }) {
 
 export default function LivePage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const carRef = useRef<SVGCircleElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useGSAP(
     () => {
@@ -132,17 +132,20 @@ export default function LivePage() {
 
       // Page entrance
       const tl = gsap.timeline();
-      tl.from(".live-header",  { opacity: 0, y: -8,  duration: 0.3, ease: "pitwall-accel" })
-        .from(".live-circuit", { opacity: 0,          duration: 0.5 }, "-=0.1")
+      tl.from(".live-header",  { opacity: 0, y: -8, duration: 0.3, ease: "pitwall-accel" })
+        .from(".live-circuit", { opacity: 0,         duration: 0.5 }, "-=0.1")
         .from(".live-panel",   { opacity: 0, y: 8, stagger: 0.07, duration: 0.3, ease: "pitwall-accel" }, "-=0.15")
-        .from(".live-notify",  { opacity: 0, y: 8,   duration: 0.3, ease: "pitwall-accel" }, "-=0.1");
+        .from(".live-notify",  { opacity: 0, y: 8, duration: 0.3, ease: "pitwall-accel" }, "-=0.1");
 
-      // Ghost car — MotionPath along Miami circuit
-      if (carRef.current) {
-        gsap.to(carRef.current, {
-          duration: 16,
+      // 5 team-colored dots — staggered positions along the circuit
+      // Negative delay = already in progress, so each car starts at a different point
+      const LAP_DURATION = 16;
+      svgRef.current?.querySelectorAll<SVGCircleElement>(".live-car").forEach((car, i) => {
+        gsap.to(car, {
+          duration: LAP_DURATION + i * 0.6, // slightly different lap times
           ease: "none",
           repeat: -1,
+          delay: -(i * (LAP_DURATION / 5)), // evenly spread around the track
           motionPath: {
             path: "#miami-track",
             align: "#miami-track",
@@ -152,7 +155,7 @@ export default function LivePage() {
             end: 1,
           },
         });
-      }
+      });
     },
     { scope: containerRef }
   );
@@ -164,7 +167,7 @@ export default function LivePage() {
       <div className="live-header flex items-center justify-between">
         <div>
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-f1-muted mb-0.5">
-            Phase 3
+            Phase 3 · Not yet active
           </p>
           <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-ibm-plex)]">
             Live Race Dashboard
@@ -180,8 +183,8 @@ export default function LivePage() {
         </div>
       </div>
 
-      {/* Circuit hero — full width, ghost car doing laps */}
-      <div className="live-circuit border border-f1-grid bg-f1-dark-2 p-4">
+      {/* Circuit hero — blurred with team-colored tracking dots */}
+      <div className="live-circuit border border-f1-grid bg-f1-dark-2 p-4 relative overflow-hidden">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] font-mono uppercase tracking-widest text-f1-muted">
             {circuitPaths.miami.name}
@@ -192,33 +195,37 @@ export default function LivePage() {
           </div>
         </div>
 
-        <svg
-          viewBox={circuitPaths.miami.viewBox}
-          className="w-full max-h-[320px]"
-          aria-label="Miami International Autodrome circuit layout with ghost car"
+        {/* Blurred circuit + colored dots — matches predictions chart treatment */}
+        <div
+          style={{ filter: "blur(4px) brightness(0.55) saturate(0.5)" }}
+          aria-hidden="true"
         >
-          <defs>
-            <filter id="car-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          {/* Outer cased stroke */}
-          <path d={circuitPaths.miami.d} stroke="var(--color-f1-cyan)" strokeWidth="6" strokeOpacity={0.1} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Dark inner channel */}
-          <path d={circuitPaths.miami.d} stroke="#0F0F0F" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Track line — motion path target */}
-          <path id="miami-track" d={circuitPaths.miami.d} stroke="var(--color-f1-cyan)" strokeWidth="1.5" strokeOpacity={0.4} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-          {/* Ghost car */}
-          <circle ref={carRef} r="6" fill="var(--color-f1-cyan)" filter="url(#car-glow)" aria-hidden="true" />
-        </svg>
+          <svg
+            ref={svgRef}
+            viewBox="30 130 460 280"
+            className="w-full max-h-[220px]"
+          >
+            {/* Outer cased stroke */}
+            <path d={circuitPaths.miami.d} stroke="var(--color-f1-cyan)" strokeWidth="7" strokeOpacity={0.15} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Dark inner channel */}
+            <path d={circuitPaths.miami.d} stroke="#0F0F0F" strokeWidth="3.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Track line — motionPath target */}
+            <path id="miami-track" d={circuitPaths.miami.d} stroke="var(--color-f1-cyan)" strokeWidth="1.5" strokeOpacity={0.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            {/* 5 team-colored tracking dots */}
+            <circle className="live-car" r="7" fill="#3671C6" />
+            <circle className="live-car" r="7" fill="#FF8000" />
+            <circle className="live-car" r="7" fill="#27F4D2" />
+            <circle className="live-car" r="7" fill="#E8002D" />
+            <circle className="live-car" r="7" fill="#229971" />
+          </svg>
+        </div>
 
-        <div className="mt-2 border-t border-f1-grid pt-2 flex items-center justify-between">
-          <span className="text-[9px] font-mono text-f1-muted uppercase tracking-widest">5.412 km · 19 turns · 3 DRS zones</span>
-          <span className="text-[9px] font-[family-name:var(--font-jetbrains)] tabular-nums text-f1-grid">Round 5 of 24</span>
+        {/* Lock label — outside blur, same style as panels */}
+        <div className="absolute inset-0 flex items-end justify-end p-3 pointer-events-none">
+          <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted flex items-center gap-1">
+            <LockIcon />
+            Phase 3
+          </span>
         </div>
       </div>
 
@@ -246,8 +253,11 @@ export default function LivePage() {
             </div>
 
             {/* Lock overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-f1-dark-2/40">
-              <LockIcon className="text-f1-grid" />
+            <div className="absolute inset-0 flex items-end justify-end p-3 bg-f1-dark-2/40">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-f1-muted flex items-center gap-1">
+                <LockIcon />
+                Phase 3
+              </span>
             </div>
           </div>
         ))}

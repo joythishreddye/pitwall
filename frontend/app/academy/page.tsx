@@ -181,7 +181,10 @@ export default function AcademyPage() {
               >
                 {module.tag}
               </span>
-              <Lock className="h-3.5 w-3.5 text-f1-grid" aria-hidden="true" />
+              <div className="flex items-center gap-1 text-f1-muted">
+                <Lock className="h-3 w-3" aria-hidden="true" />
+                <span className="text-[9px] font-mono uppercase tracking-widest">Phase 4</span>
+              </div>
             </div>
 
             {/* Blurred title + preview */}
