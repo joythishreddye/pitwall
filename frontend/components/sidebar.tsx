@@ -24,7 +24,7 @@ const NAV_ITEMS = [
   { href: "/races", label: "Races", shortLabel: "Races", icon: Calendar },
   { href: "/drivers", label: "Drivers", shortLabel: "Drivers", icon: Users },
   { href: "/predictions", label: "Predictions", shortLabel: "Predict", icon: TrendingUp },
-  { href: "/dashboard", label: "Live", shortLabel: "Live", icon: LayoutDashboard },
+  { href: "/live", label: "Live", shortLabel: "Live", icon: LayoutDashboard },
   { href: "/chat", label: "Chat", shortLabel: "Chat", icon: MessageSquare },
   { href: "/academy", label: "Academy", shortLabel: "Academy", icon: GraduationCap },
 ] as const;
