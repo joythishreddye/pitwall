@@ -1,13 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { gsap, useGSAP, SplitText, respectsReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { WaveformIndicator } from "./WaveformIndicator";
 import { stripMarkdown } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ChatMessage as ChatMessageType, KnowledgeLevel } from "@/lib/hooks/use-chat";
 
-void SplitText;
 
 function formatTimestamp(ts: number): string {
   return new Date(ts).toLocaleTimeString("en-GB", {
@@ -56,27 +55,17 @@ export function ChatMessage({ message, animate = true }: ChatMessageProps) {
     { scope: containerRef, dependencies: [] }
   );
 
-  // Telex reveal — only for new messages in this session, fires once when streaming ends.
-  // Setting display:inline on each split char preserves the original text flow so layout
-  // during animation is identical to the final rendered state.
+  // Signal-lock reveal — blur sharpens to crisp over 400ms when streaming ends.
   useGSAP(
     () => {
       if (!animate || message.isStreaming || !isAssistant || !messageTextRef.current) return;
       if (!message.content || respectsReducedMotion()) return;
 
-      const split = new SplitText(messageTextRef.current, { type: "chars" });
-      // Force inline display so word-wrap is unchanged vs plain text
-      split.chars.forEach((c) => ((c as HTMLElement).style.display = "inline"));
-
-      gsap.from(split.chars, {
-        opacity: 0,
-        duration: 0.01,
-        stagger: 0.018,
-        ease: "none",
-        onComplete: () => split.revert(),
-      });
-
-      return () => split.revert();
+      gsap.fromTo(
+        messageTextRef.current,
+        { filter: "blur(5px)", opacity: 0.4 },
+        { filter: "blur(0px)", opacity: 1, duration: 0.4, ease: "pitwall-accel" }
+      );
     },
     { scope: containerRef, dependencies: [message.isStreaming] }
   );
