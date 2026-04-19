@@ -9,7 +9,7 @@ import type { ConstructorStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-const COLS = "grid-cols-[3rem_2fr_5rem_4rem_1fr]";
+const COLS = "grid-cols-[3rem_2fr_4rem_5rem_1fr]";
 
 export function ConstructorsTable({
   constructors,
@@ -48,8 +48,8 @@ export function ConstructorsTable({
       >
         <span>Pos</span>
         <span>Constructor</span>
-        <span className="text-right">Pts</span>
         <span className="text-right">Wins</span>
+        <span className="text-right">Pts</span>
         <span />
       </div>
 
@@ -89,14 +89,14 @@ export function ConstructorsTable({
               <span className="font-semibold truncate">{c.name}</span>
             </div>
 
-            {/* Points */}
-            <span className="text-right font-data tabular-nums font-semibold">
-              {Math.floor(c.points)}
-            </span>
-
             {/* Wins */}
             <span className="text-right font-data tabular-nums text-f1-muted">
               {c.wins > 0 ? c.wins : "—"}
+            </span>
+
+            {/* Points */}
+            <span className="text-right font-data tabular-nums font-semibold">
+              {Math.floor(c.points)}
             </span>
 
             {/* Win bar */}

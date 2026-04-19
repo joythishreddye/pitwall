@@ -10,7 +10,7 @@ import type { DriverStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-const COLS = "grid-cols-[3rem_2fr_1fr_5rem_4rem_1fr]";
+const COLS = "grid-cols-[3rem_2fr_1fr_4rem_5rem_1fr]";
 
 export function DriversTable({
   drivers,
@@ -50,8 +50,8 @@ export function DriversTable({
         <span>Pos</span>
         <span>Driver</span>
         <span>Team</span>
-        <span className="text-right">Pts</span>
         <span className="text-right">Wins</span>
+        <span className="text-right">Pts</span>
         <span />
       </div>
 
@@ -98,14 +98,14 @@ export function DriversTable({
             {/* Team */}
             <span className="text-f1-muted text-xs truncate">{d.constructor_name}</span>
 
-            {/* Points */}
-            <span className="text-right font-data tabular-nums font-semibold">
-              {Math.floor(d.points)}
-            </span>
-
             {/* Wins */}
             <span className="text-right font-data tabular-nums text-f1-muted">
               {d.wins > 0 ? d.wins : "—"}
+            </span>
+
+            {/* Points */}
+            <span className="text-right font-data tabular-nums font-semibold">
+              {Math.floor(d.points)}
             </span>
 
             {/* Win bar */}
