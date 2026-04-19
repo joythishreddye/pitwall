@@ -10,7 +10,7 @@ import type { DriverStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-const COLS = "grid-cols-[3rem_2fr_1fr_5rem_4rem_2rem_1fr]";
+const COLS = "grid-cols-[3rem_2fr_1fr_5rem_4rem_1fr]";
 
 export function DriversTable({
   drivers,
@@ -52,7 +52,6 @@ export function DriversTable({
         <span>Team</span>
         <span className="text-right">Pts</span>
         <span className="text-right">Wins</span>
-        <span className="text-center">FL</span>
         <span />
       </div>
 
@@ -108,18 +107,6 @@ export function DriversTable({
             <span className="text-right font-data tabular-nums text-f1-muted">
               {d.wins > 0 ? d.wins : "—"}
             </span>
-
-            {/* FL badge */}
-            <div className="flex justify-center">
-              {d.has_fastest_lap && (
-                <span
-                  className="text-[10px] font-data font-semibold leading-none px-1 py-0.5 border border-f1-purple/50"
-                  style={{ color: "var(--color-f1-purple)", textShadow: "0 0 8px var(--color-f1-purple)" }}
-                >
-                  FL
-                </span>
-              )}
-            </div>
 
             {/* Win bar */}
             <div className="h-1.5 bg-f1-grid/30 overflow-hidden">
