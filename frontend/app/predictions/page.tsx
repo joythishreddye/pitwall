@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
-import { StatusDot } from "@/components/ui";
+import { StatusDot, NotifyForm } from "@/components/ui";
 
 const MOCK_LINES = [
   { points: "0,85 45,65 90,50 135,58 180,38 225,28 270,22 315,18 360,14 400,10", color: "#3671C6", opacity: 0.9 },
@@ -12,10 +12,10 @@ const MOCK_LINES = [
 ] as const;
 
 const PREDICTION_CARDS = [
-  { label: "RACE WINNER",   driver: "ANTONELLI", team: "Mercedes", confidence: "74.3%", color: "#27F4D2" },
-  { label: "PODIUM FINISH", driver: "PIASTRI",   team: "McLaren",  confidence: "61.8%", color: "#FF8000" },
-  { label: "FASTEST LAP",  driver: "VERSTAPPEN", team: "Red Bull", confidence: "41.2%", color: "#3671C6" },
-  { label: "DNF RISK",     driver: "HAMILTON",   team: "Ferrari",  confidence: "12.6%", color: "#E8002D" },
+  { label: "RACE WINNER", driver: "ANTONELLI", team: "Mercedes", confidence: "74.3%", color: "#27F4D2" },
+  { label: "PODIUM FINISH", driver: "PIASTRI", team: "McLaren", confidence: "61.8%", color: "#FF8000" },
+  { label: "FASTEST LAP", driver: "VERSTAPPEN", team: "Red Bull", confidence: "41.2%", color: "#3671C6" },
+  { label: "DNF RISK", driver: "HAMILTON", team: "Ferrari", confidence: "12.6%", color: "#E8002D" },
 ] as const;
 
 export default function PredictionsPage() {
@@ -44,13 +44,17 @@ export default function PredictionsPage() {
           .to(scannerRef.current, { opacity: 0, duration: 0.3 }, "-=0.3");
       }
 
+      // Notify form hidden initially so it doesn't appear before the content above it
+      gsap.set(".pred-notify", { opacity: 0, y: 8 });
+
       // Page entrance
       const tl = gsap.timeline();
       tl.from(".pred-header",   { opacity: 0, y: -8, duration: 0.3, ease: "pitwall-accel" })
         .from(".pred-status",   { opacity: 0, duration: 0.25 }, "-=0.1")
         .from(".pred-chart",    { opacity: 0, y: 12, duration: 0.35, ease: "pitwall-accel" }, "-=0.05")
         .from(".pred-card",     { opacity: 0, y: 8, stagger: 0.07, duration: 0.3, ease: "pitwall-accel" }, "-=0.15")
-        .from(".pred-strategy", { opacity: 0, y: 8, duration: 0.3, ease: "pitwall-accel" }, "-=0.1");
+        .from(".pred-strategy", { opacity: 0, y: 8, duration: 0.3, ease: "pitwall-accel" }, "-=0.1")
+        .to(".pred-notify",     { opacity: 1, y: 0, duration: 0.3, ease: "pitwall-accel" }, "-=0.05");
     },
     { scope: containerRef }
   );
@@ -134,11 +138,11 @@ export default function PredictionsPage() {
           {/* Vertical scanner — single glowing line sweeping L→R like a read head */}
           <div
             ref={scannerRef}
-            className="pointer-events-none absolute top-0 bottom-0 w-[3px] opacity-0"
+            className="pointer-events-none absolute top-0 bottom-0 w-[1px] opacity-0"
             style={{
               left: 0,
               background: "linear-gradient(to bottom, transparent, #00C0FF 30%, #00C0FF 70%, transparent)",
-              boxShadow: "0 0 8px 3px rgba(0,192,255,0.55)",
+              boxShadow: "0 0 8px 1px rgba(0,192,255,0.55)",
             }}
             aria-hidden="true"
           />
@@ -206,8 +210,8 @@ export default function PredictionsPage() {
         >
           {[
             { lap: "Lap 28", color: "text-f1-orange", text: "Undercut window opens — pit for mediums" },
-            { lap: "Lap 41", color: "text-f1-cyan",   text: "Alternative: stay out, target fastest lap on fresh softs at end" },
-            { lap: "Delta",  color: "text-f1-green",  text: "+4.2s net gain on 1-stop vs 2-stop" },
+            { lap: "Lap 41", color: "text-f1-cyan", text: "Alternative: stay out, target fastest lap on fresh softs at end" },
+            { lap: "Delta", color: "text-f1-green", text: "+4.2s net gain on 1-stop vs 2-stop" },
           ].map(row => (
             <div key={row.lap} className="flex items-center gap-3">
               <span className={`text-[10px] font-mono uppercase tracking-wider w-16 ${row.color}`}>{row.lap}</span>
@@ -223,6 +227,15 @@ export default function PredictionsPage() {
             Phase 2
           </span>
         </div>
+      </div>
+
+      {/* Notify me */}
+      <div className="pred-notify border border-f1-cyan/20 bg-f1-dark-2 p-5">
+        <NotifyForm
+          source="predictions"
+          heading="Get notified when predictions launch"
+          description="We'll ping you when Phase 2 ships."
+        />
       </div>
     </div>
   );
