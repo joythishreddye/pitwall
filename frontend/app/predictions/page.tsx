@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { StatusDot } from "@/components/ui";
 
@@ -12,53 +12,45 @@ const MOCK_LINES = [
 ] as const;
 
 const PREDICTION_CARDS = [
-  { label: "RACE WINNER",    driver: "ANTONELLI", team: "Mercedes", baseConf: 74.3, color: "#27F4D2" },
-  { label: "PODIUM FINISH",  driver: "PIASTRI",   team: "McLaren",  baseConf: 61.8, color: "#FF8000" },
-  { label: "FASTEST LAP",   driver: "VERSTAPPEN", team: "Red Bull", baseConf: 41.2, color: "#3671C6" },
-  { label: "DNF RISK",      driver: "HAMILTON",   team: "Ferrari",  baseConf: 12.6, color: "#E8002D" },
+  { label: "RACE WINNER",   driver: "ANTONELLI", team: "Mercedes", confidence: "74.3%", color: "#27F4D2" },
+  { label: "PODIUM FINISH", driver: "PIASTRI",   team: "McLaren",  confidence: "61.8%", color: "#FF8000" },
+  { label: "FASTEST LAP",  driver: "VERSTAPPEN", team: "Red Bull", confidence: "41.2%", color: "#3671C6" },
+  { label: "DNF RISK",     driver: "HAMILTON",   team: "Ferrari",  confidence: "12.6%", color: "#E8002D" },
 ] as const;
 
 export default function PredictionsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
-
-  // Cycling confidence values — jitter around base to simulate active computation
-  const [cyclingValues, setCyclingValues] = useState(
-    () => PREDICTION_CARDS.map(c => `${c.baseConf.toFixed(1)}%`)
-  );
-
-  useEffect(() => {
-    if (respectsReducedMotion()) return;
-    const id = setInterval(() => {
-      setCyclingValues(
-        PREDICTION_CARDS.map(card => {
-          const jitter = (Math.random() - 0.5) * 7;
-          const clamped = Math.max(5, Math.min(95, card.baseConf + jitter));
-          return `${clamped.toFixed(1)}%`;
-        })
-      );
-    }, 130);
-    return () => clearInterval(id);
-  }, []);
+  const scannerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       if (respectsReducedMotion()) return;
 
-      // Blinking cursor
+      // Blinking cursor in status badge
       if (cursorRef.current) {
         gsap.to(cursorRef.current, {
           opacity: 0, duration: 0.5, ease: "steps(1)", repeat: -1, yoyo: true,
         });
       }
 
+      // Single vertical scanner line sweeping the championship chart L→R
+      if (scannerRef.current) {
+        gsap.timeline({ repeat: -1, delay: 1.2 })
+          .fromTo(scannerRef.current,
+            { xPercent: -5, opacity: 0 },
+            { xPercent: 105, opacity: 1, duration: 4.5, ease: "none" }
+          )
+          .to(scannerRef.current, { opacity: 0, duration: 0.3 }, "-=0.3");
+      }
+
       // Page entrance
       const tl = gsap.timeline();
-      tl.from(".pred-header",   { opacity: 0, y: -8,  duration: 0.3, ease: "pitwall-accel" })
-        .from(".pred-status",   { opacity: 0,          duration: 0.25 }, "-=0.1")
-        .from(".pred-chart",    { opacity: 0, y: 12,   duration: 0.35, ease: "pitwall-accel" }, "-=0.05")
+      tl.from(".pred-header",   { opacity: 0, y: -8, duration: 0.3, ease: "pitwall-accel" })
+        .from(".pred-status",   { opacity: 0, duration: 0.25 }, "-=0.1")
+        .from(".pred-chart",    { opacity: 0, y: 12, duration: 0.35, ease: "pitwall-accel" }, "-=0.05")
         .from(".pred-card",     { opacity: 0, y: 8, stagger: 0.07, duration: 0.3, ease: "pitwall-accel" }, "-=0.15")
-        .from(".pred-strategy", { opacity: 0, y: 8,   duration: 0.3, ease: "pitwall-accel" }, "-=0.1");
+        .from(".pred-strategy", { opacity: 0, y: 8, duration: 0.3, ease: "pitwall-accel" }, "-=0.1");
     },
     { scope: containerRef }
   );
@@ -90,7 +82,7 @@ export default function PredictionsPage() {
         </div>
       </div>
 
-      {/* Championship simulation chart */}
+      {/* Championship simulation chart with vertical scanner */}
       <div className="pred-chart border border-f1-grid bg-f1-dark-2 p-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] font-mono uppercase tracking-widest text-f1-muted">
@@ -101,39 +93,55 @@ export default function PredictionsPage() {
           </span>
         </div>
 
-        <div
-          className="relative h-36 overflow-hidden"
-          style={{ filter: "blur(5px) brightness(0.55) saturate(0.4)" }}
-          aria-hidden="true"
-        >
-          <svg viewBox="0 0 400 100" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            {[25, 50, 75].map(y => (
-              <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2B2B2B" strokeWidth="1" />
-            ))}
-            {MOCK_LINES.map((line, i) => (
+        {/* Chart with scanner overlay */}
+        <div className="relative h-36 overflow-hidden">
+          {/* Blurred mock chart */}
+          <div
+            className="absolute inset-0"
+            style={{ filter: "blur(5px) brightness(0.55) saturate(0.4)" }}
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 400 100" className="w-full h-full" preserveAspectRatio="none">
+              {[25, 50, 75].map(y => (
+                <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2B2B2B" strokeWidth="1" />
+              ))}
+              {MOCK_LINES.map((line, i) => (
+                <polyline
+                  key={i}
+                  points={line.points}
+                  stroke={line.color}
+                  strokeWidth={i === 0 ? 2.5 : 1.5}
+                  strokeOpacity={line.opacity}
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ))}
               <polyline
-                key={i}
-                points={line.points}
-                stroke={line.color}
-                strokeWidth={i === 0 ? 2.5 : 1.5}
-                strokeOpacity={line.opacity}
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                points="0,85 45,65 90,50 135,58 180,38 225,28 270,22 315,18 360,14 400,10 400,100 0,100"
+                fill="#3671C6"
+                fillOpacity={0.08}
+                stroke="none"
               />
-            ))}
-            <polyline
-              points="0,85 45,65 90,50 135,58 180,38 225,28 270,22 315,18 360,14 400,10 400,100 0,100"
-              fill="#3671C6"
-              fillOpacity={0.08}
-              stroke="none"
-            />
-          </svg>
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1">
-            {[1, 3, 5, 7, 9, 11, 13, 15, 17, 24].map(r => (
-              <span key={r} className="text-[9px] font-mono text-f1-muted">R{r}</span>
-            ))}
+            </svg>
+            <div className="absolute bottom-0 left-0 right-0 flex justify-between px-1">
+              {[1, 3, 5, 7, 9, 11, 13, 15, 17, 24].map(r => (
+                <span key={r} className="text-[9px] font-mono text-f1-muted">R{r}</span>
+              ))}
+            </div>
           </div>
+
+          {/* Vertical scanner — single glowing line sweeping L→R like a read head */}
+          <div
+            ref={scannerRef}
+            className="pointer-events-none absolute top-0 bottom-0 w-[3px] opacity-0"
+            style={{
+              left: 0,
+              background: "linear-gradient(to bottom, transparent, #00C0FF 30%, #00C0FF 70%, transparent)",
+              boxShadow: "0 0 8px 3px rgba(0,192,255,0.55)",
+            }}
+            aria-hidden="true"
+          />
         </div>
 
         <div className="mt-2 flex items-center justify-center gap-2 text-f1-muted font-mono text-[10px] uppercase tracking-widest">
@@ -142,9 +150,9 @@ export default function PredictionsPage() {
         </div>
       </div>
 
-      {/* 4 Prediction cards with cycling confidence values */}
+      {/* 4 Prediction cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {PREDICTION_CARDS.map((card, i) => (
+        {PREDICTION_CARDS.map((card) => (
           <div
             key={card.label}
             className="pred-card border border-f1-grid bg-f1-dark-2 p-4 relative overflow-hidden"
@@ -167,19 +175,14 @@ export default function PredictionsPage() {
                 {card.driver}
               </div>
               <div className="text-[10px] text-f1-muted font-mono mb-2">{card.team}</div>
-              {/* Cycling confidence — motion perceptible through blur */}
               <div className="text-2xl font-[family-name:var(--font-jetbrains)] font-semibold text-f1-text tabular-nums">
-                {cyclingValues[i]}
+                {card.confidence}
               </div>
               <div className="mt-2 h-0.5 bg-f1-grid overflow-hidden">
-                <div
-                  className="h-full transition-none"
-                  style={{ width: cyclingValues[i], backgroundColor: card.color }}
-                />
+                <div className="h-full" style={{ width: card.confidence, backgroundColor: card.color }} />
               </div>
             </div>
 
-            {/* Lock overlay */}
             <div className="absolute inset-0 flex items-center justify-center bg-f1-dark-2/40">
               <LockIcon className="text-f1-grid" />
             </div>

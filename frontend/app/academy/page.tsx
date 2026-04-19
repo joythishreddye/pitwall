@@ -3,18 +3,19 @@
 import { useRef } from "react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { Lock } from "lucide-react";
-import Link from "next/link";
+import { NotifyForm } from "@/components/ui";
 
 const TOTAL_SEGMENTS = 20;
 const FILLED_SEGMENTS = 1;
 
+// All 6 tag colors verified unique — no two are perceptually close
 const MODULES = [
   {
     topic: "Race Format",
     title: "Race Weekend Format",
     preview: "From free practice to the chequered flag — how each session shapes the race outcome and championship points.",
     tag: "Fundamentals",
-    tagColor: "#00C0FF",
+    tagColor: "#00C0FF", // cyan
     lessons: 5,
   },
   {
@@ -22,7 +23,7 @@ const MODULES = [
     title: "Compounds, Degradation & Pit Windows",
     preview: "Why do teams pit when they do? Undercuts, overcuts, and the art of the 2-stop in a safety-car race.",
     tag: "Strategy",
-    tagColor: "#FF8000",
+    tagColor: "#FF8000", // orange
     lessons: 4,
   },
   {
@@ -30,7 +31,7 @@ const MODULES = [
     title: "Downforce, Drag & DRS",
     preview: "How air becomes a weapon — the physics of cornering grip, straight-line speed, and the DRS detection zone.",
     tag: "Engineering",
-    tagColor: "#27F4D2",
+    tagColor: "#27F4D2", // teal
     lessons: 6,
   },
   {
@@ -38,7 +39,7 @@ const MODULES = [
     title: "Budget Cap, Power Units & Penalties",
     preview: "The rulebook that shapes every car, every strategy call, and every grid penalty you've ever seen.",
     tag: "Rules",
-    tagColor: "#FFED00",
+    tagColor: "#FFED00", // yellow
     lessons: 7,
   },
   {
@@ -46,15 +47,15 @@ const MODULES = [
     title: "Flags, Safety Car & Race Control",
     preview: "Yellow, red, black-and-white — what every flag means and how Race Control orchestrates 20 cars at 300km/h.",
     tag: "Race Control",
-    tagColor: "#FF6B00",
+    tagColor: "#EC4899", // hot pink — authority, distinct from all others
     lessons: 3,
   },
   {
-    topic: "Championship",
-    title: "How the Championship is Won",
-    preview: "Points, dropped scores, Constructors' standings — the maths behind a title fight that goes to Abu Dhabi.",
-    tag: "Championships",
-    tagColor: "#FFD700",
+    topic: "Pit Stops",
+    title: "Pit Stop Science",
+    preview: "Four tyres in 2.4 seconds. The mechanics, timing, and millimetre-precision that can win or lose a race.",
+    tag: "Operations",
+    tagColor: "#E8002D", // f1-red — intensity of pit lane action
     lessons: 4,
   },
 ] as const;
@@ -64,9 +65,13 @@ export default function AcademyPage() {
 
   useGSAP(
     () => {
+      // Set initial hidden state for notify form to prevent it appearing before cards
+      gsap.set(".academy-notify", { opacity: 0, y: 8 });
+
       if (respectsReducedMotion()) {
         gsap.set(".seg-filled", { opacity: 1 });
         gsap.set(".module-card", { opacity: 1, y: 0 });
+        gsap.set(".academy-notify", { opacity: 1, y: 0 });
         return;
       }
 
@@ -81,10 +86,18 @@ export default function AcademyPage() {
         opacity: 0, duration: 0.35, ease: "pitwall-accel", stagger: 0.1,
       }, "-=0.3");
 
-      // Module card entrance + slow pulse
+      // Cards: stagger entrance
+      // 6 cards × 0.07s stagger + 0.35s duration + 0.8s delay ≈ total 1.57s
       gsap.from(".module-card", {
         opacity: 0, y: 12, stagger: 0.07, duration: 0.35, ease: "pitwall-accel", delay: 0.8,
       });
+
+      // Notify form: appears after all cards have entered
+      gsap.to(".academy-notify", {
+        opacity: 1, y: 0, duration: 0.3, ease: "pitwall-accel", delay: 1.8,
+      });
+
+      // Slow pulse on cards after they're all in
       gsap.to(".module-card", {
         opacity: 0.74, duration: 2.1, ease: "sine.inOut",
         yoyo: true, repeat: -1, stagger: 0.35, delay: 1.6,
@@ -96,41 +109,20 @@ export default function AcademyPage() {
   return (
     <div ref={containerRef} className="p-6 lg:p-8 space-y-6">
 
-      {/* Header + stats strip */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-f1-muted mb-1">
-              Phase 4 · Not yet active
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-ibm-plex)]">
-              F1 Academy
-            </h1>
-          </div>
-          <div className="flex-shrink-0 border border-f1-grid bg-f1-dark-2 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-f1-muted text-right">
-            Interactive Modules
-            <br />
-            <span className="text-f1-grid">Quiz Engine</span>
-          </div>
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-f1-muted mb-1">
+            Phase 4 · Not yet active
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-ibm-plex)]">
+            F1 Academy
+          </h1>
         </div>
-
-        {/* Stats strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 border border-f1-grid divide-x divide-f1-grid">
-          {[
-            { value: "6",     label: "Modules" },
-            { value: "29",    label: "Lessons" },
-            { value: "40+",   label: "Quiz Questions" },
-            { value: "~3.5h", label: "Est. Total" },
-          ].map(stat => (
-            <div key={stat.label} className="px-4 py-2.5 text-center">
-              <div className="text-lg font-[family-name:var(--font-jetbrains)] font-semibold tabular-nums text-f1-text">
-                {stat.value}
-              </div>
-              <div className="text-[9px] font-mono uppercase tracking-widest text-f1-muted mt-0.5">
-                {stat.label}
-              </div>
-            </div>
-          ))}
+        <div className="flex-shrink-0 border border-f1-grid bg-f1-dark-2 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-right">
+          <span className="text-f1-muted">Interactive Modules</span>
+          <br />
+          <span className="text-f1-grid">Quiz Engine</span>
         </div>
       </div>
 
@@ -141,7 +133,7 @@ export default function AcademyPage() {
             Training Progress
           </span>
           <span className="text-[10px] font-[family-name:var(--font-jetbrains)] tabular-nums text-f1-muted">
-            {FILLED_SEGMENTS}/{TOTAL_SEGMENTS} modules
+            {FILLED_SEGMENTS}/{TOTAL_SEGMENTS}
           </span>
         </div>
 
@@ -169,7 +161,7 @@ export default function AcademyPage() {
         </div>
 
         <p className="text-[9px] font-mono text-f1-grid uppercase tracking-[0.15em]">
-          5% complete — modules unlock when Phase 4 ships
+          5% — modules unlock when Phase 4 ships
         </p>
       </div>
 
@@ -178,7 +170,6 @@ export default function AcademyPage() {
         {MODULES.map((module) => (
           <div key={module.topic} className="module-card border border-f1-grid bg-f1-dark-2 p-4 relative">
 
-            {/* Top: tag + lock */}
             <div className="flex items-center justify-between mb-3">
               <span
                 className="text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 border"
@@ -207,12 +198,12 @@ export default function AcademyPage() {
               </p>
             </div>
 
-            {/* Accessible topic label (not blurred) */}
+            {/* Accessible topic label */}
             <p className="text-[10px] font-mono text-f1-grid uppercase tracking-[0.1em]">
               {module.topic}
             </p>
 
-            {/* Lesson count bar */}
+            {/* Lesson count markers */}
             <div className="mt-3 flex items-center gap-1">
               {Array.from({ length: Math.min(module.lessons, 7) }, (_, i) => (
                 <div key={i} className="h-0.5 flex-1 bg-f1-grid/50" aria-hidden="true" />
@@ -225,22 +216,13 @@ export default function AcademyPage() {
         ))}
       </div>
 
-      {/* Notify CTA — softer, links to /live */}
-      <div className="border border-f1-grid/40 bg-f1-dark-2/40 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-f1-muted mb-0.5">
-            Want early access?
-          </p>
-          <p className="text-[11px] font-mono text-f1-muted">
-            Leave your email on the Live page — we'll notify you when Academy and all features ship.
-          </p>
-        </div>
-        <Link
-          href="/live#notify"
-          className="flex-shrink-0 border border-f1-grid px-4 py-2 text-[10px] font-mono uppercase tracking-widest text-f1-muted hover:border-f1-cyan/40 hover:text-f1-cyan transition-colors duration-100 text-center"
-        >
-          Get Notified →
-        </Link>
+      {/* Notify me — inline, no redirect friction. Hidden until cards are done animating. */}
+      <div className="academy-notify border border-f1-cyan/20 bg-f1-dark-2 p-5">
+        <NotifyForm
+          source="academy"
+          heading="Get notified when Academy opens"
+          description="We'll ping you when Phase 4 ships."
+        />
       </div>
 
     </div>
