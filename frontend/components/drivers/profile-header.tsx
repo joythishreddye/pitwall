@@ -158,7 +158,7 @@ export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: Profi
           {showPhoto ? (
             <img
               src={headshotUrl}
-              alt={`${driver.forename} ${driver.surname}`}
+              alt={`${driver.forename} ${driver.surname}${driver.current_constructor ? ` — ${driver.current_constructor.name}` : ''}`}
               className="w-full h-full object-cover object-top"
               onError={() => setPhotoFailed(true)}
             />

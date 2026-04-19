@@ -200,7 +200,7 @@ export function ChampionshipChart({
   // Solid lines: DrawSVG left-to-right draw.
   // Dashed lines: opacity fade-in — DrawSVG overwrites strokeDasharray so we
   //   cannot use it on dashed paths.
-  useGSAP(
+  const { contextSafe } = useGSAP(
     () => {
       if (!lines.length || svgW === 0) return;
       if (respectsReducedMotion()) {
@@ -228,7 +228,7 @@ export function ChampionshipChart({
   // svgW === CSS pixel width of the SVG element, so mouse X maps 1:1 to SVG
   // user-unit X — no scale factor needed.
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent<SVGSVGElement>) => {
+    contextSafe((e: React.MouseEvent<SVGSVGElement>) => {
       if (compact || !svgRef.current || !scannerRef.current || svgW === 0) return;
       const svgRect = svgRef.current.getBoundingClientRect();
       const containerRect = containerRef.current!.getBoundingClientRect();
@@ -248,15 +248,15 @@ export function ChampionshipChart({
         px: e.clientX - containerRect.left,
         py: e.clientY - containerRect.top,
       });
-    },
-    [compact, maxRound, svgW]
+    }),
+    [compact, maxRound, svgW, contextSafe]
   );
 
   const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
   // ── Toggle ────────────────────────────────────────────────────────────────
   const toggleLine = useCallback(
-    (id: string) => {
+    contextSafe((id: string) => {
       if (!svgRef.current) return;
       const isHiding = !hiddenIds.has(id);
       const el = svgRef.current.querySelector(`[data-id="${id}"]`);
@@ -267,8 +267,8 @@ export function ChampionshipChart({
         else next.delete(id);
         return next;
       });
-    },
-    [hiddenIds]
+    }),
+    [hiddenIds, contextSafe]
   );
 
   // ── Tooltip data ──────────────────────────────────────────────────────────

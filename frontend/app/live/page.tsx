@@ -10,18 +10,18 @@ void MotionPathPlugin;
 // Blurred mock shapes for each panel — recognisable data silhouettes through the blur
 // Gap to Leader: team-color bars at varying lengths
 const GAP_BARS = [
-  { color: "#3671C6", width: "100%", label: "VER" },
-  { color: "#FF8000", width: "74%", label: "NOR" },
-  { color: "#27F4D2", width: "61%", label: "ANT" },
-  { color: "#FF8000", width: "48%", label: "PIA" },
-  { color: "#E8002D", width: "35%", label: "HAM" },
+  { color: "var(--color-team-red-bull)",  width: "100%", label: "VER" },
+  { color: "var(--color-team-mclaren)",   width: "74%",  label: "NOR" },
+  { color: "var(--color-team-mercedes)", width: "61%",  label: "ANT" },
+  { color: "var(--color-team-mclaren)",   width: "48%",  label: "PIA" },
+  { color: "var(--color-team-ferrari)",   width: "35%",  label: "HAM" },
 ] as const;
 
 // Tyre Strategy: compound-color dots with driver counts
 const TYRE_ROWS = [
-  { color: "#DC0000", label: "SOFT", count: 8 },
-  { color: "#FFED00", label: "MEDIUM", count: 7 },
-  { color: "#E5E5E5", label: "HARD", count: 5 },
+  { color: "var(--color-f1-red)",    label: "SOFT",   count: 8 },
+  { color: "var(--color-f1-yellow)", label: "MEDIUM", count: 7 },
+  { color: "var(--color-f1-text)",   label: "HARD",   count: 5 },
 ] as const;
 
 // Position Changes: mock +/- deltas
@@ -40,22 +40,22 @@ const PANELS = [
   {
     id: "gap",
     label: "Gap to Leader",
-    accent: "#27F4D2",
+    accent: "var(--color-team-mercedes)",
   },
   {
     id: "tyre",
     label: "Tyre Strategy",
-    accent: "#FFED00",
+    accent: "var(--color-f1-yellow)",
   },
   {
     id: "positions",
     label: "Position Changes",
-    accent: "#00FF00",
+    accent: "var(--color-f1-green)",
   },
   {
     id: "radio",
     label: "Team Radio",
-    accent: "#FF8000",
+    accent: "var(--color-team-mclaren)",
   },
 ] as const;
 
@@ -99,7 +99,7 @@ function PanelMockContent({ id }: { id: string }) {
             <span className="text-[9px] font-mono text-f1-text font-semibold">{row.code}</span>
             <span
               className="text-[10px] font-mono font-bold"
-              style={{ color: row.up ? "#00FF00" : "#DC0000" }}
+              style={{ color: row.up ? "var(--color-f1-green)" : "var(--color-f1-red)" }}
             >
               {row.delta}
             </span>
@@ -115,7 +115,7 @@ function PanelMockContent({ id }: { id: string }) {
         <div
           key={i}
           className="flex-1"
-          style={{ height: `${h}%`, backgroundColor: "#FF8000", opacity: 0.6 }}
+          style={{ height: `${h}%`, backgroundColor: "var(--color-f1-orange)", opacity: 0.6 }}
         />
       ))}
     </div>
@@ -174,8 +174,13 @@ export default function LivePage() {
           </h1>
         </div>
         {/* Pulsing "live" dot — creates impression the system is always on */}
-        <div className="flex items-center gap-2 border border-f1-grid bg-f1-dark-2 px-3 py-1.5">
-          <span className="relative flex h-2 w-2">
+        <div
+          role="status"
+          aria-live="polite"
+          aria-label="System status: awaiting live session"
+          className="flex items-center gap-2 border border-f1-grid bg-f1-dark-2 px-3 py-1.5"
+        >
+          <span aria-hidden="true" className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-f1-green opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-f1-green" style={{ boxShadow: "0 0 6px rgba(0,255,0,0.6)" }} />
           </span>

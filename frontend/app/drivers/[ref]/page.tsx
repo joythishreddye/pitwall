@@ -57,7 +57,7 @@ export default function DriverProfilePage({
     : "var(--color-f1-muted)";
   const teamHex = driver.current_constructor
     ? getTeamHexColor(driver.current_constructor.ref)
-    : "#A3A3A3";
+    : "var(--color-f1-muted)";
   const headshotUrl = findHeadshotUrl(photoDrivers, {
     acronym: driver.code,
     surname: driver.surname,

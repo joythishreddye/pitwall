@@ -139,7 +139,7 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
                 "text-right font-data text-xs",
                 isFl ? "text-purple-400" : "text-f1-muted"
               )}
-              style={isFl ? { textShadow: "0 0 8px #A855F7" } : undefined}
+              style={isFl ? { textShadow: "0 0 8px var(--color-f1-purple)" } : undefined}
               aria-label={isFl ? "Fastest lap" : undefined}
             >
               {isFl ? "FL" : "—"}

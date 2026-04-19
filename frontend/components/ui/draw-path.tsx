@@ -138,7 +138,7 @@ export function DrawPath({
           <path
             ref={innerPathRef}
             d={d}
-            stroke="#0F0F0F"
+            stroke="var(--color-f1-dark)"
             strokeWidth={innerWidth}
             strokeLinecap="round"
             strokeLinejoin="round"

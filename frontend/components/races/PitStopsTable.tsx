@@ -112,7 +112,7 @@ export function PitStopsTable({ strategy }: PitStopsTableProps) {
               />
               <span
                 className={cn("font-medium truncate", isFastest && "text-purple-400")}
-                style={isFastest ? { textShadow: "0 0 6px #A855F7" } : undefined}
+                style={isFastest ? { textShadow: "0 0 6px var(--color-f1-purple)" } : undefined}
               >
                 {ps.driver.surname}
               </span>
@@ -127,7 +127,7 @@ export function PitStopsTable({ strategy }: PitStopsTableProps) {
                 "text-right font-data",
                 isFastest ? "text-purple-400" : "text-f1-text"
               )}
-              style={isFastest ? { textShadow: "0 0 6px #A855F7" } : undefined}
+              style={isFastest ? { textShadow: "0 0 6px var(--color-f1-purple)" } : undefined}
             >
               {formatPitDuration(ps.duration_ms)}
             </span>
@@ -138,7 +138,7 @@ export function PitStopsTable({ strategy }: PitStopsTableProps) {
                 className="pit-bar h-full"
                 style={{
                   width: `${barWidthPct * 100}%`,
-                  backgroundColor: isFastest ? "#A855F7" : teamColor,
+                  backgroundColor: isFastest ? "var(--color-f1-purple)" : teamColor,
                   opacity: isFastest ? 1 : 0.7,
                 }}
                 aria-hidden="true"

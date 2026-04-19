@@ -114,7 +114,7 @@ export function DriversTable({
               {d.has_fastest_lap && (
                 <span
                   className="text-[10px] font-data font-semibold leading-none px-1 py-0.5 border border-f1-purple/50"
-                  style={{ color: "#A855F7", textShadow: "0 0 8px #A855F7" }}
+                  style={{ color: "var(--color-f1-purple)", textShadow: "0 0 8px var(--color-f1-purple)" }}
                 >
                   FL
                 </span>

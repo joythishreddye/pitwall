@@ -36,7 +36,7 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
           {/* Headshot anchored top-right — face visible from the top */}
           <img
             src={photoUrl}
-            alt={`${leader.forename} ${leader.surname}`}
+            alt={`${leader.forename} ${leader.surname} — ${leader.constructor_name ?? 'F1'}`}
             className="absolute top-0 right-0 h-full w-auto"
             style={{ opacity: 0.75 }}
           />
@@ -44,13 +44,13 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, #1A1A1A 0%, #1A1A1A 30%, rgba(26,26,26,0.6) 50%, transparent 65%)",
+              background: "linear-gradient(to right, var(--color-f1-dark-2) 0%, var(--color-f1-dark-2) 30%, color-mix(in srgb, var(--color-f1-dark-2) 60%, transparent) 50%, transparent 65%)",
             }}
           />
           {/* Bottom gradient — grounds the image into the card */}
           <div
             className="absolute inset-x-0 bottom-0 h-1/4"
-            style={{ background: "linear-gradient(to top, #1A1A1A, transparent)" }}
+            style={{ background: "linear-gradient(to top, var(--color-f1-dark-2), transparent)" }}
           />
         </div>
       )}
@@ -71,7 +71,7 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
               className="font-data text-xs font-bold px-1.5 py-0.5"
               style={{
                 backgroundColor: teamHex,
-                color: "#0F0F0F",
+                color: "var(--color-f1-dark)",
               }}
             >
               P1
