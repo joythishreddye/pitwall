@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useRef, useCallback } from "react";
+import { use, useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,6 +44,7 @@ export default function RaceDetailPage({
   const heroRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
+  const skipRef = useRef(false);
 
   const { data: race, isLoading, error } = useRaceDetail(raceId);
   const { data: strategy } = useRaceStrategy(raceId);
@@ -53,8 +54,7 @@ export default function RaceDetailPage({
   const circuitMeta = race ? getCircuitMeta(race.circuit.name) : undefined;
   const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;
 
-  // On mount: hide content below the hero (circuit draw plays first).
-  // Skipped for reduced motion — those users jump straight to compact state.
+  // On mount: hide content while the circuit draws. Skip for reduced motion.
   useGSAP(
     () => {
       if (!circuitPath || !contentRef.current || respectsReducedMotion()) return;
@@ -63,39 +63,28 @@ export default function RaceDetailPage({
     { scope: pageRef }
   );
 
-  // Reduced motion: skip draw + collapse, show compact strip immediately.
+  // Reduced motion: collapse hero immediately and show content.
   useGSAP(
     () => {
       if (!circuitPath || !respectsReducedMotion()) return;
-      if (heroRef.current) {
-        gsap.set(heroRef.current, { height: 80 });
-        heroRef.current.style.position = "sticky";
-        heroRef.current.style.top = "0";
-        heroRef.current.style.zIndex = "20";
-      }
+      if (heroRef.current) gsap.set(heroRef.current, { height: 0 });
       if (contentRef.current) gsap.set(contentRef.current, { opacity: 1, y: 0 });
     },
     { scope: pageRef }
   );
 
-  // After draw: 500 ms pause → collapse hero to 80 px strip → fade content in.
+  // After draw: 500ms pause → hero collapses to 0 → content fades up.
+  // Guarded by skipRef so it doesn't double-fire if user already scrolled.
   useGSAP(
     () => {
-      if (!drawComplete || !heroRef.current || !contentRef.current) return;
+      if (!drawComplete || skipRef.current || !heroRef.current || !contentRef.current) return;
 
       gsap.timeline()
         .to(heroRef.current, {
-          height: 80,
+          height: 0,
           duration: 0.6,
           delay: 0.5,
           ease: "pitwall-brake",
-          onComplete() {
-            if (!heroRef.current) return;
-            heroRef.current.style.position = "sticky";
-            heroRef.current.style.top = "0";
-            heroRef.current.style.zIndex = "20";
-            heroRef.current.classList.add("border-b", "border-f1-grid");
-          },
         })
         .to(
           contentRef.current,
@@ -105,6 +94,29 @@ export default function RaceDetailPage({
     },
     { scope: pageRef, dependencies: [drawComplete] }
   );
+
+  // Immediately collapse if user scrolls/wheels before draw completes.
+  const triggerSkip = useCallback(() => {
+    if (skipRef.current) return;
+    skipRef.current = true;
+    if (heroRef.current) {
+      gsap.killTweensOf(heroRef.current.querySelectorAll("path"));
+      gsap.to(heroRef.current, { height: 0, duration: 0.25, ease: "pitwall-brake" });
+    }
+    if (contentRef.current) {
+      gsap.to(contentRef.current, { opacity: 1, y: 0, duration: 0.25, delay: 0.15, ease: "pitwall-accel" });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!circuitPath || respectsReducedMotion() || drawComplete) return;
+    window.addEventListener("wheel", triggerSkip, { once: true, passive: true });
+    window.addEventListener("touchstart", triggerSkip, { once: true, passive: true });
+    return () => {
+      window.removeEventListener("wheel", triggerSkip);
+      window.removeEventListener("touchstart", triggerSkip);
+    };
+  }, [circuitPath, drawComplete, triggerSkip]);
 
   const handleDrawComplete = useCallback(() => {
     setDrawComplete(true);
@@ -143,20 +155,12 @@ export default function RaceDetailPage({
 
   return (
     <div ref={pageRef} className="relative">
-      {/* Back button — absolute on top of hero, always visible */}
-      <button
-        onClick={() => router.back()}
-        className="absolute top-8 left-8 z-20 inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 cursor-pointer"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Races
-      </button>
-
-      {/* Full-viewport hero circuit — auto-collapses to sticky 80px strip after draw */}
+      {/* Hero circuit — absolute overlay so content sits at y=0 always.
+          Collapses to height 0 after draw; content is already in position. */}
       {circuitPath && (
         <div
           ref={heroRef}
-          className="h-[calc(100vh-40px)] flex items-center justify-center px-8 overflow-hidden bg-f1-dark"
+          className="absolute inset-x-0 top-0 h-[calc(100vh-40px)] flex items-center justify-center px-8 overflow-hidden bg-f1-dark z-20"
         >
           <DrawPath
             d={circuitPath.d}
@@ -174,6 +178,14 @@ export default function RaceDetailPage({
 
       {/* Content section — fades in after hero collapses */}
       <div ref={contentRef} className="px-8 pb-8">
+        <button
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mt-6 mb-2 cursor-pointer"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Races
+        </button>
+
         {/* Flex row: left col (flex-1) = title + meta strip stacked.
             Right col = circuit. items-stretch gives circuit definite height
             = left col height; aspect-ratio:1 resolves width from that height.
