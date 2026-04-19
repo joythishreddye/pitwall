@@ -49,7 +49,7 @@ function EmptyState({ onSelect }: EmptyStateProps) {
           STANDBY
         </p>
         <p className="font-mono text-xs text-f1-muted tracking-[0.18em] mt-1.5">
-          {'// WAITING FOR TRANSMISSION'}
+          {'WAITING FOR TRANSMISSION'}
         </p>
 
         <FrequencyPresets onSelect={onSelect} />
