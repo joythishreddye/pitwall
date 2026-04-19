@@ -4,7 +4,7 @@ import { use, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
@@ -42,43 +42,66 @@ export default function RaceDetailPage({
   const [drawComplete, setDrawComplete] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
-  const inlineRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
 
   const { data: race, isLoading, error } = useRaceDetail(raceId);
   const { data: strategy } = useRaceStrategy(raceId);
 
-  // ScrollTrigger runs over the full hero height (top-top → bottom-top).
-  // As user scrolls the hero out of view the circuit fades; inline fades in.
-  // Scrub reverses on scroll-up so the circuit reappears.
+  // Derive circuit data up here (before hooks) so useGSAP closures can reference it.
+  // Safe when race is undefined (loading/error) — both will be null.
+  const circuitMeta = race ? getCircuitMeta(race.circuit.name) : undefined;
+  const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;
+
+  // On mount: hide content below the hero (circuit draw plays first).
+  // Skipped for reduced motion — those users jump straight to compact state.
   useGSAP(
     () => {
-      if (!drawComplete || !heroRef.current || !inlineRef.current) return;
+      if (!circuitPath || !contentRef.current || respectsReducedMotion()) return;
+      gsap.set(contentRef.current, { opacity: 0, y: 20 });
+    },
+    { scope: pageRef }
+  );
 
-      if (respectsReducedMotion()) {
-        gsap.set(heroRef.current, { opacity: 0 });
-        gsap.set(inlineRef.current, { opacity: 1 });
-        return;
+  // Reduced motion: skip draw + collapse, show compact strip immediately.
+  useGSAP(
+    () => {
+      if (!circuitPath || !respectsReducedMotion()) return;
+      if (heroRef.current) {
+        gsap.set(heroRef.current, { height: 80 });
+        heroRef.current.style.position = "sticky";
+        heroRef.current.style.top = "0";
+        heroRef.current.style.zIndex = "20";
       }
+      if (contentRef.current) gsap.set(contentRef.current, { opacity: 1, y: 0 });
+    },
+    { scope: pageRef }
+  );
 
-      const tl = gsap.timeline({ defaults: { ease: "none" } });
-      tl.to(heroRef.current, { opacity: 0, scale: 0.95, transformOrigin: "top center" }, 0);
-      tl.fromTo(
-        inlineRef.current,
-        { opacity: 0, scale: 0.9 },
-        { opacity: 1, scale: 1 },
-        0.55
-      );
+  // After draw: 500 ms pause → collapse hero to 80 px strip → fade content in.
+  useGSAP(
+    () => {
+      if (!drawComplete || !heroRef.current || !contentRef.current) return;
 
-      ScrollTrigger.create({
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1.2,
-        animation: tl,
-      });
-
-      ScrollTrigger.refresh();
+      gsap.timeline()
+        .to(heroRef.current, {
+          height: 80,
+          duration: 0.6,
+          delay: 0.5,
+          ease: "pitwall-brake",
+          onComplete() {
+            if (!heroRef.current) return;
+            heroRef.current.style.position = "sticky";
+            heroRef.current.style.top = "0";
+            heroRef.current.style.zIndex = "20";
+            heroRef.current.classList.add("border-b", "border-f1-grid");
+          },
+        })
+        .to(
+          contentRef.current,
+          { opacity: 1, y: 0, duration: 0.4, ease: "pitwall-accel" },
+          "-=0.15"
+        );
     },
     { scope: pageRef, dependencies: [drawComplete] }
   );
@@ -117,8 +140,6 @@ export default function RaceDetailPage({
   }
 
   const winnerMs = race.results[0]?.time_millis ?? null;
-  const circuitMeta = getCircuitMeta(race.circuit.name);
-  const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;
 
   return (
     <div ref={pageRef} className="relative">
@@ -131,11 +152,11 @@ export default function RaceDetailPage({
         Races
       </button>
 
-      {/* Full-viewport hero circuit — scrolled past to reach content */}
+      {/* Full-viewport hero circuit — auto-collapses to sticky 80px strip after draw */}
       {circuitPath && (
         <div
           ref={heroRef}
-          className="h-[calc(100vh-40px)] flex items-center justify-center px-8 overflow-hidden"
+          className="h-[calc(100vh-40px)] flex items-center justify-center px-8 overflow-hidden bg-f1-dark"
         >
           <DrawPath
             d={circuitPath.d}
@@ -151,8 +172,8 @@ export default function RaceDetailPage({
         </div>
       )}
 
-      {/* Content section — starts below the hero */}
-      <div className="px-8 pb-8">
+      {/* Content section — fades in after hero collapses */}
+      <div ref={contentRef} className="px-8 pb-8">
         {/* Flex row: left col (flex-1) = title + meta strip stacked.
             Right col = circuit. items-stretch gives circuit definite height
             = left col height; aspect-ratio:1 resolves width from that height.
@@ -201,13 +222,11 @@ export default function RaceDetailPage({
             )}
           </div>
 
-          {/* Right: circuit — height = left col height (via stretch).
-              aspect-ratio:1 makes width = height. shrink-0 prevents compression. */}
+          {/* Right: circuit thumbnail — visible once content fades in */}
           {circuitPath && (
             <div
-              ref={inlineRef}
               className="shrink-0 w-36 h-36"
-              style={{ opacity: 0, aspectRatio: '1 / 1' }}
+              style={{ aspectRatio: '1 / 1' }}
               aria-hidden="true"
             >
               <svg viewBox={circuitPath.viewBox} className="w-full h-full">
