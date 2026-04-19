@@ -62,9 +62,14 @@ export function PitStopsTable({ strategy }: PitStopsTableProps) {
 
   if (strategy.length === 0) {
     return (
-      <p className="text-f1-muted text-sm">
-        Pit stop data not available — FastF1 data covers 2022+ sessions.
-      </p>
+      <div className="flex flex-col items-center justify-center py-16 gap-3 text-center select-none">
+        <p className="font-data text-[11px] tracking-[0.2em] text-f1-muted uppercase">
+          No pit stop telemetry
+        </p>
+        <p className="text-f1-muted text-sm max-w-xs">
+          Detailed undercut data is only available for races from the 2022 season onwards.
+        </p>
+      </div>
     );
   }
 
