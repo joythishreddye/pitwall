@@ -1,10 +1,12 @@
 """Knowledge base ingestion: chunk Markdown files, embed, and upsert to Supabase."""
 
 import logging
+import time
 from pathlib import Path
 
 from supabase import Client
 
+from app.db.supabase import fetch_all
 from app.rag.chunker import chunk_markdown
 from app.rag.embedder import Embedder
 
@@ -12,7 +14,11 @@ logger = logging.getLogger(__name__)
 
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "knowledge"
 EMBED_BATCH_SIZE = 32
-INSERT_BATCH_SIZE = 500
+# Each insert also updates the vector and full-text indexes; 500-row batches
+# hit Supabase's statement timeout.
+INSERT_BATCH_SIZE = 100
+INSERT_ATTEMPTS = 3
+DELETE_SLICE = 200
 
 
 def run_rag_ingest(supabase: Client) -> int:
@@ -70,15 +76,62 @@ def run_rag_ingest(supabase: Client) -> int:
             }
         )
 
-    # Clear existing knowledge chunks and insert fresh
-    logger.info("Clearing existing knowledge_chunks...")
-    supabase.table("knowledge_chunks").delete().gte("id", 0).execute()
+    # Swap, don't wipe: write the new set first, then delete the old one.
+    # (Deleting first left the knowledge base half-empty when an insert batch
+    # hit the statement timeout.) A failure part way through removes the
+    # partial new rows and leaves the previous set serving.
+    latest = (
+        supabase.table("knowledge_chunks")
+        .select("id")
+        .order("id", desc=True)
+        .limit(1)
+        .execute()
+        .data
+    )
+    old_max_id = latest[0]["id"] if latest else 0
 
     total = 0
-    for i in range(0, len(rows), INSERT_BATCH_SIZE):
-        batch = rows[i : i + INSERT_BATCH_SIZE]
-        supabase.table("knowledge_chunks").insert(batch).execute()
-        total += len(batch)
+    try:
+        for i in range(0, len(rows), INSERT_BATCH_SIZE):
+            batch = rows[i : i + INSERT_BATCH_SIZE]
+            _insert_with_retry(supabase, batch)
+            total += len(batch)
+    except Exception:
+        logger.exception("Insert failed after %d rows; rolling back new rows", total)
+        _delete_id_range(supabase, low=old_max_id, high=None)
+        raise
 
-    logger.info("Inserted %d knowledge chunks", total)
+    logger.info("Inserted %d knowledge chunks; removing the previous set", total)
+    _delete_id_range(supabase, low=None, high=old_max_id)
     return total
+
+
+def _insert_with_retry(supabase: Client, batch: list[dict]) -> None:
+    for attempt in range(1, INSERT_ATTEMPTS + 1):
+        try:
+            supabase.table("knowledge_chunks").insert(batch).execute()
+            return
+        except Exception:
+            if attempt == INSERT_ATTEMPTS:
+                raise
+            wait = 2**attempt
+            logger.warning(
+                "Insert batch failed (attempt %d); retrying in %ds", attempt, wait
+            )
+            time.sleep(wait)
+
+
+def _delete_id_range(supabase: Client, *, low: int | None, high: int | None) -> None:
+    """Delete chunks with low < id <= high, in slices small enough to stay
+    under the statement timeout. ``None`` leaves that side open."""
+    ids = [
+        row["id"]
+        for row in fetch_all(
+            lambda: supabase.table("knowledge_chunks").select("id").order("id")
+        )
+        if (low is None or row["id"] > low) and (high is None or row["id"] <= high)
+    ]
+    for i in range(0, len(ids), DELETE_SLICE):
+        supabase.table("knowledge_chunks").delete().in_(
+            "id", ids[i : i + DELETE_SLICE]
+        ).execute()
