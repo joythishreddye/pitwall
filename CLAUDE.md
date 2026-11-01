@@ -1,123 +1,80 @@
 # PitWall — Your AI Race Engineer
 
 ## Project Overview
-An AI-powered F1 intelligence platform that makes Formula 1 accessible to newcomers while providing depth for hardcore fans. Built as a public product showcasing AI/ML engineering skills.
+An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giving depth to hardcore fans. Public, non-commercial, MIT-licensed code (data licenses in `DATA_LICENSE.md`).
 
 **Repo:** https://github.com/joythishreddye/pitwall
-**Issues:** `gh issue list` — 17 issues across 4 phases, each with detailed acceptance criteria
-**Plan:** See `.claude/plans/compiled-skipping-torvalds.md` for full architecture design
+**Issues:** `gh issue list`
+**Current plan:** `~/.claude/plans/hi-claude-its-been-logical-planet.md` (revival + roadmap, written 2026-11-01)
+**Status board:** https://claude.ai/artifact/W2TFHxDxEqXVS43CLAQYqd (live telemetry and checklist; update via ArtifactData)
 
 ## Architecture
-- **Frontend:** Next.js 15 (App Router) + TypeScript + Tailwind CSS + shadcn/ui + TanStack Query + Recharts
-- **Backend:** Python FastAPI on Render ($7/mo, always-on)
-- **Database:** Supabase PostgreSQL + pgvector (500MB free)
-- **Cache:** Upstash Redis (500K commands/mo free)
-- **LLM:** Groq (Llama 3.1 70B) with provider abstraction for Claude API swap
-- **Embeddings:** BAAI/bge-base-en-v1.5 (768 dim) + cross-encoder/ms-marco-MiniLM-L-6-v2 reranker
-- **ML:** LightGBM (lambdarank) for race/qualifying predictions
-- **Real-time:** F1 SignalR feed → Redis → SSE to frontend
-- **Team Radio:** OpenAI Whisper (open-source) for transcription
-- **Frontend hosting:** Vercel free tier
-- **CI/CD:** GitHub Actions
+- **Frontend:** Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 + TanStack Query + GSAP (primary animation) + Motion; on Vercel
+- **Backend:** Python 3.12 FastAPI on Render Starter ($7/mo, always on)
+- **Database:** Supabase Postgres + pgvector (Free tier; a keep-alive cron prevents pausing)
+- **LLM:** Groq via the provider abstraction. `LLM_MODEL=openai/gpt-oss-120b` (answers), `LLM_INTENT_MODEL=openai/gpt-oss-20b` (intent JSON). Groq rate-limits each model separately.
+- **Embeddings:** BAAI/bge-base-en-v1.5 (768 dim). Queries go through the HuggingFace router; ingestion runs locally with sentence-transformers.
+- **Reranker:** BAAI/bge-reranker-base via the HuggingFace router
+- **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).
+- **Redis (Upstash):** optional and unused. Its database was deleted in 2026; don't add hard dependencies on it.
+- **CI:** `.github/workflows/ci.yml` (ruff, pytest, eslint, tsc, next build) and `keepalive.yml` (readiness ping twice a day)
 
-## 4 Pillars
-1. **AI Race Companion** — LLM + RAG chat with 3-stage retrieval (intent→vector→rerank)
-2. **Predictive Intelligence** — LightGBM LTR race/qualifying predictions + Monte Carlo championship simulation + strategy "What If" engine
-3. **Live Race Dashboard** — F1 SignalR real-time feed + AI-generated insights (rules + ML hybrid)
-4. **F1 Academy** — Interactive learning modules with quiz engine and gamification
+## Pillars
+1. **Race Engineer chat:** RAG with 3-stage retrieval (intent → vector → rerank); becomes a tool-calling agent in Phase 4
+2. **Predictions:** baselines vs Plackett-Luce vs LightGBM, a public prediction log written before each session, a Monte Carlo championship simulator
+3. **Live:** public replay-as-if-live from OpenF1 history, plus a personal live bridge on the owner's Mac (F1 TV login, local only)
+4. **Academy:** learning path, quizzes, gamification. Never call it "F1 Academy" (F1 ACADEMY is a trademark).
 
-## Environment Variables
-All secrets go in `.env` files (never committed). See `.env.example` for the full list.
-```
-# Backend (.env)
-SUPABASE_URL=https://[project].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJ...       # Backend only, never expose to client
-GROQ_API_KEY=gsk_...                    # Groq console → API Keys
-UPSTASH_REDIS_REST_URL=https://...      # Upstash dashboard
-UPSTASH_REDIS_REST_TOKEN=...
-LLM_PROVIDER=groq                       # groq | anthropic | gemini
-SECRET_KEY=...                          # Random string for JWT signing
-
-# Frontend (.env.local)
-NEXT_PUBLIC_SUPABASE_URL=https://[project].supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...   # Safe for browser (use RLS)
-NEXT_PUBLIC_API_URL=http://localhost:8000  # Backend URL
-```
-
-## Data Sources (No Auth Required)
-- **FastF1** — `pip install fastf1`, no API key
-- **Jolpica API** — `http://api.jolpi.ca/ergast/f1/`, no auth, 200 req/hr
-- **OpenF1 API** — `https://openf1.org/`, no auth for free tier, 3 req/s
-- **f1db** — download SQL dump from GitHub releases, CC BY 4.0
+## Data sources (2026 reality)
+- **Jolpica:** results, qualifying, standings, schedules. No auth; CC BY-NC-SA 4.0.
+- **OpenF1:** historical 2023+ laps, stints, pit stops, weather, race control, positions. No auth on the free tier, 3 req/s, CC BY-NC-SA 4.0. Primary timing source from Phase 1.
+- **FastF1:** since 2026-10-15 F1's archive returns 401 without an F1 TV login, and F1 blocks cloud IPs. FastF1 ≥3.9 runs **locally only**, with the owner's own F1 TV login. Never use it in CI or on Render.
+- **f1db:** 1950–2017 backfill (#18), CC BY 4.0.
+- PostgREST caps responses at 1,000 rows. Page with `.range()` (see `_fetch_all` in `generate_knowledge.py`); `.limit()` alone silently truncates.
 
 ## Local Prerequisites
-- **Node.js:** v23+ (installed at /opt/homebrew/bin/node)
-- **pnpm:** Install with `npm install -g pnpm`
-- **Python:** Use 3.12 specifically (`/opt/homebrew/bin/python3.12`) — NOT 3.14 (ML packages don't support it yet)
-- **Virtual env:** `python3.12 -m venv venv` in backend/
+- **Node.js:** 20.9+ (v23 at /opt/homebrew/bin/node); **pnpm** 10
+- **Python:** 3.12 (`/opt/homebrew/bin/python3.12`). Not 3.14; ML packages lag.
+- **Virtual env:** `backend/venv`
 
 ## Key Commands
 ```bash
 # Frontend
-cd frontend && pnpm dev              # Start dev server
-cd frontend && pnpm build            # Production build
-cd frontend && pnpm lint             # Lint TypeScript
-cd frontend && pnpm test             # Run tests
+cd frontend && pnpm dev                 # dev server
+cd frontend && pnpm lint                # ESLint (must be 0 errors)
+cd frontend && pnpm exec tsc --noEmit   # type-check
+cd frontend && pnpm build               # production build
+# (no frontend unit tests yet; vitest is planned)
 
 # Backend
-cd backend && python -m uvicorn app.main:app --reload  # Start dev server
-cd backend && pytest                  # Run tests
-cd backend && ruff check .           # Lint Python
-cd backend && ruff format .          # Format Python
+cd backend && python -m uvicorn app.main:app --reload
+cd backend && pytest                    # 101 tests, all external services mocked
+cd backend && ruff check . && ruff format --check .
 
 # Data
-cd backend && python scripts/seed_database.py    # Seed historical data
-cd backend && python scripts/train_model.py      # Train ML models
+cd backend && python scripts/seed_database.py --seasons 2026 --skip-fastf1   # Jolpica refresh
+cd backend && python scripts/ingest_knowledge.py                             # regenerate docs + re-embed locally
 
-# GitHub
-gh issue list                        # View all issues
-gh issue view <number>               # View specific issue with full details
+# Health
+curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header
 ```
 
 ## Claude Code Tools Available
-**Skills** (slash commands):
-- `/frontend` — Switch context to frontend work (Next.js patterns, component library)
-- `/backend` — Switch context to backend work (FastAPI, Supabase, ML)
-- `/test` — Run test suite (auto-detects frontend vs backend)
-- `/issue` — Create a GitHub issue from current context
-
-**Agents** (specialized subagents):
-- `frontend-expert` — Next.js, React, TypeScript, TailwindCSS, Recharts (Pillars 3, 4 UI)
-- `backend-expert` — FastAPI, Supabase, Redis, data pipelines (Pillars 1-4 backend)
-- `ml-expert` — LightGBM, RAG pipeline, SHAP, Monte Carlo, Whisper (Pillars 1, 2, 3 AI)
-- `code-reviewer` — Run before every commit/push. Checks security, types, tests, conventions.
-
-**Rules** (auto-loaded by file path):
-- `frontend.md` — Next.js conventions (loaded for `frontend/**/*.{ts,tsx}`)
-- `backend.md` — FastAPI conventions (loaded for `backend/**/*.py`)
-- `security.md` — Secret patterns, input validation (loaded for all files)
-- `testing.md` — pytest/vitest patterns (loaded for test files)
-- `workflow.md` — plan→test→implement→review→commit pipeline (loaded for all files)
+**Skills:** `/frontend`, `/backend`, `/test`, `/issue`
+**Agents:** `frontend-expert`, `backend-expert`, `ml-expert`, `code-reviewer` (run before pushes)
+**Rules** (auto-loaded by path): `frontend.md`, `design.md`, `backend.md`, `security.md`, `testing.md`, `workflow.md`
 
 ## Code Conventions
-- **TypeScript:** Strict mode, 2-space indent, App Router patterns, Zod for validation
-- **Python:** PEP 8 via Ruff, 4-space indent, Pydantic v2, async/await for all I/O
-- **Commits:** `feat|fix|refactor|test|docs|chore: description (closes #N)`
-- **Testing:** pytest (backend, 80%+ coverage), vitest (frontend)
-- **Branches:** `main` (production), `feature/*`, `fix/*`
+- **TypeScript:** strict, 2-space indent, App Router, Zod for API validation, React Compiler lint rules (no refs read during render, no synchronous setState in effects)
+- **Python:** Ruff (lint + format), Pydantic v2, async I/O; providers raise `LLMError`, and routes never import a vendor SDK
+- **Commits:** `feat|fix|refactor|test|docs|chore|data: description (closes #N)`
+- **Branches:** `main` (production; pushing deploys Vercel), `feature/*`, `fix/*`
 
 ## Critical Rules
-- Always check GitHub issues (`gh issue view <N>`) before starting work
-- Use the LLM provider abstraction (`backend/app/llm/base.py`) — never hardcode a specific LLM
-- Store secrets in environment variables, never in code
-- RAG uses 3-stage retrieval: intent classification → vector search → cross-encoder reranking
-- ML models use temporal train/test splits — never leak future data
-- Self-review all code before committing: security, types, error handling
-- License: MIT. Credit data sources (FastF1, OpenF1, f1db) in README.
-
-## GitHub Issues Roadmap
-Phase 1 (Foundation): #1 Supabase schema, #2 Data ingestion, #3 FastAPI skeleton, #4 Next.js frontend, #5 RAG chat, #6 Race data API
-Phase 2 (Predictions): #7 Feature engineering, #8 ML models, #9 Monte Carlo + strategy, #10 Predictions UI
-Phase 3 (Live Race): #11 SignalR consumer, #12 Live dashboard UI, #13 Insight engine
-Phase 4 (Academy): #14 Learning modules, #15 Gamification, #16 Polish + launch
-Cross-cutting: #17 Post-race pipeline
+- Check GitHub issues (`gh issue view <N>`) before starting work
+- Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
+- Secrets only in env vars; Render holds production env
+- ML models use temporal train/test splits; never leak future data
+- Every chat or retrieval change must beat the RAG eval baseline (`backend/scripts/eval_rag.py`, Phase 0)
+- Ask Joythish before any new paid service. HF spend is capped at $5 (see memory).
+- Self-review before committing: security, types, error handling

@@ -67,3 +67,8 @@ supabase/.temp/
 # Temporary
 .tmp/
 temp/
+
+# Local tooling artifacts (browser automation logs, screenshots, R sessions)
+.playwright-mcp/
+screenshots/
+.Rhistory
