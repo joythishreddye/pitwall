@@ -17,8 +17,7 @@ import {
   ChartPreview,
 } from "@/components/home";
 
-const ALL_TILE_IDS = ["leader", "constructor", "next-race", "top5", "recent", "chart"] as const;
-type TileId = (typeof ALL_TILE_IDS)[number];
+type TileId = "leader" | "constructor" | "next-race" | "top5" | "recent" | "chart";
 
 // Stagger between each tile reveal (seconds)
 const TILE_STAGGER = 0.1;
@@ -61,7 +60,12 @@ export default function HomePage() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // `revealedTiles` drives each tile's own entrance (state, read in render).
+  // `scheduledRef` records tiles the cascade has already queued, so a later
+  // data arrival never tweens them twice. It's only touched inside the GSAP
+  // effect, never during render.
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
+  const scheduledRef = useRef<Set<TileId>>(new Set());
 
   // True once real data has arrived. Query data stays cached after its first
   // success, so this never flips back. (It keys on data, not on loading
@@ -76,16 +80,20 @@ export default function HomePage() {
     () => {
       if (!shouldAnimate) return;
 
+      const scheduled = scheduledRef.current;
       const tiles = gsap.utils
         .toArray<HTMLElement>("[data-tile-id]")
-        .filter((el) => !revealedTiles.has(el.dataset.tileId as TileId));
+        .filter((el) => !scheduled.has(el.dataset.tileId as TileId));
       if (tiles.length === 0) return;
-      const firstReveal = revealedTiles.size === 0;
+      const firstReveal = scheduled.size === 0;
+      const ids = tiles.map((el) => el.dataset.tileId as TileId);
+      ids.forEach((id) => scheduled.add(id));
 
       if (respectsReducedMotion()) {
+        // Only the tiles on screen now; tiles that mount later get their turn
         gsap.set(tiles, { opacity: 1, y: 0, scale: 1 });
         gsap.set(".home-subtext", { opacity: 1 });
-        setRevealedTiles(new Set(ALL_TILE_IDS));
+        setRevealedTiles((prev) => new Set([...prev, ...ids]));
         return;
       }
 

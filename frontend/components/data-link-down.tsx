@@ -41,12 +41,18 @@ export function DataLinkDown({
     onRetry();
   };
 
+  // Announced only when the phase changes, never on each countdown tick
+  const liveMessage = isRetrying
+    ? "Reconnecting to race data."
+    : autoRetrying
+      ? "Race data link lost. Retrying automatically."
+      : "Still no signal. Use Retry now to try again.";
+
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="max-w-xl rounded-sm border border-f1-grid border-l-2 border-l-f1-red bg-f1-dark-2 px-5 py-5"
-    >
+    <div className="max-w-xl rounded-sm border border-f1-grid border-l-2 border-l-f1-red bg-f1-dark-2 px-5 py-5">
+      <p role="status" className="sr-only">
+        {liveMessage}
+      </p>
       <p className="flex items-center gap-2 font-data text-[10px] uppercase tracking-widest text-f1-red">
         <span className="h-1.5 w-1.5 rounded-full bg-f1-red" aria-hidden="true" />
         Data link lost
@@ -54,7 +60,7 @@ export function DataLinkDown({
       <p className="mt-2 text-sm text-f1-text">
         Race data isn&apos;t reaching the pit wall right now.
       </p>
-      <p className="mt-1 text-xs text-f1-muted">
+      <p className="mt-1 text-xs text-f1-muted" aria-hidden="true">
         {isRetrying ? (
           "Reconnecting…"
         ) : autoRetrying ? (
