@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Protocol
 
 import httpx
@@ -52,14 +53,16 @@ class Retriever:
         embedder: SupportsEmbedQuery,
         budget: ApiBudget | None = None,
         linker: EntityLinker | None = None,
-        rerank_enabled: bool = True,
+        rerank_enabled: bool | None = None,
     ) -> None:
         self.db = db
         self.llm = llm
         self.embedder = embedder
         self.budget = budget
         self.linker = linker
-        self.rerank_enabled = rerank_enabled
+        self.rerank_enabled = (
+            settings.rerank_enabled if rerank_enabled is None else rerank_enabled
+        )
         # How the last retrieve() found its context: "vector+rerank", "vector",
         # "fulltext" or "none". Sent to clients and recorded by evals.
         self.last_mode = "none"
@@ -321,17 +324,14 @@ class Retriever:
             return chunks
 
         # Stage 2b: Entity-aware supplementary searches
-        entity_chunks = await self._entity_searches(
-            query,
-            entities,
-            candidates,
-        )
-        if entity_chunks:
-            seen = {c.source + c.content[:50] for c in candidates}
-            for chunk in entity_chunks:
-                if chunk.source + chunk.content[:50] not in seen:
+        entity_hits = await self._entity_searches(query, entities)
+        seen = {c.source + c.content[:50] for c in candidates}
+        for chunks in entity_hits.values():
+            for chunk in chunks:
+                key = chunk.source + chunk.content[:50]
+                if key not in seen:
                     candidates.append(chunk)
-                    seen.add(chunk.source + chunk.content[:50])
+                    seen.add(key)
 
         # Stage 2c: If still too few, retry unfiltered
         if len(candidates) < 5 and metadata_filter:
@@ -340,10 +340,11 @@ class Retriever:
                 len(candidates),
             )
             unfiltered = await self.vector_search(query, {}, top_k=20)
-            seen = {c.source + c.content[:50] for c in candidates}
             for chunk in unfiltered:
-                if chunk.source + chunk.content[:50] not in seen:
+                key = chunk.source + chunk.content[:50]
+                if key not in seen:
                     candidates.append(chunk)
+                    seen.add(key)
                     if len(candidates) >= 20:
                         break
 
@@ -353,16 +354,9 @@ class Retriever:
         else:
             reranked = candidates[:5]
 
-        # Stage 3b: Guarantee entity representation
-        # If specific entities were identified, ensure at least
-        # the top chunk from each entity search makes the final list
-        if entity_chunks:
-            reranked = self._ensure_entity_coverage(
-                reranked,
-                entity_chunks,
-                entities,
-                top_k=5,
-            )
+        # Stage 3b: Guarantee each named entity a place in the final list
+        if entity_hits:
+            reranked = self._ensure_entity_coverage(reranked, entity_hits, top_k=5)
 
         if reranked:
             self.last_mode = "vector+rerank" if self.reranked else "vector"
@@ -372,96 +366,74 @@ class Retriever:
         self,
         query: str,
         entities: dict,
-        existing: list[RetrievedChunk],
-    ) -> list[RetrievedChunk]:
-        """Run targeted searches for specific entities mentioned in query."""
-        extra: list[RetrievedChunk] = []
+    ) -> dict[str, list[RetrievedChunk]]:
+        """Run a targeted search per named driver, team and circuit.
 
-        # Search for each driver's profile
-        for driver_ref in entities.get("drivers", []):
-            ref = driver_ref.lower().replace(" ", "_")
-            chunks = await self.vector_search(
-                query,
-                {"driver_ref": ref},
-                top_k=5,
-            )
-            extra.extend(chunks)
+        Returns hits keyed by ref, in the order the entities were named.
+        """
+        searches = [
+            *(("driver_ref", ref) for ref in entities.get("drivers", [])),
+            *(("constructor_ref", ref) for ref in entities.get("teams", [])),
+            *(("circuit_ref", ref) for ref in entities.get("circuits", [])),
+        ]
+        hits: dict[str, list[RetrievedChunk]] = {}
+        for key, name in searches:
+            ref = str(name).lower().replace(" ", "_")
+            if ref in hits:
+                continue
+            chunks = await self.vector_search(query, {key: ref}, top_k=5)
+            if chunks:
+                hits[ref] = chunks
+        if hits:
+            logger.info("Entity searches covered: %s", ", ".join(hits))
+        return hits
 
-        # Search for each team's profile
-        for team_ref in entities.get("teams", []):
-            ref = team_ref.lower().replace(" ", "_")
-            chunks = await self.vector_search(
-                query,
-                {"constructor_ref": ref},
-                top_k=5,
+    @staticmethod
+    def _covers(chunk: RetrievedChunk, ref: str) -> bool:
+        """Whether ``chunk`` is about the entity ``ref`` (exact matches only)."""
+        meta = chunk.metadata
+        return (
+            ref
+            in (
+                meta.get("driver_ref"),
+                meta.get("constructor_ref"),
+                meta.get("circuit_ref"),
             )
-            extra.extend(chunks)
-
-        if extra:
-            logger.info(
-                "Entity searches added %d supplementary chunks",
-                len(extra),
-            )
-        return extra
+            or PurePosixPath(chunk.source).stem == ref
+        )
 
     def _ensure_entity_coverage(
         self,
         reranked: list[RetrievedChunk],
-        entity_chunks: list[RetrievedChunk],
-        entities: dict,
+        entity_hits: dict[str, list[RetrievedChunk]],
         top_k: int = 5,
     ) -> list[RetrievedChunk]:
-        """Ensure reranked results include at least one chunk per entity.
+        """Make sure every named entity has at least one chunk in the result.
 
-        For queries about specific drivers/teams, the cross-encoder
-        may rank generic results above entity profiles. This injects
-        the top entity chunk if it's missing from the final results.
+        A missing entity gets its best targeted hit, which replaces the
+        lowest-ranked chunk not already carrying an entity. (Evicting blindly
+        used to drop one side of a comparison.)
         """
-        injected = list(reranked)
-
-        # Group entity chunks by their entity ref
-        entity_best: dict[str, RetrievedChunk] = {}
-        for chunk in entity_chunks:
-            meta = chunk.metadata
-            ref = meta.get("driver_ref") or meta.get("constructor_ref")
-            if ref and ref not in entity_best:
-                entity_best[ref] = chunk
-
-        # Entities in the order the question named them (stable across runs)
-        all_refs: list[str] = []
-        for name in [*entities.get("drivers", []), *entities.get("teams", [])]:
-            ref = name.lower().replace(" ", "_")
-            if ref not in all_refs:
-                all_refs.append(ref)
-
-        protected: set[int] = set()  # chunks injected here; never evicted
-        for ref in all_refs:
-            # Check if any result already covers this entity
-            has_coverage = any(
-                ref in c.source
-                or ref == c.metadata.get("driver_ref")
-                or ref == c.metadata.get("constructor_ref")
-                for c in injected
-            )
-            if has_coverage or ref not in entity_best:
+        result = list(reranked)
+        refs = list(entity_hits)
+        protected = {id(c) for c in result if any(self._covers(c, r) for r in refs)}
+        for ref in refs:
+            if any(self._covers(c, ref) for c in result):
                 continue
-            if len(injected) >= top_k:
-                # Evict the lowest-ranked chunk we didn't inject ourselves.
-                # (Popping the last one used to drop the previous entity in a
-                # comparison, so only one side ever reached the prompt.)
+            best = entity_hits[ref][0]
+            if len(result) >= top_k:
                 victim = next(
                     (
                         i
-                        for i in range(len(injected) - 1, -1, -1)
-                        if id(injected[i]) not in protected
+                        for i in range(len(result) - 1, -1, -1)
+                        if id(result[i]) not in protected
                     ),
                     None,
                 )
                 if victim is None:
                     continue
-                injected.pop(victim)
-            injected.append(entity_best[ref])
-            protected.add(id(entity_best[ref]))
+                result.pop(victim)
+            result.append(best)
+            protected.add(id(best))
             logger.info("Injected entity chunk for '%s'", ref)
-
-        return injected[:top_k]
+        return result[:top_k]

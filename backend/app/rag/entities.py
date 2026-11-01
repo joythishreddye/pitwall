@@ -76,16 +76,22 @@ class _AliasTable:
             return None
         return self.to_ref.get(_norm(value))
 
-    def find_in(self, text: str) -> list[str]:
-        """Refs whose aliases appear as whole words in normalized ``text``."""
-        padded = f" {text} "
+    def find_and_strip(self, padded: str) -> tuple[list[str], str]:
+        """Find whole-word aliases in space-padded normalized text.
+
+        Returns the refs found and the text with those aliases blanked out,
+        so a later table can't match inside them ("red bull" in "red bull
+        ring"). Longest aliases go first.
+        """
         found: list[str] = []
-        # Longest aliases first, so "red bull racing" wins over "red bull"
         for alias in sorted(self.to_ref, key=len, reverse=True):
-            ref = self.to_ref[alias]
-            if ref not in found and f" {alias} " in padded:
-                found.append(ref)
-        return found
+            needle = f" {alias} "
+            if needle in padded:
+                ref = self.to_ref[alias]
+                if ref not in found:
+                    found.append(ref)
+                padded = padded.replace(needle, " " * len(needle))
+        return found, padded
 
 
 _YEAR = re.compile(r"\b(19[5-9]\d|20[0-9]\d)\b")
@@ -178,23 +184,42 @@ class EntityLinker:
         return linker
 
     def link(self, intent: dict, question: str) -> dict:
-        """Return a copy of ``intent`` with valid refs and a usable filter."""
-        raw_filter = intent.get("metadata_filter") or {}
-        raw_entities = intent.get("entities") or {}
-        text = _norm(question)
+        """Return a copy of ``intent`` with valid refs and a usable filter.
 
-        drivers = self._resolve_all(self.drivers, raw_entities.get("drivers"), text)
-        teams = self._resolve_all(self.teams, raw_entities.get("teams"), text)
-        circuits = self._resolve_all(self.circuits, raw_entities.get("circuits"), text)
+        Hard filters come only from entities the classifier named, repaired
+        to knowledge-base refs. Names found only by scanning the question are
+        soft: they get their own targeted searches and a guaranteed slot, but
+        never narrow the main search. That way a stray word ("a stroll",
+        "China", "the Americas") can't filter the answer out.
+        """
+        raw_filter = intent.get("metadata_filter")
+        raw_filter = raw_filter if isinstance(raw_filter, dict) else {}
+        raw_entities = intent.get("entities")
+        raw_entities = raw_entities if isinstance(raw_entities, dict) else {}
+
+        named_drivers = _resolve_list(self.drivers, raw_entities.get("drivers"))
+        named_teams = _resolve_list(self.teams, raw_entities.get("teams"))
+        named_circuits = _resolve_list(self.circuits, raw_entities.get("circuits"))
+
+        # Circuits first, then teams, then drivers, each on what the previous
+        # scan left, so "Red Bull Ring" doesn't also mean the Red Bull team.
+        text = f" {_norm(question)} "
+        found_circuits, text = self.circuits.find_and_strip(text)
+        found_teams, text = self.teams.find_and_strip(text)
+        found_drivers, _ = self.drivers.find_and_strip(text)
+
+        drivers = _merge(named_drivers, found_drivers)
+        teams = _merge(named_teams, found_teams)
+        circuits = _merge(named_circuits, found_circuits)
 
         circuit_ref = self.circuits.resolve(raw_filter.get("circuit_ref")) or (
-            circuits[0] if len(circuits) == 1 else None
+            named_circuits[0] if len(named_circuits) == 1 else None
         )
         driver_ref = self.drivers.resolve(raw_filter.get("driver_ref")) or (
-            drivers[0] if len(drivers) == 1 else None
+            named_drivers[0] if len(named_drivers) == 1 else None
         )
         team_ref = self.teams.resolve(raw_filter.get("constructor_ref")) or (
-            teams[0] if len(teams) == 1 else None
+            named_teams[0] if len(named_teams) == 1 else None
         )
 
         season = raw_filter.get("season")
@@ -215,6 +240,7 @@ class EntityLinker:
         elif team_ref and len(teams) <= 1 and not drivers:
             metadata_filter["constructor_ref"] = team_ref
 
+        seasons = raw_entities.get("seasons")
         return {
             **intent,
             "metadata_filter": metadata_filter,
@@ -222,18 +248,20 @@ class EntityLinker:
                 "drivers": drivers,
                 "teams": teams,
                 "circuits": circuits,
-                "seasons": raw_entities.get("seasons") or [],
+                "seasons": seasons if isinstance(seasons, list) else [],
             },
         }
 
-    @staticmethod
-    def _resolve_all(table: _AliasTable, values: object, text: str) -> list[str]:
-        refs: list[str] = []
-        for value in values if isinstance(values, list) else []:
-            ref = table.resolve(value)
-            if ref and ref not in refs:
-                refs.append(ref)
-        for ref in table.find_in(text):
-            if ref not in refs:
-                refs.append(ref)
-        return refs
+
+def _resolve_list(table: _AliasTable, values: object) -> list[str]:
+    """Repair a classifier-provided list of names to known refs."""
+    refs: list[str] = []
+    for value in values if isinstance(values, list) else []:
+        ref = table.resolve(value)
+        if ref and ref not in refs:
+            refs.append(ref)
+    return refs
+
+
+def _merge(first: list[str], second: list[str]) -> list[str]:
+    return first + [ref for ref in second if ref not in first]

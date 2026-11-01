@@ -87,14 +87,17 @@ def test_full_name_refs_become_knowledge_base_refs() -> None:
     assert out["entities"]["drivers"] == ["bearman"]
 
 
-def test_drivers_the_classifier_missed_are_found_in_the_question() -> None:
+def test_drivers_the_classifier_missed_become_soft_entities() -> None:
     out = _linker().link(_intent(), "Who is Arvid Lindblad?")
-    assert out["metadata_filter"] == {"driver_ref": "arvid_lindblad"}
+    # Found by scanning: searched for and guaranteed a slot, never a filter
+    assert out["metadata_filter"] == {}
+    assert out["entities"]["drivers"] == ["arvid_lindblad"]
 
 
-def test_teams_the_classifier_missed_are_found_in_the_question() -> None:
+def test_teams_the_classifier_missed_become_soft_entities() -> None:
     out = _linker().link(_intent(), "How is Cadillac doing in its first F1 season?")
-    assert out["metadata_filter"] == {"constructor_ref": "cadillac"}
+    assert out["metadata_filter"] == {}
+    assert out["entities"]["teams"] == ["cadillac"]
 
 
 def test_country_maps_to_its_only_circuit_and_keeps_the_season() -> None:
@@ -111,8 +114,16 @@ def test_a_country_with_two_circuits_is_not_an_alias() -> None:
 
 
 def test_city_names_resolve_to_circuits() -> None:
-    out = _linker().link(_intent(), "Who won the first Grand Prix in Madrid?")
+    intent = _intent()
+    intent["entities"]["circuits"] = ["Madrid"]
+    out = _linker().link(intent, "Who won the first Grand Prix in Madrid?")
     assert out["metadata_filter"] == {"circuit_ref": "madring"}
+
+
+def test_scanned_circuits_are_soft() -> None:
+    out = _linker().link(_intent(), "Who won the first Grand Prix in Madrid?")
+    assert out["metadata_filter"] == {}
+    assert out["entities"]["circuits"] == ["madring"]
 
 
 def test_category_only_filters_are_dropped() -> None:
@@ -157,8 +168,45 @@ def test_refs_without_knowledge_docs_are_dropped() -> None:
 
 
 def test_surnames_point_at_the_driver_with_a_knowledge_doc() -> None:
-    out = _linker().link(_intent(), "What were Verstappen's recent results?")
+    out = _linker().link(
+        _intent({"driver_ref": "Verstappen"}), "What were Verstappen's recent results?"
+    )
     assert out["metadata_filter"] == {"driver_ref": "max_verstappen"}
+
+
+def test_country_mentions_never_become_filters() -> None:
+    out = _linker().link(_intent(), "Is Singapore a big market for F1?")
+    assert out["metadata_filter"] == {}
+
+
+def test_common_words_inside_questions_stay_soft() -> None:
+    linker = EntityLinker.from_rows(
+        [*KB, {"driver_ref": "stroll"}, {"circuit_ref": "monza"}],
+        [*DRIVERS, {"ref": "stroll", "forename": "Lance", "surname": "Stroll"}],
+        TEAMS,
+        [*CIRCUITS, {"ref": "monza", "name": "Monza", "location": "Monza"}],
+    )
+    out = linker.link(_intent(), "Is a stroll around Monza worth it?")
+    assert out["metadata_filter"] == {}
+
+
+def test_circuit_phrases_are_not_rescanned_as_teams() -> None:
+    linker = EntityLinker.from_rows(
+        [*KB, {"circuit_ref": "red_bull_ring"}],
+        DRIVERS,
+        TEAMS,
+        [*CIRCUITS, {"ref": "red_bull_ring", "name": "Red Bull Ring"}],
+    )
+    out = linker.link(_intent(), "What is special about the Red Bull Ring?")
+    assert out["entities"]["circuits"] == ["red_bull_ring"]
+    assert out["entities"]["teams"] == []
+
+
+def test_malformed_classifier_output_is_tolerated() -> None:
+    bad = {"intent": "factual", "entities": "norris", "metadata_filter": ["x"]}
+    out = _linker().link(bad, "How is Norris doing?")
+    assert out["metadata_filter"] == {}
+    assert out["entities"]["drivers"] == ["norris"]
 
 
 def test_shared_aliases_are_dropped_as_ambiguous() -> None:

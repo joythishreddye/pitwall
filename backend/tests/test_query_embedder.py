@@ -136,3 +136,21 @@ def test_non_json_body_raises_unavailable() -> None:
 
     with pytest.raises(EmbeddingUnavailable, match="non-JSON"):
         embedder.embed_query("q")
+
+
+def test_billing_errors_cool_down_for_longer(monkeypatch) -> None:
+    clock = [1000.0]
+    monkeypatch.setattr("app.rag.query_embedder.time.monotonic", lambda: clock[0])
+    calls: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        return httpx.Response(402)
+
+    embedder, _ = _embedder(handler)
+    with pytest.raises(EmbeddingUnavailable):
+        embedder.embed_query("q1")
+    clock[0] += 300  # past the short cool-down, inside the long one
+    with pytest.raises(EmbeddingUnavailable, match="cooling down"):
+        embedder.embed_query("q2")
+    assert len(calls) == 1

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
@@ -66,6 +66,14 @@ export default function HomePage() {
   // effect, never during render.
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
   const scheduledRef = useRef<Set<TileId>>(new Set());
+
+  // useGSAP reverts its tweens on unmount, putting tiles back to opacity 0.
+  // Forget what was scheduled too, or a remount (Strict Mode, Fast Refresh)
+  // would skip every tile and leave the page blank.
+  useEffect(() => {
+    const scheduled = scheduledRef.current;
+    return () => scheduled.clear();
+  }, []);
 
   // True once real data has arrived. Query data stays cached after its first
   // success, so this never flips back. (It keys on data, not on loading

@@ -2,6 +2,7 @@
 
 import logging
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 from supabase import Client
@@ -107,16 +108,23 @@ def run_rag_ingest(supabase: Client) -> int:
 
 
 def _insert_with_retry(supabase: Client, batch: list[dict]) -> None:
+    _with_retry(
+        lambda: supabase.table("knowledge_chunks").insert(batch).execute(), "Insert"
+    )
+
+
+def _with_retry(operation: Callable[[], object], label: str) -> None:
+    """Run a write, retrying with backoff (statement timeouts are transient)."""
     for attempt in range(1, INSERT_ATTEMPTS + 1):
         try:
-            supabase.table("knowledge_chunks").insert(batch).execute()
+            operation()
             return
         except Exception:
             if attempt == INSERT_ATTEMPTS:
                 raise
             wait = 2**attempt
             logger.warning(
-                "Insert batch failed (attempt %d); retrying in %ds", attempt, wait
+                "%s failed (attempt %d); retrying in %ds", label, attempt, wait
             )
             time.sleep(wait)
 
@@ -132,6 +140,11 @@ def _delete_id_range(supabase: Client, *, low: int | None, high: int | None) -> 
         if (low is None or row["id"] > low) and (high is None or row["id"] <= high)
     ]
     for i in range(0, len(ids), DELETE_SLICE):
-        supabase.table("knowledge_chunks").delete().in_(
-            "id", ids[i : i + DELETE_SLICE]
-        ).execute()
+        slice_ids = ids[i : i + DELETE_SLICE]
+        _with_retry(
+            lambda ids=slice_ids: supabase.table("knowledge_chunks")
+            .delete()
+            .in_("id", ids)
+            .execute(),
+            "Delete",
+        )

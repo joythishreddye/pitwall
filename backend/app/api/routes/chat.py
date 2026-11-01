@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import time
 from collections.abc import AsyncIterator
 from typing import Annotated
 
@@ -71,9 +72,31 @@ def get_budget(request: Request) -> ApiBudget | None:
 Budget = Annotated[ApiBudget | None, Depends(get_budget)]
 
 
+_LINKER_RETRY_SECONDS = 300.0
+
+
 def get_linker(request: Request) -> EntityLinker | None:
-    """Return the knowledge-base entity linker, if it loaded at startup."""
-    return getattr(request.app.state, "linker", None)
+    """Return the entity linker, rebuilding it if startup couldn't.
+
+    A database blip at boot would otherwise leave raw classifier filters in
+    place until the next restart. Rebuilds are tried at most every 5 minutes.
+    """
+    state = request.app.state
+    linker = getattr(state, "linker", None)
+    if linker is not None:
+        return linker
+    now = time.monotonic()
+    if now - getattr(state, "linker_attempted_at", -_LINKER_RETRY_SECONDS) < (
+        _LINKER_RETRY_SECONDS
+    ):
+        return None
+    state.linker_attempted_at = now
+    try:
+        state.linker = EntityLinker.from_db(get_supabase())
+    except Exception:
+        logger.exception("Entity linker still unavailable")
+        return None
+    return state.linker
 
 
 Linker = Annotated[EntityLinker | None, Depends(get_linker)]

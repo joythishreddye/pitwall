@@ -36,6 +36,8 @@ _DIMENSION = 768
 # After a failure (no credits, outage, budget spent), skip HuggingFace for a
 # while instead of paying a round trip and a budget write on every question.
 _FAILURE_COOLDOWN_SECONDS = 120.0
+# Auth and billing failures (401/402/403) don't fix themselves in minutes
+_ACCOUNT_COOLDOWN_SECONDS = 900.0
 
 
 class EmbeddingUnavailable(RuntimeError):
@@ -113,7 +115,12 @@ class QueryEmbedder:
             self._fail(f"HuggingFace unreachable: {exc}")
 
         if response.status_code != 200:
-            self._fail(f"HuggingFace returned {response.status_code}")
+            self._fail(
+                f"HuggingFace returned {response.status_code}",
+                cooldown=_ACCOUNT_COOLDOWN_SECONDS
+                if response.status_code in (401, 402, 403)
+                else _FAILURE_COOLDOWN_SECONDS,
+            )
 
         try:
             data = response.json()
@@ -137,9 +144,11 @@ class QueryEmbedder:
                 self._cache.popitem(last=False)
         return vector
 
-    def _fail(self, reason: str) -> NoReturn:
+    def _fail(
+        self, reason: str, cooldown: float = _FAILURE_COOLDOWN_SECONDS
+    ) -> NoReturn:
         self.last_error = reason
-        self._cooldown_until = time.monotonic() + _FAILURE_COOLDOWN_SECONDS
+        self._cooldown_until = time.monotonic() + cooldown
         logger.warning("Query embedding unavailable: %s", reason)
         raise EmbeddingUnavailable(reason)
 

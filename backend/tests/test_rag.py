@@ -423,6 +423,7 @@ class TestRetrieverResilience:
             for i in range(8)
         ]
         retriever.db.rpc.return_value.execute.return_value = MagicMock(data=rows)
+        retriever.rerank_enabled = True
         scores = AsyncMock(return_value=[float(i) for i in range(8)])
         with patch.object(retriever, "_hf_rerank", new=scores):
             chunks = await retriever.retrieve("Compare race pace")
@@ -471,11 +472,41 @@ class TestRetrieverResilience:
         )
         result = retriever._ensure_entity_coverage(
             generic,
-            [norris, piastri],
-            {"drivers": ["norris", "piastri"], "teams": []},
+            {"norris": [norris], "piastri": [piastri]},
             top_k=5,
         )
         sources = [c.source for c in result]
         assert "drivers/norris.md" in sources
         assert "drivers/piastri.md" in sources
         assert len(result) == 5
+
+    def test_coverage_keeps_entities_that_ranked_organically(
+        self, retriever: Retriever
+    ) -> None:
+        def chunk(source: str, **meta: str) -> RetrievedChunk:
+            return RetrievedChunk(
+                content=source, metadata=meta, similarity=0.5, source=source
+            )
+
+        organic = chunk("drivers/norris.md", driver_ref="norris")
+        ranked = [chunk(f"races/r{i}.md") for i in range(4)] + [organic]
+        hits = {
+            "norris": [organic],
+            "piastri": [chunk("drivers/piastri.md", driver_ref="piastri")],
+            "leclerc": [chunk("drivers/leclerc.md", driver_ref="leclerc")],
+        }
+        sources = [c.source for c in retriever._ensure_entity_coverage(ranked, hits)]
+        assert {"drivers/norris.md", "drivers/piastri.md", "drivers/leclerc.md"} <= set(
+            sources
+        )
+
+    def test_short_refs_do_not_match_inside_other_names(
+        self, retriever: Retriever
+    ) -> None:
+        nurburgring = RetrievedChunk(
+            content="x",
+            metadata={},
+            similarity=0.5,
+            source="races/2020-r11-nurburgring.md",
+        )
+        assert not retriever._covers(nurburgring, "rb")

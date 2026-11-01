@@ -20,6 +20,7 @@ def fresh_state() -> Iterator[None]:
     app.state.llm.health_check = AsyncMock()
     app.state.intent_llm = MagicMock()
     app.state.intent_llm.health_check = AsyncMock()
+    app.state.linker = MagicMock()
     app.state.embedder = MagicMock(status="unknown")
     app.state.embedder.embed_query.return_value = [0.1] * 768
     app.state.budget = MagicMock()
@@ -45,6 +46,7 @@ async def test_ready_when_every_dependency_answers() -> None:
         "database": "ok",
         "llm": "ok",
         "intent_llm": "ok",
+        "linker": "ok",
         "embeddings": "unknown",
     }
     assert body["intent_model"] == "openai/gpt-oss-20b"

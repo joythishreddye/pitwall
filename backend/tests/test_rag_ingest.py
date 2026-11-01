@@ -11,8 +11,14 @@ from app.ingestion import rag_ingest
 class FakeTable:
     """Just enough of the Supabase table API for the swap logic."""
 
-    def __init__(self, existing_ids: list[int], fail_on_batch: int | None = None):
+    def __init__(
+        self,
+        existing_ids: list[int],
+        fail_on_batch: int | None = None,
+        flaky_deletes: int = 0,
+    ):
         self.ids = list(existing_ids)
+        self.flaky_deletes = flaky_deletes
         self.next_id = max(existing_ids, default=0) + 1
         self.inserts = 0
         self.fail_on_batch = fail_on_batch
@@ -62,6 +68,9 @@ class FakeTable:
                 self.next_id += 1
             return MagicMock(data=[])
         if op[0] == "delete_in":
+            if self.flaky_deletes:
+                self.flaky_deletes -= 1
+                raise RuntimeError("canceling statement due to statement timeout")
             doomed = set(op[1])
             self.ids = [i for i in self.ids if i not in doomed]
             return MagicMock(data=[])
@@ -103,3 +112,11 @@ def test_a_failed_insert_keeps_the_old_set_serving() -> None:
         _run(table, n_chunks=250)
 
     assert sorted(table.ids) == list(range(1, 51))
+
+
+def test_a_timed_out_delete_is_retried() -> None:
+    table = FakeTable(existing_ids=list(range(1, 51)), flaky_deletes=1)
+
+    assert _run(table, n_chunks=120) == 120
+    assert len(table.ids) == 120
+    assert min(table.ids) > 50

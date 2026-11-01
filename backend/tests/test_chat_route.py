@@ -48,6 +48,7 @@ def wire(monkeypatch: pytest.MonkeyPatch) -> Iterator[callable]:
         app.dependency_overrides[chat_route.get_intent_llm] = lambda: llm
         app.dependency_overrides[chat_route.get_embedder] = lambda: embedder
         app.dependency_overrides[chat_route.get_budget] = lambda: None
+        app.dependency_overrides[chat_route.get_linker] = lambda: None
 
     yield apply
     app.dependency_overrides.clear()
@@ -119,3 +120,25 @@ async def test_too_many_questions_get_429(wire, monkeypatch) -> None:
     assert first.status_code == 200
     assert second.status_code == 429
     assert int(second.headers["Retry-After"]) >= 1
+
+
+def test_linker_is_rebuilt_after_a_failed_boot(monkeypatch) -> None:
+    from starlette.requests import Request
+
+    clock = [1000.0]
+    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
+    built = MagicMock()
+    from_db = MagicMock(side_effect=[RuntimeError("db blip"), built])
+    monkeypatch.setattr("app.api.routes.chat.EntityLinker.from_db", from_db)
+    monkeypatch.setattr("app.api.routes.chat.get_supabase", lambda: MagicMock())
+
+    state = type("State", (), {})()
+    request = Request({"type": "http", "app": type("App", (), {"state": state})()})
+
+    assert chat_route.get_linker(request) is None  # first try fails
+    assert chat_route.get_linker(request) is None  # cooling down, no retry
+    assert from_db.call_count == 1
+    clock[0] += 301
+    assert chat_route.get_linker(request) is built
+    assert chat_route.get_linker(request) is built  # cached after that
+    assert from_db.call_count == 2

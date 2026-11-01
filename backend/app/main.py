@@ -19,6 +19,14 @@ from app.rag.budget import ApiBudget
 from app.rag.entities import EntityLinker
 from app.rag.query_embedder import EmbeddingUnavailable, QueryEmbedder
 
+# Uvicorn configures only its own loggers. Without this, the app's INFO logs
+# (retrieval mode, rate-limit source, startup) never reach Render's log view.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 logger = logging.getLogger(__name__)
 
 
@@ -175,6 +183,8 @@ async def _check_readiness(state: Any, *, deep: bool) -> tuple[int, dict[str, An
         "llm": await _probe(llm.health_check) if llm else "error",
         "intent_llm": await _probe(intent_llm.health_check) if intent_llm else "error",
     }
+    # Informational: without the linker, retrieval uses raw classifier filters
+    checks["linker"] = "ok" if getattr(state, "linker", None) else "missing"
     if embedder is None:
         checks["embeddings"] = "error"
     elif deep:

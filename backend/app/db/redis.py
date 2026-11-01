@@ -23,22 +23,3 @@ def get_redis() -> Redis | None:
     if _client is None and url and token:
         _client = Redis(url=url, token=token)
     return _client
-
-
-def ping_redis() -> bool:
-    """Check Redis connectivity without ever raising.
-
-    Returns:
-        True if Redis answered, False if it is unconfigured or unreachable.
-    """
-    client = get_redis()
-    if client is None:
-        logger.info("Redis not configured; continuing without it")
-        return False
-    try:
-        client.ping()
-    except Exception as exc:
-        logger.warning("Redis unreachable (%s); continuing without it", exc)
-        return False
-    logger.info("Redis connection verified")
-    return True
