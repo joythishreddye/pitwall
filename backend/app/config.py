@@ -36,14 +36,14 @@ class Settings(BaseSettings):
     hf_monthly_call_limit: int = Field(default=5000, ge=0)
     # Cross-encoder reranking. Off: on the 55-question eval it lost a question
     # plain vector search found (hit@5 100% -> 98.2%), ranked the rest worse
-    # (MRR@5 0.912 -> 0.752) and added ~0.8 s plus HF spend. See the README.
+    # (MRR@5 0.912 -> 0.735) and added ~0.9 s plus HF spend. See the README.
     rerank_enabled: bool = False
 
     # Chat abuse protection: requests per minute, per client and overall
     chat_rate_limit_per_ip: int = Field(default=6, ge=1)
     chat_rate_limit_global: int = Field(default=20, ge=1)
 
-    # Bandwidth guard for every /api/v1 route. Render's Hobby plan includes
+    # Bandwidth guard for every route except /health. Render's Hobby plan includes
     # 5 GB of outbound bandwidth a month, then bills $0.15/GB with no cap.
     # Uncompressed response bytes are counted: 150 MB a day keeps a month
     # under 4.5 GB even for clients that don't accept gzip.

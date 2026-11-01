@@ -27,18 +27,19 @@ The pipeline degrades instead of failing. Without embeddings (an outage, or the 
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
-| Vector search alone | 60.0% | 0.57 |
-| + the classifier's filters, used as-is | 81.8% | 0.70 |
+| Vector search alone | 69.1% | 0.66 |
+| + the classifier's filters, used as-is | 83.6% | 0.72 |
 | + entity linking (production) | **100%** | **0.91** |
-| + cross-encoder reranking | 98.2% | 0.75 |
-| Full-text fallback (no embeddings), linked filters | 87.3% | 0.81 |
+| + cross-encoder reranking | 98.2% | 0.74 |
+| Full-text fallback (no embeddings), linked filters | 87.3% | 0.80 |
 
-Entity linking adds 18 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added about 0.8s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+Entity linking adds 16 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added about 0.9s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
 
 Caveats:
 - The gold set is small and hand-written, and the linker was built against its failures.
 - Three questions that matched the classifier's own prompt examples were paraphrased.
 - False-positive cases (a word like "stroll" or "China" turning into a filter) are covered by unit tests, not by the eval.
+- Vector search is exact. An approximate (HNSW) index had degraded after bulk re-ingests and was dropped. Exact search raised plain vector search from 58% to 69% hit@5; production results didn't change.
 
 A held-out question set is next.
 
