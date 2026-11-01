@@ -207,6 +207,8 @@ async def _check_readiness(state: Any, *, deep: bool) -> tuple[int, dict[str, An
         "checks": checks,
         "llm_model": settings.llm_model,
         "intent_model": settings.llm_intent_model,
+        # Bandwidth guard counters; the keep-alive workflow alerts on them
+        "traffic": traffic_budget.stats(),
     }
     if deep:
         used = await asyncio.to_thread(budget.used_this_month) if budget else None

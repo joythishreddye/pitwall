@@ -50,6 +50,7 @@ async def test_ready_when_every_dependency_answers() -> None:
         "embeddings": "unknown",
     }
     assert body["intent_model"] == "openai/gpt-oss-20b"
+    assert body["traffic"]["today"]["budget_closed"] is False
     assert "hf_calls_this_month" not in body  # usage is for deep checks only
 
 

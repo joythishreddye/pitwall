@@ -13,9 +13,13 @@ budgets:
 
 Clients are also limited to a number of requests a minute.
 
-What it can't meter: the refusals themselves (about 0.3 KB each) and CORS
-preflights. A large, sustained flood of refused requests could still add a
-little bandwidth. Only a rate limit at the network edge could stop that.
+What it can't cap: the refusals themselves (about 0.3 KB each) and CORS
+preflights. They still cost bandwidth: one source sending 100 refused
+requests a second would add about 3.5 GB a day. Only a rate limit at the
+network edge could stop that, so refusals are counted instead. /health/ready
+reports today's and yesterday's traffic, and the keep-alive workflow fails
+(GitHub emails the owner) when refusals spike or the budget closes. That
+warning comes days before the 5 GB allowance could run out.
 
 Counters live in process memory: PitWall runs one instance, and a deploy or
 restart resets them. The default 150 MB a day keeps a month under 4.5 GB.
@@ -118,6 +122,30 @@ class TrafficBudget:
             return Refusal(429, wait, "Too many requests. Please slow down.")
         return None
 
+    def count_refusal(self, n: int, now: float | None = None) -> None:
+        """Record one refused request and the bytes its answer took."""
+        t = time.time() if now is None else now
+        with self._lock:
+            self._roll(t)
+            self._refused += 1
+            self._refused_bytes += max(n, 0)
+
+    def stats(self, now: float | None = None) -> dict:
+        """Today's traffic and yesterday's (served in MB, refusals in KB)."""
+        t = time.time() if now is None else now
+        with self._lock:
+            self._roll(t)
+            return {"today": self._snapshot(), "yesterday": self._yesterday}
+
+    def _snapshot(self) -> dict:
+        return {
+            "served_mb": round(self._total / 1_000_000, 2),
+            "budget_mb": round(self._daily / 1_000_000, 2),
+            "refused_requests": self._refused,
+            "refused_kb": round(self._refused_bytes / 1_000, 1),
+            "budget_closed": self._total >= self._daily,
+        }
+
     def add(self, client: str, n: int, now: float | None = None) -> None:
         """Count ``n`` response bytes sent to ``client``."""
         if n <= 0:
@@ -137,6 +165,9 @@ class TrafficBudget:
             self._clients: dict[str, int] = {}
             self._capped: set[str] = set()
             self._closed_logged = False
+            self._refused = 0
+            self._refused_bytes = 0
+            self._yesterday: dict | None = None
         self._limiter = SlidingWindowLimiter(
             per_key=self._per_minute, global_limit=self._global_per_minute
         )
@@ -152,11 +183,15 @@ class TrafficBudget:
     def _roll(self, t: float) -> None:
         day = int(t // _DAY_SECONDS)
         if day != self._day:
+            # Keep the day that just ended, so a twice-daily check sees it
+            self._yesterday = self._snapshot() if day == self._day + 1 else None
             self._day = day
             self._total = 0
             self._clients.clear()
             self._capped.clear()
             self._closed_logged = False
+            self._refused = 0
+            self._refused_bytes = 0
 
     def _key(self, client: str) -> str:
         if client in self._clients or len(self._clients) < _MAX_TRACKED_CLIENTS:
@@ -209,7 +244,18 @@ class ApiTrafficGuard:
                 status_code=refusal.status,
                 headers={"Retry-After": str(max(1, math.ceil(refusal.retry_after)))},
             )
-            await response(scope, receive, send)
+            refusal_bytes = 0
+
+            async def refusal_send(message: Message) -> None:
+                nonlocal refusal_bytes
+                if message["type"] == "http.response.start":
+                    refusal_bytes += _header_bytes(message)
+                elif message["type"] == "http.response.body":
+                    refusal_bytes += len(message.get("body", b""))
+                await send(message)
+
+            await response(scope, receive, refusal_send)
+            self.budget.count_refusal(refusal_bytes)
             return
 
         async def counting_send(message: Message) -> None:

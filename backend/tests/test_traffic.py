@@ -277,3 +277,28 @@ def test_closing_the_api_is_logged_once(caplog) -> None:
 
     closures = [r for r in caplog.records if "bandwidth budget used" in r.message]
     assert len(closures) == 1
+
+
+def test_refusals_are_counted_for_alerts() -> None:
+    budget = _budget()
+    client = TestClient(_app(budget))
+    budget.add("testclient", 1_000)  # this client is over its share
+
+    client.get("/api/v1/big")
+    client.get("/api/v1/big")
+
+    today = budget.stats()["today"]
+    assert today["refused_requests"] == 2
+    assert today["refused_kb"] > 0
+
+
+def test_stats_keep_yesterday_for_the_twice_daily_check() -> None:
+    budget = _budget(daily_bytes=1_000)
+    budget.add("a", 1_000, now=DAY - 100)
+    budget.count_refusal(300, now=DAY - 50)
+
+    stats = budget.stats(now=DAY + 5)
+
+    assert stats["today"]["served_mb"] == 0
+    assert stats["yesterday"]["budget_closed"] is True
+    assert stats["yesterday"]["refused_requests"] == 1

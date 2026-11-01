@@ -5,6 +5,10 @@ name: Keep-alive
 # database or its LLM is down. A degraded embedding service is reported in
 # the run summary but doesn't fail the run: chat falls back to full-text search.
 #
+# It also alerts on traffic that could cost money: Render bills bandwidth
+# past 5 GB a month, and refused requests still use some. It fails when the
+# API's daily data budget closed or refusals spiked, today or yesterday.
+#
 # GitHub disables scheduled workflows after 60 days without repository
 # activity. If that happens, re-enable it from the Actions tab.
 
@@ -35,11 +39,19 @@ jobs:
           echo "$body" | python3 -c '
           import json, sys
           try:
-              checks = json.load(sys.stdin)["checks"]
+              body = json.load(sys.stdin)
+              checks = body["checks"]
           except Exception:
               sys.exit("API did not answer with a readiness report")
           down = [k for k in ("database", "llm", "intent_llm") if checks.get(k) != "ok"]
           if down:
               sys.exit("Down: " + ", ".join(down))
-          print("OK:", checks)
+          traffic = body.get("traffic") or {}
+          for day in ("today", "yesterday"):
+              t = traffic.get(day) or {}
+              if t.get("budget_closed"):
+                  sys.exit(f"Traffic alert ({day}): the daily data budget closed the API")
+              if t.get("refused_requests", 0) > 100_000:
+                  sys.exit(f"Traffic alert ({day}): {t['refused_requests']} refused requests, a possible flood")
+          print("OK:", checks, traffic)
           '
