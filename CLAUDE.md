@@ -27,8 +27,9 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - **Bandwidth guard:** `app/api/traffic.py` meters response bytes (headers and bodies) and request rate on every route except `/health*` (`API_DAILY_MB`, `API_DAILY_MB_PER_IP`, `API_REQUESTS_PER_MINUTE_PER_IP`).
   - **Defaults:** 150 MB a day overall, 15 MB a day per client, 120 requests a minute per client.
   - **Past the global budget,** the API answers 503 until midnight UTC.
-  - **Not capped:** refusals and CORS preflights. One source sending 100 refused requests a second adds about 3.5 GB a day.
-  - **Alerting:** refusals and unmetered requests (health checks, preflights) are counted in `/health/ready` (`traffic`). `keepalive.yml` fails, and GitHub emails the owner, when the budget closes or either count passes 100k a day.
+  - **Not capped:** refusals and health checks. One source sending 100 refused requests a second adds about 3.5 GB a day.
+  - **Not capped or counted:** CORS preflights. The CORS layer answers them before the guard runs.
+  - **Alerting:** refusals and unmetered requests (health checks) are counted in `/health/ready` (`traffic`). `keepalive.yml` fails, and GitHub emails the owner, when the budget closes or either count passes 100k a day.
   - **Hard cap:** only an edge rate limit could cap refusals.
   - **Why:** Render bills outbound bandwidth beyond 5 GB a month and can't cap it, and the Render bill must stay at $7 a month.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).

@@ -56,6 +56,6 @@ jobs:
                   sys.exit(f"Traffic alert ({day}): {n} refused requests, a possible flood")
               u = t.get("unmetered_requests", 0)
               if u > 100_000:
-                  sys.exit(f"Traffic alert ({day}): {u} health-check or preflight requests, a possible flood")
+                  sys.exit(f"Traffic alert ({day}): {u} health-check requests, a possible flood")
           print("OK:", checks, traffic)
           '

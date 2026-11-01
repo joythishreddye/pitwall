@@ -13,12 +13,14 @@ budgets:
 
 Clients are also limited to a number of requests a minute.
 
-What it can't cap: the refusals themselves (about 0.3 KB each), health
-checks and CORS preflights. They still cost bandwidth: one source sending
-100 refused requests a second would add about 3.5 GB a day. Only a rate
-limit at the network edge could stop that, so they're counted instead.
+What it can't cap: the refusals themselves (about 0.3 KB each) and health
+checks. They still cost bandwidth: one source sending 100 refused requests
+a second would add about 3.5 GB a day. Only a rate limit at the network
+edge could stop that, so they're counted instead. CORS preflights are
+answered by the CORS layer before this guard runs, so they're neither
+capped nor counted (a known gap; each answer is a few hundred bytes).
 /health/ready reports today's and yesterday's traffic. The keep-alive
-workflow fails (GitHub emails the owner) when refusals or unmetered
+workflow fails (GitHub emails the owner) when refusals or health-check
 requests spike, or the budget closes. For most floods that warning comes
 days before the 5 GB allowance runs out. A flood above about 60 requests a
 second could use the allowance up between two twice-daily checks.
@@ -134,7 +136,7 @@ class TrafficBudget:
 
     def count_unmetered(self, now: float | None = None) -> None:
         """Record one request the guard lets through unmetered (health
-        checks and preflights), so floods of them still raise an alert."""
+        checks; preflights rarely reach it), so floods still raise an alert."""
         t = time.time() if now is None else now
         with self._lock:
             self._roll(t)
