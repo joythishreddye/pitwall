@@ -3,6 +3,7 @@ import { Inter, IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
 import { Providers } from "@/components/providers";
+import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
             <div className="flex-1">
               {children}
             </div>
+            <SiteFooter />
           </main>
         </Providers>
       </body>

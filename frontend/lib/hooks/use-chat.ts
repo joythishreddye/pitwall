@@ -1,7 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { z } from "zod/v4";
 import { API_BASE } from "@/lib/api-client";
+
+const OFFLINE_MESSAGE =
+  "Can't reach PitWall's race engineer right now. Try again in a minute.";
+
+const ErrorDetailSchema = z.object({ detail: z.string() });
+
+/** Turn a failed chat response into a sentence the reader can act on. */
+async function describeChatFailure(response: Response): Promise<string> {
+  if (response.status === 429) {
+    const parsed = ErrorDetailSchema.safeParse(await response.json().catch(() => null));
+    return parsed.success
+      ? parsed.data.detail
+      : "Too many questions in a short time. Try again in a minute.";
+  }
+  if (response.status >= 500) return OFFLINE_MESSAGE;
+  return "That question couldn't be sent. Try rephrasing it.";
+}
 
 interface ChatSource {
   source: string;
@@ -116,7 +134,7 @@ export function useChat() {
         });
 
         if (!response.ok) {
-          throw new Error(`Chat error: ${response.status} ${response.statusText}`);
+          throw new Error(await describeChatFailure(response));
         }
 
         const reader = response.body?.getReader();
@@ -191,7 +209,13 @@ export function useChat() {
       } catch (err) {
         if ((err as Error).name === "AbortError") return;
 
-        const errorMsg = err instanceof Error ? err.message : "Something went wrong";
+        // fetch() rejects with a TypeError when the API can't be reached at all
+        const errorMsg =
+          err instanceof TypeError
+            ? OFFLINE_MESSAGE
+            : err instanceof Error
+              ? err.message
+              : "Something went wrong";
         setError(errorMsg);
 
         setMessages((prev) => prev.filter((m) => m.id !== assistantMessage.id));

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
+import { DataLinkDown } from "@/components/data-link-down";
 import { ScannerLine } from "@/components/ui/scanner-line";
 import { SplitReveal } from "@/components/ui/split-reveal";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
@@ -25,11 +26,32 @@ const TILE_STAGGER = 0.1;
 const TILE_INITIAL_DELAY = 0.15;
 
 export default function HomePage() {
-  const { data: standings, isLoading: standingsLoading } = useStandings(CURRENT_SEASON);
-  const { data: races, isLoading: racesLoading } = useRaceCalendar(CURRENT_SEASON);
-  const { data: progression } = useStandingsProgression(CURRENT_SEASON);
+  const {
+    data: standings,
+    isLoading: standingsLoading,
+    error: standingsError,
+    isFetching: standingsFetching,
+    refetch: refetchStandings,
+  } = useStandings(CURRENT_SEASON);
+  const {
+    data: races,
+    isLoading: racesLoading,
+    error: racesError,
+    isFetching: racesFetching,
+    refetch: refetchRaces,
+  } = useRaceCalendar(CURRENT_SEASON);
+  const { data: progression, refetch: refetchProgression } =
+    useStandingsProgression(CURRENT_SEASON);
 
   const allLoaded = !standingsLoading && !racesLoading;
+  const hasData = Boolean(standings || races);
+  const linkDown = allLoaded && Boolean(standingsError || racesError);
+
+  const retryDataLink = useCallback(() => {
+    void refetchStandings();
+    void refetchRaces();
+    void refetchProgression();
+  }, [refetchStandings, refetchRaces, refetchProgression]);
 
   const leader = standings?.driver_standings?.[0];
   const constructorLeader = standings?.constructor_standings?.[0];
@@ -41,19 +63,24 @@ export default function HomePage() {
 
   const [revealedTiles, setRevealedTiles] = useState<Set<TileId>>(new Set());
 
-  // Latches true the first time allLoaded becomes true — never flips back.
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-  useEffect(() => {
-    if (allLoaded && !shouldAnimate) setShouldAnimate(true);
-  }, [allLoaded, shouldAnimate]);
+  // True once real data has arrived. Query data stays cached after its first
+  // success, so this never flips back. (It keys on data, not on loading
+  // finishing: a failed load must not start the reveal, or tiles that arrive
+  // on a retry would stay hidden.)
+  const shouldAnimate = hasData;
 
-  // Phase 2 — tile cascade after data loads
+  // Phase 2 — tile cascade. Re-runs whenever data arrives, because queries can
+  // land at different times (progression, or a recovered data link); only
+  // tiles that haven't revealed yet animate.
   useGSAP(
     () => {
       if (!shouldAnimate) return;
 
-      const tiles = gsap.utils.toArray<HTMLElement>("[data-tile-id]");
+      const tiles = gsap.utils
+        .toArray<HTMLElement>("[data-tile-id]")
+        .filter((el) => !revealedTiles.has(el.dataset.tileId as TileId));
       if (tiles.length === 0) return;
+      const firstReveal = revealedTiles.size === 0;
 
       if (respectsReducedMotion()) {
         gsap.set(tiles, { opacity: 1, y: 0, scale: 1 });
@@ -65,12 +92,14 @@ export default function HomePage() {
       const tl = gsap.timeline();
 
       // Subheading fades in first — signals data is ready
-      tl.fromTo(
-        ".home-subtext",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.35, ease: "pitwall-accel" },
-        0
-      );
+      if (firstReveal) {
+        tl.fromTo(
+          ".home-subtext",
+          { opacity: 0 },
+          { opacity: 1, duration: 0.35, ease: "pitwall-accel" },
+          0
+        );
+      }
 
       tiles.forEach((el, i) => {
         const tileId = el.dataset.tileId as TileId;
@@ -97,7 +126,7 @@ export default function HomePage() {
         );
       });
     },
-    { scope: containerRef, dependencies: [shouldAnimate] }
+    { scope: containerRef, dependencies: [shouldAnimate, standings, races, progression] }
   );
 
   return (
@@ -129,6 +158,16 @@ export default function HomePage() {
             <p className="font-data text-[10px] text-f1-muted tracking-widest uppercase">
               Loading Race Data...
             </p>
+          </div>
+        )}
+
+        {/* Data link down: the API couldn't be reached */}
+        {linkDown && !hasData && (
+          <div className="py-16">
+            <DataLinkDown
+              onRetry={retryDataLink}
+              isRetrying={standingsFetching || racesFetching}
+            />
           </div>
         )}
 
