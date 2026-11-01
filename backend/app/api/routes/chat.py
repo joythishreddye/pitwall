@@ -6,14 +6,16 @@ import logging
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-import groq
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from supabase import Client
 
+from app.api.rate_limit import SlidingWindowLimiter, client_ip
+from app.config import settings
 from app.db.supabase import get_supabase
-from app.llm.base import LLMProvider, Message
+from app.llm.base import LLMError, LLMProvider, Message
+from app.rag.budget import ApiBudget
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
 from app.rag.retriever import Retriever
@@ -42,6 +44,46 @@ def get_llm(request: Request) -> LLMProvider:
 
 
 LLM = Annotated[LLMProvider, Depends(get_llm)]
+
+
+def get_intent_llm(request: Request) -> LLMProvider:
+    """Return the intent-extraction model, falling back to the main model."""
+    return getattr(request.app.state, "intent_llm", None) or request.app.state.llm
+
+
+IntentLLM = Annotated[LLMProvider, Depends(get_intent_llm)]
+
+
+def get_embedder(request: Request) -> QueryEmbedder:
+    """Return the shared query embedder; its cache spans requests."""
+    return request.app.state.embedder
+
+
+Embedder = Annotated[QueryEmbedder, Depends(get_embedder)]
+
+
+def get_budget(request: Request) -> ApiBudget | None:
+    """Return the HuggingFace call budget, if one is configured."""
+    return getattr(request.app.state, "budget", None)
+
+
+Budget = Annotated[ApiBudget | None, Depends(get_budget)]
+
+_chat_limiter = SlidingWindowLimiter(
+    per_key=settings.chat_rate_limit_per_ip,
+    global_limit=settings.chat_rate_limit_global,
+)
+
+
+def enforce_chat_rate_limit(request: Request) -> None:
+    """Reject bursts that would drain the shared LLM and embedding quotas."""
+    retry_after = _chat_limiter.check(client_ip(request))
+    if retry_after is not None:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many questions in a short time. Try again in a minute.",
+            headers={"Retry-After": str(max(1, round(retry_after)))},
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -201,14 +243,37 @@ def _detect_knowledge_level(message: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-@router.post("")
-async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
-    """Stream a RAG-powered chat response via SSE."""
-    embedder = QueryEmbedder()
-    retriever = Retriever(db=db, llm=llm, embedder=embedder)
+def _sse(event: dict) -> str:
+    return f"data: {json.dumps(event)}\n\n"
 
-    # 1. Retrieve relevant context via 3-stage RAG
-    chunks = await retriever.retrieve(body.message)
+
+def _llm_error_message(exc: LLMError) -> str:
+    """What the reader sees when the model fails mid-answer."""
+    if exc.rate_limited:
+        return "PitWall is busy right now. Try again in a minute."
+    return "The AI service didn't answer. Try again in a moment."
+
+
+@router.post("", dependencies=[Depends(enforce_chat_rate_limit)])
+async def chat(
+    body: ChatRequest,
+    db: DB,
+    llm: LLM,
+    intent_llm: IntentLLM,
+    embedder: Embedder,
+    budget: Budget,
+) -> StreamingResponse:
+    """Stream a RAG-powered chat response via SSE."""
+    retriever = Retriever(db=db, llm=intent_llm, embedder=embedder, budget=budget)
+
+    # 1. Retrieve relevant context via 3-stage RAG. The retriever already
+    # degrades on its own (full-text fallback); this guard catches the rest.
+    try:
+        chunks = await retriever.retrieve(body.message)
+    except Exception:
+        logger.exception("Retrieval failed, answering without knowledge context")
+        chunks = []
+        retriever.last_mode = "none"
 
     # 2. Fetch current standings for live context (sync → thread)
     standings_context = await asyncio.to_thread(
@@ -237,46 +302,40 @@ async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
     # 6. Prepare source attribution
     sources = [{"source": c.source, "content": c.content[:150]} for c in chunks]
 
-    async def event_stream() -> AsyncIterator[str]:
-        # First event: sources + knowledge level metadata
-        meta = {
-            "type": "sources",
-            "data": sources,
-            "knowledge_level": knowledge_level,
-        }
-        yield f"data: {json.dumps(meta)}\n\n"
+    retrieval_mode = retriever.last_mode
 
-        # Stream tokens from LLM
+    async def event_stream() -> AsyncIterator[str]:
+        # First event: sources, knowledge level and how context was found
+        yield _sse(
+            {
+                "type": "sources",
+                "data": sources,
+                "knowledge_level": knowledge_level,
+                "retrieval": retrieval_mode,
+            }
+        )
+
+        # Stream tokens from the LLM. Every failure ends with an error event,
+        # so the reader never sees a silent, empty answer.
         try:
             async for token in llm.stream_chat(
                 messages,
                 temperature=0.4,
-                max_tokens=1024,
+                max_tokens=2048,  # reasoning models spend part of this thinking
             ):
-                yield (f"data: {json.dumps({'type': 'token', 'data': token})}\n\n")
-        except groq.APIError as exc:
-            logger.error("Groq API error: %s (status=%s)", exc.message, exc.status_code)
-            err_event = {
-                "type": "error",
-                "data": f"LLM API error ({exc.status_code}) — please try again.",
-            }
-        except groq.APIConnectionError:
-            logger.error("Groq connection error — network unreachable")
-            err_event = {
-                "type": "error",
-                "data": "Could not reach the LLM service — please try again.",
-            }
+                yield _sse({"type": "token", "data": token})
+        except LLMError as exc:
+            logger.error("LLM stream failed: %s", exc)
+            yield _sse({"type": "error", "data": _llm_error_message(exc)})
+            return
         except Exception:
             logger.exception("LLM streaming error")
-            err_event = {
-                "type": "error",
-                "data": "Stream interrupted — please try again.",
-            }
-            yield f"data: {json.dumps(err_event)}\n\n"
+            yield _sse(
+                {"type": "error", "data": "The answer was cut off. Please ask again."}
+            )
             return
 
-        # Done signal
-        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+        yield _sse({"type": "done"})
 
     return StreamingResponse(
         event_stream(),

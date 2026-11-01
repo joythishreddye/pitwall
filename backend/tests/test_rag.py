@@ -6,9 +6,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from app.api.routes.chat import _detect_knowledge_level
-from app.llm.base import Message
+from app.llm.base import LLMError, Message
 from app.rag.chunker import chunk_markdown
 from app.rag.prompt import SYSTEM_PROMPT, build_rag_prompt
+from app.rag.query_embedder import EmbeddingUnavailable
 from app.rag.retriever import RetrievedChunk, Retriever
 
 # ---------------------------------------------------------------------------
@@ -275,3 +276,155 @@ class TestRetriever:
         )
         assert chunk.content == "test"
         assert chunk.similarity == 0.5
+
+
+# ---------------------------------------------------------------------------
+# Retriever resilience (Phase 0: model swap, HF budget, full-text fallback)
+# ---------------------------------------------------------------------------
+
+
+class TestRetrieverResilience:
+    @pytest.fixture()
+    def retriever(self) -> Retriever:
+        llm = AsyncMock()
+        llm.generate.return_value = (
+            '{"intent": "factual", "entities": {"drivers": [], "teams": [],'
+            ' "circuits": [], "seasons": []}, "metadata_filter": {}}'
+        )
+        embedder = MagicMock()
+        embedder.embed_query.return_value = [0.1] * 768
+        return Retriever(db=MagicMock(), llm=llm, embedder=embedder)
+
+    @pytest.mark.asyncio()
+    async def test_classify_intent_asks_for_json_mode(
+        self, retriever: Retriever
+    ) -> None:
+        await retriever.classify_intent("Who leads the 2026 title?")
+        kwargs = retriever.llm.generate.call_args.kwargs
+        assert kwargs["json_mode"] is True
+        assert kwargs["max_tokens"] >= 512
+
+    @pytest.mark.asyncio()
+    async def test_classify_intent_survives_llm_failure(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.llm.generate.side_effect = LLMError("down", status_code=503)
+        result = await retriever.classify_intent("Anything")
+        assert result["intent"] == "unknown"
+        assert result["metadata_filter"] == {}
+
+    @pytest.mark.asyncio()
+    async def test_classify_intent_rejects_non_object_json(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.llm.generate.return_value = "[1, 2, 3]"
+        result = await retriever.classify_intent("Anything")
+        assert result["intent"] == "unknown"
+
+    @pytest.mark.asyncio()
+    async def test_falls_back_to_fulltext_without_embeddings(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.db.rpc.return_value.execute.return_value = MagicMock(
+            data=[
+                {
+                    "content": "Monza is the Temple of Speed.",
+                    "metadata": {},
+                    "source": "circuits/monza.md",
+                    "rank": 0.4,
+                }
+            ]
+        )
+        chunks = await retriever.retrieve("Tell me about Monza")
+        assert [c.source for c in chunks] == ["circuits/monza.md"]
+        assert retriever.last_mode == "fulltext"
+        retriever.db.rpc.assert_called_with(
+            "search_knowledge_text",
+            {
+                "query_text": "Tell me about Monza",
+                "match_count": 5,
+                "filter_metadata": {},
+            },
+        )
+
+    @pytest.mark.asyncio()
+    async def test_fulltext_uses_the_intent_filter_then_tops_up(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.llm.generate.return_value = (
+            '{"intent": "explanation", "entities": {"drivers": [], "teams":'
+            ' ["mercedes"], "circuits": [], "seasons": []},'
+            ' "metadata_filter": {"constructor_ref": "mercedes"}}'
+        )
+        profile = {
+            "content": "Mercedes profile",
+            "metadata": {},
+            "source": "teams/mercedes.md",
+            "rank": 1.0,
+        }
+        recap = {
+            "content": "Suzuka recap",
+            "metadata": {},
+            "source": "races/2026-r03-suzuka.md",
+            "rank": 0.9,
+        }
+        retriever.db.rpc.return_value.execute.side_effect = [
+            MagicMock(data=[profile]),
+            MagicMock(data=[profile, recap]),
+        ]
+
+        chunks = await retriever.retrieve("Why is Mercedes so fast?")
+
+        assert [c.source for c in chunks] == [
+            "teams/mercedes.md",
+            "races/2026-r03-suzuka.md",
+        ]
+        first_call = retriever.db.rpc.call_args_list[0]
+        assert first_call.args[1]["filter_metadata"] == {"constructor_ref": "mercedes"}
+
+    @pytest.mark.asyncio()
+    async def test_fulltext_failure_returns_nothing(self, retriever: Retriever) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.db.rpc.side_effect = RuntimeError("function missing")
+        chunks = await retriever.retrieve("Tell me about Monza")
+        assert chunks == []
+        assert retriever.last_mode == "none"
+
+    @pytest.mark.asyncio()
+    async def test_rerank_skipped_when_budget_is_spent(
+        self, retriever: Retriever
+    ) -> None:
+        budget = MagicMock()
+        budget.consume.return_value = False
+        retriever.budget = budget
+        chunks = [
+            RetrievedChunk(content=f"c{i}", metadata={}, similarity=0.5, source=f"s{i}")
+            for i in range(8)
+        ]
+        with patch.object(retriever, "_hf_rerank", new=AsyncMock()) as hf_rerank:
+            result = await retriever.rerank("q", chunks, top_k=5)
+        hf_rerank.assert_not_awaited()
+        assert result == chunks[:5]
+        assert retriever.reranked is False
+
+    @pytest.mark.asyncio()
+    async def test_vector_mode_reports_that_rerank_ran(
+        self, retriever: Retriever
+    ) -> None:
+        rows = [
+            {
+                "content": f"chunk {i}",
+                "metadata": {},
+                "similarity": 0.9 - i / 100,
+                "source": f"s{i}.md",
+            }
+            for i in range(8)
+        ]
+        retriever.db.rpc.return_value.execute.return_value = MagicMock(data=rows)
+        scores = AsyncMock(return_value=[float(i) for i in range(8)])
+        with patch.object(retriever, "_hf_rerank", new=scores):
+            chunks = await retriever.retrieve("Compare race pace")
+        assert retriever.last_mode == "vector+rerank"
+        assert chunks[0].content == "chunk 7"
