@@ -21,6 +21,10 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
   - **Race names:** a weak circuit alias counts inside a race name ("Monaco Grand Prix", "Singapore GP").
   - **Comparisons:** several entities of one kind get no filter, but a targeted search and a guaranteed slot each.
   - **Relaxing:** empty filters relax to season-only, then to none, judged on the filtered search alone.
+- **Bandwidth guard:** `app/api/traffic.py` caps `/api/v1` response bytes and request rate (`API_DAILY_MB`, `API_DAILY_MB_PER_IP`, `API_REQUESTS_PER_MINUTE_PER_IP`).
+  - **Defaults:** 150 MB a day overall, 15 MB a day per client, 120 requests a minute per client.
+  - **Past the global budget,** the API answers 503 until midnight UTC.
+  - **Why:** Render bills outbound bandwidth beyond 5 GB a month and can't cap it, and the Render bill must stay at $7 a month.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).
 - **Redis (Upstash):** optional and unused. Its database was deleted in 2026; don't add hard dependencies on it.
 - **CI:** `.github/workflows/ci.yml` (ruff, pytest, eslint, tsc, next build) and `keepalive.yml` (readiness ping twice a day)
@@ -33,7 +37,9 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 
 ## Data sources (2026 reality)
 - **Jolpica:** results, qualifying, standings, schedules. No auth; CC BY-NC-SA 4.0.
-- **OpenF1:** historical 2023+ laps, stints, pit stops, weather, race control, positions. No auth on the free tier, 3 req/s, CC BY-NC-SA 4.0. Primary timing source from Phase 1.
+- **OpenF1:** historical 2023+ laps, stints, pit stops, weather, race control, positions. Free tier: no auth, 3 req/s, CC BY-NC-SA 4.0. Primary timing source from Phase 1.
+  - **Live-session block (verified 2026-11-01):** during any live F1 session, OpenF1 returns 401 to unauthenticated clients for all data, past sessions included.
+  - **So:** ingest after sessions end, retrying on 401; pre-ingest replays; and never call OpenF1 when a page is viewed.
 - **FastF1:** since 2026-10-15 F1's archive returns 401 without an F1 TV login, and F1 blocks cloud IPs. FastF1 ≥3.9 runs **locally only**, with the owner's own F1 TV login. Never use it in CI or on Render.
 - **f1db:** 1950–2017 backfill (#18), CC BY 4.0.
 - PostgREST caps responses at 1,000 rows. Page with `.range()` (see `_fetch_all` in `generate_knowledge.py`); `.limit()` alone silently truncates.
@@ -54,7 +60,7 @@ cd frontend && pnpm build               # production build
 
 # Backend
 cd backend && python -m uvicorn app.main:app --reload
-cd backend && pytest                    # 153 tests, all external services mocked
+cd backend && pytest                    # 163 tests, all external services mocked
 cd backend && ruff check . && ruff format --check .
 
 # Data

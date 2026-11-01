@@ -25,7 +25,7 @@ tags:
 **Race Laps:** 53  
 **Race Distance:** 307.471 km (191.054 miles)  
 **Lap Record:** 1:30.983 — Lewis Hamilton (Mercedes, 2019)  
-**DRS Zones:** 2 (back straight after Spoon Curve; DRS zone 2 on main straight)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (back straight after Spoon Curve; DRS zone 2 on main straight)  
 **Corners:** 18  
 **Average Speed:** Approximately 220-230 km/h  
 

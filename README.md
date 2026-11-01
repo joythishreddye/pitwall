@@ -52,9 +52,12 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 
 - **Swappable LLMs:** routes depend on a provider interface, never on an SDK. When Groq retired Llama 3.3 70B, moving to gpt-oss was a config change (`LLM_MODEL`, `LLM_INTENT_MODEL`).
 - **Readiness, not just liveness:** `GET /health/ready` checks the database, both models and the embedding service. A twice-daily GitHub Actions job keeps the free database awake and emails on outages.
-- **Spend guardrails:** paid inference calls go through a monthly ceiling counted in Postgres, which fails closed. Chat has per-client and global rate limits.
+- **Spend guardrails:**
+  - Paid inference calls go through a monthly ceiling counted in Postgres, which fails closed.
+  - Chat has per-client and global rate limits.
+  - The API caps its own daily response bandwidth, so hosting costs can't run past the plan.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 153 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 163 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 

@@ -21,7 +21,7 @@ tags:
 **Race Laps:** 78  
 **Race Distance:** 260.286 km (161.734 miles) — the only race below the 305km minimum, by FIA dispensation due to the circuit's historic status  
 **Lap Record:** 1:12.909 — Lewis Hamilton (Mercedes, 2021)  
-**DRS Zones:** 1 (start/finish straight)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 1 (start/finish straight)  
 **Corners:** 19  
 
 ## Historical Significance

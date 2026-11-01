@@ -22,7 +22,7 @@ tags:
 **Race Laps:** 52  
 **Race Distance:** 306.198 km (190.242 miles)  
 **Lap Record:** 1:27.097 — Max Verstappen (Red Bull Racing, 2020)  
-**DRS Zones:** 2 (Wellington Straight; Hangar Straight)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (Wellington Straight; Hangar Straight)  
 **Corners:** 18  
 **Average Speed:** Approximately 240-250 km/h  
 
@@ -92,7 +92,7 @@ In wet conditions, the strategy question shifts entirely to tyre compound choice
 
 ## DRS Zones
 
-Two DRS zones — Wellington Straight and Hangar Straight — provide reasonable overtaking opportunities. Silverstone sees genuine racing but not the processional DRS-chain overtaking of lower-downforce circuits. The DRS is useful but not dominant, meaning pure car pace and driver skill still determine positions through the high-speed sections where DRS cannot be used.
+DRS was replaced by active aerodynamics in 2026. Through 2025, two DRS zones — Wellington Straight and Hangar Straight — provided reasonable overtaking opportunities. Silverstone sees genuine racing but not the processional DRS-chain overtaking of lower-downforce circuits. DRS was useful but not dominant, meaning pure car pace and driver skill still determine positions through the high-speed sections where DRS cannot be used.
 
 ## Notable Moments
 

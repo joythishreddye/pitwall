@@ -96,7 +96,7 @@ Teams aim to carry the minimum fuel necessary. If a safety car period reduces ra
 
 ## Track Position vs Fresh Tyres
 
-The fundamental question of every strategy decision. At many circuits, particularly those with limited overtaking opportunities (Monaco, Singapore, Budapest), track position is almost priceless — a driver in front of slower but faster-tyred rivals may successfully defend for the entire stint simply by being on the racing line with no clean overtaking opportunities. At high-speed, multiple-DRS-zone circuits (Bahrain, Baku, Monza), fresh tyres can overcome a track position deficit.
+The fundamental question of every strategy decision. At many circuits, particularly those with limited overtaking opportunities (Monaco, Singapore, Budapest), track position is almost priceless — a driver in front of slower but faster-tyred rivals may successfully defend for the entire stint simply by being on the racing line with no clean overtaking opportunities. At high-speed circuits with long straights (Bahrain, Baku, Monza; multiple DRS zones through 2025), fresh tyres can overcome a track position deficit.
 
 Teams model this trade-off using circuit overtaking probability data and real-time pace comparisons. A strategy that looks optimal on paper may be abandoned if the circuit historically shows that defending track position succeeds against fresh tyre pressure.
 

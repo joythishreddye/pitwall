@@ -22,7 +22,7 @@ tags:
 **Race Laps:** 53  
 **Race Distance:** 306.720 km (190.567 miles)  
 **Lap Record:** 1:21.046 — Rubens Barrichello (Ferrari, 2004)  
-**DRS Zones:** 2 (main straight; between Lesmo 2 and Variante Ascari)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (main straight; between Lesmo 2 and Variante Ascari)  
 **Corners:** 11  
 **Average Speed:** Approximately 255-265 km/h — the fastest average of any F1 race  
 

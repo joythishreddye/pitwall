@@ -14,7 +14,7 @@ A comprehensive reference covering the most important Formula 1 terminology, fro
 ---
 
 ## DRS (Drag Reduction System)
-A driver-activated system that opens a flap in the rear wing, reducing aerodynamic drag and increasing top speed. Usable only within designated DRS zones when a driver is within 1 second of the car ahead. See the dedicated DRS guide for full detail.
+Used from 2011 to 2025; the 2026 regulations replaced it with active aerodynamics and Manual Override Mode. A driver-activated system that opened a flap in the rear wing, reducing aerodynamic drag and increasing top speed. It was usable only within designated DRS zones when a driver was within 1 second of the car ahead. See the dedicated DRS guide for full detail.
 
 ## Undercut
 A pit stop strategy where a driver pits earlier than the car ahead, gains time on fresher, faster tyres, and emerges ahead after the rival pits. Works best when the tyres being fitted are significantly faster than worn ones.
@@ -140,13 +140,13 @@ The rear underfloor section that expands the airflow exiting beneath the car, ac
 The aerodynamic element at the car's nose, generating downforce and directing airflow around the front tyres and toward the underfloor. Highly sensitive to damage.
 
 ## Rear Wing
-The large wing at the car's rear, generating downforce over the rear axle. Contains the DRS flap. High-downforce configurations use steep angles; low-downforce (Monza) configurations use shallow angles.
+The large wing at the car's rear, generating downforce over the rear axle. Through 2025 it contained the DRS flap; from 2026 it is an active, variable-geometry wing. High-downforce configurations use steep angles; low-downforce (Monza) configurations use shallow angles.
 
 ## Halo
 The titanium safety structure surrounding the cockpit, mandatory since 2018. Has saved multiple lives including Leclerc at Bahrain 2020 and Zhou Guanyu at Silverstone 2022. Initially controversial aesthetically but universally accepted after safety demonstrations.
 
 ## DRS Zone
-A designated section of track where DRS may be activated. Usually on long straights. Each circuit has one to three DRS zones.
+A designated section of track where DRS could be activated (2011–2025). Usually on long straights; each circuit had one to three.
 
 ## Detection Point
 A timing loop in the road where the 1-second gap between cars is measured to determine whether the following car may activate DRS in the subsequent zone.

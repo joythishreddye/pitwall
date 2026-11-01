@@ -23,7 +23,7 @@ tags:
 **Race Laps:** 44  
 **Race Distance:** 308.052 km (191.415 miles)  
 **Lap Record:** 1:46.286 — Valtteri Bottas (Mercedes, 2018)  
-**DRS Zones:** 2 (Kemmel Straight after Raidillon; between Bus Stop chicane and La Source)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (Kemmel Straight after Raidillon; between Bus Stop chicane and La Source)  
 **Corners:** 20  
 **Average Speed:** Approximately 230-240 km/h  
 
