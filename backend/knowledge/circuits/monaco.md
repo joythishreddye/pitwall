@@ -65,7 +65,7 @@ The final corner, a right-hander named after the founder of the Automobile Club 
 
 Monaco is the quintessential circuit where track position is everything. The streets are so narrow (barely wider than a truck in places), and the corners so slow, that a car ahead can drive defensively on the racing line and make it physically impossible for a rival to find room to pass.
 
-The single DRS zone on the start/finish straight adds perhaps 10 km/h of speed but the straight is too short and the approach to Sainte Dévote too tight for DRS to create genuine overtaking opportunities. The result is that the Monaco Grand Prix is often determined by qualifying — pole position has an exceptionally high conversion rate to victory.
+Through 2025, the single DRS zone on the start/finish straight added perhaps 10 km/h of speed, but the straight is too short and the approach to Sainte Dévote too tight for DRS to create genuine overtaking opportunities. The result is that the Monaco Grand Prix is often determined by qualifying — pole position has an exceptionally high conversion rate to victory.
 
 For this reason, qualifying at Monaco is even more critical than at other venues. A driver who qualifies P2 but makes no mistakes will almost certainly finish P2. Strategy becomes the only realistic mechanism for position changes.
 

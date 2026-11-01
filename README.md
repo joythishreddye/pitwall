@@ -55,9 +55,9 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 - **Spend guardrails:**
   - Paid inference calls go through a monthly ceiling counted in Postgres, which fails closed.
   - Chat has per-client and global rate limits.
-  - The API caps its own daily response bandwidth, so hosting costs can't run past the plan.
+  - The API meters the bandwidth it serves and stops at a daily budget, so normal traffic and single-source floods can't push hosting past the plan. Refused requests aren't metered, so a large distributed flood could still add a little.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 163 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 168 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 

@@ -76,12 +76,7 @@ traffic_budget = TrafficBudget(
     client_daily_bytes=settings.api_daily_mb_per_ip * 1_000_000,
     daily_bytes=settings.api_daily_mb * 1_000_000,
 )
-protect(
-    app,
-    budget=traffic_budget,
-    cors_origins=settings.cors_origins,
-    prefix=API_PREFIX,
-)
+protect(app, budget=traffic_budget, cors_origins=settings.cors_origins)
 
 app.include_router(seasons.router, prefix=API_PREFIX)
 app.include_router(races.router, prefix=API_PREFIX)

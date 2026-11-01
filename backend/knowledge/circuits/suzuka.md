@@ -38,7 +38,7 @@ Designed by John Hugenholtz (who also designed Zandvoort), Suzuka opened in 1962
 ## Track Layout and Famous Corners
 
 **Turn 1**
-A medium-speed right-hand corner leading into the figure-8 section. Approach from the pit straight offers overtaking potential — the start of the first DRS zone ends here.
+A medium-speed right-hand corner leading into the figure-8 section. Approach from the pit straight offers overtaking potential — the first DRS zone (2011–2025) ended here.
 
 **The Esses (Turns 2-9)**
 The defining section of Suzuka. A breathtaking sequence of alternating high-speed left and right sweepers in the first sector, where cars thread through at sustained speeds of 200-270 km/h. The Esses demand absolute precision — the rhythm is essential, and any hesitation or mistake compounds through the entire sequence. Oversteer in the Esses can trigger a snap spin with no run-off and immediate barriers.
@@ -55,10 +55,10 @@ A fast right-hander followed by a tighter right, leading under the crossover bri
 The unique feature of Suzuka's figure-8 layout. Cars on the upper loop pass over cars on the lower loop via a bridge. A visually iconic element unique to Suzuka in the world of F1.
 
 **Hairpin (Turn 14)**
-The slowest corner at Suzuka — a tight hairpin at the back of the circuit. Preceded by the back straight's DRS zone. One of the key overtaking spots: DRS provides a slipstream advantage approaching the hairpin, with a long braking zone into a very slow corner allowing late overtaking attempts.
+The slowest corner at Suzuka — a tight hairpin at the back of the circuit. Preceded by the back straight, a DRS zone through 2025. One of the key overtaking spots: the slipstream (and, through 2025, DRS) helps approaching the hairpin, with a long braking zone into a very slow corner allowing late overtaking attempts.
 
 **Spoon Curve (Turns 13-14 in some mappings, turns 15-16)**
-A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight that precedes the DRS zone into the hairpin. Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
+A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight into the hairpin (a DRS zone through 2025). Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
 
 **130R (Turn 17)**
 The fastest corner at Suzuka and one of the fastest in all of Formula 1. Named for its 130-meter radius, it was originally taken flat-out by cars of the 1990s and 2000s at over 300 km/h. Modern F1 cars take it almost or fully flat, generating extreme lateral G-forces. When a driver has a problem through 130R — a tyre failure, a loose wing — the consequences are severe. It is one of the corners that defines a driver's commitment.
@@ -77,7 +77,7 @@ The circuit rewards aerodynamically efficient, mechanically balanced cars and dr
 
 ## Setup Characteristics
 
-Medium-to-high downforce, biased toward cornering performance for the Esses and Spoon rather than straight-line speed. The DRS zones are useful but not dominant. Power unit performance matters on the back straight, but cornering efficiency through the Esses and 130R is more differentiating.
+Medium-to-high downforce, biased toward cornering performance for the Esses and Spoon rather than straight-line speed. The DRS zones (through 2025) were useful but not dominant. Power unit performance matters on the back straight, but cornering efficiency through the Esses and 130R is more differentiating.
 
 Rear stability is particularly important — the Esses require the rear to remain planted as the car switches direction rapidly. Cars that are rear-limited at Suzuka struggle throughout the first sector.
 

@@ -35,7 +35,7 @@ The Autodromo Nazionale di Monza opened in 1922 and hosted the first Italian Gra
 ## Track Layout and Famous Corners
 
 **Variante del Rettifilo (Turn 1-2)**
-The first chicane after the start/finish straight, arriving from the pit straight at over 340 km/h. The heaviest braking zone of the lap. High lock-up risk under the massive deceleration required. Frequent overtaking opportunity as the long straight provides DRS and slipstream opportunities.
+The first chicane after the start/finish straight, arriving from the pit straight at over 340 km/h. The heaviest braking zone of the lap. High lock-up risk under the massive deceleration required. Frequent overtaking opportunity: the long straight gives a slipstream (and gave DRS through 2025).
 
 **Curva Grande (Turn 3)**
 A fast, sweeping right-hander taken flat-out or close to it in modern F1 cars. Tests aerodynamic efficiency at high speed. The low-downforce Monza setup means cars are on the limit here.
@@ -50,7 +50,7 @@ Two flowing medium-to-fast right-hand corners through the park section of the ci
 A high-speed chicane named after Alberto Ascari, the two-time world champion who died here testing a Ferrari in 1955. Entered at approximately 290 km/h, requiring one of the most precise braking points of the lap. The chicane configuration has been modified several times over the decades.
 
 **Curva Parabolica / Curva Alboreto (Turn 11)**
-The final corner — a long, sweeping right-hander leading onto the main start/finish straight. Renamed Curva Alboreto in memory of Michele Alboreto in 2020. Exit speed from the Parabolica is critical: a car exiting 5 km/h faster will be nearly 25m ahead at the end of the main straight, crucial for slipstream and DRS positioning.
+The final corner — a long, sweeping right-hander leading onto the main start/finish straight. Renamed Curva Alboreto in memory of Michele Alboreto in 2020. Exit speed from the Parabolica is critical: a car exiting 5 km/h faster will be nearly 25m ahead at the end of the main straight, crucial for slipstream positioning (and, through 2025, DRS).
 
 ## Low-Downforce Setup: The Monza Paradox
 
@@ -64,7 +64,7 @@ The trade-off: without downforce, the car is nervous through the Lesmos, unstabl
 
 Monza produces some of Formula 1's most exciting qualifying and racing due to slipstream dynamics. In qualifying, drivers jockey for position on the in-lap, deliberately slowing down to get into another car's slipstream for a speed boost on the flying lap. The result is chaotic slow laps with drivers playing cat-and-mouse, sometimes dramatically — Verstappen and Hamilton famously had a confrontation in 2020 qualifying where neither wanted to lead on the final flying lap.
 
-In the race, slipstream chains form on the long straights. Multiple cars drafting each other can be significantly faster than a lone car at the front, creating dynamic battles where the lead changes through the DRS activation zones.
+In the race, slipstream chains form on the long straights. Multiple cars drafting each other can be significantly faster than a lone car at the front, creating dynamic battles where the lead changes on the straights (through the DRS zones, until 2025).
 
 ## Tyre Strategy
 

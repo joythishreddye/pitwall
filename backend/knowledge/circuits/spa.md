@@ -48,7 +48,7 @@ Historically, Eau Rouge was one of the most respected and feared corners in F1. 
 The word "Raidillon" refers specifically to the steep climb after the valley. Eau Rouge is technically just the left-hander at the bottom. The terms are often used interchangeably.
 
 **Kemmel Straight**
-The long straight after Raidillon climbing further uphill before leveling out. One of the most spectacular DRS zones in F1 — cars exit Raidillon already at 300+ km/h and continue accelerating up the hill, reaching 340+ km/h. Following cars with DRS activated appear to catapult past rivals in a way rarely seen elsewhere.
+The long straight after Raidillon climbing further uphill before leveling out. It was one of the most spectacular DRS zones in F1 (2011–2025) — cars exit Raidillon already at 300+ km/h and continue accelerating up the hill, reaching 340+ km/h. Following cars with DRS activated appeared to catapult past rivals in a way rarely seen elsewhere.
 
 **Les Combes (Turns 5-6-7)**
 The braking zone at the end of Kemmel Straight — one of the key overtaking spots. A right-left chicane demanding precise braking from enormous speeds. The approach from Eau Rouge through Kemmel makes this one of the most dramatic pass locations on the calendar.

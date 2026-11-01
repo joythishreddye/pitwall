@@ -1,21 +1,29 @@
-"""Bandwidth guard for the public API.
+"""Bandwidth guard for the API.
 
 Render's Hobby workspace includes 5 GB of outbound bandwidth a month and
-bills $0.15/GB after that, with no setting to cap it. This middleware is the
-cap. It counts the uncompressed bytes of every API response, which is an
-upper bound on what leaves Render after gzip, against two daily budgets:
+bills $0.15/GB after that, with no setting to cap it. This middleware meters
+what the API serves: the headers and uncompressed body of every response
+(an upper bound on what leaves Render after gzip) count against two daily
+budgets:
 
 * per client: a source past its share gets 429s, so one script can't use up
   the day for everyone;
-* global: once it's spent, every API route answers 503 until midnight UTC.
+* global: once it's spent, everything except /health answers 503 until
+  midnight UTC.
 
-Clients are also limited to a number of requests a minute. Counters live in
-process memory: PitWall runs one instance, and a deploy or restart resets
-them. The default 150 MB a day keeps a month under 4.5 GB.
+Clients are also limited to a number of requests a minute.
+
+What it can't meter: the refusals themselves (about 0.3 KB each) and CORS
+preflights. A large, sustained flood of refused requests could still add a
+little bandwidth. Only a rate limit at the network edge could stop that.
+
+Counters live in process memory: PitWall runs one instance, and a deploy or
+restart resets them. The default 150 MB a day keeps a month under 4.5 GB.
 """
 
 from __future__ import annotations
 
+import logging
 import math
 import threading
 import time
@@ -29,13 +37,19 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app.api.rate_limit import SlidingWindowLimiter, client_ip
 
+logger = logging.getLogger(__name__)
+
 _DAY_SECONDS = 86_400
-# Beyond this many clients in a day, new ones share one counter (memory bound)
+# Beyond this many clients in a day, new ones share one counter (memory
+# bound). That shared counter is exempt from the per-client cap, so ordinary
+# visitors aren't locked out together; the global budget still applies.
 _MAX_TRACKED_CLIENTS = 100_000
 _OVERFLOW_CLIENT = "~overflow"
 # Request-rate cap across all clients. The byte budget already protects the
 # bill, so this is set high and only blunts floods.
 _GLOBAL_REQUESTS_PER_MINUTE = 6_000
+# Log at most this many clients reaching their daily cap per day
+_CAP_LOGS_PER_DAY = 10
 
 
 @dataclass(frozen=True)
@@ -46,7 +60,7 @@ class Refusal:
 
 
 class TrafficBudget:
-    """Daily byte budgets (per client and global) plus a per-minute limit."""
+    """Daily byte budgets (per client and global) plus per-minute limits."""
 
     def __init__(
         self,
@@ -54,22 +68,19 @@ class TrafficBudget:
         per_minute: int,
         client_daily_bytes: int,
         daily_bytes: int,
+        global_per_minute: int = _GLOBAL_REQUESTS_PER_MINUTE,
     ) -> None:
         self._per_minute = per_minute
+        self._global_per_minute = global_per_minute
         self._client_daily = client_daily_bytes
         self._daily = daily_bytes
-        self._limiter = SlidingWindowLimiter(
-            per_key=per_minute, global_limit=_GLOBAL_REQUESTS_PER_MINUTE
-        )
-        self._day = -1
-        self._total = 0
-        self._clients: dict[str, int] = {}
         self._lock = threading.Lock()
+        self.reset()
 
     def check(self, client: str, now: float | None = None) -> Refusal | None:
         """Decide whether ``client`` may make a request right now.
 
-        Returns None (and counts the request toward the per-minute limit)
+        Returns None (and counts the request toward the per-minute limits)
         when it's allowed; otherwise why not and when to retry.
         """
         t = time.time() if now is None else now
@@ -77,12 +88,26 @@ class TrafficBudget:
         with self._lock:
             self._roll(t)
             if self._total >= self._daily:
+                if not self._closed_logged:
+                    self._closed_logged = True
+                    logger.warning(
+                        "Daily API bandwidth budget used (%d bytes); serving 503 "
+                        "until midnight UTC",
+                        self._total,
+                    )
                 return Refusal(
                     503,
                     until_midnight,
                     "PitWall has used today's data budget. It resets at midnight UTC.",
                 )
-            if self._clients.get(self._key(client), 0) >= self._client_daily:
+            key = self._key(client)
+            if (
+                key != _OVERFLOW_CLIENT
+                and self._clients.get(key, 0) >= self._client_daily
+            ):
+                if key not in self._capped and len(self._capped) < _CAP_LOGS_PER_DAY:
+                    self._capped.add(key)
+                    logger.warning("A client reached its daily API data limit")
                 return Refusal(
                     429,
                     until_midnight,
@@ -105,14 +130,15 @@ class TrafficBudget:
             self._total += n
 
     def reset(self) -> None:
-        """Forget all counts (tests)."""
+        """Forget all counts (startup and tests)."""
         with self._lock:
             self._day = -1
             self._total = 0
-            self._clients.clear()
+            self._clients: dict[str, int] = {}
+            self._capped: set[str] = set()
+            self._closed_logged = False
         self._limiter = SlidingWindowLimiter(
-            per_key=self._per_minute,
-            global_limit=_GLOBAL_REQUESTS_PER_MINUTE,
+            per_key=self._per_minute, global_limit=self._global_per_minute
         )
 
     def client_bytes(self, client: str) -> int:
@@ -129,6 +155,8 @@ class TrafficBudget:
             self._day = day
             self._total = 0
             self._clients.clear()
+            self._capped.clear()
+            self._closed_logged = False
 
     def _key(self, client: str) -> str:
         if client in self._clients or len(self._clients) < _MAX_TRACKED_CLIENTS:
@@ -136,23 +164,39 @@ class TrafficBudget:
         return _OVERFLOW_CLIENT
 
 
+def _header_bytes(message: Message) -> int:
+    """Approximate wire size of a response's status line and headers."""
+    headers = message.get("headers") or []
+    return 17 + sum(len(name) + len(value) + 4 for name, value in headers)
+
+
 class ApiTrafficGuard:
-    """ASGI middleware that applies a TrafficBudget to one URL prefix.
+    """ASGI middleware that applies a TrafficBudget to every HTTP request
+    except the exempt paths (health checks).
 
     Pure ASGI rather than BaseHTTPMiddleware, so streamed responses (chat's
     server-sent events) pass through chunk by chunk.
     """
 
-    def __init__(self, app: ASGIApp, *, budget: TrafficBudget, prefix: str) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        budget: TrafficBudget,
+        exempt: tuple[str, ...] = ("/health",),
+    ) -> None:
         self.app = app
         self.budget = budget
-        self.prefix = prefix
+        self.exempt = exempt
+
+    def _is_exempt(self, path: str) -> bool:
+        return any(path == p or path.startswith(p + "/") for p in self.exempt)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if (
             scope["type"] != "http"
             or scope["method"] == "OPTIONS"
-            or not scope["path"].startswith(self.prefix)
+            or self._is_exempt(scope["path"])
         ):
             await self.app(scope, receive, send)
             return
@@ -169,7 +213,9 @@ class ApiTrafficGuard:
             return
 
         async def counting_send(message: Message) -> None:
-            if message["type"] == "http.response.body":
+            if message["type"] == "http.response.start":
+                self.budget.add(client, _header_bytes(message))
+            elif message["type"] == "http.response.body":
                 self.budget.add(client, len(message.get("body", b"")))
             await send(message)
 
@@ -181,7 +227,7 @@ def protect(
     *,
     budget: TrafficBudget,
     cors_origins: list[str],
-    prefix: str,
+    exempt: tuple[str, ...] = ("/health",),
 ) -> None:
     """Install the traffic guard inside CORS.
 
@@ -189,7 +235,7 @@ def protect(
     goes last: 429 and 503 answers then carry Access-Control-Allow-Origin,
     and browsers can read them instead of reporting a CORS error.
     """
-    app.add_middleware(ApiTrafficGuard, budget=budget, prefix=prefix)
+    app.add_middleware(ApiTrafficGuard, budget=budget, exempt=exempt)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,

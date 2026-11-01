@@ -37,13 +37,13 @@ It is the home of the British Grand Prix and the venue most closely associated w
 ## Track Layout and Famous Corners
 
 **Abbey (Turn 1)**
-The first corner after the start/finish straight, a fast right-hander. Cars approach at over 300 km/h and carry significant speed through. Was rebuilt in 2010 as part of the Arena complex, turning a formerly dangerous flat-out kink into a proper corner. One of the DRS activation zone ends.
+The first corner after the start/finish straight, a fast right-hander. Cars approach at over 300 km/h and carry significant speed through. Was rebuilt in 2010 as part of the Arena complex, turning a formerly dangerous flat-out kink into a proper corner. One of the DRS zones (2011–2025) ended here.
 
 **Village/The Loop/Aintree (Turns 2-4)**
 A flowing, multi-apex section through the Arena complex. Medium-speed corners where car balance and mechanical grip are tested. The surface here can be particularly slippery when damp.
 
 **Wellington Straight**
-One of the two long straights providing DRS opportunities. Connects the Arena complex to the Brooklands corner.
+One of the two long straights that were DRS zones through 2025. Connects the Arena complex to the Brooklands corner.
 
 **Brooklands/Luffield (Turns 6-7)**
 Slow hairpin-like section requiring heavy braking from Wellington Straight speeds. A key overtaking opportunity in the race.
@@ -57,17 +57,17 @@ The defining section of Silverstone. A sequence of high-speed left-right-left-ri
 Getting the Maggotts-Becketts complex right is the single biggest lap time differentiator at Silverstone. A car that understands this section can gain multiple tenths over rivals. It is the sequence most drivers cite as one of the most thrilling in all of motorsport.
 
 **Hangar Straight**
-The second DRS zone. Named after the WWII aircraft hangars that used to stand adjacent to this part of the old airfield. One of the longest straights on the circuit, where top speeds reach approximately 320 km/h.
+The second DRS zone through 2025. Named after the WWII aircraft hangars that used to stand adjacent to this part of the old airfield. One of the longest straights on the circuit, where top speeds reach approximately 320 km/h.
 
 **Stowe (Turn 16)**
 A fast right-hander at the end of the Hangar Straight. Heavy braking, another overtaking zone. Historically a famous corner from the old Silverstone layout where it featured as a very fast bend.
 
 **Club Corner (Turn 18)**
-The final corner, a medium-speed right-hander leading back to the start/finish straight. Exit speed from Club is critical for the DRS straight.
+The final corner, a medium-speed right-hander leading back to the start/finish straight. Exit speed from Club is critical for the main straight (a DRS zone through 2025).
 
 ## High-Speed Aerodynamic Demands
 
-Silverstone rewards cars with high aerodynamic efficiency — particularly through the Maggotts-Becketts sequence, where downforce directly translates into cornering speed. Teams run medium-to-high downforce setups, balancing the needs of the fast corners with the two DRS straights.
+Silverstone rewards cars with high aerodynamic efficiency — particularly through the Maggotts-Becketts sequence, where downforce directly translates into cornering speed. Teams run medium-to-high downforce setups, balancing the needs of the fast corners with the two long straights.
 
 The circuit is particularly demanding on front tyres, which take significant lateral load through the high-speed sections. Front tyre degradation is a key variable in Silverstone strategy.
 

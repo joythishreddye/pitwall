@@ -16,15 +16,18 @@ interface ChampionshipLeaderTileProps {
 }
 
 export function ChampionshipLeaderTile({ leader, revealed = false }: ChampionshipLeaderTileProps) {
-  const { data: driverPhotos } = useDriverPhotos();
+  const { data: driverPhotos, isPending: photosPending } = useDriverPhotos();
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
   const photoUrl = findHeadshotUrl(driverPhotos, {
     acronym: leader.driver_code,
     surname: leader.surname,
   });
-  const [photoFailed, setPhotoFailed] = useState(false);
-  const showPhoto = Boolean(photoUrl) && !photoFailed;
+  // Remember which URL failed, so a new leader's photo gets its own chance
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const showPhoto = Boolean(photoUrl) && photoUrl !== failedUrl;
+  // Wait for the lookup to settle, or the watermark flashes before the photo
+  const showWatermark = !showPhoto && !photosPending && Boolean(leader.driver_code);
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid group cursor-pointer h-full">
@@ -35,7 +38,7 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
 
       {/* No photo: OpenF1 refuses free clients during live sessions, so the
           driver code fills the space, as on the /drivers grid */}
-      {!showPhoto && leader.driver_code && (
+      {showWatermark && (
         <span
           className="absolute top-4 right-5 font-mono font-black leading-none select-none pointer-events-none tabular-nums"
           style={{ fontSize: "clamp(72px, 10vw, 144px)", color: teamHex, opacity: 0.12 }}
@@ -54,7 +57,7 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
             alt={`${leader.forename} ${leader.surname} — ${leader.constructor_name ?? 'F1'}`}
             className="absolute top-0 right-0 h-full w-auto"
             style={{ opacity: 0.75 }}
-            onError={() => setPhotoFailed(true)}
+            onError={() => setFailedUrl(photoUrl ?? null)}
           />
           {/* Left gradient — blends into card text area */}
           <div

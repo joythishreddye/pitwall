@@ -10,7 +10,7 @@ tags:
 
 # DRS Explained: The Drag Reduction System (2011–2025)
 
-> **2026 status:** DRS is gone. It was used from 2011 to 2025, and the 2026 regulations replaced it with active aerodynamics and Manual Override Mode. See "DRS in 2026" below and the 2026 regulation changes guide. The rest of this guide explains how DRS worked.
+> **2026 status:** DRS is gone. It was used from 2011 to 2025, and the 2026 regulations replaced it with active aerodynamics and Overtake Mode. See "DRS in 2026" below and the 2026 regulation changes guide. The rest of this guide explains how DRS worked.
 
 ## What is DRS?
 
@@ -74,9 +74,9 @@ DRS changed driver behavior in several ways:
 
 The 2026 F1 regulations, the biggest rule overhaul since 2022, removed DRS. Two systems took over its job.
 
-**Manual Override Mode (MOM)** is integrated with the power unit's electric deployment. Rather than opening a physical flap, a driver deploys additional electrical power (from the MGU-K) to help an overtake.
+**Overtake Mode** (called Manual Override Mode in the draft rules) gives a driver within one second of the car ahead extra electrical energy from the power unit. Rather than opening a physical flap, the following driver gets more power to attack.
 
-**Active aerodynamics** let the front and rear wings change angle on track, switching between high-downforce (cornering) and low-drag (straight) configurations. That makes a separate DRS flap unnecessary.
+**Active aerodynamics** let the front and rear wings change angle on track, switching between corner mode (high downforce) and straight mode (low drag). That makes a separate DRS flap unnecessary.
 
 The debate before the change. Arguments for removing traditional DRS:
 - Overtaking should reflect genuine pace differences

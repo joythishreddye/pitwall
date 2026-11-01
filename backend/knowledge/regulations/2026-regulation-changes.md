@@ -21,7 +21,7 @@ Teams with strong electrical engineering departments (Mercedes, Ferrari) were ex
 
 ## Active Aerodynamics
 
-The most visually striking change: active aerodynamic elements are now legal. Cars can adjust front and rear wing angles while on track, not just through DRS. The rear wing features a variable-geometry system that can switch between high-downforce and low-drag configurations. The front wing also has adjustable elements. This replaces the traditional DRS system entirely.
+The most visually striking change: active aerodynamic elements are now legal. Cars can adjust front and rear wing angles while on track, not just through DRS. The rear wing features a variable-geometry system that can switch between high-downforce and low-drag configurations. The front wing also has adjustable elements. This replaces the traditional DRS system entirely. The wings switch between corner mode (high downforce) and straight mode (low drag). For overtaking, a driver within one second of the car ahead can use Overtake Mode, an extra allowance of electrical energy (the draft rules called it Manual Override Mode).
 
 Active aero means cars can optimize their aerodynamic setup for each corner and straight, rather than compromising between downforce and drag. Teams with superior control systems and simulation capabilities have an advantage in exploiting these new degrees of freedom.
 

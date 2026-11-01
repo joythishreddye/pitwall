@@ -110,7 +110,7 @@ def _app(budget: TrafficBudget) -> FastAPI:
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    protect(app, budget=budget, cors_origins=[ORIGIN], prefix="/api/v1")
+    protect(app, budget=budget, cors_origins=[ORIGIN])
     return app
 
 
@@ -139,8 +139,9 @@ def test_response_bytes_are_counted() -> None:
 
     client.get("/api/v1/big")
 
-    assert budget.client_bytes("testclient") == 600
-    assert budget.total_bytes() == 600
+    # The 600-byte body plus the status line and headers
+    assert 600 < budget.client_bytes("testclient") < 1_000
+    assert budget.total_bytes() == budget.client_bytes("testclient")
 
 
 def test_health_and_preflights_are_never_limited() -> None:
@@ -178,7 +179,7 @@ def test_streams_pass_through_chunk_by_chunk_and_are_counted() -> None:
     async def send(message: dict) -> None:
         sent.append(message)
 
-    guard = ApiTrafficGuard(inner, budget=budget, prefix="/api/v1")
+    guard = ApiTrafficGuard(inner, budget=budget)
     scope = {
         "type": "http",
         "method": "POST",
@@ -190,4 +191,89 @@ def test_streams_pass_through_chunk_by_chunk_and_are_counted() -> None:
 
     bodies = [m for m in sent if m["type"] == "http.response.body"]
     assert len(bodies) == 4  # not buffered into one message
-    assert budget.client_bytes("203.0.113.9") == 3 * len(b"data: 0\n\n")
+    # A status line with no headers (17 bytes), then three chunks
+    assert budget.client_bytes("203.0.113.9") == 17 + 3 * len(b"data: 0\n\n")
+
+
+def _run_guard(guard: ApiTrafficGuard, method: str, path: str) -> list[dict]:
+    sent: list[dict] = []
+
+    async def receive() -> dict:
+        return {"type": "http.request", "body": b"", "more_body": False}
+
+    async def send(message: dict) -> None:
+        sent.append(message)
+
+    scope = {
+        "type": "http",
+        "method": method,
+        "path": path,
+        "headers": [],
+        "client": ("198.51.100.7", 1234),
+    }
+    asyncio.run(guard(scope, receive, send))
+    return sent
+
+
+def test_every_path_but_health_is_metered() -> None:
+    budget = _budget()
+    client = TestClient(_app(budget))
+
+    client.get("/openapi.json")
+    after_docs = budget.total_bytes()
+    client.get("/health")
+
+    assert after_docs > 0  # API docs count too
+    assert budget.total_bytes() == after_docs  # health checks don't
+
+
+def test_the_guard_itself_lets_preflights_through() -> None:
+    reached: list[str] = []
+
+    async def inner(scope, receive, send) -> None:
+        reached.append(scope["method"])
+        await send({"type": "http.response.start", "status": 200, "headers": []})
+        await send({"type": "http.response.body", "body": b""})
+
+    budget = _budget(daily_bytes=1)
+    budget.add("anyone", 10)  # the API is closed for the day
+    guard = ApiTrafficGuard(inner, budget=budget)
+
+    _run_guard(guard, "OPTIONS", "/api/v1/big")
+    refused = _run_guard(guard, "GET", "/api/v1/big")
+
+    assert reached == ["OPTIONS"]
+    assert refused[0]["status"] == 503
+
+
+def test_overflow_clients_share_no_per_client_cap(monkeypatch) -> None:
+    monkeypatch.setattr("app.api.traffic._MAX_TRACKED_CLIENTS", 1)
+    budget = _budget(client_daily_bytes=1_000, daily_bytes=100_000)
+    budget.add("first", 10)  # fills the table
+    budget.add("second", 5_000)  # lands in the shared overflow bucket
+
+    assert budget.check("third") is None  # not locked out with "second"
+    assert budget.total_bytes() == 5_010  # still counted globally
+
+
+def test_requests_per_minute_are_limited_globally_too() -> None:
+    budget = _budget(global_per_minute=3)
+    for client in ("a", "b", "c"):
+        assert budget.check(client, now=0) is None
+
+    refusal = budget.check("d", now=1)
+
+    assert refusal is not None
+    assert refusal.status == 429
+
+
+def test_closing_the_api_is_logged_once(caplog) -> None:
+    budget = _budget(daily_bytes=100)
+    budget.add("a", 100, now=10)
+
+    with caplog.at_level("WARNING", logger="app.api.traffic"):
+        budget.check("a", now=11)
+        budget.check("b", now=12)
+
+    closures = [r for r in caplog.records if "bandwidth budget used" in r.message]
+    assert len(closures) == 1

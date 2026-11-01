@@ -14,7 +14,7 @@ A comprehensive reference covering the most important Formula 1 terminology, fro
 ---
 
 ## DRS (Drag Reduction System)
-Used from 2011 to 2025; the 2026 regulations replaced it with active aerodynamics and Manual Override Mode. A driver-activated system that opened a flap in the rear wing, reducing aerodynamic drag and increasing top speed. It was usable only within designated DRS zones when a driver was within 1 second of the car ahead. See the dedicated DRS guide for full detail.
+Used from 2011 to 2025; the 2026 regulations replaced it with active aerodynamics and Overtake Mode. A driver-activated system that opened a flap in the rear wing, reducing aerodynamic drag and increasing top speed. It was usable only within designated DRS zones when a driver was within 1 second of the car ahead. See the dedicated DRS guide for full detail.
 
 ## Undercut
 A pit stop strategy where a driver pits earlier than the car ahead, gains time on fresher, faster tyres, and emerges ahead after the rival pits. Works best when the tyres being fitted are significantly faster than worn ones.
@@ -145,14 +145,17 @@ The large wing at the car's rear, generating downforce over the rear axle. Throu
 ## Halo
 The titanium safety structure surrounding the cockpit, mandatory since 2018. Has saved multiple lives including Leclerc at Bahrain 2020 and Zhou Guanyu at Silverstone 2022. Initially controversial aesthetically but universally accepted after safety demonstrations.
 
+## Overtake Mode
+The overtaking aid that replaced DRS in 2026: a driver within one second of the car ahead can use extra electrical energy from the power unit. The draft rules called it Manual Override Mode.
+
 ## DRS Zone
 A designated section of track where DRS could be activated (2011–2025). Usually on long straights; each circuit had one to three.
 
 ## Detection Point
-A timing loop in the road where the 1-second gap between cars is measured to determine whether the following car may activate DRS in the subsequent zone.
+A timing loop in the road where the 1-second gap between cars is measured. Through 2025 it decided whether the following car could use DRS in the next zone.
 
 ## Activation Zone
-The point on track where a driver may press the DRS button to open the rear wing flap. Located after the detection point and at the start of the DRS zone.
+The point on track where, through 2025, a driver could press the DRS button to open the rear wing flap. It was after the detection point, at the start of the DRS zone.
 
 ## Power Unit
 The complete hybrid propulsion system in modern F1 cars, comprising the Internal Combustion Engine (ICE), turbocharger, MGU-K, MGU-H, Energy Store (battery), and Control Electronics.
