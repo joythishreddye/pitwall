@@ -60,3 +60,11 @@ def test_titles_use_the_final_round_leader() -> None:
     ]
 
     assert _count_titles(leaders, lambda season: True) == {1: 1}
+
+
+def test_format_time_handles_laps_and_full_races() -> None:
+    from app.ingestion.generate_knowledge import _format_time
+
+    assert _format_time(83_456) == "1:23.456"  # a lap
+    assert _format_time(6_434_808) == "1:47:14.808"  # a race
+    assert _format_time(None) == "N/A"

@@ -9,36 +9,16 @@ Generates:
 import logging
 from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Any
 
 from supabase import Client
+
+from app.db.supabase import fetch_all as _fetch_all
 
 logger = logging.getLogger(__name__)
 
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "knowledge"
 CURRENT_SEASON = 2026
 FIRST_SEASON_IN_DB = 2018
-
-# PostgREST returns at most this many rows per request, whatever .limit() says
-_PAGE_SIZE = 1000
-
-
-def _fetch_all(build: Callable[[], Any], page_size: int = _PAGE_SIZE) -> list[dict]:
-    """Read every row of a query, one page at a time.
-
-    Args:
-        build: Returns a fresh, ordered query builder (call ``.order()`` on a
-            unique column so pages don't overlap).
-        page_size: Rows per request; must not exceed the server's row cap.
-    """
-    rows: list[dict] = []
-    start = 0
-    while True:
-        page = build().range(start, start + page_size - 1).execute().data or []
-        rows.extend(page)
-        if len(page) < page_size:
-            return rows
-        start += page_size
 
 
 def _count_titles(
@@ -88,11 +68,14 @@ def _is_dnf(status: str) -> bool:
 
 
 def _format_time(ms: int | None) -> str:
-    """Convert milliseconds to M:SS.sss format."""
+    """Format a duration: M:SS.sss for laps, H:MM:SS.sss for full races."""
     if not ms:
         return "N/A"
-    minutes = ms // 60000
-    seconds = (ms % 60000) / 1000
+    hours, rem = divmod(ms, 3_600_000)
+    minutes, rem = divmod(rem, 60_000)
+    seconds = rem / 1000
+    if hours:
+        return f"{hours}:{minutes:02d}:{seconds:06.3f}"
     return f"{minutes}:{seconds:06.3f}"
 
 
