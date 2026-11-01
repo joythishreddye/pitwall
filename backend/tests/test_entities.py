@@ -210,6 +210,91 @@ def test_country_mentions_are_not_entities() -> None:
         assert out["entities"]["circuits"] == [], question
 
 
+def _circuit_linker() -> EntityLinker:
+    extra = [
+        {
+            "ref": "monaco",
+            "name": "Circuit de Monaco",
+            "location": "Monte-Carlo",
+            "country": "Monaco",
+        },
+        {
+            "ref": "bahrain",
+            "name": "Bahrain International Circuit",
+            "location": "Sakhir",
+            "country": "Bahrain",
+        },
+        {
+            "ref": "villeneuve",
+            "name": "Circuit Gilles Villeneuve",
+            "location": "Montreal",
+            "country": "Canada",
+        },
+        {
+            "ref": "americas",
+            "name": "Circuit of the Americas",
+            "location": "Austin",
+            "country": "USA",
+        },
+    ]
+    return EntityLinker.from_rows(
+        [*KB, *({"circuit_ref": c["ref"]} for c in extra), {"driver_ref": "leclerc"}],
+        [*DRIVERS, {"ref": "leclerc", "forename": "Charles", "surname": "Leclerc"}],
+        TEAMS,
+        [*CIRCUITS, *extra],
+    )
+
+
+def test_places_that_are_also_countries_or_people_need_a_race_name() -> None:
+    linker = _circuit_linker()
+    for question in (
+        "Is Monaco expensive to visit?",
+        "Is Bahrain a big market for F1?",
+        "What did Jacques Villeneuve win?",
+        "How popular is F1 across the Americas?",
+    ):
+        out = linker.link(_intent(), question)
+        assert out["metadata_filter"] == {}, question
+        assert out["entities"]["circuits"] == [], question
+
+
+def test_a_race_name_or_circuit_name_is_enough() -> None:
+    linker = _circuit_linker()
+    cases = {
+        "Who won the 2025 Monaco Grand Prix?": "monaco",
+        "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?": "bahrain",
+        "Is the Singapore GP hard on brakes?": "marina_bay",
+        "Who won in Monte Carlo?": "monaco",
+        "What makes Circuit Gilles Villeneuve tricky?": "villeneuve",
+    }
+    for question, ref in cases.items():
+        out = linker.link(_intent(), question)
+        assert out["metadata_filter"] == {"circuit_ref": ref}, question
+
+
+def test_a_country_in_passing_leaves_the_classifier_filter_alone() -> None:
+    out = _circuit_linker().link(
+        _intent({"driver_ref": "leclerc"}, ["leclerc"]), "Is Leclerc from Monaco?"
+    )
+    assert out["metadata_filter"] == {"driver_ref": "leclerc"}
+
+
+def test_aston_alone_is_not_aston_martin() -> None:
+    linker = EntityLinker.from_rows(
+        [*KB, {"constructor_ref": "aston_martin"}],
+        DRIVERS,
+        [*TEAMS, {"ref": "aston_martin", "name": "Aston Martin"}],
+        CIRCUITS,
+    )
+    assert linker.link(_intent(), "Did Aston Villa win?")["entities"]["teams"] == []
+    for intent, question in (
+        (_intent(), "How is Aston Martin doing?"),
+        (_intent(teams=["Aston"]), "How is Aston doing?"),
+    ):
+        out = linker.link(intent, question)
+        assert out["metadata_filter"] == {"constructor_ref": "aston_martin"}, question
+
+
 def _stroll_linker() -> EntityLinker:
     return EntityLinker.from_rows(
         [*KB, {"driver_ref": "stroll"}, {"circuit_ref": "monza"}],

@@ -15,11 +15,16 @@ It also enforces the filter rules the eval baseline supports:
   base covers (its race docs start in 2018, so "Suzuka in 1989" lives in
   the history docs);
 * comparisons use no filter, and entity searches cover each side;
-* a scan of the question trusts only unambiguous names: refs, full names,
-  team and circuit names, circuit cities. Country names and surnames that
-  are everyday words ("China", "a stroll") still repair names the classifier
-  gave, but a scan never matches them, so a stray word can't filter the
-  answer out.
+* a scan of the question trusts only unambiguous names: full names, team and
+  circuit names, circuit cities, and refs that aren't also everyday words.
+  Weak aliases still repair names the classifier gave, but a scan skips
+  them, so a stray word can't filter the answer out. Weak aliases are:
+  - country names, including the refs "bahrain" and "monaco";
+  - places that are also people or words ("americas", "villeneuve");
+  - word-like surnames ("a stroll");
+  - "aston".
+
+  A weak circuit alias counts only inside a race name ("Monaco Grand Prix").
 """
 
 from __future__ import annotations
@@ -43,11 +48,17 @@ _SHORT_ALIASES = frozenset({"spa"})
 _EXTRA_TEAM_ALIASES = {
     "racing bulls": "rb",
     "red bull racing": "red_bull",
-    "aston": "aston_martin",
 }
-# Surnames that are also everyday words. They resolve a name the classifier
-# gives, but a scan of the question ignores them ("a stroll around Monza").
+# Weak aliases resolve a name the classifier gives, but a scan of the
+# question ignores them ("a stroll around Monza", "Aston Villa").
+_WEAK_TEAM_ALIASES = {"aston": "aston_martin"}
 _WORD_SURNAMES = frozenset({"stroll", "button", "hill"})
+# Circuit refs that are also people or everyday words ("Jacques Villeneuve")
+_WORD_CIRCUIT_ALIASES = frozenset(
+    {"americas", "villeneuve", "rodriguez", "ricard", "vegas"}
+)
+# A weak circuit alias still counts as part of a race name ("Monaco GP")
+_RACE_NAME_WORDS = ("grand prix", "gp")
 
 
 def _norm(text: str) -> str:
@@ -59,8 +70,10 @@ def _norm(text: str) -> str:
 @dataclass
 class _AliasTable:
     to_ref: dict[str, str] = field(default_factory=dict)
-    # Aliases that resolve classifier output but that a scan never matches
+    # Aliases that resolve classifier output but that a scan skips, unless
+    # one of ``race_name_words`` follows them
     weak: set[str] = field(default_factory=set)
+    race_name_words: tuple[str, ...] = ()
     _ambiguous: set[str] = field(default_factory=set)
 
     def add(
@@ -98,20 +111,24 @@ class _AliasTable:
     def find_and_strip(self, padded: str) -> tuple[list[str], str]:
         """Find whole-word aliases in space-padded normalized text.
 
-        Weak aliases are skipped. Returns the refs found and the text with
-        those aliases blanked out, so a later table can't match inside them
-        ("red bull" in "red bull ring"). Longest aliases go first.
+        Weak aliases are skipped unless a race-name word follows them.
+        Returns the refs found and the text with those aliases blanked out,
+        so a later table can't match inside them ("red bull" in "red bull
+        ring"). Longest aliases go first.
         """
         found: list[str] = []
         for alias in sorted(self.to_ref, key=len, reverse=True):
-            if alias in self.weak:
-                continue
             needle = f" {alias} "
-            if needle in padded:
-                ref = self.to_ref[alias]
-                if ref not in found:
-                    found.append(ref)
-                padded = padded.replace(needle, " " * len(needle))
+            if needle not in padded:
+                continue
+            if alias in self.weak and not any(
+                f" {alias} {word} " in padded for word in self.race_name_words
+            ):
+                continue
+            ref = self.to_ref[alias]
+            if ref not in found:
+                found.append(ref)
+            padded = padded.replace(needle, " " * len(needle))
         return found, padded
 
 
@@ -122,7 +139,9 @@ _YEAR = re.compile(r"\b(19[5-9]\d|20[0-9]\d)\b")
 class EntityLinker:
     drivers: _AliasTable = field(default_factory=_AliasTable)
     teams: _AliasTable = field(default_factory=_AliasTable)
-    circuits: _AliasTable = field(default_factory=_AliasTable)
+    circuits: _AliasTable = field(
+        default_factory=lambda: _AliasTable(race_name_words=_RACE_NAME_WORDS)
+    )
     # Earliest season with race documents; older questions skip race filters
     first_season: int = 2018
 
@@ -165,14 +184,22 @@ class EntityLinker:
         for alias, ref in _EXTRA_TEAM_ALIASES.items():
             if ref in kb_teams:
                 linker.teams.add(ref, [alias])
+        for alias, ref in _WEAK_TEAM_ALIASES.items():
+            if ref in kb_teams:
+                linker.teams.add(ref, [alias], weak=True)
 
         kb_circuit_rows = [c for c in circuits if c["ref"] in kb_circuits]
         country_counts = Counter(_norm(c.get("country") or "") for c in kb_circuit_rows)
         for c in kb_circuit_rows:
-            linker.circuits.add(c["ref"], [c["ref"], c.get("name"), c.get("location")])
             # A country names its only circuit when the classifier says so,
-            # but "Is China a big market?" is not about Shanghai
+            # but "Is China a big market?" is not about Shanghai. The same
+            # goes for refs that are countries or people ("monaco",
+            # "villeneuve").
             country = _norm(c.get("country") or "")
+            for alias in (c["ref"], c.get("name"), c.get("location")):
+                plain = _norm(alias or "")
+                weak = plain in _WORD_CIRCUIT_ALIASES or plain == country
+                linker.circuits.add(c["ref"], [alias], weak=weak)
             if country and country_counts[country] == 1:
                 linker.circuits.add(c["ref"], [country], weak=True)
         return linker

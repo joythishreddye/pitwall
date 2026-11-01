@@ -16,7 +16,11 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - **Embeddings:** BAAI/bge-base-en-v1.5 (768 dim). Queries go through the HuggingFace router; ingestion runs locally with sentence-transformers.
 - **Entity linker:** `app/rag/entities.py` maps classifier entities to knowledge-base refs and builds the filter. Category-only filters are never used (they hid the regulations docs).
 - **Reranker:** bge-reranker-base, **off by default** (`RERANK_ENABLED=false`). On the eval it lowered hit@5 from 100% to 98.2% and MRR@5 from 0.91 to 0.75, and added ~0.8 s.
-- **Entity linking rule:** filters come from entities the classifier named (repaired to KB refs) and from unambiguous names in the question: refs, full names, team and circuit names, circuit cities. The classifier doesn't know the 2026 newcomers, so the scan is needed. Country names and word-like surnames ("China", "stroll") only repair classifier output; a scan never matches them. Several entities of one kind mean a comparison: no filter, but a targeted search and a guaranteed slot for each. Empty filters relax to season-only, then to none, judged on the filtered search alone.
+- **Entity linking rule:** filters come from entities the classifier named (repaired to KB refs) and from unambiguous names in the question: full names, team and circuit names, circuit cities. The classifier doesn't know the 2026 newcomers, so the scan is needed.
+  - **Weak aliases** only repair classifier output; a scan skips them. They are country names (including the refs `bahrain` and `monaco`), places that are also people or words (`americas`, `villeneuve`, `rodriguez`, `ricard`, `vegas`), word-like surnames (`stroll`) and `aston`.
+  - **Race names:** a weak circuit alias counts inside a race name ("Monaco Grand Prix", "Singapore GP").
+  - **Comparisons:** several entities of one kind get no filter, but a targeted search and a guaranteed slot each.
+  - **Relaxing:** empty filters relax to season-only, then to none, judged on the filtered search alone.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).
 - **Redis (Upstash):** optional and unused. Its database was deleted in 2026; don't add hard dependencies on it.
 - **CI:** `.github/workflows/ci.yml` (ruff, pytest, eslint, tsc, next build) and `keepalive.yml` (readiness ping twice a day)
@@ -50,7 +54,7 @@ cd frontend && pnpm build               # production build
 
 # Backend
 cd backend && python -m uvicorn app.main:app --reload
-cd backend && pytest                    # 149 tests, all external services mocked
+cd backend && pytest                    # 153 tests, all external services mocked
 cd backend && ruff check . && ruff format --check .
 
 # Data
@@ -78,6 +82,6 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval change re-runs `backend/scripts/eval_rag.py` and must not regress the last recorded run in `backend/evals/results/` (gold v2). No question may go from hit to miss, and production mode (vector+intent) hit@5 and MRR@5 may not drop. Last run: 2026-11-01T2034Z, 100% / 0.912.
+- Every chat or retrieval change re-runs `backend/scripts/eval_rag.py` and must not regress the last recorded run in `backend/evals/results/` (gold v2). No question may go from hit to miss, and production mode (vector+intent) hit@5 and MRR@5 may not drop. Last run: 2026-11-01T2055Z, 100% / 0.912.
 - Ask Joythish before any new paid service. HF spend is capped at $5 (see memory).
 - Self-review before committing: security, types, error handling
