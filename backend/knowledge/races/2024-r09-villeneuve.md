@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
-  - mclaren
   - red_bull
+  - mclaren
   - mercedes
 knowledge_level: all
 tags:

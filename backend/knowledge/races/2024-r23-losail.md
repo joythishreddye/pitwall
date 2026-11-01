@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
-  - mclaren
   - red_bull
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - losail

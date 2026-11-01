@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve

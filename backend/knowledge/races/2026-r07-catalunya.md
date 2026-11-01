@@ -8,9 +8,9 @@ driver_refs:
   - russell
   - norris
 constructor_refs:
-  - mclaren
   - ferrari
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - catalunya

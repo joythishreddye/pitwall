@@ -8,9 +8,9 @@ driver_refs:
   - antonelli
   - hamilton
 constructor_refs:
-  - ferrari
   - red_bull
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - sepang

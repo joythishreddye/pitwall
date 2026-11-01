@@ -68,3 +68,12 @@ def test_format_time_handles_laps_and_full_races() -> None:
     assert _format_time(83_456) == "1:23.456"  # a lap
     assert _format_time(6_434_808) == "1:47:14.808"  # a race
     assert _format_time(None) == "N/A"
+
+
+def test_metadata_ref_lists_keep_podium_order() -> None:
+    from app.ingestion.generate_knowledge import _unique_in_order
+
+    assert _unique_in_order(["mercedes", "ferrari", "mercedes"]) == [
+        "mercedes",
+        "ferrari",
+    ]

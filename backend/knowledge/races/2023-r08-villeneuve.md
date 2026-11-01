@@ -8,8 +8,8 @@ driver_refs:
   - alonso
   - hamilton
 constructor_refs:
-  - aston_martin
   - red_bull
+  - aston_martin
   - mercedes
 knowledge_level: all
 tags:

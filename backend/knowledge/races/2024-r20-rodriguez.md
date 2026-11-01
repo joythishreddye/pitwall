@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - leclerc
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - rodriguez

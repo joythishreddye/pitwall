@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - norris
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - albert_park

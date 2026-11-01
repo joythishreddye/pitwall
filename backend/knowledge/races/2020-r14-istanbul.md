@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - vettel
 constructor_refs:
+  - mercedes
   - racing_point
   - ferrari
-  - mercedes
 knowledge_level: all
 tags:
   - istanbul

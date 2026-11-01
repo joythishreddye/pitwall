@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring

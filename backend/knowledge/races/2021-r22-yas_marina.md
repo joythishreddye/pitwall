@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - ferrari
   - red_bull
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - yas_marina

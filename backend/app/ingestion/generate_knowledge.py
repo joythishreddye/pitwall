@@ -58,6 +58,12 @@ _FINISHED_STATUSES = frozenset(
 )
 
 
+def _unique_in_order(refs: Iterable[str]) -> list[str]:
+    """Drop repeats but keep first-seen order (podium order), so regenerated
+    docs don't reorder their metadata from run to run as a set would."""
+    return list(dict.fromkeys(refs))
+
+
 def _is_dnf(status: str) -> bool:
     """Return True if the status indicates a retirement/DNF."""
     if status in _FINISHED_STATUSES:
@@ -634,7 +640,7 @@ def generate_race_summaries(supabase: Client) -> int:
 
         # Driver refs for metadata
         driver_refs = [r["drivers"]["ref"] for r in podium]
-        constructor_refs = list({r["constructors"]["ref"] for r in podium})
+        constructor_refs = _unique_in_order(r["constructors"]["ref"] for r in podium)
 
         w = winner["drivers"]
         wc = winner["constructors"]

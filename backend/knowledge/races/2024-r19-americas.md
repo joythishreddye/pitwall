@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - ricciardo
 constructor_refs:
-  - renault
-  - red_bull
   - mercedes
+  - red_bull
+  - renault
 knowledge_level: all
 tags:
   - nurburgring

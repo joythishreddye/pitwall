@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - istanbul

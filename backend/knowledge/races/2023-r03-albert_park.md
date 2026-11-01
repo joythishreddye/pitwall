@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - alonso
 constructor_refs:
-  - aston_martin
   - red_bull
   - mercedes
+  - aston_martin
 knowledge_level: all
 tags:
   - albert_park

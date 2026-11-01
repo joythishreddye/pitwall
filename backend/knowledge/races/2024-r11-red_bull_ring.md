@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - ferrari
-  - mclaren
   - mercedes
+  - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - red_bull_ring

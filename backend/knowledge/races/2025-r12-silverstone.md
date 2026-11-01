@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - hulkenberg
 constructor_refs:
-  - sauber
   - mclaren
+  - sauber
 knowledge_level: all
 tags:
   - silverstone

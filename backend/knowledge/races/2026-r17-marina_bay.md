@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - antonelli
 constructor_refs:
-  - mercedes
   - red_bull
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - marina_bay

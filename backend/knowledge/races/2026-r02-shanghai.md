@@ -8,8 +8,8 @@ driver_refs:
   - russell
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - shanghai

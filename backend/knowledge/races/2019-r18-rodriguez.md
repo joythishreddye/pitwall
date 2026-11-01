@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - bottas
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - rodriguez

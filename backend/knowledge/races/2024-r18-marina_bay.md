@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - piastri
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay

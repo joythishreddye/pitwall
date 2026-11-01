@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
-  - mclaren
-  - red_bull
   - mercedes
+  - red_bull
+  - mclaren
 knowledge_level: all
 tags:
   - madring

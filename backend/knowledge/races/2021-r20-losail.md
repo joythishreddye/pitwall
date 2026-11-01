@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - alonso
 constructor_refs:
-  - alpine
-  - red_bull
   - mercedes
+  - red_bull
+  - alpine
 knowledge_level: all
 tags:
   - losail

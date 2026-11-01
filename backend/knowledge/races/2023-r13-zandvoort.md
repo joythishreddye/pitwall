@@ -8,8 +8,8 @@ driver_refs:
   - alonso
   - gasly
 constructor_refs:
-  - aston_martin
   - red_bull
+  - aston_martin
   - alpine
 knowledge_level: all
 tags:

@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - monaco

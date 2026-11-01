@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - hungaroring

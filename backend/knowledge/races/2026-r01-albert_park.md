@@ -8,8 +8,8 @@ driver_refs:
   - antonelli
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - albert_park

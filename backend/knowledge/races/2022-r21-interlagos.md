@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - interlagos

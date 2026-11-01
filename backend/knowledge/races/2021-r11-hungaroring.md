@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
+  - alpine
   - mercedes
   - ferrari
-  - alpine
 knowledge_level: all
 tags:
   - hungaroring

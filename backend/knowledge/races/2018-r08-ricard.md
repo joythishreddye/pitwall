@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - raikkonen
 constructor_refs:
-  - ferrari
-  - red_bull
   - mercedes
+  - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - ricard
