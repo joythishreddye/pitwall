@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { NumberCounter } from "@/components/ui/number-counter";
@@ -22,6 +23,8 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
     acronym: leader.driver_code,
     surname: leader.surname,
   });
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const showPhoto = Boolean(photoUrl) && !photoFailed;
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid group cursor-pointer h-full">
@@ -30,15 +33,28 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
       {/* Team color top bar — z-[6] to sit above the photo layer */}
       <div className="absolute top-0 left-0 right-0 h-0.5 z-[6]" style={{ backgroundColor: teamHex }} />
 
+      {/* No photo: OpenF1 refuses free clients during live sessions, so the
+          driver code fills the space, as on the /drivers grid */}
+      {!showPhoto && leader.driver_code && (
+        <span
+          className="absolute top-4 right-5 font-mono font-black leading-none select-none pointer-events-none tabular-nums"
+          style={{ fontSize: "clamp(72px, 10vw, 144px)", color: teamHex, opacity: 0.12 }}
+          aria-hidden="true"
+        >
+          {leader.driver_code}
+        </span>
+      )}
+
       {/* Driver photo — bottom-anchored portrait, natural proportions */}
-      {photoUrl && (
+      {showPhoto && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Headshot anchored top-right — face visible from the top */}
           <img
-            src={photoUrl}
+            src={photoUrl ?? undefined}
             alt={`${leader.forename} ${leader.surname} — ${leader.constructor_name ?? 'F1'}`}
             className="absolute top-0 right-0 h-full w-auto"
             style={{ opacity: 0.75 }}
+            onError={() => setPhotoFailed(true)}
           />
           {/* Left gradient — blends into card text area */}
           <div

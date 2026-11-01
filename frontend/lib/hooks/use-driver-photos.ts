@@ -26,7 +26,9 @@ export function useDriverPhotos() {
     queryKey: ["openf1-driver-photos"],
     queryFn: fetchOpenF1Drivers,
     staleTime: 60 * 60 * 1000, // 1 hour
-    retry: 1,
+    // During live sessions OpenF1 answers 401 to free clients; retrying
+    // only doubles the failed requests. Callers fall back to the driver code.
+    retry: false,
   });
 }
 
