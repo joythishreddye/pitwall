@@ -18,26 +18,28 @@ tags:
 **Driver Code:** COL
 **Current Team:** Alpine F1 Team (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 14
+- **Races:** 45
 - **Wins:** 0
 - **Podiums:** 0
 - **Pole Positions:** 0
-- **Career Points:** 4.0
-- **World Championships:** 0
+- **Points:** 32.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 1
+- **Points (including sprints):** 27
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P10
-- **DNFs:** 0
-- **Races Completed:** 3
+- **Best Finish:** P6
+- **DNFs:** 3
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P14 (started P16)
-- Round 2 Chinese Grand Prix: P10 (started P12)
-- Round 3 Japanese Grand Prix: P16 (started P15)
+- Round 14 Spanish Grand Prix: P7 (started P9)
+- Round 15 Azerbaijan Grand Prix: PR (started P9)
+- Round 16 Bahrain Grand Prix in Malaysia: P13 (started P21)
+- Round 17 Singapore Grand Prix: PR (started P15)
+- Round 18 United States Grand Prix: PR (started P20)

@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - max_verstappen
 constructor_refs:
+  - red_bull
   - ferrari
   - mercedes
-  - red_bull
 knowledge_level: all
 tags:
   - yas_marina

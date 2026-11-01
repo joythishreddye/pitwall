@@ -19,19 +19,19 @@ tags:
 ## 2026 Season Performance
 
 - **Championship Position:** P2
-- **Points:** 90
-- **Wins:** 0
-- **Podiums:** 3
-- **DNFs:** 0
+- **Points:** 474
+- **Wins:** 2
+- **Podiums:** 12
+- **DNFs:** 4
 
 ## 2026 Driver Breakdown
 
-- **Charles Leclerc:** 42 pts, best P3 in 3 races
-- **Lewis Hamilton:** 35 pts, best P3 in 3 races
+- **Lewis Hamilton:** 214 pts, best P1 in 18 races
+- **Charles Leclerc:** 199 pts, best P1 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 130
-- **Wins:** 10
-- **Podiums:** 55
-- **Total Points:** 1441.0
+- **Race Entries:** 382
+- **Wins:** 21
+- **Podiums:** 121
+- **Total Points:** 3778.5

@@ -18,26 +18,28 @@ tags:
 **Driver Code:** SAI
 **Current Team:** Williams (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 72
-- **Wins:** 1
-- **Podiums:** 9
+- **Races:** 190
+- **Wins:** 4
+- **Podiums:** 29
 - **Pole Positions:** 5
-- **Career Points:** 406.5
-- **World Championships:** 0
+- **Points:** 1146.5
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 2
+- **Points (including sprints):** 7
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P9
-- **DNFs:** 0
-- **Races Completed:** 3
+- **DNFs:** 3
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P15 (started P21)
-- Round 2 Chinese Grand Prix: P9 (started P17)
-- Round 3 Japanese Grand Prix: P15 (started P16)
+- Round 14 Spanish Grand Prix: PR (started P20)
+- Round 15 Azerbaijan Grand Prix: P10 (started P14)
+- Round 16 Bahrain Grand Prix in Malaysia: P17 (started P13)
+- Round 17 Singapore Grand Prix: P14 (started P13)
+- Round 18 United States Grand Prix: P18 (started P16)

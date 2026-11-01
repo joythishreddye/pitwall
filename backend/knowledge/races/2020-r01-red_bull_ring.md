@@ -9,8 +9,8 @@ driver_refs:
   - norris
 constructor_refs:
   - ferrari
-  - mercedes
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring

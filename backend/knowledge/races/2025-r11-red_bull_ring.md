@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - leclerc
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - red_bull_ring

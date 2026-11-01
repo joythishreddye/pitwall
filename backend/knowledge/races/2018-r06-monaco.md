@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - hamilton
 constructor_refs:
-  - mercedes
-  - ferrari
   - red_bull
+  - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - monaco

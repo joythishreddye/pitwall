@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - norris
 constructor_refs:
-  - mclaren
   - red_bull
+  - mclaren
 knowledge_level: all
 tags:
   - losail
@@ -19,7 +19,7 @@ tags:
 # Qatar Grand Prix 2023 — Race Summary
 
 **Date:** 2023-10-08
-**Circuit:** Losail International Circuit
+**Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
 **Winner Time:** 87:39.168
 **Fastest Lap:** Max Verstappen

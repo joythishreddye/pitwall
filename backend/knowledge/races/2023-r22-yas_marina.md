@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - russell
 constructor_refs:
-  - mercedes
-  - ferrari
   - red_bull
+  - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - yas_marina

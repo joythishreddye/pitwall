@@ -8,9 +8,9 @@ driver_refs:
   - russell
   - leclerc
 constructor_refs:
+  - red_bull
   - ferrari
   - mercedes
-  - red_bull
 knowledge_level: all
 tags:
   - zandvoort

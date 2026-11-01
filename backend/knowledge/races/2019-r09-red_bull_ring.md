@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - bottas
 constructor_refs:
-  - mercedes
-  - ferrari
   - red_bull
+  - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring

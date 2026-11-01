@@ -18,20 +18,20 @@ tags:
 
 ## 2026 Season Performance
 
-- **Championship Position:** P5
-- **Points:** 16
+- **Championship Position:** P6
+- **Points:** 69
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 0
+- **DNFs:** 5
 
 ## 2026 Driver Breakdown
 
-- **Pierre Gasly:** 15 pts, best P6 in 3 races
-- **Franco Colapinto:** 1 pts, best P10 in 3 races
+- **Pierre Gasly:** 40 pts, best P6 in 18 races
+- **Franco Colapinto:** 27 pts, best P6 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 69
+- **Race Entries:** 264
 - **Wins:** 1
-- **Podiums:** 1
-- **Total Points:** 66.0
+- **Podiums:** 6
+- **Total Points:** 585.0

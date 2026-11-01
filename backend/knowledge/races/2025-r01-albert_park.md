@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - russell
 constructor_refs:
-  - mercedes
-  - mclaren
   - red_bull
+  - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - albert_park

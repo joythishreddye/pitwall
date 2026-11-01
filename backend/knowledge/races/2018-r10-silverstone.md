@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - raikkonen
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - silverstone

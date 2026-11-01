@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - williams
-  - mclaren
   - red_bull
+  - mclaren
+  - williams
 knowledge_level: all
 tags:
   - losail
@@ -20,7 +20,7 @@ tags:
 # Qatar Grand Prix 2025 — Race Summary
 
 **Date:** 2025-11-30
-**Circuit:** Losail International Circuit
+**Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
 **Winner Time:** 84:38.241
 **Fastest Lap:** Oscar Piastri

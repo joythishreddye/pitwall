@@ -18,26 +18,28 @@ tags:
 **Driver Code:** GAS
 **Current Team:** Alpine F1 Team (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 74
+- **Races:** 191
 - **Wins:** 1
-- **Podiums:** 2
-- **Pole Positions:** 0
-- **Career Points:** 191.0
-- **World Championships:** 0
+- **Podiums:** 5
+- **Pole Positions:** 1
+- **Points:** 486.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 15
+- **Points (including sprints):** 42
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P6
-- **DNFs:** 0
-- **Races Completed:** 3
+- **DNFs:** 2
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P10 (started P14)
-- Round 2 Chinese Grand Prix: P6 (started P7)
-- Round 3 Japanese Grand Prix: P7 (started P7)
+- Round 14 Spanish Grand Prix: P12 (started P14)
+- Round 15 Azerbaijan Grand Prix: PR (started P7)
+- Round 16 Bahrain Grand Prix in Malaysia: P16 (started P9)
+- Round 17 Singapore Grand Prix: P11 (started P7)
+- Round 18 United States Grand Prix: P10 (started P10)

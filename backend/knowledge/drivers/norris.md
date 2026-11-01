@@ -18,26 +18,28 @@ tags:
 **Driver Code:** NOR
 **Current Team:** McLaren (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 50
-- **Wins:** 2
-- **Podiums:** 9
-- **Pole Positions:** 16
-- **Career Points:** 344.0
-- **World Championships:** 1
+- **Races:** 170
+- **Wins:** 13
+- **Podiums:** 49
+- **Pole Positions:** 19
+- **Points:** 1522.0
+- **World Championships since 2018:** 1
 
 ## 2026 Season Performance
 
-- **Points:** 20
-- **Wins:** 0
-- **Podiums:** 0
-- **Best Finish:** P5
-- **DNFs:** 1
-- **Races Completed:** 3
+- **Points (including sprints):** 211
+- **Wins:** 2
+- **Podiums:** 5
+- **Best Finish:** P1
+- **DNFs:** 4
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P5 (started P6)
-- Round 2 Chinese Grand Prix: PW (started P6)
-- Round 3 Japanese Grand Prix: P5 (started P5)
+- Round 14 Spanish Grand Prix: P3 (started P1)
+- Round 15 Azerbaijan Grand Prix: PR (started P5)
+- Round 16 Bahrain Grand Prix in Malaysia: P9 (started P5)
+- Round 17 Singapore Grand Prix: P4 (started P5)
+- Round 18 United States Grand Prix: P5 (started P8)

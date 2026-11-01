@@ -18,26 +18,28 @@ tags:
 **Driver Code:** BEA
 **Current Team:** Haas F1 Team (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 19
+- **Races:** 45
 - **Wins:** 0
 - **Podiums:** 0
 - **Pole Positions:** 0
-- **Career Points:** 37.0
-- **World Championships:** 0
+- **Points:** 65.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 16
+- **Points (including sprints):** 23
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P5
-- **DNFs:** 1
-- **Races Completed:** 3
+- **DNFs:** 5
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P7 (started P12)
-- Round 2 Chinese Grand Prix: P5 (started P10)
-- Round 3 Japanese Grand Prix: PR (started P18)
+- Round 14 Spanish Grand Prix: P16 (started P22)
+- Round 15 Azerbaijan Grand Prix: P9 (started P10)
+- Round 16 Bahrain Grand Prix in Malaysia: P14 (started P16)
+- Round 17 Singapore Grand Prix: P12 (started P11)
+- Round 18 United States Grand Prix: PR (started P13)

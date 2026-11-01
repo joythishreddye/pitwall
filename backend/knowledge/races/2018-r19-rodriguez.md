@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - raikkonen
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - rodriguez

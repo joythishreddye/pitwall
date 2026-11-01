@@ -18,26 +18,28 @@ tags:
 **Driver Code:** PIA
 **Current Team:** McLaren (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 15
-- **Wins:** 1
-- **Podiums:** 4
+- **Races:** 88
+- **Wins:** 9
+- **Podiums:** 28
 - **Pole Positions:** 6
-- **Career Points:** 142.0
-- **World Championships:** 0
+- **Points:** 851.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 18
+- **Points (including sprints):** 144
 - **Wins:** 0
-- **Podiums:** 1
+- **Podiums:** 2
 - **Best Finish:** P2
-- **DNFs:** 2
-- **Races Completed:** 3
+- **DNFs:** 3
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PW (started P5)
-- Round 2 Chinese Grand Prix: PW (started P5)
-- Round 3 Japanese Grand Prix: P2 (started P3)
+- Round 14 Spanish Grand Prix: P8 (started P7)
+- Round 15 Azerbaijan Grand Prix: P13 (started P3)
+- Round 16 Bahrain Grand Prix in Malaysia: P6 (started P6)
+- Round 17 Singapore Grand Prix: P5 (started P6)
+- Round 18 United States Grand Prix: P7 (started P7)

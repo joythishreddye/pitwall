@@ -8,9 +8,9 @@ driver_refs:
   - alonso
   - ocon
 constructor_refs:
+  - red_bull
   - aston_martin
   - alpine
-  - red_bull
 knowledge_level: all
 tags:
   - monaco

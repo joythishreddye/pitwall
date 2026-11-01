@@ -19,19 +19,19 @@ tags:
 ## 2026 Season Performance
 
 - **Championship Position:** P8
-- **Points:** 2
+- **Points:** 23
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 2
+- **DNFs:** 6
 
 ## 2026 Driver Breakdown
 
-- **Gabriel Bortoleto:** 2 pts, best P9 in 3 races
-- **Nico Hülkenberg:** 0 pts, best P11 in 3 races
+- **Nico Hülkenberg:** 11 pts, best P8 in 18 races
+- **Gabriel Bortoleto:** 10 pts, best P8 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 4
+- **Race Entries:** 36
 - **Wins:** 0
 - **Podiums:** 0
-- **Total Points:** 2.0
+- **Total Points:** 21.0

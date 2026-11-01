@@ -18,26 +18,28 @@ tags:
 **Driver Code:** HUL
 **Current Team:** Audi (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 60
+- **Races:** 135
 - **Wins:** 0
-- **Podiums:** 0
+- **Podiums:** 1
 - **Pole Positions:** 0
-- **Career Points:** 117.0
-- **World Championships:** 0
+- **Points:** 220.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 0
+- **Points (including sprints):** 13
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P11
-- **DNFs:** 1
-- **Races Completed:** 3
+- **Best Finish:** P8
+- **DNFs:** 4
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PW (started P11)
-- Round 2 Chinese Grand Prix: P11 (started P11)
-- Round 3 Japanese Grand Prix: P11 (started P13)
+- Round 14 Spanish Grand Prix: P10 (started P11)
+- Round 15 Azerbaijan Grand Prix: P11 (started P18)
+- Round 16 Bahrain Grand Prix in Malaysia: P11 (started P15)
+- Round 17 Singapore Grand Prix: P8 (started P10)
+- Round 18 United States Grand Prix: P11 (started P11)

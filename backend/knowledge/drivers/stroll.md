@@ -18,26 +18,28 @@ tags:
 **Driver Code:** STR
 **Current Team:** Aston Martin (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 77
+- **Races:** 189
 - **Wins:** 0
-- **Podiums:** 1
+- **Podiums:** 2
 - **Pole Positions:** 1
-- **Career Points:** 97.0
-- **World Championships:** 0
+- **Points:** 275.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 0
+- **Points (including sprints):** 0
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P17
-- **DNFs:** 2
-- **Races Completed:** 3
+- **Best Finish:** P12
+- **DNFs:** 11
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PR (started P22)
-- Round 2 Chinese Grand Prix: PR (started P20)
-- Round 3 Japanese Grand Prix: PR (started P22)
+- Round 14 Spanish Grand Prix: PR (started P21)
+- Round 15 Azerbaijan Grand Prix: PR (started P22)
+- Round 16 Bahrain Grand Prix in Malaysia: P12 (started P14)
+- Round 17 Singapore Grand Prix: PR (started P21)
+- Round 18 United States Grand Prix: P15 (started P22)

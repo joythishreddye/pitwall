@@ -18,26 +18,28 @@ tags:
 **Driver Code:** RUS
 **Current Team:** Mercedes (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 47
-- **Wins:** 0
-- **Podiums:** 3
-- **Pole Positions:** 7
-- **Career Points:** 118.0
-- **World Championships:** 0
+- **Races:** 170
+- **Wins:** 8
+- **Podiums:** 32
+- **Pole Positions:** 11
+- **Points:** 1161.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 55
-- **Wins:** 1
-- **Podiums:** 2
+- **Points (including sprints):** 242
+- **Wins:** 3
+- **Podiums:** 8
 - **Best Finish:** P1
-- **DNFs:** 0
-- **Races Completed:** 3
+- **DNFs:** 3
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P1 (started P1)
-- Round 2 Chinese Grand Prix: P2 (started P2)
-- Round 3 Japanese Grand Prix: P4 (started P2)
+- Round 14 Spanish Grand Prix: P5 (started P6)
+- Round 15 Azerbaijan Grand Prix: P1 (started P1)
+- Round 16 Bahrain Grand Prix in Malaysia: P20 (started P7)
+- Round 17 Singapore Grand Prix: P9 (started P19)
+- Round 18 United States Grand Prix: P8 (started P6)

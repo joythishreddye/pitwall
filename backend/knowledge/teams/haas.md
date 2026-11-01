@@ -18,20 +18,20 @@ tags:
 
 ## 2026 Season Performance
 
-- **Championship Position:** P4
-- **Points:** 18
+- **Championship Position:** P7
+- **Points:** 30
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 1
+- **DNFs:** 6
 
 ## 2026 Driver Breakdown
 
-- **Oliver Bearman:** 16 pts, best P5 in 3 races
-- **Esteban Ocon:** 1 pts, best P10 in 3 races
+- **Oliver Bearman:** 19 pts, best P5 in 18 races
+- **Esteban Ocon:** 7 pts, best P8 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 144
+- **Race Entries:** 382
 - **Wins:** 0
 - **Podiums:** 0
-- **Total Points:** 173.0
+- **Total Points:** 316.0

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hamilton
 constructor_refs:
-  - mercedes
-  - ferrari
   - red_bull
+  - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring

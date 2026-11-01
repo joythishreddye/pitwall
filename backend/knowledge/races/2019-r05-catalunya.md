@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - mercedes
   - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - catalunya

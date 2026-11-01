@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - russell
 constructor_refs:
-  - mercedes
-  - ferrari
   - red_bull
+  - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - albert_park

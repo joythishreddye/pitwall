@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - sainz
 constructor_refs:
-  - ferrari
-  - mclaren
   - red_bull
+  - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - americas

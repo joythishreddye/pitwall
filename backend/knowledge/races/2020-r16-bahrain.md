@@ -8,8 +8,8 @@ driver_refs:
   - ocon
   - stroll
 constructor_refs:
-  - racing_point
   - renault
+  - racing_point
 knowledge_level: all
 tags:
   - bahrain

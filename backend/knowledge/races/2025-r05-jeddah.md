@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - ferrari
-  - mclaren
   - red_bull
+  - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - jeddah

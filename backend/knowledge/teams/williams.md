@@ -19,19 +19,19 @@ tags:
 ## 2026 Season Performance
 
 - **Championship Position:** P9
-- **Points:** 2
+- **Points:** 12
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 1
+- **DNFs:** 10
 
 ## 2026 Driver Breakdown
 
-- **Carlos Sainz:** 2 pts, best P9 in 3 races
-- **Alexander Albon:** 0 pts, best P12 in 3 races
+- **Carlos Sainz:** 7 pts, best P9 in 18 races
+- **Alexander Albon:** 5 pts, best P8 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 136
+- **Race Entries:** 381
 - **Wins:** 0
-- **Podiums:** 1
-- **Total Points:** 60.0
+- **Podiums:** 3
+- **Total Points:** 218.0

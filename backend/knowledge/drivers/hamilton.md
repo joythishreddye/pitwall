@@ -18,26 +18,28 @@ tags:
 **Driver Code:** HAM
 **Current Team:** Ferrari (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 82
-- **Wins:** 37
-- **Podiums:** 57
-- **Pole Positions:** 35
-- **Career Points:** 1412.5
-- **World Championships:** 3
+- **Races:** 190
+- **Wins:** 44
+- **Podiums:** 91
+- **Pole Positions:** 36
+- **Points:** 2559.5
+- **World Championships since 2018:** 3
 
 ## 2026 Season Performance
 
-- **Points:** 35
-- **Wins:** 0
-- **Podiums:** 1
-- **Best Finish:** P3
-- **DNFs:** 0
-- **Races Completed:** 3
+- **Points (including sprints):** 241
+- **Wins:** 1
+- **Podiums:** 6
+- **Best Finish:** P1
+- **DNFs:** 1
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P4 (started P7)
-- Round 2 Chinese Grand Prix: P3 (started P3)
-- Round 3 Japanese Grand Prix: P6 (started P6)
+- Round 14 Spanish Grand Prix: PR (started P4)
+- Round 15 Azerbaijan Grand Prix: P6 (started P6)
+- Round 16 Bahrain Grand Prix in Malaysia: P3 (started P2)
+- Round 17 Singapore Grand Prix: P6 (started P3)
+- Round 18 United States Grand Prix: P4 (started P5)

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - alonso
 constructor_refs:
+  - red_bull
   - mercedes
   - alpine
-  - red_bull
 knowledge_level: all
 tags:
   - losail
@@ -20,7 +20,7 @@ tags:
 # Qatar Grand Prix 2021 — Race Summary
 
 **Date:** 2021-11-21
-**Circuit:** Losail International Circuit
+**Circuit:** Lusail International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
 **Winner Time:** 84:28.471
 **Fastest Lap:** Max Verstappen

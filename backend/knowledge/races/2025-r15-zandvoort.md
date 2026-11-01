@@ -9,8 +9,8 @@ driver_refs:
   - hadjar
 constructor_refs:
   - rb
-  - mclaren
   - red_bull
+  - mclaren
 knowledge_level: all
 tags:
   - zandvoort

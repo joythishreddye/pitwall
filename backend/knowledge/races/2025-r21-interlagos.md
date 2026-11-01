@@ -8,9 +8,9 @@ driver_refs:
   - antonelli
   - max_verstappen
 constructor_refs:
-  - mercedes
-  - mclaren
   - red_bull
+  - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - interlagos

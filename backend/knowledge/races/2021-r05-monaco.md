@@ -8,9 +8,9 @@ driver_refs:
   - sainz
   - norris
 constructor_refs:
+  - red_bull
   - ferrari
   - mclaren
-  - red_bull
 knowledge_level: all
 tags:
   - monaco

@@ -18,26 +18,28 @@ tags:
 **Driver Code:** ANT
 **Current Team:** Mercedes (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 7
-- **Wins:** 0
-- **Podiums:** 0
-- **Pole Positions:** 2
-- **Career Points:** 12.0
-- **World Championships:** 1
+- **Races:** 42
+- **Wins:** 9
+- **Podiums:** 18
+- **Pole Positions:** 7
+- **Points:** 469.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 68
-- **Wins:** 2
-- **Podiums:** 3
+- **Points (including sprints):** 365
+- **Wins:** 9
+- **Podiums:** 15
 - **Best Finish:** P1
-- **DNFs:** 0
-- **Races Completed:** 3
+- **DNFs:** 1
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P2 (started P2)
-- Round 2 Chinese Grand Prix: P1 (started P1)
-- Round 3 Japanese Grand Prix: P1 (started P1)
+- Round 14 Spanish Grand Prix: P1 (started P2)
+- Round 15 Azerbaijan Grand Prix: P5 (started P16)
+- Round 16 Bahrain Grand Prix in Malaysia: P2 (started P3)
+- Round 17 Singapore Grand Prix: P3 (started P4)
+- Round 18 United States Grand Prix: P1 (started P1)

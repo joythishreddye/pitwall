@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
   - mclaren
 knowledge_level: all
 tags:

@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - norris
 constructor_refs:
-  - mercedes
-  - mclaren
   - red_bull
+  - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring

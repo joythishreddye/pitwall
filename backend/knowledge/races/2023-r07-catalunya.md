@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - mercedes
   - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - catalunya

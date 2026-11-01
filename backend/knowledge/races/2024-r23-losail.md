@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
+  - red_bull
   - ferrari
   - mclaren
-  - red_bull
 knowledge_level: all
 tags:
   - losail
@@ -20,7 +20,7 @@ tags:
 # Qatar Grand Prix 2024 — Race Summary
 
 **Date:** 2024-12-01
-**Circuit:** Losail International Circuit
+**Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
 **Winner Time:** 91:05.323
 **Fastest Lap:** Lando Norris

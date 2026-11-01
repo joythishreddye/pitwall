@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - max_verstappen
 constructor_refs:
-  - ferrari
-  - mclaren
   - red_bull
+  - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - rodriguez

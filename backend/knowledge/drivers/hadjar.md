@@ -18,26 +18,28 @@ tags:
 **Driver Code:** HAD
 **Current Team:** Red Bull (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 8
+- **Races:** 39
 - **Wins:** 0
-- **Podiums:** 0
+- **Podiums:** 3
 - **Pole Positions:** 0
-- **Career Points:** 11.0
-- **World Championships:** 0
+- **Points:** 155.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 4
+- **Points (including sprints):** 105
 - **Wins:** 0
-- **Podiums:** 0
-- **Best Finish:** P8
-- **DNFs:** 1
-- **Races Completed:** 3
+- **Podiums:** 2
+- **Best Finish:** P3
+- **DNFs:** 2
+- **Races Completed:** 15
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PR (started P3)
-- Round 2 Chinese Grand Prix: P8 (started P9)
-- Round 3 Japanese Grand Prix: P12 (started P8)
+- Round 11 Hungarian Grand Prix: P6 (started P8)
+- Round 15 Azerbaijan Grand Prix: P3 (started P4)
+- Round 16 Bahrain Grand Prix in Malaysia: P5 (started P8)
+- Round 17 Singapore Grand Prix: P10 (started P22)
+- Round 18 United States Grand Prix: P6 (started P3)

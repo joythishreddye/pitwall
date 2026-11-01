@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - leclerc
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - yas_marina

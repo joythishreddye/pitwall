@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - mercedes
   - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - ricard

@@ -18,26 +18,28 @@ tags:
 **Driver Code:** BOT
 **Current Team:** Cadillac F1 Team (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 71
-- **Wins:** 4
-- **Podiums:** 34
+- **Races:** 167
+- **Wins:** 7
+- **Podiums:** 45
 - **Pole Positions:** 15
-- **Career Points:** 766.0
-- **World Championships:** 0
+- **Points:** 1072.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 0
+- **Points (including sprints):** 0
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P13
-- **DNFs:** 1
-- **Races Completed:** 3
+- **DNFs:** 9
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PR (started P19)
-- Round 2 Chinese Grand Prix: P13 (started P19)
-- Round 3 Japanese Grand Prix: P19 (started P20)
+- Round 14 Spanish Grand Prix: P18 (started P19)
+- Round 15 Azerbaijan Grand Prix: P16 (started P19)
+- Round 16 Bahrain Grand Prix in Malaysia: PR (started P19)
+- Round 17 Singapore Grand Prix: P19 (started P18)
+- Round 18 United States Grand Prix: PR (started P19)

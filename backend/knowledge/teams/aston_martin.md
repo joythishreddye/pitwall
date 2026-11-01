@@ -18,20 +18,20 @@ tags:
 
 ## 2026 Season Performance
 
-- **Championship Position:** P11
-- **Points:** 0
+- **Championship Position:** P10
+- **Points:** 7
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 4
+- **DNFs:** 17
 
 ## 2026 Driver Breakdown
 
-- **Lance Stroll:** 0 pts, best P17 in 3 races
-- **Fernando Alonso:** 0 pts, best P17 in 3 races
+- **Fernando Alonso:** 7 pts, best P8 in 18 races
+- **Lance Stroll:** 0 pts, best P12 in 18 races
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 60
+- **Race Entries:** 263
 - **Wins:** 0
-- **Podiums:** 4
-- **Total Points:** 160.0
+- **Podiums:** 9
+- **Total Points:** 579.0

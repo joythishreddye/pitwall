@@ -18,26 +18,28 @@ tags:
 **Driver Code:** LAW
 **Current Team:** RB F1 Team (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 10
+- **Races:** 53
 - **Wins:** 0
 - **Podiums:** 0
 - **Pole Positions:** 0
-- **Career Points:** 6.0
-- **World Championships:** 0
+- **Points:** 114.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 8
+- **Points (including sprints):** 77
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P7
-- **DNFs:** 0
-- **Races Completed:** 3
+- **Best Finish:** P5
+- **DNFs:** 1
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: P13 (started P8)
-- Round 2 Chinese Grand Prix: P7 (started P14)
-- Round 3 Japanese Grand Prix: P9 (started P14)
+- Round 14 Spanish Grand Prix: P6 (started P8)
+- Round 15 Azerbaijan Grand Prix: P12 (started P11)
+- Round 16 Bahrain Grand Prix in Malaysia: P7 (started P11)
+- Round 17 Singapore Grand Prix: P7 (started P8)
+- Round 18 United States Grand Prix: P9 (started P9)

@@ -8,9 +8,9 @@ driver_refs:
   - gasly
   - sainz
 constructor_refs:
-  - toro_rosso
-  - mclaren
   - red_bull
+  - mclaren
+  - toro_rosso
 knowledge_level: all
 tags:
   - interlagos

@@ -18,26 +18,28 @@ tags:
 **Driver Code:** ALO
 **Current Team:** Aston Martin (2026 season)
 
-## Career Statistics (in database)
+## Statistics since 2018 (not full career totals)
 
-- **Races:** 65
+- **Races:** 153
 - **Wins:** 0
-- **Podiums:** 4
+- **Podiums:** 9
 - **Pole Positions:** 0
-- **Career Points:** 213.0
-- **World Championships:** 0
+- **Points:** 538.0
+- **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points:** 0
+- **Points (including sprints):** 7
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P17
-- **DNFs:** 2
-- **Races Completed:** 3
+- **Best Finish:** P8
+- **DNFs:** 6
+- **Races Completed:** 18
 
 ## Recent Results (2026)
 
-- Round 1 Australian Grand Prix: PR (started P17)
-- Round 2 Chinese Grand Prix: PR (started P18)
-- Round 3 Japanese Grand Prix: P18 (started P21)
+- Round 14 Spanish Grand Prix: P17 (started P17)
+- Round 15 Azerbaijan Grand Prix: PR (started P21)
+- Round 16 Bahrain Grand Prix in Malaysia: P8 (started P12)
+- Round 17 Singapore Grand Prix: P16 (started P20)
+- Round 18 United States Grand Prix: P16 (started P12)
