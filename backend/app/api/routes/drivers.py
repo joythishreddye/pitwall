@@ -245,17 +245,11 @@ def get_driver(driver_ref: str, db: DB) -> DriverProfile:
         HTTPException: 404 when no driver with that ref exists.
     """
     driver_result = (
-        db.table("drivers")
-        .select("*")
-        .eq("ref", driver_ref)
-        .limit(1)
-        .execute()
+        db.table("drivers").select("*").eq("ref", driver_ref).limit(1).execute()
     )
     drivers = driver_result.data or []
     if not drivers:
-        raise HTTPException(
-            status_code=404, detail=f"Driver '{driver_ref}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Driver '{driver_ref}' not found")
 
     driver_row = drivers[0]
     driver_id = driver_row["id"]
@@ -320,17 +314,11 @@ def get_driver_results(
         HTTPException: 404 when the driver does not exist.
     """
     driver_result = (
-        db.table("drivers")
-        .select("id")
-        .eq("ref", driver_ref)
-        .limit(1)
-        .execute()
+        db.table("drivers").select("id").eq("ref", driver_ref).limit(1).execute()
     )
     drivers = driver_result.data or []
     if not drivers:
-        raise HTTPException(
-            status_code=404, detail=f"Driver '{driver_ref}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Driver '{driver_ref}' not found")
     driver_id = drivers[0]["id"]
 
     # Fetch race results joined with races and constructors.

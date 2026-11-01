@@ -111,8 +111,7 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
             d = driver_map.get(row["entity_id"], {})
             name = f"{d.get('forename', '?')} {d.get('surname', '?')}"
             lines.append(
-                f"P{row['position']}. {name}"
-                f" — {row['points']} pts ({row['wins']} wins)"
+                f"P{row['position']}. {name} — {row['points']} pts ({row['wins']} wins)"
             )
         return "\n".join(lines)
     except Exception:
@@ -124,22 +123,64 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
 # Knowledge level detection
 # ---------------------------------------------------------------------------
 
-_EXPERT_TERMS = frozenset({
-    "undercut", "overcut", "degradation", "graining", "blistering",
-    "downforce", "drag", "dirty air", "ground effect", "diffuser",
-    "ers", "mgu-k", "mgu-h", "drs zone", "delta", "stint",
-    "compound", "crossover", "porpoising", "parc ferme", "aero",
-    "setup", "rake", "ride height", "floor", "bargeboard",
-    "tyre blanket", "fuel load", "lift and coast", "deployment",
-    "harvesting", "sector time", "purple sector", "flat spot",
-    "lockup", "active aero", "sustainable fuel",
-})
+_EXPERT_TERMS = frozenset(
+    {
+        "undercut",
+        "overcut",
+        "degradation",
+        "graining",
+        "blistering",
+        "downforce",
+        "drag",
+        "dirty air",
+        "ground effect",
+        "diffuser",
+        "ers",
+        "mgu-k",
+        "mgu-h",
+        "drs zone",
+        "delta",
+        "stint",
+        "compound",
+        "crossover",
+        "porpoising",
+        "parc ferme",
+        "aero",
+        "setup",
+        "rake",
+        "ride height",
+        "floor",
+        "bargeboard",
+        "tyre blanket",
+        "fuel load",
+        "lift and coast",
+        "deployment",
+        "harvesting",
+        "sector time",
+        "purple sector",
+        "flat spot",
+        "lockup",
+        "active aero",
+        "sustainable fuel",
+    }
+)
 
-_BEGINNER_MARKERS = frozenset({
-    "what is", "what are", "explain", "how does", "what does",
-    "who is", "tell me about", "basics", "beginner", "new to f1",
-    "simple", "easy to understand",
-})
+_BEGINNER_MARKERS = frozenset(
+    {
+        "what is",
+        "what are",
+        "explain",
+        "how does",
+        "what does",
+        "who is",
+        "tell me about",
+        "basics",
+        "beginner",
+        "new to f1",
+        "simple",
+        "easy to understand",
+    }
+)
 
 
 def _detect_knowledge_level(message: str) -> str:
@@ -171,13 +212,12 @@ async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
 
     # 2. Fetch current standings for live context (sync → thread)
     standings_context = await asyncio.to_thread(
-        _fetch_current_standings_sync, db,
+        _fetch_current_standings_sync,
+        db,
     )
 
     # 3. Build conversation history (Pydantic enforces max_length=6)
-    history_messages = [
-        Message(role=h.role, content=h.content) for h in body.history
-    ]
+    history_messages = [Message(role=h.role, content=h.content) for h in body.history]
 
     # 4. Build prompt
     chunk_dicts = [
@@ -195,10 +235,7 @@ async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
     knowledge_level = _detect_knowledge_level(body.message)
 
     # 6. Prepare source attribution
-    sources = [
-        {"source": c.source, "content": c.content[:150]}
-        for c in chunks
-    ]
+    sources = [{"source": c.source, "content": c.content[:150]} for c in chunks]
 
     async def event_stream() -> AsyncIterator[str]:
         # First event: sources + knowledge level metadata
@@ -212,11 +249,11 @@ async def chat(body: ChatRequest, db: DB, llm: LLM) -> StreamingResponse:
         # Stream tokens from LLM
         try:
             async for token in llm.stream_chat(
-                messages, temperature=0.4, max_tokens=1024,
+                messages,
+                temperature=0.4,
+                max_tokens=1024,
             ):
-                yield (
-                    f"data: {json.dumps({'type': 'token', 'data': token})}\n\n"
-                )
+                yield (f"data: {json.dumps({'type': 'token', 'data': token})}\n\n")
         except groq.APIError as exc:
             logger.error("Groq API error: %s (status=%s)", exc.message, exc.status_code)
             err_event = {

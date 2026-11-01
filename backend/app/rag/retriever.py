@@ -18,8 +18,7 @@ from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 logger = logging.getLogger(__name__)
 
 _RERANKER_URL = (
-    "https://router.huggingface.co"
-    "/hf-inference/models/BAAI/bge-reranker-base"
+    "https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-base"
 )
 
 
@@ -41,7 +40,10 @@ class Retriever:
     """Three-stage RAG retrieval pipeline."""
 
     def __init__(
-        self, db: Client, llm: LLMProvider, embedder: SupportsEmbedQuery,
+        self,
+        db: Client,
+        llm: LLMProvider,
+        embedder: SupportsEmbedQuery,
     ) -> None:
         self.db = db
         self.llm = llm
@@ -59,7 +61,9 @@ class Retriever:
         ]
         try:
             raw = await self.llm.generate(
-                messages, temperature=0.0, max_tokens=256,
+                messages,
+                temperature=0.0,
+                max_tokens=256,
             )
             # Strip markdown code fences if present
             cleaned = raw.strip()
@@ -76,7 +80,8 @@ class Retriever:
             return result
         except (json.JSONDecodeError, KeyError, TypeError) as exc:
             logger.warning(
-                "Intent classification failed (%s), using empty filter", exc,
+                "Intent classification failed (%s), using empty filter",
+                exc,
             )
             return {
                 "intent": "unknown",
@@ -97,14 +102,13 @@ class Retriever:
     ) -> list[RetrievedChunk]:
         """Stage 2: Embed query and search via pgvector cosine similarity."""
         embedding = await asyncio.to_thread(
-            self.embedder.embed_query, query,
+            self.embedder.embed_query,
+            query,
         )
 
         # Clean metadata filter — remove empty values
         clean_filter = {
-            k: v
-            for k, v in metadata_filter.items()
-            if v is not None and v != ""
+            k: v for k, v in metadata_filter.items() if v is not None and v != ""
         }
 
         result = await asyncio.to_thread(
@@ -120,12 +124,14 @@ class Retriever:
 
         chunks = []
         for row in result.data or []:
-            chunks.append(RetrievedChunk(
-                content=row["content"],
-                metadata=row["metadata"] or {},
-                similarity=row["similarity"],
-                source=row["source"] or "",
-            ))
+            chunks.append(
+                RetrievedChunk(
+                    content=row["content"],
+                    metadata=row["metadata"] or {},
+                    similarity=row["similarity"],
+                    source=row["source"] or "",
+                )
+            )
 
         logger.info(
             "Vector search returned %d chunks (filter: %s)",
@@ -151,7 +157,8 @@ class Retriever:
             scores = await self._hf_rerank(query, chunks)
         except (httpx.HTTPError, KeyError, ValueError) as exc:
             logger.warning(
-                "HuggingFace reranker unavailable (%s), skipping rerank", exc,
+                "HuggingFace reranker unavailable (%s), skipping rerank",
+                exc,
             )
             return chunks[:top_k]
 
@@ -168,21 +175,22 @@ class Retriever:
         return reranked
 
     async def _hf_rerank(
-        self, query: str, chunks: list[RetrievedChunk],
+        self,
+        query: str,
+        chunks: list[RetrievedChunk],
     ) -> list[float]:
         """Call HuggingFace Inference API for cross-encoder scoring."""
         token = settings.huggingface_api_token
         headers = {"Authorization": f"Bearer {token}"}
         payload = {
-            "inputs": [
-                {"text": query, "text_pair": c.content}
-                for c in chunks
-            ],
+            "inputs": [{"text": query, "text_pair": c.content} for c in chunks],
         }
 
         async with httpx.AsyncClient(timeout=15.0) as client:
             resp = await client.post(
-                _RERANKER_URL, headers=headers, json=payload,
+                _RERANKER_URL,
+                headers=headers,
+                json=payload,
             )
             resp.raise_for_status()
 
@@ -202,12 +210,16 @@ class Retriever:
 
         # Stage 2: Primary vector search
         candidates = await self.vector_search(
-            query, metadata_filter, top_k=20,
+            query,
+            metadata_filter,
+            top_k=20,
         )
 
         # Stage 2b: Entity-aware supplementary searches
         entity_chunks = await self._entity_searches(
-            query, entities, candidates,
+            query,
+            entities,
+            candidates,
         )
         if entity_chunks:
             seen = {c.source + c.content[:50] for c in candidates}
@@ -238,7 +250,10 @@ class Retriever:
         # the top chunk from each entity search makes the final list
         if entity_chunks:
             reranked = self._ensure_entity_coverage(
-                reranked, entity_chunks, entities, top_k=5,
+                reranked,
+                entity_chunks,
+                entities,
+                top_k=5,
             )
 
         return reranked
@@ -256,7 +271,9 @@ class Retriever:
         for driver_ref in entities.get("drivers", []):
             ref = driver_ref.lower().replace(" ", "_")
             chunks = await self.vector_search(
-                query, {"driver_ref": ref}, top_k=5,
+                query,
+                {"driver_ref": ref},
+                top_k=5,
             )
             extra.extend(chunks)
 
@@ -264,13 +281,16 @@ class Retriever:
         for team_ref in entities.get("teams", []):
             ref = team_ref.lower().replace(" ", "_")
             chunks = await self.vector_search(
-                query, {"constructor_ref": ref}, top_k=5,
+                query,
+                {"constructor_ref": ref},
+                top_k=5,
             )
             extra.extend(chunks)
 
         if extra:
             logger.info(
-                "Entity searches added %d supplementary chunks", len(extra),
+                "Entity searches added %d supplementary chunks",
+                len(extra),
             )
         return extra
 
@@ -307,7 +327,8 @@ class Retriever:
         for ref in all_refs:
             # Check if any result already covers this entity
             has_coverage = any(
-                ref in c.source or ref == c.metadata.get("driver_ref")
+                ref in c.source
+                or ref == c.metadata.get("driver_ref")
                 or ref == c.metadata.get("constructor_ref")
                 for c in injected
             )

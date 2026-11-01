@@ -13,10 +13,7 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-_MODEL_URL = (
-    "https://router.huggingface.co"
-    "/hf-inference/models/BAAI/bge-base-en-v1.5"
-)
+_MODEL_URL = "https://router.huggingface.co/hf-inference/models/BAAI/bge-base-en-v1.5"
 _QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 

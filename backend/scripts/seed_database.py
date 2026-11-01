@@ -47,12 +47,7 @@ def validate_counts(supabase) -> bool:
     logger.info("─── Validation ───")
     all_ok = True
     for table, minimum in {**EXPECTED_COUNTS, **EXPECTED_COUNTS_FASTF1}.items():
-        result = (
-            supabase.table(table)
-            .select("id", count="exact")
-            .limit(0)
-            .execute()
-        )
+        result = supabase.table(table).select("id", count="exact").limit(0).execute()
         actual = result.count or 0
         status = "OK" if actual >= minimum else "LOW"
         if actual < minimum:
@@ -64,11 +59,14 @@ def validate_counts(supabase) -> bool:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Seed PitWall database with F1 data")
     parser.add_argument(
-        "--seasons", type=int, nargs="+",
+        "--seasons",
+        type=int,
+        nargs="+",
         help="Seasons to ingest (default: 2018-now Jolpica, 2022-now FastF1)",
     )
     parser.add_argument(
-        "--skip-fastf1", action="store_true",
+        "--skip-fastf1",
+        action="store_true",
         help="Skip FastF1 ingestion (laps, pit stops, weather)",
     )
     args = parser.parse_args()

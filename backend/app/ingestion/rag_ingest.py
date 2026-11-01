@@ -60,13 +60,15 @@ def run_rag_ingest(supabase: Client) -> int:
     # Build rows for upsert
     rows = []
     for chunk, embedding in zip(all_chunks, all_embeddings, strict=True):
-        rows.append({
-            "content": chunk["content"],
-            "metadata": chunk["metadata"],
-            "embedding": embedding,
-            "token_count": chunk["token_count"],
-            "source": chunk["source"],
-        })
+        rows.append(
+            {
+                "content": chunk["content"],
+                "metadata": chunk["metadata"],
+                "embedding": embedding,
+                "token_count": chunk["token_count"],
+                "source": chunk["source"],
+            }
+        )
 
     # Clear existing knowledge chunks and insert fresh
     logger.info("Clearing existing knowledge_chunks...")

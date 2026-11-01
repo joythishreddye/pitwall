@@ -122,20 +122,21 @@ def _fetch_driver_standings(
     # For current constructor we look at race_results for this season's races
     # and grab the constructor name.
     season_race_ids_result = (
-        db.table("races")
-        .select("id")
-        .eq("season", season)
-        .execute()
+        db.table("races").select("id").eq("season", season).execute()
     )
     season_race_ids = [r["id"] for r in (season_race_ids_result.data or [])]
 
     constructors_result = (
-        db.table("race_results")
-        .select("driver_id, constructors(name, ref)")
-        .in_("driver_id", driver_ids)
-        .in_("race_id", season_race_ids)
-        .execute()
-    ) if season_race_ids else type("R", (), {"data": []})()
+        (
+            db.table("race_results")
+            .select("driver_id, constructors(name, ref)")
+            .in_("driver_id", driver_ids)
+            .in_("race_id", season_race_ids)
+            .execute()
+        )
+        if season_race_ids
+        else type("R", (), {"data": []})()
+    )
     # Build maps: driver_id -> constructor name/ref (last row wins for the season)
     constructor_name_map: dict[int, str] = {}
     constructor_ref_map: dict[int, str] = {}

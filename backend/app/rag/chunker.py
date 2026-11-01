@@ -94,11 +94,13 @@ def chunk_markdown(filepath: Path) -> list[dict]:
             token_count = _count_tokens(chunk_text)
             if token_count < 20:
                 continue
-            chunks.append({
-                "content": chunk_text,
-                "metadata": {**metadata},
-                "token_count": token_count,
-                "source": source,
-            })
+            chunks.append(
+                {
+                    "content": chunk_text,
+                    "metadata": {**metadata},
+                    "token_count": token_count,
+                    "source": source,
+                }
+            )
 
     return chunks

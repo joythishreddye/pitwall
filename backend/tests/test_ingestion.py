@@ -147,7 +147,8 @@ def test_map_result():
         "FastestLap": {"rank": "1"},
     }
     result = _map_result(
-        raw, race_id=10,
+        raw,
+        race_id=10,
         driver_lookup={"verstappen": 1},
         constructor_lookup={"red_bull": 2},
     )
@@ -172,7 +173,8 @@ def test_map_result_dnf():
         "status": "Engine",
     }
     result = _map_result(
-        raw, race_id=10,
+        raw,
+        race_id=10,
         driver_lookup={"ham": 3},
         constructor_lookup={"merc": 4},
     )
@@ -189,7 +191,8 @@ def test_map_result_unknown_driver_returns_none():
         "grid": "1",
     }
     result = _map_result(
-        raw, race_id=10,
+        raw,
+        race_id=10,
         driver_lookup={},
         constructor_lookup={"merc": 4},
     )

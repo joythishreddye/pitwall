@@ -17,9 +17,21 @@ KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "knowledge"
 CURRENT_SEASON = 2026
 
 # Statuses that mean a car didn't finish (retired, accident, etc.)
-_FINISHED_STATUSES = frozenset({"Finished", "Lapped", "+1 Lap", "+2 Laps",
-                                "+3 Laps", "+4 Laps", "+5 Laps", "+6 Laps",
-                                "+7 Laps", "+8 Laps", "+9 Laps"})
+_FINISHED_STATUSES = frozenset(
+    {
+        "Finished",
+        "Lapped",
+        "+1 Lap",
+        "+2 Laps",
+        "+3 Laps",
+        "+4 Laps",
+        "+5 Laps",
+        "+6 Laps",
+        "+7 Laps",
+        "+8 Laps",
+        "+9 Laps",
+    }
+)
 
 
 def _is_dnf(status: str) -> bool:
@@ -179,9 +191,7 @@ def generate_driver_profiles(supabase: Client) -> int:
         # Season performance
         season_points = sum(r["points"] or 0 for r in results)
         season_wins = sum(1 for r in results if r["position"] == 1)
-        season_podiums = sum(
-            1 for r in results if r["position"] and r["position"] <= 3
-        )
+        season_podiums = sum(1 for r in results if r["position"] and r["position"] <= 3)
         best_finish = min(
             (r["position"] for r in results if r["position"]),
             default=None,
@@ -193,41 +203,38 @@ def generate_driver_profiles(supabase: Client) -> int:
         recent_lines = []
         for r in recent:
             race = r["races"]
-            pos = r["position_text"] if "position_text" in r else str(
-                r["position"]
-            )
+            pos = r["position_text"] if "position_text" in r else str(r["position"])
             recent_lines.append(
-                f"- Round {race['round']} {race['name']}:"
-                f" P{pos} (started P{r['grid']})"
+                f"- Round {race['round']} {race['name']}: P{pos} (started P{r['grid']})"
             )
 
         md = f"""---
 category: driver
-driver_ref: {d['ref']}
-constructor_ref: {team['ref']}
+driver_ref: {d["ref"]}
+constructor_ref: {team["ref"]}
 knowledge_level: all
 tags:
-  - {d['ref']}
-  - {team['ref']}
-  - {d['nationality'].lower()}
+  - {d["ref"]}
+  - {team["ref"]}
+  - {d["nationality"].lower()}
 ---
 
-# {d['forename']} {d['surname']} — Driver Profile
+# {d["forename"]} {d["surname"]} — Driver Profile
 
 ## Overview
 
-**Full Name:** {d['forename']} {d['surname']}
-**Nationality:** {d['nationality']}
-**Driver Code:** {d['code']}
-**Current Team:** {team['name']} ({CURRENT_SEASON} season)
+**Full Name:** {d["forename"]} {d["surname"]}
+**Nationality:** {d["nationality"]}
+**Driver Code:** {d["code"]}
+**Current Team:** {team["name"]} ({CURRENT_SEASON} season)
 
 ## Career Statistics (in database)
 
-- **Races:** {stats['races']}
-- **Wins:** {stats['wins']}
-- **Podiums:** {stats['podiums']}
+- **Races:** {stats["races"]}
+- **Wins:** {stats["wins"]}
+- **Podiums:** {stats["podiums"]}
 - **Pole Positions:** {poles.get(did, 0)}
-- **Career Points:** {stats['points']:.1f}
+- **Career Points:** {stats["points"]:.1f}
 - **World Championships:** {championships.get(did, 0)}
 
 ## {CURRENT_SEASON} Season Performance
@@ -235,7 +242,7 @@ tags:
 - **Points:** {season_points:.0f}
 - **Wins:** {season_wins}
 - **Podiums:** {season_podiums}
-- **Best Finish:** P{best_finish if best_finish else 'N/A'}
+- **Best Finish:** P{best_finish if best_finish else "N/A"}
 - **DNFs:** {dnfs}
 - **Races Completed:** {len(results)}
 
@@ -286,10 +293,7 @@ def generate_team_profiles(supabase: Client) -> int:
 
     # Get current season race IDs
     season_races = (
-        supabase.table("races")
-        .select("id")
-        .eq("season", CURRENT_SEASON)
-        .execute()
+        supabase.table("races").select("id").eq("season", CURRENT_SEASON).execute()
     )
     season_race_ids = [r["id"] for r in season_races.data]
 
@@ -312,9 +316,7 @@ def generate_team_profiles(supabase: Client) -> int:
         cid = row["constructor_id"]
         team_results[cid].append(row)
         d = row["drivers"]
-        team_drivers[cid].add(
-            f"{d['forename']} {d['surname']} ({d['code']})"
-        )
+        team_drivers[cid].add(f"{d['forename']} {d['surname']} ({d['code']})")
 
     # Career stats per constructor
     all_career = (
@@ -352,12 +354,8 @@ def generate_team_profiles(supabase: Client) -> int:
         cs = career_stats.get(cid, {})
 
         # Season breakdown
-        season_podiums = sum(
-            1 for r in results if r["position"] and r["position"] <= 3
-        )
-        season_dnfs = sum(
-            1 for r in results if _is_dnf(r["status"])
-        )
+        season_podiums = sum(1 for r in results if r["position"] and r["position"] <= 3)
+        season_dnfs = sum(1 for r in results if _is_dnf(r["status"]))
 
         # Per-driver breakdown
         driver_breakdown: dict[str, dict] = {}
@@ -366,7 +364,9 @@ def generate_team_profiles(supabase: Client) -> int:
             name = f"{d['forename']} {d['surname']}"
             if name not in driver_breakdown:
                 driver_breakdown[name] = {
-                    "points": 0, "best": 99, "races": 0,
+                    "points": 0,
+                    "best": 99,
+                    "races": 0,
                 }
             driver_breakdown[name]["points"] += r["points"] or 0
             driver_breakdown[name]["races"] += 1
@@ -375,7 +375,8 @@ def generate_team_profiles(supabase: Client) -> int:
 
         driver_lines = []
         for name, stats in sorted(
-            driver_breakdown.items(), key=lambda x: -x[1]["points"],
+            driver_breakdown.items(),
+            key=lambda x: -x[1]["points"],
         ):
             best = stats["best"] if stats["best"] < 99 else "N/A"
             driver_lines.append(
@@ -385,27 +386,27 @@ def generate_team_profiles(supabase: Client) -> int:
 
         md = f"""---
 category: team
-constructor_ref: {c['ref']}
+constructor_ref: {c["ref"]}
 knowledge_level: all
 tags:
-  - {c['ref']}
-  - {c['nationality'].lower()}
+  - {c["ref"]}
+  - {c["nationality"].lower()}
   - constructors-championship
 ---
 
-# {c['name']} — Team Profile
+# {c["name"]} — Team Profile
 
 ## Overview
 
-**Full Name:** {c['name']}
-**Nationality:** {c['nationality']}
-**{CURRENT_SEASON} Drivers:** {', '.join(drivers_list)}
+**Full Name:** {c["name"]}
+**Nationality:** {c["nationality"]}
+**{CURRENT_SEASON} Drivers:** {", ".join(drivers_list)}
 
 ## {CURRENT_SEASON} Season Performance
 
-- **Championship Position:** P{stand['position']}
-- **Points:** {stand['points']}
-- **Wins:** {stand['wins']}
+- **Championship Position:** P{stand["position"]}
+- **Points:** {stand["points"]}
+- **Wins:** {stand["wins"]}
 - **Podiums:** {season_podiums}
 - **DNFs:** {season_dnfs}
 
@@ -415,10 +416,10 @@ tags:
 
 ## Career Statistics (in database)
 
-- **Race Entries:** {cs.get('races', 0)}
-- **Wins:** {cs.get('wins', 0)}
-- **Podiums:** {cs.get('podiums', 0)}
-- **Total Points:** {cs.get('points', 0):.1f}
+- **Race Entries:** {cs.get("races", 0)}
+- **Wins:** {cs.get("wins", 0)}
+- **Podiums:** {cs.get("podiums", 0)}
+- **Total Points:** {cs.get("points", 0):.1f}
 """
         filepath = out_dir / f"{c['ref']}.md"
         filepath.write_text(md.strip() + "\n", encoding="utf-8")
@@ -572,7 +573,8 @@ def generate_race_summaries(supabase: Client) -> int:
             for p in pits:
                 code = p["drivers"]["code"]
                 driver_stops[code] = max(
-                    driver_stops.get(code, 0), p["stop_number"],
+                    driver_stops.get(code, 0),
+                    p["stop_number"],
                 )
             one_stop = sum(1 for v in driver_stops.values() if v == 1)
             two_stop = sum(1 for v in driver_stops.values() if v == 2)
@@ -588,35 +590,33 @@ def generate_race_summaries(supabase: Client) -> int:
 
         # Driver refs for metadata
         driver_refs = [r["drivers"]["ref"] for r in podium]
-        constructor_refs = list(
-            {r["constructors"]["ref"] for r in podium}
-        )
+        constructor_refs = list({r["constructors"]["ref"] for r in podium})
 
         w = winner["drivers"]
         wc = winner["constructors"]
 
         md = f"""---
 category: race
-season: {race['season']}
-round: {race['round']}
+season: {race["season"]}
+round: {race["round"]}
 circuit_ref: {circuit_ref}
 driver_refs:
-{chr(10).join(f'  - {ref}' for ref in driver_refs)}
+{chr(10).join(f"  - {ref}" for ref in driver_refs)}
 constructor_refs:
-{chr(10).join(f'  - {ref}' for ref in constructor_refs)}
+{chr(10).join(f"  - {ref}" for ref in constructor_refs)}
 knowledge_level: all
 tags:
   - {circuit_ref}
-  - {race['season']}-season
+  - {race["season"]}-season
 ---
 
-# {race['name']} {race['season']} — Race Summary
+# {race["name"]} {race["season"]} — Race Summary
 
-**Date:** {race['date']}
+**Date:** {race["date"]}
 **Circuit:** {circuit_name}
-**Winner:** {w['forename']} {w['surname']} ({wc['name']})
+**Winner:** {w["forename"]} {w["surname"]} ({wc["name"]})
 **Winner Time:** {_format_time(winner_time)}
-**Fastest Lap:** {fl_holder or 'N/A'}
+**Fastest Lap:** {fl_holder or "N/A"}
 
 ## Podium
 
@@ -644,9 +644,7 @@ tags:
         if pit_summary:
             md += f"\n## Pit Strategy\n\n{pit_summary}\n"
 
-        filename = (
-            f"{race['season']}-r{race['round']:02d}-{circuit_ref}.md"
-        )
+        filename = f"{race['season']}-r{race['round']:02d}-{circuit_ref}.md"
         filepath = out_dir / filename
         filepath.write_text(md.strip() + "\n", encoding="utf-8")
         count += 1

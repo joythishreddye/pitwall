@@ -44,7 +44,9 @@ def _fetch_all_pages(
     offset = 0
     while True:
         data = fetch_json(
-            http, url, rl,
+            http,
+            url,
+            rl,
             params={"limit": PAGE_LIMIT, "offset": offset},
         )
         items = data.get(table_key, {}).get(list_key, [])
@@ -168,13 +170,14 @@ def _map_qualifying(
 # ── Ingestion functions ──────────────────────────────────────────
 
 
-def ingest_circuits(
-    supabase: Client, http: httpx.Client, rl: RateLimiter
-) -> int:
+def ingest_circuits(supabase: Client, http: httpx.Client, rl: RateLimiter) -> int:
     """Fetch and upsert all circuits."""
     circuits = _fetch_all_pages(
-        http, rl, f"{BASE_URL}/circuits.json",
-        "CircuitTable", "Circuits",
+        http,
+        rl,
+        f"{BASE_URL}/circuits.json",
+        "CircuitTable",
+        "Circuits",
     )
     rows = [_map_circuit(c) for c in circuits]
     count = batch_upsert(supabase, "circuits", rows, on_conflict="ref")
@@ -182,13 +185,14 @@ def ingest_circuits(
     return count
 
 
-def ingest_drivers(
-    supabase: Client, http: httpx.Client, rl: RateLimiter
-) -> int:
+def ingest_drivers(supabase: Client, http: httpx.Client, rl: RateLimiter) -> int:
     """Fetch and upsert all drivers (paginated — ~900 total)."""
     all_drivers = _fetch_all_pages(
-        http, rl, f"{BASE_URL}/drivers.json",
-        "DriverTable", "Drivers",
+        http,
+        rl,
+        f"{BASE_URL}/drivers.json",
+        "DriverTable",
+        "Drivers",
     )
     rows = [_map_driver(d) for d in all_drivers]
     count = batch_upsert(supabase, "drivers", rows, on_conflict="ref")
@@ -196,13 +200,14 @@ def ingest_drivers(
     return count
 
 
-def ingest_constructors(
-    supabase: Client, http: httpx.Client, rl: RateLimiter
-) -> int:
+def ingest_constructors(supabase: Client, http: httpx.Client, rl: RateLimiter) -> int:
     """Fetch and upsert all constructors."""
     all_constructors = _fetch_all_pages(
-        http, rl, f"{BASE_URL}/constructors.json",
-        "ConstructorTable", "Constructors",
+        http,
+        rl,
+        f"{BASE_URL}/constructors.json",
+        "ConstructorTable",
+        "Constructors",
     )
     rows = [_map_constructor(c) for c in all_constructors]
     count = batch_upsert(supabase, "constructors", rows, on_conflict="ref")
@@ -221,8 +226,11 @@ def ingest_races(
     total = 0
     for season in seasons:
         races = _fetch_all_pages(
-            http, rl, f"{BASE_URL}/{season}.json",
-            "RaceTable", "Races",
+            http,
+            rl,
+            f"{BASE_URL}/{season}.json",
+            "RaceTable",
+            "Races",
         )
         rows = [r for r in (_map_race(race, circuit_lookup) for race in races) if r]
         count = batch_upsert(supabase, "races", rows, on_conflict="season,round")
@@ -245,8 +253,11 @@ def ingest_results(
     for season in seasons:
         season_count = 0
         raw_races = _fetch_all_pages(
-            http, rl, f"{BASE_URL}/{season}/results.json",
-            "RaceTable", "Races",
+            http,
+            rl,
+            f"{BASE_URL}/{season}/results.json",
+            "RaceTable",
+            "Races",
         )
         # Merge results from duplicate race entries across pages
         merged: dict[tuple, list] = {}
@@ -267,7 +278,9 @@ def ingest_results(
                 if r
             ]
             season_count += batch_upsert(
-                supabase, "race_results", rows,
+                supabase,
+                "race_results",
+                rows,
                 on_conflict="race_id,driver_id",
             )
         logger.info("Results %d: %d upserted", season, season_count)
@@ -290,8 +303,11 @@ def ingest_qualifying(
         season_count = 0
         try:
             raw_races = _fetch_all_pages(
-                http, rl, f"{BASE_URL}/{season}/qualifying.json",
-                "RaceTable", "Races",
+                http,
+                rl,
+                f"{BASE_URL}/{season}/qualifying.json",
+                "RaceTable",
+                "Races",
             )
         except Exception:
             logger.warning("No qualifying data for %d", season)
@@ -300,9 +316,7 @@ def ingest_qualifying(
         merged: dict[tuple, list] = {}
         for race in raw_races:
             key = (int(race["season"]), int(race["round"]))
-            merged.setdefault(key, []).extend(
-                race.get("QualifyingResults", [])
-            )
+            merged.setdefault(key, []).extend(race.get("QualifyingResults", []))
 
         for key, qual_results in merged.items():
             race_id = race_lookup.get(key)
@@ -317,7 +331,9 @@ def ingest_qualifying(
                 if r
             ]
             season_count += batch_upsert(
-                supabase, "qualifying_results", rows,
+                supabase,
+                "qualifying_results",
+                rows,
                 on_conflict="race_id,driver_id",
             )
         logger.info("Qualifying %d: %d upserted", season, season_count)
@@ -339,7 +355,9 @@ def ingest_standings(
         # Driver standings
         try:
             data = fetch_json(
-                http, f"{BASE_URL}/{season}/driverStandings.json", rl,
+                http,
+                f"{BASE_URL}/{season}/driverStandings.json",
+                rl,
             )
             standings_list = data.get("StandingsTable", {}).get("StandingsLists", [])
             if standings_list:
@@ -350,17 +368,21 @@ def ingest_standings(
                     entity_id = driver_lookup.get(ds["Driver"]["driverId"])
                     if entity_id is None:
                         continue
-                    rows.append({
-                        "season": season,
-                        "round": rnd,
-                        "type": "driver",
-                        "entity_id": entity_id,
-                        "position": safe_int(ds["position"]),
-                        "points": safe_float(ds["points"], 0.0),
-                        "wins": safe_int(ds.get("wins"), 0),
-                    })
+                    rows.append(
+                        {
+                            "season": season,
+                            "round": rnd,
+                            "type": "driver",
+                            "entity_id": entity_id,
+                            "position": safe_int(ds["position"]),
+                            "points": safe_float(ds["points"], 0.0),
+                            "wins": safe_int(ds.get("wins"), 0),
+                        }
+                    )
                 total += batch_upsert(
-                    supabase, "standings", rows,
+                    supabase,
+                    "standings",
+                    rows,
                     on_conflict="season,round,type,entity_id",
                 )
         except Exception:
@@ -369,7 +391,9 @@ def ingest_standings(
         # Constructor standings
         try:
             data = fetch_json(
-                http, f"{BASE_URL}/{season}/constructorStandings.json", rl,
+                http,
+                f"{BASE_URL}/{season}/constructorStandings.json",
+                rl,
             )
             standings_list = data.get("StandingsTable", {}).get("StandingsLists", [])
             if standings_list:
@@ -381,17 +405,21 @@ def ingest_standings(
                     entity_id = constructor_lookup.get(cref)
                     if entity_id is None:
                         continue
-                    rows.append({
-                        "season": season,
-                        "round": rnd,
-                        "type": "constructor",
-                        "entity_id": entity_id,
-                        "position": safe_int(cs["position"]),
-                        "points": safe_float(cs["points"], 0.0),
-                        "wins": safe_int(cs.get("wins"), 0),
-                    })
+                    rows.append(
+                        {
+                            "season": season,
+                            "round": rnd,
+                            "type": "constructor",
+                            "entity_id": entity_id,
+                            "position": safe_int(cs["position"]),
+                            "points": safe_float(cs["points"], 0.0),
+                            "wins": safe_int(cs.get("wins"), 0),
+                        }
+                    )
                 total += batch_upsert(
-                    supabase, "standings", rows,
+                    supabase,
+                    "standings",
+                    rows,
                     on_conflict="season,round,type,entity_id",
                 )
         except Exception:
@@ -439,13 +467,30 @@ def run_jolpica_ingest(
 
         # Phase 3: results, qualifying, standings
         counts["race_results"] = ingest_results(
-            supabase, http, rl, seasons, race_lookup, driver_lookup, constructor_lookup,
+            supabase,
+            http,
+            rl,
+            seasons,
+            race_lookup,
+            driver_lookup,
+            constructor_lookup,
         )
         counts["qualifying_results"] = ingest_qualifying(
-            supabase, http, rl, seasons, race_lookup, driver_lookup, constructor_lookup,
+            supabase,
+            http,
+            rl,
+            seasons,
+            race_lookup,
+            driver_lookup,
+            constructor_lookup,
         )
         counts["standings"] = ingest_standings(
-            supabase, http, rl, seasons, driver_lookup, constructor_lookup,
+            supabase,
+            http,
+            rl,
+            seasons,
+            driver_lookup,
+            constructor_lookup,
         )
 
     logger.info("Jolpica ingest complete: %s", counts)

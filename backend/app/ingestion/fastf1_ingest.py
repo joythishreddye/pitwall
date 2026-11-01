@@ -72,22 +72,26 @@ def _ingest_laps(
         compound = lap.get("Compound")
         if pd.isna(compound):
             compound = None
-        rows.append({
-            "race_id": race_id,
-            "driver_id": driver_id,
-            "lap_number": lap_num,
-            "position": pos,
-            "time_millis": td_to_ms(lap.get("LapTime")),
-            "sector1_ms": td_to_ms(lap.get("Sector1Time")),
-            "sector2_ms": td_to_ms(lap.get("Sector2Time")),
-            "sector3_ms": td_to_ms(lap.get("Sector3Time")),
-            "compound": compound,
-            "tyre_life": _safe_val(lap, "TyreLife", int),
-            "is_pit_in": not pd.isna(lap.get("PitInTime")),
-            "is_pit_out": not pd.isna(lap.get("PitOutTime")),
-        })
+        rows.append(
+            {
+                "race_id": race_id,
+                "driver_id": driver_id,
+                "lap_number": lap_num,
+                "position": pos,
+                "time_millis": td_to_ms(lap.get("LapTime")),
+                "sector1_ms": td_to_ms(lap.get("Sector1Time")),
+                "sector2_ms": td_to_ms(lap.get("Sector2Time")),
+                "sector3_ms": td_to_ms(lap.get("Sector3Time")),
+                "compound": compound,
+                "tyre_life": _safe_val(lap, "TyreLife", int),
+                "is_pit_in": not pd.isna(lap.get("PitInTime")),
+                "is_pit_out": not pd.isna(lap.get("PitOutTime")),
+            }
+        )
     return batch_upsert(
-        supabase, "lap_summaries", rows,
+        supabase,
+        "lap_summaries",
+        rows,
         on_conflict="race_id,driver_id,lap_number",
     )
 
@@ -126,16 +130,20 @@ def _ingest_pit_stops(
                     delta = (pit_out - pit_in).total_seconds()
                     duration_ms = int(delta * 1000)
 
-            rows.append({
-                "race_id": race_id,
-                "driver_id": driver_id,
-                "stop_number": stop_num,
-                "lap": lap_num,
-                "duration_ms": duration_ms,
-            })
+            rows.append(
+                {
+                    "race_id": race_id,
+                    "driver_id": driver_id,
+                    "stop_number": stop_num,
+                    "lap": lap_num,
+                    "duration_ms": duration_ms,
+                }
+            )
 
     return batch_upsert(
-        supabase, "pit_stops", rows,
+        supabase,
+        "pit_stops",
+        rows,
         on_conflict="race_id,driver_id,stop_number",
     )
 
@@ -184,22 +192,22 @@ def _ingest_weather(
             continue
         w = weather[mask].iloc[-1]
 
-        rows.append({
-            "race_id": race_id,
-            "lap_number": lap_num,
-            "air_temp": _safe_val(w, "AirTemp"),
-            "track_temp": _safe_val(w, "TrackTemp"),
-            "humidity": _safe_val(w, "Humidity"),
-            "pressure": _safe_val(w, "Pressure"),
-            "wind_speed": _safe_val(w, "WindSpeed"),
-            "wind_direction": _safe_val(w, "WindDirection", int),
-            "rainfall": bool(w.get("Rainfall", False)),
-        })
+        rows.append(
+            {
+                "race_id": race_id,
+                "lap_number": lap_num,
+                "air_temp": _safe_val(w, "AirTemp"),
+                "track_temp": _safe_val(w, "TrackTemp"),
+                "humidity": _safe_val(w, "Humidity"),
+                "pressure": _safe_val(w, "Pressure"),
+                "wind_speed": _safe_val(w, "WindSpeed"),
+                "wind_direction": _safe_val(w, "WindDirection", int),
+                "rainfall": bool(w.get("Rainfall", False)),
+            }
+        )
 
     # Delete existing weather for this race, then plain insert
-    supabase.table("weather_readings").delete().eq(
-        "race_id", race_id
-    ).execute()
+    supabase.table("weather_readings").delete().eq("race_id", race_id).execute()
     if not rows:
         return 0
     for i in range(0, len(rows), BATCH_SIZE):
@@ -229,13 +237,17 @@ def _process_session(
             wait = 120 * (attempt + 1)
             logger.warning(
                 "FastF1 rate limit hit on %d R%d, waiting %ds (attempt %d/3)",
-                year, round_num, wait, attempt + 1,
+                year,
+                round_num,
+                wait,
+                attempt + 1,
             )
             time.sleep(wait)
         except Exception:
             logger.warning(
                 "Could not load session %d round %d, skipping",
-                year, round_num,
+                year,
+                round_num,
             )
             return counts
     else:
@@ -251,18 +263,17 @@ def _process_session(
         logger.warning("Data not loaded for %d round %d, skipping", year, round_num)
         return counts
 
-    counts["lap_summaries"] = _ingest_laps(
-        supabase, laps, race_id, driver_code_lookup
-    )
-    counts["pit_stops"] = _ingest_pit_stops(
-        supabase, laps, race_id, driver_code_lookup
-    )
+    counts["lap_summaries"] = _ingest_laps(supabase, laps, race_id, driver_code_lookup)
+    counts["pit_stops"] = _ingest_pit_stops(supabase, laps, race_id, driver_code_lookup)
     counts["weather_readings"] = _ingest_weather(supabase, session, race_id)
 
     logger.info(
         "Session %d R%d: %d laps, %d pits, %d weather",
-        year, round_num,
-        counts["lap_summaries"], counts["pit_stops"], counts["weather_readings"],
+        year,
+        round_num,
+        counts["lap_summaries"],
+        counts["pit_stops"],
+        counts["weather_readings"],
     )
     return counts
 
@@ -319,7 +330,9 @@ def run_fastf1_ingest(
             if existing.count and existing.count > 0:
                 logger.debug(
                     "Skipping %d R%d — %d laps exist",
-                    year, round_num, existing.count,
+                    year,
+                    round_num,
+                    existing.count,
                 )
                 continue
 

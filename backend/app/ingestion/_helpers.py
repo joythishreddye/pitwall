@@ -69,7 +69,10 @@ def fetch_json(
 
 
 def build_lookup(
-    supabase: Client, table: str, key_col: str, value_col: str = "id",
+    supabase: Client,
+    table: str,
+    key_col: str,
+    value_col: str = "id",
 ) -> dict:
     """Load a {key: value} mapping from a Supabase table."""
     rows = (
@@ -87,11 +90,7 @@ def build_lookup(
 def build_race_lookup(supabase: Client) -> dict[tuple[int, int], int]:
     """Load {(season, round): id} mapping from races table."""
     rows = (
-        supabase.table("races")
-        .select("id, season, round")
-        .limit(10000)
-        .execute()
-        .data
+        supabase.table("races").select("id, season, round").limit(10000).execute().data
     )
     return {(r["season"], r["round"]): r["id"] for r in rows}
 

@@ -10,6 +10,4 @@ def create_llm() -> LLMProvider:
     if provider == "groq":
         return GroqProvider()
 
-    raise ValueError(
-        f"Unknown LLM provider: {provider}. Supported: groq"
-    )
+    raise ValueError(f"Unknown LLM provider: {provider}. Supported: groq")

@@ -167,15 +167,14 @@ class TestKnowledgeLevel:
         assert _detect_knowledge_level("Explain the rules") == "beginner"
 
     def test_expert_detected(self) -> None:
-        assert _detect_knowledge_level(
-            "How does degradation affect the undercut window?"
-        ) == "expert"
+        assert (
+            _detect_knowledge_level("How does degradation affect the undercut window?")
+            == "expert"
+        )
 
     def test_intermediate_default(self) -> None:
         assert _detect_knowledge_level("Who won the race?") == "intermediate"
-        assert _detect_knowledge_level(
-            "How is Mercedes performing?"
-        ) == "intermediate"
+        assert _detect_knowledge_level("How is Mercedes performing?") == "intermediate"
 
 
 # ---------------------------------------------------------------------------
@@ -194,7 +193,8 @@ class TestRetriever:
 
     @pytest.mark.asyncio()
     async def test_classify_intent_parses_json(
-        self, mock_retriever: Retriever,
+        self,
+        mock_retriever: Retriever,
     ) -> None:
         mock_retriever.llm.generate.return_value = (
             '{"intent": "factual", "entities": {"drivers": ["hamilton"],'
@@ -207,7 +207,8 @@ class TestRetriever:
 
     @pytest.mark.asyncio()
     async def test_classify_intent_handles_code_fences(
-        self, mock_retriever: Retriever,
+        self,
+        mock_retriever: Retriever,
     ) -> None:
         mock_retriever.llm.generate.return_value = (
             '```json\n{"intent": "explanation", "entities": {'
@@ -219,7 +220,8 @@ class TestRetriever:
 
     @pytest.mark.asyncio()
     async def test_classify_intent_fallback_on_bad_json(
-        self, mock_retriever: Retriever,
+        self,
+        mock_retriever: Retriever,
     ) -> None:
         mock_retriever.llm.generate.return_value = "not valid json at all"
         result = await mock_retriever.classify_intent("Something")
@@ -228,7 +230,8 @@ class TestRetriever:
 
     @pytest.mark.asyncio()
     async def test_vector_search_calls_rpc(
-        self, mock_retriever: Retriever,
+        self,
+        mock_retriever: Retriever,
     ) -> None:
         mock_rpc = MagicMock()
         mock_rpc.execute.return_value = MagicMock(
@@ -265,7 +268,10 @@ class TestRetriever:
 
     def test_reranked_chunk_dataclass(self) -> None:
         chunk = RetrievedChunk(
-            content="test", metadata={}, similarity=0.5, source="a.md",
+            content="test",
+            metadata={},
+            similarity=0.5,
+            source="a.md",
         )
         assert chunk.content == "test"
         assert chunk.similarity == 0.5

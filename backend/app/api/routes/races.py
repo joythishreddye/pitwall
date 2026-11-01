@@ -119,9 +119,7 @@ class DriverStrategy(BaseModel):
 
 def _race_exists(db: Client, race_id: int) -> bool:
     """Return True when a race with the given id exists in the database."""
-    result = (
-        db.table("races").select("id").eq("id", race_id).limit(1).execute()
-    )
+    result = db.table("races").select("id").eq("id", race_id).limit(1).execute()
     return bool(result.data)
 
 
@@ -204,9 +202,9 @@ def get_race(race_id: int, db: DB) -> RaceDetail:
         c = row.get("constructors") or {}
         race_results.append(
             RaceResult(
-                driver=_build_driver_brief(d) if d.get("id") else DriverBrief(
-                    id=0, ref="", forename="Unknown", surname=""
-                ),
+                driver=_build_driver_brief(d)
+                if d.get("id")
+                else DriverBrief(id=0, ref="", forename="Unknown", surname=""),
                 constructor=(
                     _build_constructor_brief(c)
                     if c.get("id")
@@ -260,13 +258,7 @@ def get_race_laps(
     # Resolve optional driver filter
     driver_id_filter: int | None = None
     if driver_ref is not None:
-        dr = (
-            db.table("drivers")
-            .select("id")
-            .eq("ref", driver_ref)
-            .limit(1)
-            .execute()
-        )
+        dr = db.table("drivers").select("id").eq("ref", driver_ref).limit(1).execute()
         if not dr.data:
             raise HTTPException(
                 status_code=404, detail=f"Driver '{driver_ref}' not found"
@@ -321,9 +313,9 @@ def get_race_laps(
     for did, d in driver_map.items():
         result.append(
             DriverLapData(
-                driver=_build_driver_brief(d) if d.get("id") else DriverBrief(
-                    id=did, ref="", forename="Unknown", surname=""
-                ),
+                driver=_build_driver_brief(d)
+                if d.get("id")
+                else DriverBrief(id=did, ref="", forename="Unknown", surname=""),
                 laps=driver_laps[did],
             )
         )
@@ -379,9 +371,9 @@ def get_race_strategy(race_id: int, db: DB) -> list[DriverStrategy]:
     for did, d in driver_map.items():
         result.append(
             DriverStrategy(
-                driver=_build_driver_brief(d) if d.get("id") else DriverBrief(
-                    id=did, ref="", forename="Unknown", surname=""
-                ),
+                driver=_build_driver_brief(d)
+                if d.get("id")
+                else DriverBrief(id=did, ref="", forename="Unknown", surname=""),
                 pit_stops=driver_stops[did],
             )
         )
