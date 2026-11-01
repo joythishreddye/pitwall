@@ -14,7 +14,12 @@ It also enforces the filter rules the eval baseline supports:
 * no race or circuit filter for years before the first season the knowledge
   base covers (its race docs start in 2018, so "Suzuka in 1989" lives in
   the history docs);
-* comparisons use no filter, and entity searches cover each side.
+* comparisons use no filter, and entity searches cover each side;
+* a scan of the question trusts only unambiguous names: refs, full names,
+  team and circuit names, circuit cities. Country names and surnames that
+  are everyday words ("China", "a stroll") still repair names the classifier
+  gave, but a scan never matches them, so a stray word can't filter the
+  answer out.
 """
 
 from __future__ import annotations
@@ -40,6 +45,9 @@ _EXTRA_TEAM_ALIASES = {
     "red bull racing": "red_bull",
     "aston": "aston_martin",
 }
+# Surnames that are also everyday words. They resolve a name the classifier
+# gives, but a scan of the question ignores them ("a stroll around Monza").
+_WORD_SURNAMES = frozenset({"stroll", "button", "hill"})
 
 
 def _norm(text: str) -> str:
@@ -51,9 +59,13 @@ def _norm(text: str) -> str:
 @dataclass
 class _AliasTable:
     to_ref: dict[str, str] = field(default_factory=dict)
+    # Aliases that resolve classifier output but that a scan never matches
+    weak: set[str] = field(default_factory=set)
     _ambiguous: set[str] = field(default_factory=set)
 
-    def add(self, ref: str, aliases: Iterable[str | None]) -> None:
+    def add(
+        self, ref: str, aliases: Iterable[str | None], *, weak: bool = False
+    ) -> None:
         for raw in aliases:
             if not raw:
                 continue
@@ -67,9 +79,16 @@ class _AliasTable:
             if existing and existing != ref:
                 # Two entities share this alias: trust neither
                 del self.to_ref[alias]
+                self.weak.discard(alias)
                 self._ambiguous.add(alias)
-            else:
+            elif existing is None:
                 self.to_ref[alias] = ref
+                if weak:
+                    self.weak.add(alias)
+            elif not weak:
+                # The same entity also uses this alias unambiguously
+                # (circuit "monaco" in the country Monaco)
+                self.weak.discard(alias)
 
     def resolve(self, value: object) -> str | None:
         if not isinstance(value, str) or not value.strip():
@@ -79,12 +98,14 @@ class _AliasTable:
     def find_and_strip(self, padded: str) -> tuple[list[str], str]:
         """Find whole-word aliases in space-padded normalized text.
 
-        Returns the refs found and the text with those aliases blanked out,
-        so a later table can't match inside them ("red bull" in "red bull
-        ring"). Longest aliases go first.
+        Weak aliases are skipped. Returns the refs found and the text with
+        those aliases blanked out, so a later table can't match inside them
+        ("red bull" in "red bull ring"). Longest aliases go first.
         """
         found: list[str] = []
         for alias in sorted(self.to_ref, key=len, reverse=True):
+            if alias in self.weak:
+                continue
             needle = f" {alias} "
             if needle in padded:
                 ref = self.to_ref[alias]
@@ -131,8 +152,13 @@ class EntityLinker:
         linker = cls(first_season=min(seasons) if seasons else 2018)
         for d in drivers:
             if d["ref"] in kb_drivers:
-                full = f"{d.get('forename', '')} {d.get('surname', '')}"
-                linker.drivers.add(d["ref"], [d["ref"], d.get("surname"), full])
+                surname = d.get("surname") or ""
+                linker.drivers.add(d["ref"], [f"{d.get('forename', '')} {surname}"])
+                # The ref is usually the surname too ("stroll")
+                for alias in (d["ref"], surname):
+                    linker.drivers.add(
+                        d["ref"], [alias], weak=_norm(alias) in _WORD_SURNAMES
+                    )
         for c in constructors:
             if c["ref"] in kb_teams:
                 linker.teams.add(c["ref"], [c["ref"], c.get("name")])
@@ -143,11 +169,12 @@ class EntityLinker:
         kb_circuit_rows = [c for c in circuits if c["ref"] in kb_circuits]
         country_counts = Counter(_norm(c.get("country") or "") for c in kb_circuit_rows)
         for c in kb_circuit_rows:
-            aliases = [c["ref"], c.get("name"), c.get("location")]
+            linker.circuits.add(c["ref"], [c["ref"], c.get("name"), c.get("location")])
+            # A country names its only circuit when the classifier says so,
+            # but "Is China a big market?" is not about Shanghai
             country = _norm(c.get("country") or "")
             if country and country_counts[country] == 1:
-                aliases.append(country)
-            linker.circuits.add(c["ref"], aliases)
+                linker.circuits.add(c["ref"], [country], weak=True)
         return linker
 
     @classmethod
@@ -186,11 +213,10 @@ class EntityLinker:
     def link(self, intent: dict, question: str) -> dict:
         """Return a copy of ``intent`` with valid refs and a usable filter.
 
-        Hard filters come only from entities the classifier named, repaired
-        to knowledge-base refs. Names found only by scanning the question are
-        soft: they get their own targeted searches and a guaranteed slot, but
-        never narrow the main search. That way a stray word ("a stroll",
-        "China", "the Americas") can't filter the answer out.
+        Entities come from the classifier, repaired to knowledge-base refs,
+        and from unambiguous names in the question (the classifier doesn't
+        know the 2026 newcomers). One entity of a kind becomes the filter;
+        several mean a comparison, which entity searches cover instead.
         """
         raw_filter = intent.get("metadata_filter")
         raw_filter = raw_filter if isinstance(raw_filter, dict) else {}
@@ -213,13 +239,13 @@ class EntityLinker:
         circuits = _merge(named_circuits, found_circuits)
 
         circuit_ref = self.circuits.resolve(raw_filter.get("circuit_ref")) or (
-            named_circuits[0] if len(named_circuits) == 1 else None
+            circuits[0] if len(circuits) == 1 else None
         )
         driver_ref = self.drivers.resolve(raw_filter.get("driver_ref")) or (
-            named_drivers[0] if len(named_drivers) == 1 else None
+            drivers[0] if len(drivers) == 1 else None
         )
         team_ref = self.teams.resolve(raw_filter.get("constructor_ref")) or (
-            named_teams[0] if len(named_teams) == 1 else None
+            teams[0] if len(teams) == 1 else None
         )
 
         season = raw_filter.get("season")

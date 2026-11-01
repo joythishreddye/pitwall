@@ -28,12 +28,12 @@ The pipeline degrades instead of failing. Without embeddings (an outage, or the 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
 | Vector search alone | 60.0% | 0.57 |
-| + the classifier's filters, used as-is | 78.2% | 0.67 |
-| + entity linking (production) | **98.2%** | **0.85** |
-| + cross-encoder reranking | 98.2% | 0.76 |
-| Full-text fallback (no embeddings), linked filters | 83.6% | 0.77 |
+| + the classifier's filters, used as-is | 81.8% | 0.72 |
+| + entity linking (production) | **100%** | **0.91** |
+| + cross-encoder reranking | 98.2% | 0.75 |
+| Full-text fallback (no embeddings), linked filters | 87.3% | 0.81 |
 
-Entity linking alone is worth 20 points of hit@5. Reranking found the same documents but ranked them worse, and added about 0.7s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+Entity linking adds 18 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added about 0.8s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
 
 Caveats:
 - The gold set is small and hand-written, and the linker was built against its failures.
@@ -54,7 +54,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 - **Readiness, not just liveness:** `GET /health/ready` checks the database, both models and the embedding service. A twice-daily GitHub Actions job keeps the free database awake and emails on outages.
 - **Spend guardrails:** paid inference calls go through a monthly ceiling counted in Postgres, which fails closed. Chat has per-client and global rate limits.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 139 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 149 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 

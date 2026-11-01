@@ -6,7 +6,6 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
-from pathlib import PurePosixPath
 from typing import Protocol
 
 import httpx
@@ -26,6 +25,15 @@ _FULLTEXT_MAX_CHARS = 300
 
 _RERANKER_URL = (
     "https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-base"
+)
+
+# Per kind of entity: the linker's list, the metadata key that marks the
+# entity's own documents, and any extra filter. Driver profiles carry their
+# team's constructor_ref, so a team search asks for the team doc itself.
+_ENTITY_SEARCHES: tuple[tuple[str, str, dict], ...] = (
+    ("drivers", "driver_ref", {}),
+    ("teams", "constructor_ref", {"category": "team"}),
+    ("circuits", "circuit_ref", {}),
 )
 
 
@@ -303,12 +311,17 @@ class Retriever:
         if self.linker is not None:
             # Repair refs and drop filters the eval showed to hurt
             intent_result = self.linker.link(intent_result, query)
-        metadata_filter = intent_result.get("metadata_filter", {})
-        entities = intent_result.get("entities", {})
+        # Without a linker these come straight from the model: check shapes
+        metadata_filter = intent_result.get("metadata_filter")
+        if not isinstance(metadata_filter, dict):
+            metadata_filter = {}
+        entities = intent_result.get("entities")
+        if not isinstance(entities, dict):
+            entities = {}
 
         # Stage 2: Primary vector search
         try:
-            candidates = await self.vector_search(
+            primary = await self.vector_search(
                 query,
                 metadata_filter,
                 top_k=20,
@@ -323,21 +336,24 @@ class Retriever:
             self.last_mode = "fulltext" if chunks else "none"
             return chunks
 
-        # Stage 2b: Entity-aware supplementary searches
-        entity_hits = await self._entity_searches(query, entities)
-        seen = {c.source + c.content[:50] for c in candidates}
-        for chunks in entity_hits.values():
+        candidates: list[RetrievedChunk] = []
+        seen: set[str] = set()
+
+        def add(chunks: list[RetrievedChunk]) -> None:
             for chunk in chunks:
                 key = chunk.source + chunk.content[:50]
                 if key not in seen:
                     candidates.append(chunk)
                     seen.add(key)
 
-        # Stage 2c: Too few results? Relax the filter one step at a time.
-        # Season-only comes first: a race named for one country but held in
-        # another ("Bahrain Grand Prix" at Sepang in 2026) fails the circuit
-        # filter but is still a race of that season.
-        if len(candidates) < 5 and metadata_filter:
+        add(primary)
+
+        # Stage 2b: Too few filtered results? Relax the filter one step at a
+        # time. Season-only comes first: a race named for one country but held
+        # in another ("Bahrain Grand Prix" at Sepang in 2026) fails the circuit
+        # filter but is still a race of that season. This counts the filtered
+        # search alone, before entity searches pad the list.
+        if len(primary) < 5 and metadata_filter:
             fallbacks: list[dict] = []
             if "season" in metadata_filter and len(metadata_filter) > 1:
                 fallbacks.append({"season": metadata_filter["season"]})
@@ -348,14 +364,16 @@ class Retriever:
                     len(candidates),
                     fallback or "none",
                 )
-                for chunk in await self.vector_search(query, fallback, top_k=20):
-                    key = chunk.source + chunk.content[:50]
-                    if key not in seen:
-                        candidates.append(chunk)
-                        seen.add(key)
+                add(await self._safe_search(query, fallback, top_k=20))
                 if len(candidates) >= 5:
                     break
             del candidates[20:]
+
+        # Stage 2c: A targeted search per named entity. Its hits rank after
+        # the main results; coverage below gives each entity a slot.
+        entity_hits = await self._entity_searches(query, entities)
+        for chunks in entity_hits.values():
+            add(chunks)
 
         # Stage 3: Rerank
         if self.rerank_enabled:
@@ -371,78 +389,104 @@ class Retriever:
             self.last_mode = "vector+rerank" if self.reranked else "vector"
         return reranked
 
+    async def _safe_search(
+        self,
+        query: str,
+        metadata_filter: dict,
+        top_k: int,
+    ) -> list[RetrievedChunk]:
+        """A secondary search: if it fails, only its own results are lost."""
+        try:
+            return await self.vector_search(query, metadata_filter, top_k=top_k)
+        except Exception:
+            logger.warning(
+                "Secondary search failed (filter %s); continuing without it",
+                metadata_filter,
+                exc_info=True,
+            )
+            return []
+
     async def _entity_searches(
         self,
         query: str,
         entities: dict,
-    ) -> dict[str, list[RetrievedChunk]]:
+    ) -> dict[tuple[str, str], list[RetrievedChunk]]:
         """Run a targeted search per named driver, team and circuit.
 
-        Returns hits keyed by ref, in the order the entities were named.
+        Returns hits keyed by (metadata key, ref), in the order the entities
+        were named. An entity whose search failed or found nothing maps to an
+        empty list, so coverage still protects the chunks that mention it.
         """
-        searches = [
-            *(("driver_ref", ref) for ref in entities.get("drivers", [])),
-            *(("constructor_ref", ref) for ref in entities.get("teams", [])),
-            *(("circuit_ref", ref) for ref in entities.get("circuits", [])),
-        ]
-        hits: dict[str, list[RetrievedChunk]] = {}
-        for key, name in searches:
-            ref = str(name).lower().replace(" ", "_")
-            if ref in hits:
-                continue
-            chunks = await self.vector_search(query, {key: ref}, top_k=5)
-            if chunks:
-                hits[ref] = chunks
-        if hits:
-            logger.info("Entity searches covered: %s", ", ".join(hits))
+        hits: dict[tuple[str, str], list[RetrievedChunk]] = {}
+        for kind, key, extra in _ENTITY_SEARCHES:
+            names = entities.get(kind)
+            for name in names if isinstance(names, list) else []:
+                ref = str(name).lower().replace(" ", "_")
+                if (key, ref) not in hits:
+                    hits[(key, ref)] = await self._safe_search(
+                        query, {key: ref, **extra}, top_k=5
+                    )
+        found = [ref for (_key, ref), chunks in hits.items() if chunks]
+        if found:
+            logger.info("Entity searches covered: %s", ", ".join(found))
         return hits
 
     @staticmethod
-    def _covers(chunk: RetrievedChunk, ref: str) -> bool:
-        """Whether ``chunk`` is about the entity ``ref`` (exact matches only)."""
+    def _covers(chunk: RetrievedChunk, key: str, ref: str) -> bool:
+        """Whether ``chunk`` comes from one of the entity's own documents.
+
+        Exact metadata matches only. A driver profile carries its team's
+        constructor_ref but isn't the team's document, so it can't stand in
+        for the team.
+        """
         meta = chunk.metadata
-        return (
-            ref
-            in (
-                meta.get("driver_ref"),
-                meta.get("constructor_ref"),
-                meta.get("circuit_ref"),
-            )
-            or PurePosixPath(chunk.source).stem == ref
-        )
+        if meta.get(key) != ref:
+            return False
+        return key != "constructor_ref" or not meta.get("driver_ref")
 
     def _ensure_entity_coverage(
         self,
-        reranked: list[RetrievedChunk],
-        entity_hits: dict[str, list[RetrievedChunk]],
+        ranked: list[RetrievedChunk],
+        entity_hits: dict[tuple[str, str], list[RetrievedChunk]],
         top_k: int = 5,
     ) -> list[RetrievedChunk]:
         """Make sure every named entity has at least one chunk in the result.
 
-        A missing entity gets its best targeted hit, which replaces the
-        lowest-ranked chunk not already carrying an entity. (Evicting blindly
-        used to drop one side of a comparison.)
+        A missing entity gets its best targeted hit. It takes the place of the
+        lowest-ranked chunk that no other entity depends on: an entity's only
+        chunk is kept (so a comparison keeps both sides), but a third chunk
+        about one race can make room for a second race.
         """
-        result = list(reranked)
-        refs = list(entity_hits)
-        protected = {id(c) for c in result if any(self._covers(c, r) for r in refs)}
-        for ref in refs:
-            if any(self._covers(c, ref) for c in result):
+        result = list(ranked[:top_k])
+        for key, ref in entity_hits:
+            if any(self._covers(c, key, ref) for c in result):
                 continue
-            best = entity_hits[ref][0]
+            best = next(
+                (c for c in entity_hits[(key, ref)] if self._covers(c, key, ref)), None
+            )
+            if best is None:
+                continue
             if len(result) >= top_k:
-                victim = next(
-                    (
-                        i
-                        for i in range(len(result) - 1, -1, -1)
-                        if id(result[i]) not in protected
-                    ),
-                    None,
-                )
+                victim = self._eviction_victim(result, entity_hits)
                 if victim is None:
                     continue
                 result.pop(victim)
             result.append(best)
-            protected.add(id(best))
             logger.info("Injected entity chunk for '%s'", ref)
-        return result[:top_k]
+        return result
+
+    def _eviction_victim(
+        self,
+        result: list[RetrievedChunk],
+        entity_hits: dict[tuple[str, str], list[RetrievedChunk]],
+    ) -> int | None:
+        """Index of the lowest-ranked chunk no entity depends on, if any."""
+        for i in range(len(result) - 1, -1, -1):
+            others = result[:i] + result[i + 1 :]
+            if all(
+                any(self._covers(c, key, ref) for c in others)
+                for key, ref in entity_hits
+                if self._covers(result[i], key, ref)
+            ):
+                return i
+        return None

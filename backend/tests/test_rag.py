@@ -1,5 +1,6 @@
 """Tests for the RAG pipeline: chunker, prompt builder, knowledge level, retriever."""
 
+import json
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -8,6 +9,7 @@ import pytest
 from app.api.routes.chat import _detect_knowledge_level
 from app.llm.base import LLMError, Message
 from app.rag.chunker import chunk_markdown
+from app.rag.entities import EntityLinker
 from app.rag.prompt import SYSTEM_PROMPT, build_rag_prompt
 from app.rag.query_embedder import EmbeddingUnavailable
 from app.rag.retriever import RetrievedChunk, Retriever
@@ -283,6 +285,156 @@ class TestRetriever:
 # ---------------------------------------------------------------------------
 
 
+def _chunk(source: str, similarity: float = 0.5, **meta: object) -> RetrievedChunk:
+    return RetrievedChunk(
+        content=source, metadata=meta, similarity=similarity, source=source
+    )
+
+
+def _row(source: str, similarity: float, **meta: object) -> dict:
+    return {
+        "content": source,
+        "metadata": meta,
+        "similarity": similarity,
+        "source": source,
+    }
+
+
+def _intent_json(filter_: dict, **entities: list) -> str:
+    return json.dumps(
+        {
+            "intent": "factual",
+            "entities": {
+                "drivers": entities.get("drivers", []),
+                "teams": entities.get("teams", []),
+                "circuits": entities.get("circuits", []),
+                "seasons": entities.get("seasons", []),
+            },
+            "metadata_filter": filter_,
+        }
+    )
+
+
+class FakeKnowledgeBase:
+    """Answers match_knowledge_chunks the way Postgres does: containment
+    filter, best similarity first, at most match_count rows."""
+
+    def __init__(self, rows: list[dict], fail_on: list[dict] | None = None) -> None:
+        self.rows = rows
+        self.fail_on = fail_on or []
+        self.filters: list[dict] = []
+
+    def rpc(self, _name: str, params: dict) -> MagicMock:
+        wanted = params["filter_metadata"]
+        self.filters.append(wanted)
+        if wanted in self.fail_on:
+            raise RuntimeError("canceling statement due to statement timeout")
+        matched = [
+            r
+            for r in self.rows
+            if all(r["metadata"].get(k) == v for k, v in wanted.items())
+        ]
+        matched.sort(key=lambda r: r["similarity"], reverse=True)
+        call = MagicMock()
+        call.execute.return_value = MagicMock(data=matched[: params["match_count"]])
+        return call
+
+
+# In 2026 the "Bahrain Grand Prix" ran at Sepang. Older Bahrain races score
+# higher on the word "Bahrain", which is what buried the 2026 race.
+BAHRAIN_KB = [
+    _row(
+        "races/2026-r16-sepang.md",
+        0.80,
+        category="race",
+        season=2026,
+        circuit_ref="sepang",
+    ),
+    *(
+        _row(
+            f"races/2026-r{i:02d}-c{i}.md",
+            0.70 - i / 100,
+            category="race",
+            season=2026,
+            circuit_ref=f"c{i}",
+        )
+        for i in range(1, 6)
+    ),
+    *(
+        _row(
+            f"races/{y}-bahrain.md",
+            0.85,
+            category="race",
+            season=y,
+            circuit_ref="bahrain",
+        )
+        for y in (2019, 2020, 2021, 2024, 2025)
+    ),
+    _row("circuits/bahrain.md", 0.75, category="circuits", circuit_ref="bahrain"),
+]
+BAHRAIN_CIRCUITS = [
+    {
+        "ref": "bahrain",
+        "name": "Bahrain International Circuit",
+        "location": "Sakhir",
+        "country": "Bahrain",
+    },
+    {
+        "ref": "sepang",
+        "name": "Sepang International Circuit",
+        "location": "Kuala Lumpur",
+        "country": "Malaysia",
+    },
+]
+
+# Driver docs carry their team's constructor_ref, so a team search can
+# surface a driver profile ahead of the team's own doc.
+TEAMS_KB = [
+    _row(
+        "races/2026-r10-spa.md", 0.70, category="race", season=2026, circuit_ref="spa"
+    ),
+    _row(
+        "races/2026-r14-madring.md",
+        0.69,
+        category="race",
+        season=2026,
+        circuit_ref="madring",
+    ),
+    _row(
+        "races/2025-r21-interlagos.md",
+        0.68,
+        category="race",
+        season=2025,
+        circuit_ref="interlagos",
+    ),
+    _row("teams/mercedes.md", 0.67, category="team", constructor_ref="mercedes"),
+    _row(
+        "drivers/norris.md",
+        0.66,
+        category="driver",
+        driver_ref="norris",
+        constructor_ref="mclaren",
+    ),
+    _row(
+        "drivers/russell.md",
+        0.60,
+        category="driver",
+        driver_ref="russell",
+        constructor_ref="mercedes",
+    ),
+    _row("teams/mclaren.md", 0.55, category="team", constructor_ref="mclaren"),
+]
+TEAMS_LINKER_ROWS = (
+    [r["metadata"] for r in TEAMS_KB],
+    [
+        {"ref": "norris", "forename": "Lando", "surname": "Norris"},
+        {"ref": "russell", "forename": "George", "surname": "Russell"},
+    ],
+    [{"ref": "mercedes", "name": "Mercedes"}, {"ref": "mclaren", "name": "McLaren"}],
+    [],
+)
+
+
 class TestRetrieverResilience:
     @pytest.fixture()
     def retriever(self) -> Retriever:
@@ -452,27 +604,12 @@ class TestRetrieverResilience:
     def test_comparisons_keep_both_injected_entities(
         self, retriever: Retriever
     ) -> None:
-        generic = [
-            RetrievedChunk(
-                content=f"g{i}", metadata={}, similarity=0.9, source=f"races/r{i}.md"
-            )
-            for i in range(5)
-        ]
-        norris = RetrievedChunk(
-            content="Norris profile",
-            metadata={"driver_ref": "norris"},
-            similarity=0.5,
-            source="drivers/norris.md",
-        )
-        piastri = RetrievedChunk(
-            content="Piastri profile",
-            metadata={"driver_ref": "piastri"},
-            similarity=0.5,
-            source="drivers/piastri.md",
-        )
+        generic = [_chunk(f"races/r{i}.md", 0.9) for i in range(5)]
+        norris = _chunk("drivers/norris.md", driver_ref="norris")
+        piastri = _chunk("drivers/piastri.md", driver_ref="piastri")
         result = retriever._ensure_entity_coverage(
             generic,
-            {"norris": [norris], "piastri": [piastri]},
+            {("driver_ref", "norris"): [norris], ("driver_ref", "piastri"): [piastri]},
             top_k=5,
         )
         sources = [c.source for c in result]
@@ -483,33 +620,66 @@ class TestRetrieverResilience:
     def test_coverage_keeps_entities_that_ranked_organically(
         self, retriever: Retriever
     ) -> None:
-        def chunk(source: str, **meta: str) -> RetrievedChunk:
-            return RetrievedChunk(
-                content=source, metadata=meta, similarity=0.5, source=source
-            )
-
-        organic = chunk("drivers/norris.md", driver_ref="norris")
-        ranked = [chunk(f"races/r{i}.md") for i in range(4)] + [organic]
+        organic = _chunk("drivers/norris.md", driver_ref="norris")
+        ranked = [_chunk(f"races/r{i}.md") for i in range(4)] + [organic]
         hits = {
-            "norris": [organic],
-            "piastri": [chunk("drivers/piastri.md", driver_ref="piastri")],
-            "leclerc": [chunk("drivers/leclerc.md", driver_ref="leclerc")],
+            ("driver_ref", "norris"): [organic],
+            ("driver_ref", "piastri"): [
+                _chunk("drivers/piastri.md", driver_ref="piastri")
+            ],
+            ("driver_ref", "leclerc"): [
+                _chunk("drivers/leclerc.md", driver_ref="leclerc")
+            ],
         }
-        sources = [c.source for c in retriever._ensure_entity_coverage(ranked, hits)]
-        assert {"drivers/norris.md", "drivers/piastri.md", "drivers/leclerc.md"} <= set(
-            sources
-        )
+        sources = {c.source for c in retriever._ensure_entity_coverage(ranked, hits)}
+        assert {
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "drivers/leclerc.md",
+        } <= sources
 
-    def test_short_refs_do_not_match_inside_other_names(
+    def test_extra_chunks_of_a_covered_entity_make_room(
         self, retriever: Retriever
     ) -> None:
-        nurburgring = RetrievedChunk(
-            content="x",
-            metadata={},
-            similarity=0.5,
-            source="races/2020-r11-nurburgring.md",
+        # All five Bahrain chunks used to be protected, so Sepang never got in
+        bahrain = [
+            _chunk(f"races/{y}-bahrain.md", circuit_ref="bahrain")
+            for y in range(2019, 2024)
+        ]
+        sepang = _chunk("races/2026-r16-sepang.md", circuit_ref="sepang")
+        result = retriever._ensure_entity_coverage(
+            bahrain,
+            {("circuit_ref", "bahrain"): bahrain, ("circuit_ref", "sepang"): [sepang]},
         )
-        assert not retriever._covers(nurburgring, "rb")
+        sources = [c.source for c in result]
+        assert len(result) == 5
+        assert sources[0] == "races/2019-bahrain.md"  # the best cover stays
+        assert "races/2026-r16-sepang.md" in sources
+
+    def test_the_only_chunk_of_an_entity_is_never_evicted(
+        self, retriever: Retriever
+    ) -> None:
+        ranked = [_chunk(f"drivers/d{i}.md", driver_ref=f"d{i}") for i in range(5)]
+        hits = {("driver_ref", f"d{i}"): [ranked[i]] for i in range(5)}
+        hits[("driver_ref", "d5")] = [_chunk("drivers/d5.md", driver_ref="d5")]
+        assert retriever._ensure_entity_coverage(ranked, hits) == ranked
+
+    def test_a_driver_doc_does_not_cover_its_team(self) -> None:
+        norris = _chunk(
+            "drivers/norris.md",
+            category="driver",
+            driver_ref="norris",
+            constructor_ref="mclaren",
+        )
+        team = _chunk("teams/mclaren.md", category="team", constructor_ref="mclaren")
+        assert Retriever._covers(norris, "driver_ref", "norris")
+        assert not Retriever._covers(norris, "constructor_ref", "mclaren")
+        assert Retriever._covers(team, "constructor_ref", "mclaren")
+
+    def test_refs_must_match_exactly(self) -> None:
+        nurburgring = _chunk("races/2020-r11-nurburgring.md", circuit_ref="nurburgring")
+        assert not Retriever._covers(nurburgring, "constructor_ref", "rb")
+        assert not Retriever._covers(nurburgring, "circuit_ref", "nurburg")
 
     @pytest.mark.asyncio()
     async def test_empty_filters_relax_to_season_before_dropping_all(
@@ -541,3 +711,86 @@ class TestRetrieverResilience:
         ]
         assert filters == [{"circuit_ref": "bahrain", "season": 2026}, {"season": 2026}]
         assert [c.source for c in chunks] == [r["source"] for r in season_rows[:5]]
+
+    # The production path: a linker, entity searches and coverage together.
+
+    @pytest.mark.asyncio()
+    @pytest.mark.parametrize(
+        "question",
+        [
+            "Who won the 2026 Bahrain Grand Prix?",
+            "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?",
+        ],
+    )
+    async def test_a_relocated_race_is_found_through_its_season(
+        self, retriever: Retriever, question: str
+    ) -> None:
+        # The circuit's entity search used to fill the candidate list first,
+        # so the season-only search never ran
+        kb = FakeKnowledgeBase(BAHRAIN_KB)
+        retriever.db = kb
+        retriever.linker = EntityLinker.from_rows(
+            [r["metadata"] for r in BAHRAIN_KB], [], [], BAHRAIN_CIRCUITS
+        )
+        retriever.llm.generate.return_value = _intent_json(
+            {"circuit_ref": "bahrain", "season": 2026},
+            circuits=["bahrain"],
+            seasons=[2026],
+        )
+
+        chunks = await retriever.retrieve(question)
+
+        assert {"season": 2026} in kb.filters
+        assert chunks[0].source == "races/2026-r16-sepang.md"
+        assert retriever.last_mode == "vector"
+
+    @pytest.mark.asyncio()
+    async def test_each_team_in_a_comparison_gets_its_own_doc(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.db = FakeKnowledgeBase(TEAMS_KB)
+        retriever.linker = EntityLinker.from_rows(*TEAMS_LINKER_ROWS)
+        retriever.llm.generate.return_value = _intent_json(
+            {}, teams=["Mercedes", "McLaren"]
+        )
+
+        chunks = await retriever.retrieve("Compare Mercedes and McLaren this season.")
+
+        sources = [c.source for c in chunks]
+        assert "teams/mercedes.md" in sources
+        assert "teams/mclaren.md" in sources
+
+    @pytest.mark.asyncio()
+    async def test_a_failed_entity_search_keeps_everything_else(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.db = FakeKnowledgeBase(TEAMS_KB, fail_on=[{"driver_ref": "norris"}])
+        retriever.linker = EntityLinker.from_rows(*TEAMS_LINKER_ROWS)
+        retriever.llm.generate.return_value = _intent_json(
+            {}, drivers=["Norris", "Russell"]
+        )
+
+        chunks = await retriever.retrieve("Compare Norris and Russell.")
+
+        sources = [c.source for c in chunks]
+        assert len(chunks) == 5
+        assert "drivers/norris.md" in sources  # found by the main search
+        assert "drivers/russell.md" in sources
+        assert retriever.last_mode == "vector"
+
+    @pytest.mark.asyncio()
+    async def test_a_failed_relaxed_search_moves_on(self, retriever: Retriever) -> None:
+        kb = FakeKnowledgeBase(BAHRAIN_KB, fail_on=[{"season": 2026}])
+        retriever.db = kb
+        retriever.llm.generate.return_value = _intent_json(
+            {"circuit_ref": "bahrain", "season": 2026}, circuits=["bahrain"]
+        )
+
+        chunks = await retriever.retrieve("Who won the 2026 Bahrain Grand Prix?")
+
+        assert kb.filters[:3] == [
+            {"circuit_ref": "bahrain", "season": 2026},
+            {"season": 2026},
+            {},
+        ]
+        assert len(chunks) == 5
