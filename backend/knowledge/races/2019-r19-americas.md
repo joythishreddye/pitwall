@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-11-03
 **Circuit:** Circuit of the Americas
 **Winner:** Valtteri Bottas (Mercedes)
-**Winner Time:** 93:55.653
+**Winner Time:** 1:33:55.653
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

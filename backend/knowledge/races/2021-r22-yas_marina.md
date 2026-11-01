@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -22,7 +22,7 @@ tags:
 **Date:** 2021-12-12
 **Circuit:** Yas Marina Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 90:17.345
+**Winner Time:** 1:30:17.345
 **Fastest Lap:** Max Verstappen
 
 ## Podium

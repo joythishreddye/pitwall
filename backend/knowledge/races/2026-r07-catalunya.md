@@ -8,9 +8,9 @@ driver_refs:
   - russell
   - norris
 constructor_refs:
+  - mercedes
   - ferrari
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - catalunya
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-06-14
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Lewis Hamilton (Ferrari)
-**Winner Time:** 92:28.105
+**Winner Time:** 1:32:28.105
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

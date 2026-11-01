@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - interlagos
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-11-13
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 98:34.044
+**Winner Time:** 1:38:34.044
 **Fastest Lap:** George Russell
 
 ## Podium

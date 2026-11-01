@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
   - mclaren
 knowledge_level: all
 tags:
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-12-01
 **Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 91:05.323
+**Winner Time:** 1:31:05.323
 **Fastest Lap:** Lando Norris
 
 ## Podium

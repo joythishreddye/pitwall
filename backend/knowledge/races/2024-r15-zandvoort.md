@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
+  - ferrari
   - red_bull
   - mclaren
-  - ferrari
 knowledge_level: all
 tags:
   - zandvoort
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-08-25
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 90:45.519
+**Winner Time:** 1:30:45.519
 **Fastest Lap:** Lando Norris
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - antonelli
   - max_verstappen
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - interlagos
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-11-09
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 92:01.596
+**Winner Time:** 1:32:01.596
 **Fastest Lap:** Alexander Albon
 
 ## Podium

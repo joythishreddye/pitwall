@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - norris
 constructor_refs:
+  - mercedes
   - ferrari
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2020-07-05
 **Circuit:** Red Bull Ring
 **Winner:** Valtteri Bottas (Mercedes)
-**Winner Time:** 90:55.739
+**Winner Time:** 1:30:55.739
 **Fastest Lap:** Lando Norris
 
 ## Podium

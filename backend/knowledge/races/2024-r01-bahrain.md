@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-03-02
 **Circuit:** Bahrain International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 91:44.742
+**Winner Time:** 1:31:44.742
 **Fastest Lap:** Max Verstappen
 
 ## Podium

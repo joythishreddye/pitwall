@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-07-03
 **Circuit:** Silverstone Circuit
 **Winner:** Carlos Sainz (Ferrari)
-**Winner Time:** 137:50.311
+**Winner Time:** 2:17:50.311
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

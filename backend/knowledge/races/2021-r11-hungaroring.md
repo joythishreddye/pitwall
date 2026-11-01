@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - sainz
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
   - alpine
 knowledge_level: all
 tags:
@@ -22,7 +22,7 @@ tags:
 **Date:** 2021-08-01
 **Circuit:** Hungaroring
 **Winner:** Esteban Ocon (Alpine F1 Team)
-**Winner Time:** 124:43.199
+**Winner Time:** 2:04:43.199
 **Fastest Lap:** Pierre Gasly
 
 ## Podium

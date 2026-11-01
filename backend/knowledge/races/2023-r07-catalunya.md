@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-06-04
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 87:57.940
+**Winner Time:** 1:27:57.940
 **Fastest Lap:** Max Verstappen
 
 ## Podium

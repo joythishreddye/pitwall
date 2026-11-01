@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-08-16
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 91:45.279
+**Winner Time:** 1:31:45.279
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

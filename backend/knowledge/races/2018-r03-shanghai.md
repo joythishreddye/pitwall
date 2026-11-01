@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - raikkonen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - shanghai
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-04-15
 **Circuit:** Shanghai International Circuit
 **Winner:** Daniel Ricciardo (Red Bull)
-**Winner Time:** 95:36.380
+**Winner Time:** 1:35:36.380
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

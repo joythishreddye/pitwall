@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-03-28
 **Circuit:** Bahrain International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 92:03.897
+**Winner Time:** 1:32:03.897
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

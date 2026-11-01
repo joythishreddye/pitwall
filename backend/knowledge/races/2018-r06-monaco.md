@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-05-27
 **Circuit:** Circuit de Monaco
 **Winner:** Daniel Ricciardo (Red Bull)
-**Winner Time:** 102:54.807
+**Winner Time:** 1:42:54.807
 **Fastest Lap:** Max Verstappen
 
 ## Podium

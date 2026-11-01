@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - silverstone
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-07-14
 **Circuit:** Silverstone Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 81:08.452
+**Winner Time:** 1:21:08.452
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

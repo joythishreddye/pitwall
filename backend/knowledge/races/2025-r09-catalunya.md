@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - leclerc
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-06-01
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Oscar Piastri (McLaren)
-**Winner Time:** 92:57.375
+**Winner Time:** 1:32:57.375
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

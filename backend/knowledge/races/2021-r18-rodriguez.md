@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-11-07
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 98:39.086
+**Winner Time:** 1:38:39.086
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

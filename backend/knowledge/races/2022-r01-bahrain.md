@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-03-20
 **Circuit:** Bahrain International Circuit
 **Winner:** Charles Leclerc (Ferrari)
-**Winner Time:** 97:33.584
+**Winner Time:** 1:37:33.584
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

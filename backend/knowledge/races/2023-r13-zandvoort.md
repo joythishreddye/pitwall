@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-08-27
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 144:04.411
+**Winner Time:** 2:24:04.411
 **Fastest Lap:** Fernando Alonso
 
 ## Podium

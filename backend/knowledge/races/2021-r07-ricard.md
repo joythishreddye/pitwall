@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-06-20
 **Circuit:** Circuit Paul Ricard
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 87:25.770
+**Winner Time:** 1:27:25.770
 **Fastest Lap:** Max Verstappen
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - antonelli
   - russell
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - zandvoort
@@ -21,7 +21,7 @@ tags:
 **Date:** 2026-08-23
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 124:44.859
+**Winner Time:** 2:04:44.859
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - raikkonen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-06-24
 **Circuit:** Circuit Paul Ricard
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 90:11.385
+**Winner Time:** 1:30:11.385
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

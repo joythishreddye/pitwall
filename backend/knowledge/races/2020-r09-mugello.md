@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - albon
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - mugello
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-09-13
 **Circuit:** Autodromo Internazionale del Mugello
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 139:35.059
+**Winner Time:** 2:19:35.059
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

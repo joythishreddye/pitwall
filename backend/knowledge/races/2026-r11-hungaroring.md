@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - hungaroring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-07-26
 **Circuit:** Hungaroring
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 99:56.180
+**Winner Time:** 1:39:56.180
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-06-15
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 91:52.688
+**Winner Time:** 1:31:52.688
 **Fastest Lap:** George Russell
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - alonso
 constructor_refs:
+  - mercedes
   - red_bull
   - aston_martin
-  - mercedes
 knowledge_level: all
 tags:
   - albert_park
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-04-02
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 152:38.371
+**Winner Time:** 2:32:38.371
 **Fastest Lap:** Sergio Pérez
 
 ## Podium

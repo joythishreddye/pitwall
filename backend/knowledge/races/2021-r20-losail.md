@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - alonso
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
   - alpine
 knowledge_level: all
 tags:
@@ -22,7 +22,7 @@ tags:
 **Date:** 2021-11-21
 **Circuit:** Lusail International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 84:28.471
+**Winner Time:** 1:24:28.471
 **Fastest Lap:** Max Verstappen
 
 ## Podium

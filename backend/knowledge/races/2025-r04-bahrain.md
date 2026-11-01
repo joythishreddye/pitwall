@@ -8,8 +8,8 @@ driver_refs:
   - russell
   - norris
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-04-13
 **Circuit:** Bahrain International Circuit
 **Winner:** Oscar Piastri (McLaren)
-**Winner Time:** 95:39.435
+**Winner Time:** 1:35:39.435
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

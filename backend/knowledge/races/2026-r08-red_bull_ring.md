@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2026-06-28
 **Circuit:** Red Bull Ring
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 86:37.979
+**Winner Time:** 1:26:37.979
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-12-05
 **Circuit:** Jeddah Corniche Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 126:15.118
+**Winner Time:** 2:06:15.118
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

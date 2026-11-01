@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-07-23
 **Circuit:** Hungaroring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 98:08.634
+**Winner Time:** 1:38:08.634
 **Fastest Lap:** Max Verstappen
 
 ## Podium

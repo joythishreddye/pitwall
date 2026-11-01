@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-04-07
 **Circuit:** Suzuka Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 114:23.566
+**Winner Time:** 1:54:23.566
 **Fastest Lap:** Max Verstappen
 
 ## Podium

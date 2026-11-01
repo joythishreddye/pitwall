@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - leclerc
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-06-29
 **Circuit:** Red Bull Ring
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 83:47.693
+**Winner Time:** 1:23:47.693
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

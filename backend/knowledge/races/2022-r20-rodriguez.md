@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-10-30
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 98:36.729
+**Winner Time:** 1:38:36.729
 **Fastest Lap:** George Russell
 
 ## Podium

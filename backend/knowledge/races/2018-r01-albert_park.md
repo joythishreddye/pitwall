@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - albert_park
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-03-25
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Sebastian Vettel (Ferrari)
-**Winner Time:** 89:33.283
+**Winner Time:** 1:29:33.283
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

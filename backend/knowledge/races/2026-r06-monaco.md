@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - hadjar
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-06-07
 **Circuit:** Circuit de Monaco
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 143:31.243
+**Winner Time:** 2:23:31.243
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

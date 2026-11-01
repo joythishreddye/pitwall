@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-04-08
 **Circuit:** Bahrain International Circuit
 **Winner:** Sebastian Vettel (Ferrari)
-**Winner Time:** 92:01.940
+**Winner Time:** 1:32:01.940
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-09-22
 **Circuit:** Marina Bay Street Circuit
 **Winner:** Sebastian Vettel (Ferrari)
-**Winner Time:** 118:33.667
+**Winner Time:** 1:58:33.667
 **Fastest Lap:** Kevin Magnussen
 
 ## Podium

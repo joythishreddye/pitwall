@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-03-27
 **Circuit:** Jeddah Corniche Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 84:19.293
+**Winner Time:** 1:24:19.293
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

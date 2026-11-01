@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-05-09
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 93:07.680
+**Winner Time:** 1:33:07.680
 **Fastest Lap:** Max Verstappen
 
 ## Podium

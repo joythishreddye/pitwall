@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - leclerc
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-10-29
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 122:30.814
+**Winner Time:** 2:02:30.814
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

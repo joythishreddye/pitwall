@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-07-12
 **Circuit:** Red Bull Ring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 82:50.683
+**Winner Time:** 1:22:50.683
 **Fastest Lap:** Carlos Sainz
 
 ## Podium

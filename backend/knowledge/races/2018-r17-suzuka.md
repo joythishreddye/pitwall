@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-10-07
 **Circuit:** Suzuka Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 87:17.062
+**Winner Time:** 1:27:17.062
 **Fastest Lap:** Sebastian Vettel
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - max_verstappen
 constructor_refs:
+  - ferrari
   - red_bull
   - mclaren
-  - ferrari
 knowledge_level: all
 tags:
   - rodriguez
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-10-26
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 97:58.574
+**Winner Time:** 1:37:58.574
 **Fastest Lap:** George Russell
 
 ## Podium

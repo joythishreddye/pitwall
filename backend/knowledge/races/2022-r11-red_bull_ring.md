@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-07-10
 **Circuit:** Red Bull Ring
 **Winner:** Charles Leclerc (Ferrari)
-**Winner Time:** 84:24.312
+**Winner Time:** 1:24:24.312
 **Fastest Lap:** Max Verstappen
 
 ## Podium

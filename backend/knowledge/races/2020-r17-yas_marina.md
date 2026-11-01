@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - hamilton
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-12-13
 **Circuit:** Yas Marina Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 96:28.645
+**Winner Time:** 1:36:28.645
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

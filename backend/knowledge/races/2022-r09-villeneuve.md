@@ -8,9 +8,9 @@ driver_refs:
   - sainz
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-06-19
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 96:21.757
+**Winner Time:** 1:36:21.757
 **Fastest Lap:** Carlos Sainz
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-05-24
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 88:15.758
+**Winner Time:** 1:28:15.758
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

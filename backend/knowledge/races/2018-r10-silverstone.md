@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - silverstone
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-07-08
 **Circuit:** Silverstone Circuit
 **Winner:** Sebastian Vettel (Ferrari)
-**Winner Time:** 87:29.784
+**Winner Time:** 1:27:29.784
 **Fastest Lap:** Sebastian Vettel
 
 ## Podium

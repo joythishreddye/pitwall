@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-05-22
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 97:20.475
+**Winner Time:** 1:37:20.475
 **Fastest Lap:** Sergio Pérez
 
 ## Podium

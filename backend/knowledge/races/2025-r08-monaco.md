@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - monaco
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-05-25
 **Circuit:** Circuit de Monaco
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 100:33.843
+**Winner Time:** 1:40:33.843
 **Fastest Lap:** Lando Norris
 
 ## Podium

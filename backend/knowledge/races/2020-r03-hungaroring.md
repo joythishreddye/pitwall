@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-07-19
 **Circuit:** Hungaroring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 96:12.473
+**Winner Time:** 1:36:12.473
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

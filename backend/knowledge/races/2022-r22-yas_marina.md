@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - perez
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-11-20
 **Circuit:** Yas Marina Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 87:45.914
+**Winner Time:** 1:27:45.914
 **Fastest Lap:** Lando Norris
 
 ## Podium

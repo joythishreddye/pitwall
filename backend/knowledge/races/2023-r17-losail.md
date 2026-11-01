@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-10-08
 **Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 87:39.168
+**Winner Time:** 1:27:39.168
 **Fastest Lap:** Max Verstappen
 
 ## Podium

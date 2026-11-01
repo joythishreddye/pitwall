@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - bottas
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2019-06-30
 **Circuit:** Red Bull Ring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 82:01.822
+**Winner Time:** 1:22:01.822
 **Fastest Lap:** Max Verstappen
 
 ## Podium

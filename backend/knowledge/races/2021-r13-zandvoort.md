@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - zandvoort
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-09-05
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 90:05.395
+**Winner Time:** 1:30:05.395
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

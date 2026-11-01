@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - leclerc
 constructor_refs:
-  - mclaren
   - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - yas_marina
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-12-08
 **Circuit:** Yas Marina Circuit
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 86:33.291
+**Winner Time:** 1:26:33.291
 **Fastest Lap:** Kevin Magnussen
 
 ## Podium

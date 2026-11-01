@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-03-09
 **Circuit:** Jeddah Corniche Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 80:43.273
+**Winner Time:** 1:20:43.273
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

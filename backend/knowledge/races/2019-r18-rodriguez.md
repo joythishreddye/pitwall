@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - bottas
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - rodriguez
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-10-27
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 96:48.904
+**Winner Time:** 1:36:48.904
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

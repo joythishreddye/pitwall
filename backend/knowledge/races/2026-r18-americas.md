@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-10-25
 **Circuit:** Circuit of the Americas
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 95:16.650
+**Winner Time:** 1:35:16.650
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

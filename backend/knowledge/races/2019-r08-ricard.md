@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - ricard
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-06-23
 **Circuit:** Circuit Paul Ricard
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 84:31.198
+**Winner Time:** 1:24:31.198
 **Fastest Lap:** Sebastian Vettel
 
 ## Podium

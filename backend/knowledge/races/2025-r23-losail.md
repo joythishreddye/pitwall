@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-11-30
 **Circuit:** Lusail International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 84:38.241
+**Winner Time:** 1:24:38.241
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

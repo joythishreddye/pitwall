@@ -8,9 +8,9 @@ driver_refs:
   - russell
   - leclerc
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - zandvoort
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-09-04
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 96:42.773
+**Winner Time:** 1:36:42.773
 **Fastest Lap:** Max Verstappen
 
 ## Podium

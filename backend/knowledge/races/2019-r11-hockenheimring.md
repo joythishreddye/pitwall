@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - kvyat
 constructor_refs:
-  - red_bull
-  - ferrari
   - toro_rosso
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - hockenheimring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2019-07-28
 **Circuit:** Hockenheimring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 104:31.275
+**Winner Time:** 1:44:31.275
 **Fastest Lap:** Max Verstappen
 
 ## Podium

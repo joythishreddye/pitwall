@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-10-20
 **Circuit:** Circuit of the Americas
 **Winner:** Charles Leclerc (Ferrari)
-**Winner Time:** 95:09.639
+**Winner Time:** 1:35:09.639
 **Fastest Lap:** Esteban Ocon
 
 ## Podium

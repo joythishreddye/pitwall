@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-04-06
 **Circuit:** Suzuka Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 82:06.983
+**Winner Time:** 1:22:06.983
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

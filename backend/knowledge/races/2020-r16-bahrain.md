@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-12-06
 **Circuit:** Bahrain International Circuit
 **Winner:** Sergio Pérez (Racing Point)
-**Winner Time:** 91:15.114
+**Winner Time:** 1:31:15.114
 **Fastest Lap:** George Russell
 
 ## Podium

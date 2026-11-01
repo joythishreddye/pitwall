@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - istanbul
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-10-10
 **Circuit:** Istanbul Park
 **Winner:** Valtteri Bottas (Mercedes)
-**Winner Time:** 91:04.103
+**Winner Time:** 1:31:04.103
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - russell
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - shanghai
@@ -21,7 +21,7 @@ tags:
 **Date:** 2026-03-15
 **Circuit:** Shanghai International Circuit
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 93:15.607
+**Winner Time:** 1:33:15.607
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

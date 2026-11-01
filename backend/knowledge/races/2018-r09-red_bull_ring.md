@@ -8,8 +8,8 @@ driver_refs:
   - raikkonen
   - vettel
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-07-01
 **Circuit:** Red Bull Ring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 81:56.024
+**Winner Time:** 1:21:56.024
 **Fastest Lap:** Kimi Räikkönen
 
 ## Podium

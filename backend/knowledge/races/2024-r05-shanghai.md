@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-04-21
 **Circuit:** Shanghai International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 100:52.554
+**Winner Time:** 1:40:52.554
 **Fastest Lap:** Fernando Alonso
 
 ## Podium

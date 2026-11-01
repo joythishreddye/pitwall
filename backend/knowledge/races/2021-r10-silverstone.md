@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - bottas
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - silverstone
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-07-18
 **Circuit:** Silverstone Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 118:23.284
+**Winner Time:** 1:58:23.284
 **Fastest Lap:** Sergio Pérez
 
 ## Podium

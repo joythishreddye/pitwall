@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-10-21
 **Circuit:** Circuit of the Americas
 **Winner:** Kimi Räikkönen (Ferrari)
-**Winner Time:** 94:18.643
+**Winner Time:** 1:34:18.643
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

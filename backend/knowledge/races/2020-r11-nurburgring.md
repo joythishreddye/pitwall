@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - ricciardo
 constructor_refs:
-  - red_bull
-  - renault
   - mercedes
+  - renault
+  - red_bull
 knowledge_level: all
 tags:
   - nurburgring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2020-10-11
 **Circuit:** Nürburgring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 95:49.641
+**Winner Time:** 1:35:49.641
 **Fastest Lap:** Max Verstappen
 
 ## Podium

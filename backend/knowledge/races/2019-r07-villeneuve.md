@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - villeneuve
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-06-09
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 89:07.084
+**Winner Time:** 1:29:07.084
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

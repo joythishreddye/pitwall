@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - vettel
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - shanghai
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-04-14
 **Circuit:** Shanghai International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 92:06.350
+**Winner Time:** 1:32:06.350
 **Fastest Lap:** Pierre Gasly
 
 ## Podium

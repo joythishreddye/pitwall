@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
   - mclaren
 knowledge_level: all
 tags:
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-09-17
 **Circuit:** Marina Bay Street Circuit
 **Winner:** Carlos Sainz (Ferrari)
-**Winner Time:** 106:37.418
+**Winner Time:** 1:46:37.418
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

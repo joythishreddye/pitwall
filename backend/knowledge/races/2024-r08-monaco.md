@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-05-26
 **Circuit:** Circuit de Monaco
 **Winner:** Charles Leclerc (Ferrari)
-**Winner Time:** 143:15.554
+**Winner Time:** 2:23:15.554
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

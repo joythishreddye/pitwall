@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-11-03
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 126:54.430
+**Winner Time:** 2:06:54.430
 **Fastest Lap:** Max Verstappen
 
 ## Podium

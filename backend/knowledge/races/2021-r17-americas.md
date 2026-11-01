@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - perez
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-10-24
 **Circuit:** Circuit of the Americas
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 94:36.552
+**Winner Time:** 1:34:36.552
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

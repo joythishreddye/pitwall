@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - albert_park
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-03-17
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Valtteri Bottas (Mercedes)
-**Winner Time:** 85:27.325
+**Winner Time:** 1:25:27.325
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - perez
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-07-02
 **Circuit:** Red Bull Ring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 85:33.607
+**Winner Time:** 1:25:33.607
 **Fastest Lap:** Max Verstappen
 
 ## Podium

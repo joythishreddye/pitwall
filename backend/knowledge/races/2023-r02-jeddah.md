@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-03-19
 **Circuit:** Jeddah Corniche Circuit
 **Winner:** Sergio Pérez (Red Bull)
-**Winner Time:** 81:14.894
+**Winner Time:** 1:21:14.894
 **Fastest Lap:** Max Verstappen
 
 ## Podium

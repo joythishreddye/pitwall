@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - bottas
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - monaco
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-05-26
 **Circuit:** Circuit de Monaco
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 103:28.437
+**Winner Time:** 1:43:28.437
 **Fastest Lap:** Pierre Gasly
 
 ## Podium

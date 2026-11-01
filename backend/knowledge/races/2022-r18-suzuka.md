@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - leclerc
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - suzuka
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-10-09
 **Circuit:** Suzuka Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 181:44.004
+**Winner Time:** 3:01:44.004
 **Fastest Lap:** Guanyu Zhou
 
 ## Podium

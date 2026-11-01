@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - albon
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-11-29
 **Circuit:** Bahrain International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 179:47.515
+**Winner Time:** 2:59:47.515
 **Fastest Lap:** Max Verstappen
 
 ## Podium

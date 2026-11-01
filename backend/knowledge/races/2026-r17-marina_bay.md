@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - antonelli
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-10-11
 **Circuit:** Marina Bay Street Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 102:00.785
+**Winner Time:** 1:42:00.785
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

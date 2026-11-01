@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - villeneuve
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-06-10
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Sebastian Vettel (Ferrari)
-**Winner Time:** 88:31.377
+**Winner Time:** 1:28:31.377
 **Fastest Lap:** Max Verstappen
 
 ## Podium

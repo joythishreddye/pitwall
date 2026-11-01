@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - catalunya
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-05-13
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 95:29.972
+**Winner Time:** 1:35:29.972
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

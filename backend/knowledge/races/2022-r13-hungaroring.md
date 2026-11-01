@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-07-31
 **Circuit:** Hungaroring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 99:35.912
+**Winner Time:** 1:39:35.912
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

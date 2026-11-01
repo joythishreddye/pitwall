@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - leclerc
 constructor_refs:
+  - ferrari
   - red_bull
   - mclaren
-  - ferrari
 knowledge_level: all
 tags:
   - americas
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-10-19
 **Circuit:** Circuit of the Americas
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 94:00.161
+**Winner Time:** 1:34:00.161
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

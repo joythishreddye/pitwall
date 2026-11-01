@@ -8,9 +8,9 @@ driver_refs:
   - alonso
   - hamilton
 constructor_refs:
+  - mercedes
   - red_bull
   - aston_martin
-  - mercedes
 knowledge_level: all
 tags:
   - villeneuve
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-06-18
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 93:58.348
+**Winner Time:** 1:33:58.348
 **Fastest Lap:** Sergio Pérez
 
 ## Podium

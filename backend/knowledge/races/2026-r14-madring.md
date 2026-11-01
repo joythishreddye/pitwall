@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - madring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-09-13
 **Circuit:** Madring
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 94:23.754
+**Winner Time:** 1:34:23.754
 **Fastest Lap:** George Russell
 
 ## Podium

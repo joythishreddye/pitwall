@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - russell
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - albert_park
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-04-10
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Charles Leclerc (Ferrari)
-**Winner Time:** 87:46.548
+**Winner Time:** 1:27:46.548
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

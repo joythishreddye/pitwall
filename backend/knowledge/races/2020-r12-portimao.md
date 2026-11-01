@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - max_verstappen
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - portimao
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-10-25
 **Circuit:** Autódromo Internacional do Algarve
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 89:56.828
+**Winner Time:** 1:29:56.828
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

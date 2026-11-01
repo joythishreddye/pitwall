@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - villeneuve
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-06-09
 **Circuit:** Circuit Gilles Villeneuve
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 105:47.927
+**Winner Time:** 1:45:47.927
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

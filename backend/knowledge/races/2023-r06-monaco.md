@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-05-28
 **Circuit:** Circuit de Monaco
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 108:51.980
+**Winner Time:** 1:48:51.980
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

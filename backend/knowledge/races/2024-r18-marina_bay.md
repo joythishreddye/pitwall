@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-09-22
 **Circuit:** Marina Bay Street Circuit
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 100:52.571
+**Winner Time:** 1:40:52.571
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

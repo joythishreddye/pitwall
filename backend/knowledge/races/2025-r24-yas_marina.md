@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-12-07
 **Circuit:** Yas Marina Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 86:07.469
+**Winner Time:** 1:26:07.469
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

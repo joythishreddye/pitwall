@@ -8,9 +8,9 @@ driver_refs:
   - gasly
   - sainz
 constructor_refs:
+  - toro_rosso
   - red_bull
   - mclaren
-  - toro_rosso
 knowledge_level: all
 tags:
   - interlagos
@@ -22,7 +22,7 @@ tags:
 **Date:** 2019-11-17
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 93:14.678
+**Winner Time:** 1:33:14.678
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

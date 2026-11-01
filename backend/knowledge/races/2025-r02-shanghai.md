@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - shanghai
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-03-23
 **Circuit:** Shanghai International Circuit
 **Winner:** Oscar Piastri (McLaren)
-**Winner Time:** 90:55.026
+**Winner Time:** 1:30:55.026
 **Fastest Lap:** Lando Norris
 
 ## Podium

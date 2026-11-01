@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-11-14
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 92:22.851
+**Winner Time:** 1:32:22.851
 **Fastest Lap:** Sergio Pérez
 
 ## Podium

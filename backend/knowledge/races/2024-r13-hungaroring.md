@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - hungaroring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-07-21
 **Circuit:** Hungaroring
 **Winner:** Oscar Piastri (McLaren)
-**Winner Time:** 98:01.989
+**Winner Time:** 1:38:01.989
 **Fastest Lap:** George Russell
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - norris
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
   - mclaren
 knowledge_level: all
 tags:
@@ -22,7 +22,7 @@ tags:
 **Date:** 2021-05-23
 **Circuit:** Circuit de Monaco
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 98:56.820
+**Winner Time:** 1:38:56.820
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

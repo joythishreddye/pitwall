@@ -8,9 +8,9 @@ driver_refs:
   - bottas
   - norris
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2021-07-04
 **Circuit:** Red Bull Ring
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 83:54.543
+**Winner Time:** 1:23:54.543
 **Fastest Lap:** Max Verstappen
 
 ## Podium

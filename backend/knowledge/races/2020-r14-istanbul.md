@@ -8,9 +8,9 @@ driver_refs:
   - perez
   - vettel
 constructor_refs:
-  - ferrari
   - mercedes
   - racing_point
+  - ferrari
 knowledge_level: all
 tags:
   - istanbul
@@ -22,7 +22,7 @@ tags:
 **Date:** 2020-11-15
 **Circuit:** Istanbul Park
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 102:19.313
+**Winner Time:** 1:42:19.313
 **Fastest Lap:** Lando Norris
 
 ## Podium

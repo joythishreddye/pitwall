@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - hadjar
 constructor_refs:
-  - rb
   - red_bull
   - mclaren
+  - rb
 knowledge_level: all
 tags:
   - zandvoort
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-08-31
 **Circuit:** Circuit Park Zandvoort
 **Winner:** Oscar Piastri (McLaren)
-**Winner Time:** 98:29.849
+**Winner Time:** 1:38:29.849
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

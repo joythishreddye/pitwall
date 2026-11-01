@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-10-27
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Carlos Sainz (Ferrari)
-**Winner Time:** 100:55.800
+**Winner Time:** 1:40:55.800
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

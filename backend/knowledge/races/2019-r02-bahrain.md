@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - bahrain
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-03-31
 **Circuit:** Bahrain International Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 94:21.295
+**Winner Time:** 1:34:21.295
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - hamilton
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - suzuka
@@ -21,7 +21,7 @@ tags:
 **Date:** 2019-10-13
 **Circuit:** Suzuka Circuit
 **Winner:** Valtteri Bottas (Mercedes)
-**Winner Time:** 81:46.755
+**Winner Time:** 1:21:46.755
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

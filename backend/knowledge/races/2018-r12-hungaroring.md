@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - hungaroring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-07-29
 **Circuit:** Hungaroring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 97:16.427
+**Winner Time:** 1:37:16.427
 **Fastest Lap:** Daniel Ricciardo
 
 ## Podium

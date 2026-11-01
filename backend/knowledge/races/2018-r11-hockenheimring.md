@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - raikkonen
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - hockenheimring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-07-22
 **Circuit:** Hockenheimring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 92:29.845
+**Winner Time:** 1:32:29.845
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

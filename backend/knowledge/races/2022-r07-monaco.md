@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - monaco
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-05-29
 **Circuit:** Circuit de Monaco
 **Winner:** Sergio Pérez (Red Bull)
-**Winner Time:** 116:30.265
+**Winner Time:** 1:56:30.265
 **Fastest Lap:** Lando Norris
 
 ## Podium

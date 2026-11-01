@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - silverstone
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-07-07
 **Circuit:** Silverstone Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 82:27.059
+**Winner Time:** 1:22:27.059
 **Fastest Lap:** Carlos Sainz
 
 ## Podium

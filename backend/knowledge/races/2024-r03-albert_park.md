@@ -21,7 +21,7 @@ tags:
 **Date:** 2024-03-24
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Carlos Sainz (Ferrari)
-**Winner Time:** 80:26.843
+**Winner Time:** 1:20:26.843
 **Fastest Lap:** Charles Leclerc
 
 ## Podium

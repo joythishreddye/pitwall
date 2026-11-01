@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - raikkonen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-11-11
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 87:09.066
+**Winner Time:** 1:27:09.066
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

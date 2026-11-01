@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - russell
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - albert_park
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-03-16
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 102:06.304
+**Winner Time:** 1:42:06.304
 **Fastest Lap:** Lando Norris
 
 ## Podium

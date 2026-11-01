@@ -8,9 +8,9 @@ driver_refs:
   - antonelli
   - hamilton
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - sepang
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-10-04
 **Circuit:** Sepang International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 107:14.808
+**Winner Time:** 1:47:14.808
 **Fastest Lap:** Max Verstappen
 
 ## Podium

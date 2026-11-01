@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - russell
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-11-26
 **Circuit:** Yas Marina Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 87:02.624
+**Winner Time:** 1:27:02.624
 **Fastest Lap:** Max Verstappen
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - mclaren
-  - ferrari
   - mercedes
+  - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-06-30
 **Circuit:** Red Bull Ring
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 84:22.798
+**Winner Time:** 1:24:22.798
 **Fastest Lap:** Fernando Alonso
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - leclerc
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - americas
@@ -22,7 +22,7 @@ tags:
 **Date:** 2022-10-23
 **Circuit:** Circuit of the Americas
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 102:11.687
+**Winner Time:** 1:42:11.687
 **Fastest Lap:** George Russell
 
 ## Podium

@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-03-05
 **Circuit:** Bahrain International Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 93:56.736
+**Winner Time:** 1:33:56.736
 **Fastest Lap:** Guanyu Zhou
 
 ## Podium

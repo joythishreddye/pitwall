@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - marina_bay
@@ -22,7 +22,7 @@ tags:
 **Date:** 2025-10-05
 **Circuit:** Marina Bay Street Circuit
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 100:22.367
+**Winner Time:** 1:40:22.367
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

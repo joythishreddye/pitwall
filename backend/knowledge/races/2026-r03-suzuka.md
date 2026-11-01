@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - leclerc
 constructor_refs:
-  - mclaren
-  - ferrari
   - mercedes
+  - ferrari
+  - mclaren
 knowledge_level: all
 tags:
   - suzuka
@@ -22,7 +22,7 @@ tags:
 **Date:** 2026-03-29
 **Circuit:** Suzuka Circuit
 **Winner:** Andrea Kimi Antonelli (Mercedes)
-**Winner Time:** 88:03.403
+**Winner Time:** 1:28:03.403
 **Fastest Lap:** Andrea Kimi Antonelli
 
 ## Podium

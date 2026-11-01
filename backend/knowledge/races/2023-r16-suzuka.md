@@ -21,7 +21,7 @@ tags:
 **Date:** 2023-09-24
 **Circuit:** Suzuka Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 90:58.421
+**Winner Time:** 1:30:58.421
 **Fastest Lap:** Max Verstappen
 
 ## Podium

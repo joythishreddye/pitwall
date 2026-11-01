@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - silverstone
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-07-09
 **Circuit:** Silverstone Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 85:16.938
+**Winner Time:** 1:25:16.938
 **Fastest Lap:** Max Verstappen
 
 ## Podium

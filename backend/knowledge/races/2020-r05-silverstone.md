@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - silverstone
@@ -21,7 +21,7 @@ tags:
 **Date:** 2020-08-09
 **Circuit:** Silverstone Circuit
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 79:41.993
+**Winner Time:** 1:19:41.993
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

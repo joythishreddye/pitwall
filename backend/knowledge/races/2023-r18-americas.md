@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - sainz
 constructor_refs:
+  - ferrari
   - red_bull
   - mclaren
-  - ferrari
 knowledge_level: all
 tags:
   - americas
@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-10-22
 **Circuit:** Circuit of the Americas
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 95:21.362
+**Winner Time:** 1:35:21.362
 **Fastest Lap:** Yuki Tsunoda
 
 ## Podium

@@ -8,9 +8,9 @@ driver_refs:
   - vettel
   - max_verstappen
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -22,7 +22,7 @@ tags:
 **Date:** 2018-11-25
 **Circuit:** Yas Marina Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 99:40.382
+**Winner Time:** 1:39:40.382
 **Fastest Lap:** Sebastian Vettel
 
 ## Podium

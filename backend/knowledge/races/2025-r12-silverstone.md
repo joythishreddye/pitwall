@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - hulkenberg
 constructor_refs:
-  - mclaren
   - sauber
+  - mclaren
 knowledge_level: all
 tags:
   - silverstone
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-07-06
 **Circuit:** Silverstone Circuit
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 97:15.735
+**Winner Time:** 1:37:15.735
 **Fastest Lap:** Oscar Piastri
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - sainz
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - marina_bay
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-10-02
 **Circuit:** Marina Bay Street Circuit
 **Winner:** Sergio Pérez (Red Bull)
-**Winner Time:** 122:20.238
+**Winner Time:** 2:02:20.238
 **Fastest Lap:** George Russell
 
 ## Podium

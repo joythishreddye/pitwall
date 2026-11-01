@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - vettel
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - hungaroring
@@ -22,7 +22,7 @@ tags:
 **Date:** 2019-08-04
 **Circuit:** Hungaroring
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 95:03.796
+**Winner Time:** 1:35:03.796
 **Fastest Lap:** Max Verstappen
 
 ## Podium

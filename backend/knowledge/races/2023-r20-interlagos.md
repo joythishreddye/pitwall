@@ -22,7 +22,7 @@ tags:
 **Date:** 2023-11-05
 **Circuit:** Autódromo José Carlos Pace
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 116:48.894
+**Winner Time:** 1:56:48.894
 **Fastest Lap:** Lando Norris
 
 ## Podium

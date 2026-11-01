@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
+  - mercedes
   - red_bull
   - mclaren
-  - mercedes
 knowledge_level: all
 tags:
   - catalunya
@@ -22,7 +22,7 @@ tags:
 **Date:** 2024-06-23
 **Circuit:** Circuit de Barcelona-Catalunya
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 88:20.227
+**Winner Time:** 1:28:20.227
 **Fastest Lap:** Lando Norris
 
 ## Podium

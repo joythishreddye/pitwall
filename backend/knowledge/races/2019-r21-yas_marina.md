@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - red_bull
-  - ferrari
   - mercedes
+  - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - yas_marina
@@ -22,7 +22,7 @@ tags:
 **Date:** 2019-12-01
 **Circuit:** Yas Marina Circuit
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 94:05.715
+**Winner Time:** 1:34:05.715
 **Fastest Lap:** Lewis Hamilton
 
 ## Podium

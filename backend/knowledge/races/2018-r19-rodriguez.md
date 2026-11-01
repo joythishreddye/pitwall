@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - raikkonen
 constructor_refs:
-  - red_bull
   - ferrari
+  - red_bull
 knowledge_level: all
 tags:
   - rodriguez
@@ -21,7 +21,7 @@ tags:
 **Date:** 2018-10-28
 **Circuit:** Autódromo Hermanos Rodríguez
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 98:28.851
+**Winner Time:** 1:38:28.851
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

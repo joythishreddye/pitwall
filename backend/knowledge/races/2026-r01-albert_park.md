@@ -8,8 +8,8 @@ driver_refs:
   - antonelli
   - leclerc
 constructor_refs:
-  - ferrari
   - mercedes
+  - ferrari
 knowledge_level: all
 tags:
   - albert_park
@@ -21,7 +21,7 @@ tags:
 **Date:** 2026-03-08
 **Circuit:** Albert Park Grand Prix Circuit
 **Winner:** George Russell (Mercedes)
-**Winner Time:** 83:06.801
+**Winner Time:** 1:23:06.801
 **Fastest Lap:** Max Verstappen
 
 ## Podium

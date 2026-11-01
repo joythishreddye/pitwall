@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - russell
 constructor_refs:
-  - mclaren
   - mercedes
+  - mclaren
 knowledge_level: all
 tags:
   - hungaroring
@@ -21,7 +21,7 @@ tags:
 **Date:** 2025-08-03
 **Circuit:** Hungaroring
 **Winner:** Lando Norris (McLaren)
-**Winner Time:** 95:21.231
+**Winner Time:** 1:35:21.231
 **Fastest Lap:** George Russell
 
 ## Podium

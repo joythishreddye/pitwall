@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - bottas
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - portimao
@@ -21,7 +21,7 @@ tags:
 **Date:** 2021-05-02
 **Circuit:** Autódromo Internacional do Algarve
 **Winner:** Lewis Hamilton (Mercedes)
-**Winner Time:** 94:31.421
+**Winner Time:** 1:34:31.421
 **Fastest Lap:** Valtteri Bottas
 
 ## Podium

@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - russell
 constructor_refs:
-  - red_bull
   - mercedes
+  - red_bull
 knowledge_level: all
 tags:
   - ricard
@@ -21,7 +21,7 @@ tags:
 **Date:** 2022-07-24
 **Circuit:** Circuit Paul Ricard
 **Winner:** Max Verstappen (Red Bull)
-**Winner Time:** 90:02.112
+**Winner Time:** 1:30:02.112
 **Fastest Lap:** Carlos Sainz
 
 ## Podium
