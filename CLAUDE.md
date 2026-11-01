@@ -14,13 +14,14 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - **Database:** Supabase Postgres + pgvector (Free tier; a keep-alive cron prevents pausing)
 - **LLM:** Groq via the provider abstraction. `LLM_MODEL=openai/gpt-oss-120b` (answers), `LLM_INTENT_MODEL=openai/gpt-oss-20b` (intent JSON). Groq rate-limits each model separately.
 - **Embeddings:** BAAI/bge-base-en-v1.5 (768 dim). Queries go through the HuggingFace router; ingestion runs locally with sentence-transformers.
-- **Reranker:** BAAI/bge-reranker-base via the HuggingFace router
+- **Entity linker:** `app/rag/entities.py` maps classifier entities to knowledge-base refs and builds the filter. Category-only filters are never used (they hid the regulations docs).
+- **Reranker:** bge-reranker-base, **off by default** (`RERANK_ENABLED=false`). On the eval it lowered hit@5 from 100% to 96.4% and MRR from 0.91 to 0.72.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).
 - **Redis (Upstash):** optional and unused. Its database was deleted in 2026; don't add hard dependencies on it.
 - **CI:** `.github/workflows/ci.yml` (ruff, pytest, eslint, tsc, next build) and `keepalive.yml` (readiness ping twice a day)
 
 ## Pillars
-1. **Race Engineer chat:** RAG with 3-stage retrieval (intent → vector → rerank); becomes a tool-calling agent in Phase 4
+1. **Race Engineer chat:** RAG (intent → entity linking → vector search + per-entity searches; rerank off by default); becomes a tool-calling agent in Phase 4
 2. **Predictions:** baselines vs Plackett-Luce vs LightGBM, a public prediction log written before each session, a Monte Carlo championship simulator
 3. **Live:** public replay-as-if-live from OpenF1 history, plus a personal live bridge on the owner's Mac (F1 TV login, local only)
 4. **Academy:** learning path, quizzes, gamification. Never call it "F1 Academy" (F1 ACADEMY is a trademark).
@@ -48,12 +49,13 @@ cd frontend && pnpm build               # production build
 
 # Backend
 cd backend && python -m uvicorn app.main:app --reload
-cd backend && pytest                    # 101 tests, all external services mocked
+cd backend && pytest                    # 120 tests, all external services mocked
 cd backend && ruff check . && ruff format --check .
 
 # Data
 cd backend && python scripts/seed_database.py --seasons 2026 --skip-fastf1   # Jolpica refresh
 cd backend && python scripts/ingest_knowledge.py                             # regenerate docs + re-embed locally
+cd backend && python scripts/eval_rag.py                                     # retrieval eval (55 Qs, local models, ~4 min)
 
 # Health
 curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header
@@ -75,6 +77,6 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval change must beat the RAG eval baseline (`backend/scripts/eval_rag.py`, Phase 0)
+- Every chat or retrieval change must beat the eval: 100% hit@5, MRR 0.91 on `backend/evals/rag_gold.json` (`backend/scripts/eval_rag.py`)
 - Ask Joythish before any new paid service. HF spend is capped at $5 (see memory).
 - Self-review before committing: security, types, error handling

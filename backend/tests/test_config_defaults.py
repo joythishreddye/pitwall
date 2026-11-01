@@ -38,6 +38,7 @@ def test_llm_defaults_to_gpt_oss_with_low_effort(required_env) -> None:
 def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:
     s = Settings(_env_file=None)
     assert s.hf_monthly_call_limit == 5000
+    assert s.rerank_enabled is False
     assert s.chat_rate_limit_per_ip == 6
     assert s.chat_rate_limit_global == 20
     assert s.health_check_token is None

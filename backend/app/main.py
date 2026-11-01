@@ -15,6 +15,7 @@ from app.db.redis import get_redis, ping_redis
 from app.db.supabase import get_supabase, ping_supabase
 from app.llm.factory import create_llm
 from app.rag.budget import ApiBudget
+from app.rag.entities import EntityLinker
 from app.rag.query_embedder import EmbeddingUnavailable, QueryEmbedder
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         ping_supabase()
     except Exception:
         logger.exception("Supabase unreachable at startup; /health/ready reports it")
+    try:
+        app.state.linker = EntityLinker.from_db(supabase)
+    except Exception:
+        logger.exception("Entity linker unavailable; using raw classifier filters")
+        app.state.linker = None
     ping_redis()
     logger.info("Startup complete (LLM model: %s)", settings.llm_model)
 

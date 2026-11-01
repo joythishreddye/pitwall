@@ -16,6 +16,7 @@ from app.config import settings
 from app.db.supabase import get_supabase
 from app.llm.base import LLMError, LLMProvider, Message
 from app.rag.budget import ApiBudget
+from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
 from app.rag.retriever import Retriever
@@ -68,6 +69,14 @@ def get_budget(request: Request) -> ApiBudget | None:
 
 
 Budget = Annotated[ApiBudget | None, Depends(get_budget)]
+
+
+def get_linker(request: Request) -> EntityLinker | None:
+    """Return the knowledge-base entity linker, if it loaded at startup."""
+    return getattr(request.app.state, "linker", None)
+
+
+Linker = Annotated[EntityLinker | None, Depends(get_linker)]
 
 _chat_limiter = SlidingWindowLimiter(
     per_key=settings.chat_rate_limit_per_ip,
@@ -262,9 +271,17 @@ async def chat(
     intent_llm: IntentLLM,
     embedder: Embedder,
     budget: Budget,
+    linker: Linker,
 ) -> StreamingResponse:
     """Stream a RAG-powered chat response via SSE."""
-    retriever = Retriever(db=db, llm=intent_llm, embedder=embedder, budget=budget)
+    retriever = Retriever(
+        db=db,
+        llm=intent_llm,
+        embedder=embedder,
+        budget=budget,
+        linker=linker,
+        rerank_enabled=settings.rerank_enabled,
+    )
 
     # 1. Retrieve relevant context via 3-stage RAG. The retriever already
     # degrades on its own (full-text fallback); this guard catches the rest.

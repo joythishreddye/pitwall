@@ -428,3 +428,54 @@ class TestRetrieverResilience:
             chunks = await retriever.retrieve("Compare race pace")
         assert retriever.last_mode == "vector+rerank"
         assert chunks[0].content == "chunk 7"
+
+    @pytest.mark.asyncio()
+    async def test_rerank_can_be_switched_off(self, retriever: Retriever) -> None:
+        rows = [
+            {
+                "content": f"chunk {i}",
+                "metadata": {},
+                "similarity": 0.9 - i / 100,
+                "source": f"s{i}.md",
+            }
+            for i in range(8)
+        ]
+        retriever.db.rpc.return_value.execute.return_value = MagicMock(data=rows)
+        retriever.rerank_enabled = False
+        with patch.object(retriever, "_hf_rerank", new=AsyncMock()) as hf_rerank:
+            chunks = await retriever.retrieve("Compare race pace")
+        hf_rerank.assert_not_awaited()
+        assert retriever.last_mode == "vector"
+        assert chunks[0].content == "chunk 0"
+
+    def test_comparisons_keep_both_injected_entities(
+        self, retriever: Retriever
+    ) -> None:
+        generic = [
+            RetrievedChunk(
+                content=f"g{i}", metadata={}, similarity=0.9, source=f"races/r{i}.md"
+            )
+            for i in range(5)
+        ]
+        norris = RetrievedChunk(
+            content="Norris profile",
+            metadata={"driver_ref": "norris"},
+            similarity=0.5,
+            source="drivers/norris.md",
+        )
+        piastri = RetrievedChunk(
+            content="Piastri profile",
+            metadata={"driver_ref": "piastri"},
+            similarity=0.5,
+            source="drivers/piastri.md",
+        )
+        result = retriever._ensure_entity_coverage(
+            generic,
+            [norris, piastri],
+            {"drivers": ["norris", "piastri"], "teams": []},
+            top_k=5,
+        )
+        sources = [c.source for c in result]
+        assert "drivers/norris.md" in sources
+        assert "drivers/piastri.md" in sources
+        assert len(result) == 5

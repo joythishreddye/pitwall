@@ -14,6 +14,7 @@ from supabase import Client
 from app.config import settings
 from app.llm.base import LLMError, LLMProvider, Message
 from app.rag.budget import ApiBudget
+from app.rag.entities import EntityLinker
 from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 from app.rag.query_embedder import EmbeddingUnavailable
 
@@ -47,11 +48,15 @@ class Retriever:
         llm: LLMProvider,
         embedder: SupportsEmbedQuery,
         budget: ApiBudget | None = None,
+        linker: EntityLinker | None = None,
+        rerank_enabled: bool = True,
     ) -> None:
         self.db = db
         self.llm = llm
         self.embedder = embedder
         self.budget = budget
+        self.linker = linker
+        self.rerank_enabled = rerank_enabled
         # How the last retrieve() found its context: "vector+rerank", "vector",
         # "fulltext" or "none". Sent to clients and recorded by evals.
         self.last_mode = "none"
@@ -289,6 +294,9 @@ class Retriever:
 
         # Stage 1: Intent classification
         intent_result = await self.classify_intent(query)
+        if self.linker is not None:
+            # Repair refs and drop filters the eval showed to hurt
+            intent_result = self.linker.link(intent_result, query)
         metadata_filter = intent_result.get("metadata_filter", {})
         entities = intent_result.get("entities", {})
 
@@ -337,7 +345,10 @@ class Retriever:
                         break
 
         # Stage 3: Rerank
-        reranked = await self.rerank(query, candidates, top_k=5)
+        if self.rerank_enabled:
+            reranked = await self.rerank(query, candidates, top_k=5)
+        else:
+            reranked = candidates[:5]
 
         # Stage 3b: Guarantee entity representation
         # If specific entities were identified, ensure at least
@@ -413,13 +424,14 @@ class Retriever:
             if ref and ref not in entity_best:
                 entity_best[ref] = chunk
 
-        # Check which entities are missing from results
-        all_refs = set()
-        for driver in entities.get("drivers", []):
-            all_refs.add(driver.lower().replace(" ", "_"))
-        for team in entities.get("teams", []):
-            all_refs.add(team.lower().replace(" ", "_"))
+        # Entities in the order the question named them (stable across runs)
+        all_refs: list[str] = []
+        for name in [*entities.get("drivers", []), *entities.get("teams", [])]:
+            ref = name.lower().replace(" ", "_")
+            if ref not in all_refs:
+                all_refs.append(ref)
 
+        protected: set[int] = set()  # chunks injected here; never evicted
         for ref in all_refs:
             # Check if any result already covers this entity
             has_coverage = any(
@@ -428,11 +440,25 @@ class Retriever:
                 or ref == c.metadata.get("constructor_ref")
                 for c in injected
             )
-            if not has_coverage and ref in entity_best:
-                # Replace the lowest-ranked result
-                if len(injected) >= top_k:
-                    injected.pop()
-                injected.append(entity_best[ref])
-                logger.info("Injected entity chunk for '%s'", ref)
+            if has_coverage or ref not in entity_best:
+                continue
+            if len(injected) >= top_k:
+                # Evict the lowest-ranked chunk we didn't inject ourselves.
+                # (Popping the last one used to drop the previous entity in a
+                # comparison, so only one side ever reached the prompt.)
+                victim = next(
+                    (
+                        i
+                        for i in range(len(injected) - 1, -1, -1)
+                        if id(injected[i]) not in protected
+                    ),
+                    None,
+                )
+                if victim is None:
+                    continue
+                injected.pop(victim)
+            injected.append(entity_best[ref])
+            protected.add(id(entity_best[ref]))
+            logger.info("Injected entity chunk for '%s'", ref)
 
         return injected[:top_k]

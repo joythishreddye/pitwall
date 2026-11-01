@@ -13,14 +13,27 @@ In F1, the pit wall is where race engineers read the data and call the strategy.
 ## What works today
 
 ### Race Engineer chat
-Answers come from a three-stage retrieval pipeline over 238 knowledge documents (1,128 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
+Answers come from a retrieval pipeline over 238 knowledge documents (1,128 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
 
-1. **Intent and entities:** `gpt-oss-20b` turns the question into metadata filters (drivers, teams, circuits, seasons) in JSON mode.
-2. **Search:** pgvector cosine search over BGE-base-en-v1.5 embeddings, plus targeted searches per named driver or team.
-3. **Rerank:** the `bge-reranker-base` cross-encoder picks the best five passages.
+1. **Intent:** `gpt-oss-20b` pulls out the drivers, teams, circuits and seasons a question is about, in JSON mode.
+2. **Entity linking:** a deterministic linker maps those names to the refs the knowledge base uses ("Lando Norris" becomes `norris`, "Singapore" becomes `marina_bay`). It also catches names the model missed and builds the metadata filter.
+3. **Search:** pgvector cosine search over BGE-base-en-v1.5 embeddings, plus a targeted search for each named driver or team, so comparisons get both sides.
 4. **Answer:** `gpt-oss-120b` on Groq streams the reply over Server-Sent Events, with the latest standings injected as context.
 
-The pipeline degrades instead of failing. Without embeddings (outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search ranked by question-term coverage. Without the reranker, it uses vector order.
+The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
+
+### Retrieval quality, measured
+`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5.
+
+| Pipeline | hit@5 | MRR@5 |
+|---|---|---|
+| Vector search alone | 61.8% | 0.59 |
+| + LLM intent filters (as first built) | 78.2% | 0.68 |
+| + entity linking and fixes (current) | **100%** | **0.91** |
+| + cross-encoder reranking | 96.4% | 0.72 |
+| Full-text fallback, no embeddings | 87.3% | 0.81 |
+
+Reranking made results worse and added about 0.9s per question, so it ships switched off (`RERANK_ENABLED`). The fixes were developed against this gold set's failures, so the next step is a held-out question set before treating these numbers as general.
 
 ### Season data
 Standings, results, qualifying, pit stops and driver profiles for 2018–2026, ingested from Jolpica and FastF1 into Supabase Postgres and served by FastAPI.
@@ -33,7 +46,8 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 - **Swappable LLMs:** routes depend on a provider interface, never on an SDK. When Groq retired Llama 3.3 70B, moving to gpt-oss was a config change (`LLM_MODEL`, `LLM_INTENT_MODEL`).
 - **Readiness, not just liveness:** `GET /health/ready` checks the database, both models and the embedding service. A twice-daily GitHub Actions job keeps the free database awake and emails on outages.
 - **Spend guardrails:** paid inference calls go through a monthly ceiling counted in Postgres, which fails closed. Chat has per-client and global rate limits.
-- **Tests and CI:** 101 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
+- **Tests and CI:** 120 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 
@@ -53,7 +67,7 @@ Browser ── Next.js 16 on Vercel
               │  HTTPS + Server-Sent Events
               ▼
          FastAPI on Render ──── Groq (gpt-oss-120b answers, gpt-oss-20b intent)
-              │           └──── HuggingFace (BGE embeddings + reranker)
+              │           └──── HuggingFace (BGE query embeddings)
               ▼
      Supabase Postgres + pgvector ◄── ingestion: Jolpica, FastF1 (OpenF1 next)
 ```

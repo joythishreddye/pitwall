@@ -1,0 +1,69 @@
+{
+  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks.",
+  "version": 1,
+  "questions": [
+    {"id": "drv-01", "kind": "driver", "question": "How many wins has Kimi Antonelli taken in the 2026 season?", "expected": ["drivers/antonelli.md"]},
+    {"id": "drv-02", "kind": "driver", "question": "How is George Russell's 2026 season going?", "expected": ["drivers/russell.md"]},
+    {"id": "drv-03", "kind": "driver", "question": "Which team does Fernando Alonso drive for in 2026?", "expected": ["drivers/alonso.md"]},
+    {"id": "drv-04", "kind": "driver", "question": "How many points has Lewis Hamilton scored this season?", "expected": ["drivers/hamilton.md"]},
+    {"id": "drv-05", "kind": "driver", "question": "Tell me about Oliver Bearman.", "expected": ["drivers/bearman.md"]},
+    {"id": "drv-06", "kind": "driver", "question": "What were Max Verstappen's most recent results?", "expected": ["drivers/max_verstappen.md"]},
+    {"id": "drv-07", "kind": "driver", "question": "How many world championships has Lando Norris won?", "expected": ["drivers/norris.md"]},
+    {"id": "drv-08", "kind": "driver", "question": "Who is Arvid Lindblad?", "expected": ["drivers/arvid_lindblad.md"]},
+
+    {"id": "team-01", "kind": "team", "question": "How many points do Mercedes have in the 2026 constructors' championship?", "expected": ["teams/mercedes.md"]},
+    {"id": "team-02", "kind": "team", "question": "How is Cadillac doing in its first F1 season?", "expected": ["teams/cadillac.md"]},
+    {"id": "team-03", "kind": "team", "question": "Who drives for Audi in 2026?", "expected": ["teams/audi.md"]},
+    {"id": "team-04", "kind": "team", "question": "How has Ferrari performed in 2026?", "expected": ["teams/ferrari.md"]},
+    {"id": "team-05", "kind": "team", "question": "Where is McLaren in the 2026 standings?", "expected": ["teams/mclaren.md"]},
+    {"id": "team-06", "kind": "team", "question": "Tell me about the Williams team this season.", "expected": ["teams/williams.md"]},
+    {"id": "team-07", "kind": "team", "question": "How many wins does Red Bull have in 2026?", "expected": ["teams/red_bull.md"]},
+
+    {"id": "r26-01", "kind": "race", "question": "Who won the 2026 Australian Grand Prix?", "expected": ["races/2026-r01-albert_park.md"]},
+    {"id": "r26-02", "kind": "race", "question": "Who won the 2026 Japanese Grand Prix?", "expected": ["races/2026-r03-suzuka.md"]},
+    {"id": "r26-03", "kind": "race", "question": "What happened at the 2026 Monaco Grand Prix?", "expected": ["races/2026-r06-monaco.md"]},
+    {"id": "r26-04", "kind": "race", "question": "Who was on the podium at Silverstone in 2026?", "expected": ["races/2026-r09-silverstone.md"]},
+    {"id": "r26-05", "kind": "race", "question": "Who won the 2026 Italian Grand Prix at Monza?", "expected": ["races/2026-r13-monza.md"]},
+    {"id": "r26-06", "kind": "race", "question": "Who won the first Grand Prix at Madring in Madrid?", "expected": ["races/2026-r14-madring.md"]},
+    {"id": "r26-07", "kind": "race", "question": "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?", "expected": ["races/2026-r16-sepang.md"]},
+    {"id": "r26-08", "kind": "race", "question": "Who won the 2026 United States Grand Prix in Austin?", "expected": ["races/2026-r18-americas.md"]},
+    {"id": "r26-09", "kind": "race", "question": "Who retired from the 2026 Singapore Grand Prix?", "expected": ["races/2026-r17-marina_bay.md"]},
+    {"id": "r26-10", "kind": "race", "question": "Who gained the most places at the 2026 Azerbaijan Grand Prix?", "expected": ["races/2026-r15-baku.md"]},
+
+    {"id": "rold-01", "kind": "race", "question": "Who won the 2025 Monaco Grand Prix?", "expected": ["races/2025-r08-monaco.md"]},
+    {"id": "rold-02", "kind": "race", "question": "Who won the 2025 Abu Dhabi Grand Prix?", "expected": ["races/2025-r24-yas_marina.md"]},
+    {"id": "rold-03", "kind": "race", "question": "Who won the 2025 Italian Grand Prix?", "expected": ["races/2025-r16-monza.md"]},
+    {"id": "rold-04", "kind": "race", "question": "Who won the 2025 Australian Grand Prix?", "expected": ["races/2025-r01-albert_park.md"]},
+    {"id": "rold-05", "kind": "race", "question": "What was the result of the 2024 Monaco Grand Prix?", "expected": ["races/2024-r08-monaco.md"]},
+    {"id": "rold-06", "kind": "race", "question": "Who won the 2024 Miami Grand Prix?", "expected": ["races/2024-r06-miami.md"]},
+    {"id": "rold-07", "kind": "race", "question": "What happened at the 2021 Abu Dhabi Grand Prix?", "expected": ["races/2021-r22-yas_marina.md", "history/iconic-races.md"]},
+    {"id": "rold-08", "kind": "race", "question": "Who won the 2019 British Grand Prix?", "expected": ["races/2019-r10-silverstone.md"]},
+
+    {"id": "circ-01", "kind": "circuit", "question": "Why is it so hard to overtake at Monaco?", "expected": ["circuits/monaco.md"]},
+    {"id": "circ-02", "kind": "circuit", "question": "Why is Monza called the Temple of Speed?", "expected": ["circuits/monza.md"]},
+    {"id": "circ-03", "kind": "circuit", "question": "What makes Eau Rouge at Spa special?", "expected": ["circuits/spa.md"]},
+    {"id": "circ-04", "kind": "circuit", "question": "Why is Suzuka shaped like a figure eight?", "expected": ["circuits/suzuka.md"]},
+    {"id": "circ-05", "kind": "circuit", "question": "What are Maggotts and Becketts at Silverstone?", "expected": ["circuits/silverstone.md"]},
+
+    {"id": "exp-01", "kind": "explainer", "question": "What is DRS?", "expected": ["explainers/drs-explained.md", "explainers/glossary.md"]},
+    {"id": "exp-02", "kind": "explainer", "question": "What is an undercut in F1?", "expected": ["explainers/race-strategy-101.md", "explainers/glossary.md"]},
+    {"id": "exp-03", "kind": "explainer", "question": "What is dirty air?", "expected": ["explainers/glossary.md"]},
+    {"id": "exp-04", "kind": "explainer", "question": "How does a virtual safety car work?", "expected": ["explainers/race-strategy-101.md"]},
+    {"id": "exp-05", "kind": "explainer", "question": "Why would a team choose a one-stop over a two-stop strategy?", "expected": ["explainers/race-strategy-101.md"]},
+    {"id": "exp-06", "kind": "explainer", "question": "What is ground effect?", "expected": ["explainers/glossary.md"]},
+
+    {"id": "reg-01", "kind": "regulation", "question": "How many points does a Grand Prix winner get?", "expected": ["regulations/points-system.md"]},
+    {"id": "reg-02", "kind": "regulation", "question": "What changed in the 2026 F1 regulations?", "expected": ["regulations/2026-regulation-changes.md"]},
+    {"id": "reg-03", "kind": "regulation", "question": "What is active aerodynamics on the 2026 cars?", "expected": ["regulations/2026-regulation-changes.md"]},
+    {"id": "reg-04", "kind": "regulation", "question": "How does a sprint weekend work?", "expected": ["regulations/race-format.md"]},
+    {"id": "reg-05", "kind": "regulation", "question": "What does a black and white flag mean?", "expected": ["regulations/flags-and-penalties.md"]},
+    {"id": "reg-06", "kind": "regulation", "question": "What are parc fermé rules?", "expected": ["regulations/race-format.md"]},
+
+    {"id": "hist-01", "kind": "history", "question": "What happened between Senna and Prost at Suzuka in 1989?", "expected": ["history/iconic-races.md"]},
+    {"id": "hist-02", "kind": "history", "question": "How did Lewis Hamilton win his first title in 2008?", "expected": ["history/iconic-races.md"]},
+
+    {"id": "cmp-01", "kind": "comparison", "question": "Compare Lando Norris and Oscar Piastri in 2026.", "expected": ["drivers/norris.md", "drivers/piastri.md"]},
+    {"id": "cmp-02", "kind": "comparison", "question": "Who is doing better in 2026, Leclerc or Hamilton?", "expected": ["drivers/leclerc.md", "drivers/hamilton.md"]},
+    {"id": "cmp-03", "kind": "comparison", "question": "Compare Mercedes and McLaren this season.", "expected": ["teams/mercedes.md", "teams/mclaren.md"]}
+  ]
+}
