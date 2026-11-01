@@ -7,7 +7,9 @@ Generates:
 """
 
 import logging
+from collections.abc import Callable, Iterable
 from pathlib import Path
+from typing import Any
 
 from supabase import Client
 
@@ -15,6 +17,48 @@ logger = logging.getLogger(__name__)
 
 KNOWLEDGE_DIR = Path(__file__).resolve().parents[2] / "knowledge"
 CURRENT_SEASON = 2026
+FIRST_SEASON_IN_DB = 2018
+
+# PostgREST returns at most this many rows per request, whatever .limit() says
+_PAGE_SIZE = 1000
+
+
+def _fetch_all(build: Callable[[], Any], page_size: int = _PAGE_SIZE) -> list[dict]:
+    """Read every row of a query, one page at a time.
+
+    Args:
+        build: Returns a fresh, ordered query builder (call ``.order()`` on a
+            unique column so pages don't overlap).
+        page_size: Rows per request; must not exceed the server's row cap.
+    """
+    rows: list[dict] = []
+    start = 0
+    while True:
+        page = build().range(start, start + page_size - 1).execute().data or []
+        rows.extend(page)
+        if len(page) < page_size:
+            return rows
+        start += page_size
+
+
+def _count_titles(
+    leader_rows: Iterable[dict],
+    is_complete: Callable[[int], bool],
+) -> dict[int, int]:
+    """Count championships per entity from P1 standings rows.
+
+    Only seasons that are complete count: the leader of a season in progress
+    is not a champion yet.
+    """
+    champions: dict[int, int] = {}
+    for season in {row["season"] for row in leader_rows}:
+        if not is_complete(season):
+            continue
+        season_rows = [r for r in leader_rows if r["season"] == season]
+        final = max(season_rows, key=lambda r: r["round"])
+        champions[final["entity_id"]] = champions.get(final["entity_id"], 0) + 1
+    return champions
+
 
 # Statuses that mean a car didn't finish (retired, accident, etc.)
 _FINISHED_STATUSES = frozenset(
@@ -119,12 +163,11 @@ def generate_driver_profiles(supabase: Client) -> int:
     # Fetch career stats for all grid drivers
     driver_ids = list(drivers.keys())
 
-    all_results = (
-        supabase.table("race_results")
-        .select("driver_id, position, points, status")
+    all_results = _fetch_all(
+        lambda: supabase.table("race_results")
+        .select("id, driver_id, position, points, status")
         .in_("driver_id", driver_ids)
-        .limit(10000)
-        .execute()
+        .order("id")
     )
 
     # Compute career stats
@@ -137,7 +180,7 @@ def generate_driver_profiles(supabase: Client) -> int:
             "points": 0.0,
         }
 
-    for row in all_results.data:
+    for row in all_results:
         did = row["driver_id"]
         if did not in career:
             continue
@@ -150,36 +193,50 @@ def generate_driver_profiles(supabase: Client) -> int:
             career[did]["podiums"] += 1
 
     # Fetch qualifying poles
-    quali_poles = (
-        supabase.table("qualifying_results")
-        .select("driver_id")
+    quali_poles = _fetch_all(
+        lambda: supabase.table("qualifying_results")
+        .select("id, driver_id")
         .in_("driver_id", driver_ids)
         .eq("position", 1)
-        .execute()
+        .order("id")
     )
     poles: dict[int, int] = {}
-    for row in quali_poles.data:
+    for row in quali_poles:
         did = row["driver_id"]
         poles[did] = poles.get(did, 0) + 1
 
-    # Fetch championship titles (P1 in final round standings)
-    championships: dict[int, int] = {}
-    titles = (
+    # Championship titles: final-round P1 of completed seasons only. The
+    # current season is complete once every scheduled race has results.
+    current_complete = len({r["race_id"] for r in current_results_raw.data}) >= len(
+        race_ids
+    )
+    leader_rows = (
         supabase.table("standings")
         .select("entity_id, season, round")
         .eq("type", "driver")
         .eq("position", 1)
-        .in_("entity_id", driver_ids)
         .execute()
+    ).data
+    championships = _count_titles(
+        leader_rows,
+        lambda season: season < CURRENT_SEASON or current_complete,
     )
-    # Group by season, take max round
-    season_champs: dict[tuple[int, int], int] = {}
-    for row in titles.data:
-        key = (row["entity_id"], row["season"])
-        if key not in season_champs or row["round"] > season_champs[key]:
-            season_champs[key] = row["round"]
-    for (did, _season), _round in season_champs.items():
-        championships[did] = championships.get(did, 0) + 1
+
+    # Season points from the standings table: race results alone miss sprints
+    latest_driver_standings = (
+        supabase.table("standings")
+        .select("entity_id, points, round")
+        .eq("type", "driver")
+        .eq("season", CURRENT_SEASON)
+        .execute()
+    ).data
+    standings_points: dict[int, float] = {}
+    standings_round: dict[int, int] = {}
+    for row in latest_driver_standings:
+        eid = row["entity_id"]
+        if row["round"] >= standings_round.get(eid, -1):
+            standings_round[eid] = row["round"]
+            standings_points[eid] = row["points"] or 0
 
     count = 0
     for did, data in drivers.items():
@@ -188,8 +245,10 @@ def generate_driver_profiles(supabase: Client) -> int:
         results = data["season_results"]
         stats = career[did]
 
-        # Season performance
-        season_points = sum(r["points"] or 0 for r in results)
+        # Season performance (standings points include sprints)
+        season_points = standings_points.get(
+            did, sum(r["points"] or 0 for r in results)
+        )
         season_wins = sum(1 for r in results if r["position"] == 1)
         season_podiums = sum(1 for r in results if r["position"] and r["position"] <= 3)
         best_finish = min(
@@ -228,18 +287,18 @@ tags:
 **Driver Code:** {d["code"]}
 **Current Team:** {team["name"]} ({CURRENT_SEASON} season)
 
-## Career Statistics (in database)
+## Statistics since {FIRST_SEASON_IN_DB} (not full career totals)
 
 - **Races:** {stats["races"]}
 - **Wins:** {stats["wins"]}
 - **Podiums:** {stats["podiums"]}
 - **Pole Positions:** {poles.get(did, 0)}
-- **Career Points:** {stats["points"]:.1f}
-- **World Championships:** {championships.get(did, 0)}
+- **Points:** {stats["points"]:.1f}
+- **World Championships since {FIRST_SEASON_IN_DB}:** {championships.get(did, 0)}
 
 ## {CURRENT_SEASON} Season Performance
 
-- **Points:** {season_points:.0f}
+- **Points (including sprints):** {season_points:.0f}
 - **Wins:** {season_wins}
 - **Podiums:** {season_podiums}
 - **Best Finish:** P{best_finish if best_finish else "N/A"}
@@ -319,18 +378,17 @@ def generate_team_profiles(supabase: Client) -> int:
         team_drivers[cid].add(f"{d['forename']} {d['surname']} ({d['code']})")
 
     # Career stats per constructor
-    all_career = (
-        supabase.table("race_results")
-        .select("constructor_id, position, points")
+    all_career = _fetch_all(
+        lambda: supabase.table("race_results")
+        .select("id, constructor_id, position, points")
         .in_("constructor_id", constructor_ids)
-        .limit(10000)
-        .execute()
+        .order("id")
     )
     career_stats: dict[int, dict] = {
         cid: {"races": 0, "wins": 0, "podiums": 0, "points": 0.0}
         for cid in constructor_ids
     }
-    for row in all_career.data:
+    for row in all_career:
         cid = row["constructor_id"]
         if cid not in career_stats:
             continue
@@ -414,7 +472,7 @@ tags:
 
 {chr(10).join(driver_lines)}
 
-## Career Statistics (in database)
+## Statistics since {FIRST_SEASON_IN_DB} (not full team history)
 
 - **Race Entries:** {cs.get("races", 0)}
 - **Wins:** {cs.get("wins", 0)}
