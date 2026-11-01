@@ -1,5 +1,7 @@
 """Startup resilience and the /health/ready endpoint."""
 
+import asyncio
+import time
 from collections.abc import Iterator
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -46,7 +48,7 @@ async def test_ready_when_every_dependency_answers() -> None:
         "embeddings": "unknown",
     }
     assert body["intent_model"] == "openai/gpt-oss-20b"
-    assert body["hf_calls_this_month"] == 7
+    assert "hf_calls_this_month" not in body  # usage is for deep checks only
 
 
 async def test_degraded_when_the_database_is_down() -> None:
@@ -109,9 +111,30 @@ async def test_deep_check_makes_a_real_embedding_call() -> None:
 
     assert response.status_code == 200
     assert response.json()["checks"]["embeddings"] == "ok"
+    assert response.json()["hf_calls_this_month"] == 7
     app.state.embedder.embed_query.assert_called_once_with(
         "readiness probe", use_cache=False
     )
+
+
+async def test_concurrent_cold_requests_share_one_probe() -> None:
+    calls = 0
+
+    def slow_ping() -> None:
+        nonlocal calls
+        calls += 1
+        time.sleep(0.05)
+
+    with patch("app.main.ping_supabase", side_effect=slow_ping):
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            responses = await asyncio.gather(
+                *(client.get("/health/ready") for _ in range(10))
+            )
+
+    assert {r.status_code for r in responses} == {200}
+    assert calls == 1
+    assert app.state.llm.health_check.await_count == 1
 
 
 async def test_startup_survives_dependency_outages() -> None:
@@ -120,10 +143,12 @@ async def test_startup_survives_dependency_outages() -> None:
         patch("app.main.ping_supabase", side_effect=RuntimeError("paused")),
         patch("app.main.get_redis", return_value=None),
         patch("app.main.create_llm", return_value=MagicMock()),
+        patch("app.main.EntityLinker.from_db", side_effect=RuntimeError("no db")),
         patch("app.main.QueryEmbedder") as embedder_cls,
     ):
         async with lifespan(app):
             assert app.state.embedder is embedder_cls.return_value
             assert app.state.redis is None
+            assert app.state.linker is None
 
     embedder_cls.return_value.close.assert_called_once()

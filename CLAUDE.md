@@ -49,7 +49,7 @@ cd frontend && pnpm build               # production build
 
 # Backend
 cd backend && python -m uvicorn app.main:app --reload
-cd backend && pytest                    # 120 tests, all external services mocked
+cd backend && pytest                    # 126 tests, all external services mocked
 cd backend && ruff check . && ruff format --check .
 
 # Data

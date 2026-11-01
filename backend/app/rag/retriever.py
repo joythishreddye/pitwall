@@ -20,6 +20,9 @@ from app.rag.query_embedder import EmbeddingUnavailable
 
 logger = logging.getLogger(__name__)
 
+# Full-text cost grows with query terms; the SQL function caps it too
+_FULLTEXT_MAX_CHARS = 300
+
 _RERANKER_URL = (
     "https://router.huggingface.co/hf-inference/models/BAAI/bge-reranker-base"
 )
@@ -263,7 +266,7 @@ class Retriever:
                 lambda: self.db.rpc(
                     "search_knowledge_text",
                     {
-                        "query_text": query,
+                        "query_text": query[:_FULLTEXT_MAX_CHARS],
                         "match_count": top_k,
                         "filter_metadata": metadata_filter,
                     },

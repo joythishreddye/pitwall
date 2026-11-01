@@ -7,13 +7,17 @@ rotates addresses.
 
 from __future__ import annotations
 
+import logging
 import threading
 import time
 from collections import deque
 
 from fastapi import Request
 
+logger = logging.getLogger(__name__)
+
 _MAX_TRACKED_CLIENTS = 10_000
+_logged_source = False
 
 
 class SlidingWindowLimiter:
@@ -75,13 +79,32 @@ class SlidingWindowLimiter:
 
 
 def client_ip(request: Request) -> str:
-    """Best-effort client address behind Render's proxy.
+    """Best-effort client address behind Render's edge.
 
-    Render's proxy appends the address it saw to X-Forwarded-For, so the
-    rightmost entry is the one a client can't forge.
+    Render serves its domains through Cloudflare, which sets CF-Connecting-IP
+    to the address it saw and overwrites any value a client sends. Without
+    it, use the rightmost X-Forwarded-For entry (the hop a client can't
+    forge), then the socket peer.
     """
+    cf_ip = request.headers.get("cf-connecting-ip", "").strip()
     forwarded = request.headers.get("x-forwarded-for", "")
     parts = [p.strip() for p in forwarded.split(",") if p.strip()]
-    if parts:
-        return parts[-1]
-    return request.client.host if request.client else "unknown"
+    if cf_ip:
+        source, ip = "cf-connecting-ip", cf_ip
+    elif parts:
+        source, ip = "x-forwarded-for", parts[-1]
+    else:
+        source = "socket"
+        ip = request.client.host if request.client else "unknown"
+    _log_source_once(source, len(parts))
+    return ip
+
+
+def _log_source_once(source: str, forwarded_hops: int) -> None:
+    """Record which header keys the rate limits (no addresses are logged)."""
+    global _logged_source
+    if not _logged_source:
+        _logged_source = True
+        logger.info(
+            "Rate limits keyed on %s (X-Forwarded-For hops: %d)", source, forwarded_hops
+        )

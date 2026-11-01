@@ -88,6 +88,15 @@ async def test_llm_failure_ends_with_an_error_event(wire) -> None:
     assert not any(e["type"] == "done" for e in events)
 
 
+async def test_an_empty_answer_ends_with_an_error_event(wire) -> None:
+    wire(_llm(tokens=[]))
+
+    events = _events((await _ask()).text)
+
+    assert events[-1]["type"] == "error"
+    assert "didn't come back" in events[-1]["data"]
+
+
 async def test_rate_limited_llm_gets_a_specific_message(wire) -> None:
     wire(_llm(error=LLMError("429", status_code=429)))
 

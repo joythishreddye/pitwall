@@ -92,11 +92,47 @@ def test_bypassing_the_cache_forces_a_real_call() -> None:
     assert len(calls) == 2
 
 
-def test_recovers_after_a_failure() -> None:
+def test_recovers_after_the_cooldown(monkeypatch) -> None:
+    clock = [1000.0]
+    monkeypatch.setattr("app.rag.query_embedder.time.monotonic", lambda: clock[0])
     responses = iter([httpx.Response(503), httpx.Response(200, json=[[0.2] * 768])])
     embedder, _ = _embedder(lambda r: next(responses))
 
     with pytest.raises(EmbeddingUnavailable):
         embedder.embed_query("q")
+    clock[0] += 121
     assert embedder.embed_query("q") == [0.2] * 768
     assert embedder.status == "ok"
+
+
+def test_failures_trigger_a_cooldown_without_network_or_budget() -> None:
+    calls: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        return httpx.Response(402)
+
+    embedder, budget = _embedder(handler)
+    with pytest.raises(EmbeddingUnavailable):
+        embedder.embed_query("first")
+    with pytest.raises(EmbeddingUnavailable, match="cooling down"):
+        embedder.embed_query("second")
+
+    assert len(calls) == 1
+    assert budget.consume.call_count == 1
+
+
+def test_readiness_probes_bypass_the_cooldown() -> None:
+    responses = iter([httpx.Response(503), httpx.Response(200, json=[[0.3] * 768])])
+    embedder, _ = _embedder(lambda r: next(responses))
+
+    with pytest.raises(EmbeddingUnavailable):
+        embedder.embed_query("q")
+    assert embedder.embed_query("q", use_cache=False) == [0.3] * 768
+
+
+def test_non_json_body_raises_unavailable() -> None:
+    embedder, _ = _embedder(lambda r: httpx.Response(200, text="<html>busy</html>"))
+
+    with pytest.raises(EmbeddingUnavailable, match="non-JSON"):
+        embedder.embed_query("q")

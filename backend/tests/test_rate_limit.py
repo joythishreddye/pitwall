@@ -49,5 +49,15 @@ def test_client_ip_prefers_the_proxy_appended_address() -> None:
     assert client_ip(request) == "2.2.2.2"
 
 
+def test_client_ip_prefers_cloudflares_header() -> None:
+    request = _request(
+        [
+            (b"cf-connecting-ip", b"5.5.5.5"),
+            (b"x-forwarded-for", b"1.1.1.1, 2.2.2.2"),
+        ]
+    )
+    assert client_ip(request) == "5.5.5.5"
+
+
 def test_client_ip_falls_back_to_the_socket() -> None:
     assert client_ip(_request([])) == "9.9.9.9"

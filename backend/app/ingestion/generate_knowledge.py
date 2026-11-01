@@ -495,38 +495,41 @@ def generate_race_summaries(supabase: Client) -> int:
     batch_size = 50
     results_by_race: dict[int, list] = {rid: [] for rid in all_race_ids}
 
+    # Every batch is paged: 50 races of results or pit stops can exceed the
+    # 1,000-row response cap (2024 summaries lost their pit data this way).
     for i in range(0, len(all_race_ids), batch_size):
         batch_ids = all_race_ids[i : i + batch_size]
-        batch_results = (
-            supabase.table("race_results")
+        batch_results = _fetch_all(
+            lambda ids=batch_ids: supabase.table("race_results")
             .select(
-                "race_id, driver_id, constructor_id, grid, position,"
+                "id, race_id, driver_id, constructor_id, grid, position,"
                 " position_text, points, laps, status, time_millis,"
                 " fastest_lap_rank,"
                 " drivers!inner(ref, forename, surname, code),"
                 " constructors!inner(ref, name)"
             )
-            .in_("race_id", batch_ids)
-            .order("position")
-            .execute()
+            .in_("race_id", ids)
+            .order("id")
         )
-        for row in batch_results.data:
+        for row in batch_results:
             results_by_race[row["race_id"]].append(row)
+    for rows in results_by_race.values():
+        rows.sort(key=lambda r: (r["position"] is None, r["position"] or 0))
 
     # Fetch pit stops per race
     pit_data: dict[int, list] = {rid: [] for rid in all_race_ids}
     for i in range(0, len(all_race_ids), batch_size):
         batch_ids = all_race_ids[i : i + batch_size]
-        pits = (
-            supabase.table("pit_stops")
+        pits = _fetch_all(
+            lambda ids=batch_ids: supabase.table("pit_stops")
             .select(
-                "race_id, driver_id, stop_number, lap, duration_ms,"
+                "id, race_id, driver_id, stop_number, lap, duration_ms,"
                 " drivers!inner(code, surname)"
             )
-            .in_("race_id", batch_ids)
-            .execute()
+            .in_("race_id", ids)
+            .order("id")
         )
-        for row in pits.data:
+        for row in pits:
             pit_data[row["race_id"]].append(row)
 
     count = 0

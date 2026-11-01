@@ -12,10 +12,7 @@ def anyio_backend():
 @pytest.mark.anyio
 async def test_health_returns_200():
     """Health endpoint should return 200 with status and version."""
-    with (
-        patch("app.main.ping_supabase"),
-        patch("app.main.ping_redis"),
-    ):
+    with patch("app.main.ping_supabase"):
         from app.main import app
 
         transport = ASGITransport(app=app)

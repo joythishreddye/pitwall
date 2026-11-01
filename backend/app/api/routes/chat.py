@@ -334,12 +334,14 @@ async def chat(
 
         # Stream tokens from the LLM. Every failure ends with an error event,
         # so the reader never sees a silent, empty answer.
+        produced = False
         try:
             async for token in llm.stream_chat(
                 messages,
                 temperature=0.4,
                 max_tokens=2048,  # reasoning models spend part of this thinking
             ):
+                produced = True
                 yield _sse({"type": "token", "data": token})
         except LLMError as exc:
             logger.error("LLM stream failed: %s", exc)
@@ -349,6 +351,18 @@ async def chat(
             logger.exception("LLM streaming error")
             yield _sse(
                 {"type": "error", "data": "The answer was cut off. Please ask again."}
+            )
+            return
+
+        if not produced:
+            # e.g. a reasoning model spent its whole budget thinking
+            logger.warning("LLM returned an empty answer")
+            yield _sse(
+                {
+                    "type": "error",
+                    "data": "The race engineer didn't come back with an answer. "
+                    "Try asking another way.",
+                }
             )
             return
 

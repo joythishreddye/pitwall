@@ -36,7 +36,7 @@ The pipeline degrades instead of failing. Without embeddings (an outage, or the 
 Reranking made results worse and added about 0.9s per question, so it ships switched off (`RERANK_ENABLED`). The fixes were developed against this gold set's failures, so the next step is a held-out question set before treating these numbers as general.
 
 ### Season data
-Standings, results, qualifying, pit stops and driver profiles for 2018–2026, ingested from Jolpica and FastF1 into Supabase Postgres and served by FastAPI.
+Standings, results, qualifying and driver profiles for 2018–2026, with lap times, tyre stints and pit stops from 2022. Ingested from Jolpica and FastF1 into Supabase Postgres and served by FastAPI.
 
 ### Pit-wall interface
 Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio transmissions, a race-control home dashboard, team-color accents throughout.
@@ -47,7 +47,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 - **Readiness, not just liveness:** `GET /health/ready` checks the database, both models and the embedding service. A twice-daily GitHub Actions job keeps the free database awake and emails on outages.
 - **Spend guardrails:** paid inference calls go through a monthly ceiling counted in Postgres, which fails closed. Chat has per-client and global rate limits.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 120 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 126 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 
