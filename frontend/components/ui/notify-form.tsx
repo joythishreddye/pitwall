@@ -45,7 +45,7 @@ export function NotifyForm({ source, heading, description, className = "" }: Not
       <div className={`flex items-center gap-2.5 border border-f1-green/30 bg-f1-green/5 px-4 py-3 ${className}`}>
         <StatusDot variant="live" />
         <span className="text-[10px] font-mono uppercase tracking-widest text-f1-green">
-          Confirmed — we'll ping you when it ships
+          Confirmed — we&apos;ll ping you when it ships
         </span>
       </div>
     );

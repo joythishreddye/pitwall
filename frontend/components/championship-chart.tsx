@@ -227,28 +227,33 @@ export function ChampionshipChart({
   // ── Mouse handler ─────────────────────────────────────────────────────────
   // svgW === CSS pixel width of the SVG element, so mouse X maps 1:1 to SVG
   // user-unit X — no scale factor needed.
+  // Handlers wrap their GSAP work in contextSafe at event time, so tweens
+  // join the useGSAP context (and are cleaned up) without touching refs
+  // during render.
   const handleMouseMove = useCallback(
-    contextSafe((e: React.MouseEvent<SVGSVGElement>) => {
-      if (compact || !svgRef.current || !scannerRef.current || svgW === 0) return;
-      const svgRect = svgRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current!.getBoundingClientRect();
-      const iW = innerW(svgW);
-      const mouseX = e.clientX - svgRect.left;
-      const clampedX = Math.max(PAD.l, Math.min(PAD.l + iW, mouseX));
-      const rawRound = ((clampedX - PAD.l) / iW) * (maxRound - 1) + 1;
-      const round = Math.round(Math.max(1, Math.min(maxRound, rawRound)));
+    (e: React.MouseEvent<SVGSVGElement>) => {
+      contextSafe(() => {
+        if (compact || !svgRef.current || !scannerRef.current || svgW === 0) return;
+        const svgRect = svgRef.current.getBoundingClientRect();
+        const containerRect = containerRef.current!.getBoundingClientRect();
+        const iW = innerW(svgW);
+        const mouseX = e.clientX - svgRect.left;
+        const clampedX = Math.max(PAD.l, Math.min(PAD.l + iW, mouseX));
+        const rawRound = ((clampedX - PAD.l) / iW) * (maxRound - 1) + 1;
+        const round = Math.round(Math.max(1, Math.min(maxRound, rawRound)));
 
-      gsap.to(scannerRef.current, {
-        attr: { x1: xScale(round, maxRound, svgW), x2: xScale(round, maxRound, svgW) },
-        duration: 0.08,
-        ease: "none",
-      });
-      setTooltip({
-        round,
-        px: e.clientX - containerRect.left,
-        py: e.clientY - containerRect.top,
-      });
-    }),
+        gsap.to(scannerRef.current, {
+          attr: { x1: xScale(round, maxRound, svgW), x2: xScale(round, maxRound, svgW) },
+          duration: 0.08,
+          ease: "none",
+        });
+        setTooltip({
+          round,
+          px: e.clientX - containerRect.left,
+          py: e.clientY - containerRect.top,
+        });
+      })();
+    },
     [compact, maxRound, svgW, contextSafe]
   );
 
@@ -256,18 +261,20 @@ export function ChampionshipChart({
 
   // ── Toggle ────────────────────────────────────────────────────────────────
   const toggleLine = useCallback(
-    contextSafe((id: string) => {
-      if (!svgRef.current) return;
-      const isHiding = !hiddenIds.has(id);
-      const el = svgRef.current.querySelector(`[data-id="${id}"]`);
-      if (el) gsap.to(el, { opacity: isHiding ? 0 : 0.85, duration: 0.25, ease: "pitwall-accel" });
-      setHiddenIds((prev) => {
-        const next = new Set(prev);
-        if (isHiding) next.add(id);
-        else next.delete(id);
-        return next;
-      });
-    }),
+    (id: string) => {
+      contextSafe(() => {
+        if (!svgRef.current) return;
+        const isHiding = !hiddenIds.has(id);
+        const el = svgRef.current.querySelector(`[data-id="${id}"]`);
+        if (el) gsap.to(el, { opacity: isHiding ? 0 : 0.85, duration: 0.25, ease: "pitwall-accel" });
+        setHiddenIds((prev) => {
+          const next = new Set(prev);
+          if (isHiding) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+      })();
+    },
     [hiddenIds, contextSafe]
   );
 

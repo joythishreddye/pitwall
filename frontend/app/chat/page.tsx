@@ -96,19 +96,11 @@ export default function ChatPage() {
   const errorRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Track IDs that existed before this page session (restored from sessionStorage).
-  // Messages in this set skip telex/entrance animations — they've already been seen.
-  const mountedIdsRef = useRef<Set<string>>(new Set<string>());
-
-  // Populate mountedIdsRef once the session restoration effect fires.
-  // We compare message count: the first non-zero batch after mount is the restore.
-  const sessionRestoredRef = useRef(false);
-  useEffect(() => {
-    if (!sessionRestoredRef.current && messages.length > 0) {
-      sessionRestoredRef.current = true;
-      messages.forEach((m) => mountedIdsRef.current.add(m.id));
-    }
-  }, [messages]);
+  // Messages created before this page mounted were restored from
+  // sessionStorage and already seen, so they skip the entrance and
+  // signal-lock animations. Comparing timestamps keeps this a pure render
+  // decision, and the first exchange of a fresh session still animates.
+  const [mountedAt] = useState(() => Date.now());
 
   // Smooth-scroll to newest message
   useEffect(() => {
@@ -174,7 +166,7 @@ export default function ChatPage() {
               <ChatMessage
                 key={msg.id}
                 message={msg}
-                animate={!mountedIdsRef.current.has(msg.id)}
+                animate={msg.timestamp >= mountedAt}
               />
             ))}
             <div ref={messagesEndRef} />

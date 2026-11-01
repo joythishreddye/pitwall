@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap, useGSAP, DrawSVGPlugin, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 
@@ -62,8 +62,11 @@ export function DrawPath({
   const outerPathRef = useRef<SVGPathElement>(null);
   const innerPathRef = useRef<SVGPathElement>(null);
 
+  // Latest onComplete, read by GSAP callbacks without re-running the animation
   const onCompleteRef = useRef(onComplete);
-  onCompleteRef.current = onComplete;
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useGSAP(
     () => {
