@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - mercedes
   - ferrari
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - red_bull_ring
@@ -51,3 +51,7 @@ tags:
 - Lance Stroll: P17 → P13 (+4 places)
 - Nico Hülkenberg: P9 → P6 (+3 places)
 - Pierre Gasly: P13 → P10 (+3 places)
+
+## Pit Strategy
+
+15 on 2-stop, 5 on 3+ stops

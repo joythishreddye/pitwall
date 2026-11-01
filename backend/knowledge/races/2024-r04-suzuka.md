@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - suzuka
@@ -54,3 +54,7 @@ tags:
 - Guanyu Zhou: Retired (started P20)
 - Daniel Ricciardo: Retired (started P11)
 - Alexander Albon: Retired (started P14)
+
+## Pit Strategy
+
+2 on 2-stop, 16 on 3+ stops

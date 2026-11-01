@@ -9,8 +9,8 @@ driver_refs:
   - russell
 constructor_refs:
   - mercedes
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - yas_marina
@@ -54,3 +54,7 @@ tags:
 ## Retirements/DNFs
 
 - Carlos Sainz: Retired (started P16)
+
+## Pit Strategy
+
+3 drivers on 1-stop, 16 on 2-stop, 1 on 3+ stops

@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - mercedes
-  - red_bull
   - mclaren
+  - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - catalunya
@@ -48,3 +48,7 @@ tags:
 
 - Sergio Pérez: P11 → P8 (+3 places)
 - Daniel Ricciardo: P18 → P15 (+3 places)
+
+## Pit Strategy
+
+18 on 2-stop, 2 on 3+ stops

@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - perez
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - shanghai
@@ -53,3 +53,7 @@ tags:
 - Daniel Ricciardo: Retired (started P12)
 - Yuki Tsunoda: Retired (started P19)
 - Valtteri Bottas: Retired (started P10)
+
+## Pit Strategy
+
+4 drivers on 1-stop, 12 on 2-stop, 4 on 3+ stops

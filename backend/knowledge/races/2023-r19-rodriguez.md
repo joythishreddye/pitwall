@@ -8,9 +8,9 @@ driver_refs:
   - hamilton
   - leclerc
 constructor_refs:
-  - mercedes
   - ferrari
   - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - rodriguez

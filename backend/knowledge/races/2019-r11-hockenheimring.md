@@ -9,8 +9,8 @@ driver_refs:
   - kvyat
 constructor_refs:
   - toro_rosso
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - hockenheimring

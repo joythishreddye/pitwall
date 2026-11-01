@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - leclerc
 constructor_refs:
-  - ferrari
   - red_bull
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - zandvoort
@@ -50,3 +50,7 @@ tags:
 - Carlos Sainz: P10 → P5 (+5 places)
 - Alexander Albon: P19 → P14 (+5 places)
 - Charles Leclerc: P6 → P3 (+3 places)
+
+## Pit Strategy
+
+14 drivers on 1-stop, 6 on 2-stop

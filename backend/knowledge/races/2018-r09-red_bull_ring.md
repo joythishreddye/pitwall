@@ -8,8 +8,8 @@ driver_refs:
   - raikkonen
   - vettel
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - red_bull_ring

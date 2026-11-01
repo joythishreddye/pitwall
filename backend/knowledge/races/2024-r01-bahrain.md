@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - sainz
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - bahrain
@@ -48,3 +48,7 @@ tags:
 - Guanyu Zhou: P17 → P11 (+6 places)
 - Sergio Pérez: P5 → P2 (+3 places)
 - Kevin Magnussen: P15 → P12 (+3 places)
+
+## Pit Strategy
+
+17 on 2-stop, 3 on 3+ stops

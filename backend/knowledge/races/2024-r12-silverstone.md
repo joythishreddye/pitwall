@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - norris
 constructor_refs:
-  - mercedes
-  - red_bull
   - mclaren
+  - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - silverstone
@@ -54,3 +54,7 @@ tags:
 
 - George Russell: Retired (started P1)
 - Pierre Gasly: Did not start (started P19)
+
+## Pit Strategy
+
+14 on 2-stop, 5 on 3+ stops

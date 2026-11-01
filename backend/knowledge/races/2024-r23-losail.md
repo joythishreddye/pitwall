@@ -8,9 +8,9 @@ driver_refs:
   - leclerc
   - piastri
 constructor_refs:
-  - ferrari
-  - red_bull
   - mclaren
+  - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - losail
@@ -58,3 +58,7 @@ tags:
 - Lance Stroll: Retired (started P15)
 - Franco Colapinto: Retired (started P19)
 - Esteban Ocon: Retired (started P20)
+
+## Pit Strategy
+
+18 on 3+ stops

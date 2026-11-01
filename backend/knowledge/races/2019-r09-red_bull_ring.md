@@ -9,8 +9,8 @@ driver_refs:
   - bottas
 constructor_refs:
   - mercedes
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - red_bull_ring

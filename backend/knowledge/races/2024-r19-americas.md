@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - max_verstappen
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - americas
@@ -54,3 +54,7 @@ tags:
 ## Retirements/DNFs
 
 - Lewis Hamilton: Retired (started P17)
+
+## Pit Strategy
+
+15 drivers on 1-stop, 4 on 2-stop

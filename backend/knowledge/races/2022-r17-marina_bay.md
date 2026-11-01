@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - sainz
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - marina_bay

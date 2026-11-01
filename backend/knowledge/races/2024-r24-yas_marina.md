@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - leclerc
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - yas_marina
@@ -55,3 +55,7 @@ tags:
 - Valtteri Bottas: Retired (started P9)
 - Franco Colapinto: Retired (started P20)
 - Sergio Pérez: Retired (started P10)
+
+## Pit Strategy
+
+11 drivers on 1-stop, 6 on 2-stop, 2 on 3+ stops

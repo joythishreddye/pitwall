@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - russell
 constructor_refs:
-  - mercedes
   - red_bull
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - albert_park
@@ -60,3 +60,7 @@ tags:
 - Carlos Sainz: Retired (started P10)
 - Jack Doohan: Retired (started P14)
 - Isack Hadjar: Retired (started P11)
+
+## Pit Strategy
+
+17 on 3+ stops

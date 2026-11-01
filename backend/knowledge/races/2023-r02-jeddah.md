@@ -8,8 +8,8 @@ driver_refs:
   - max_verstappen
   - alonso
 constructor_refs:
-  - red_bull
   - aston_martin
+  - red_bull
 knowledge_level: all
 tags:
   - jeddah

@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - red_bull
-  - mclaren
   - williams
+  - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - losail

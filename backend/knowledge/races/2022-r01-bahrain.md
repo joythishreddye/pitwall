@@ -8,8 +8,8 @@ driver_refs:
   - sainz
   - hamilton
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - bahrain

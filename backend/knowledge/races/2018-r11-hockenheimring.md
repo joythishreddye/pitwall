@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - raikkonen
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - hockenheimring

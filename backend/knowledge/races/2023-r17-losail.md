@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - norris
 constructor_refs:
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - losail

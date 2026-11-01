@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - bottas
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - monaco

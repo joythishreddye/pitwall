@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - mercedes
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - hungaroring
@@ -51,3 +51,7 @@ tags:
 ## Retirements/DNFs
 
 - Pierre Gasly: Retired (started P20)
+
+## Pit Strategy
+
+1 drivers on 1-stop, 17 on 2-stop, 2 on 3+ stops

@@ -8,8 +8,8 @@ driver_refs:
   - vettel
   - leclerc
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - villeneuve

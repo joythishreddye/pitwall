@@ -9,8 +9,8 @@ driver_refs:
   - antonelli
 constructor_refs:
   - mercedes
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - marina_bay

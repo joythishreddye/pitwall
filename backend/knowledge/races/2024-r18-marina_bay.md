@@ -55,3 +55,7 @@ tags:
 
 - Kevin Magnussen: Retired (started P14)
 - Alexander Albon: Retired (started P11)
+
+## Pit Strategy
+
+17 drivers on 1-stop, 1 on 2-stop, 2 on 3+ stops

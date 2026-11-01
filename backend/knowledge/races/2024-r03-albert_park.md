@@ -8,8 +8,8 @@ driver_refs:
   - leclerc
   - norris
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - albert_park
@@ -56,3 +56,7 @@ tags:
 - George Russell: Retired (started P7)
 - Lewis Hamilton: Retired (started P11)
 - Max Verstappen: Retired (started P1)
+
+## Pit Strategy
+
+2 drivers on 1-stop, 16 on 2-stop, 1 on 3+ stops

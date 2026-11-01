@@ -8,9 +8,9 @@ driver_refs:
   - max_verstappen
   - antonelli
 constructor_refs:
-  - mercedes
   - red_bull
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - hungaroring

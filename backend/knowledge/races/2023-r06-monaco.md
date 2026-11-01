@@ -8,8 +8,8 @@ driver_refs:
   - alonso
   - ocon
 constructor_refs:
-  - red_bull
   - aston_martin
+  - red_bull
   - alpine
 knowledge_level: all
 tags:

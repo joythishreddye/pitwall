@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - russell
 constructor_refs:
-  - mercedes
-  - red_bull
   - mclaren
+  - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - villeneuve
@@ -59,3 +59,7 @@ tags:
 - Sergio Pérez: Retired (started P16)
 - Charles Leclerc: Retired (started P11)
 - Logan Sargeant: Retired (started P13)
+
+## Pit Strategy
+
+3 drivers on 1-stop, 8 on 2-stop, 8 on 3+ stops

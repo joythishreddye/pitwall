@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - alonso
 constructor_refs:
-  - red_bull
   - mclaren
   - aston_martin
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos

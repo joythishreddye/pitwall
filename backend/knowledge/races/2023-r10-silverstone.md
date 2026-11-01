@@ -8,9 +8,9 @@ driver_refs:
   - norris
   - hamilton
 constructor_refs:
-  - mercedes
-  - red_bull
   - mclaren
+  - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - silverstone

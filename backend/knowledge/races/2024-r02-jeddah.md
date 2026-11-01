@@ -8,8 +8,8 @@ driver_refs:
   - perez
   - leclerc
 constructor_refs:
-  - ferrari
   - red_bull
+  - ferrari
 knowledge_level: all
 tags:
   - jeddah
@@ -54,3 +54,7 @@ tags:
 
 - Lance Stroll: Retired (started P10)
 - Pierre Gasly: Retired (started P18)
+
+## Pit Strategy
+
+18 drivers on 1-stop, 1 on 2-stop

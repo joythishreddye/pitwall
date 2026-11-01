@@ -8,8 +8,8 @@ driver_refs:
   - hamilton
   - bottas
 constructor_refs:
-  - mercedes
   - red_bull
+  - mercedes
 knowledge_level: all
 tags:
   - zandvoort

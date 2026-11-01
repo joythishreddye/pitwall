@@ -8,8 +8,8 @@ driver_refs:
   - antonelli
   - russell
 constructor_refs:
-  - mercedes
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - zandvoort

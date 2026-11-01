@@ -8,9 +8,9 @@ driver_refs:
   - piastri
   - leclerc
 constructor_refs:
-  - mercedes
   - ferrari
   - mclaren
+  - mercedes
 knowledge_level: all
 tags:
   - suzuka

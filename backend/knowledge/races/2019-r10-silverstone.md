@@ -8,8 +8,8 @@ driver_refs:
   - bottas
   - leclerc
 constructor_refs:
-  - mercedes
   - ferrari
+  - mercedes
 knowledge_level: all
 tags:
   - silverstone

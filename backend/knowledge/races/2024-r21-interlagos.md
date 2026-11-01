@@ -58,3 +58,7 @@ tags:
 - Alexander Albon: Did not start (started P7)
 - Lance Stroll: Did not start (started P10)
 - Nico Hülkenberg: Disqualified (started P18)
+
+## Pit Strategy
+
+4 drivers on 1-stop, 12 on 2-stop, 2 on 3+ stops

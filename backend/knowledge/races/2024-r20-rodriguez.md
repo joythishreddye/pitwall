@@ -8,8 +8,8 @@ driver_refs:
   - norris
   - leclerc
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - rodriguez
@@ -55,3 +55,7 @@ tags:
 - Fernando Alonso: Retired (started P13)
 - Alexander Albon: Retired (started P9)
 - Yuki Tsunoda: Retired (started P11)
+
+## Pit Strategy
+
+15 drivers on 1-stop, 2 on 2-stop, 1 on 3+ stops

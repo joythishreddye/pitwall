@@ -9,8 +9,8 @@ driver_refs:
   - sainz
 constructor_refs:
   - toro_rosso
-  - red_bull
   - mclaren
+  - red_bull
 knowledge_level: all
 tags:
   - interlagos

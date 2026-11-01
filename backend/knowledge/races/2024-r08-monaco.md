@@ -8,8 +8,8 @@ driver_refs:
   - piastri
   - sainz
 constructor_refs:
-  - ferrari
   - mclaren
+  - ferrari
 knowledge_level: all
 tags:
   - monaco
@@ -54,3 +54,7 @@ tags:
 - Sergio Pérez: Retired (started P16)
 - Nico Hülkenberg: Retired (started P19)
 - Kevin Magnussen: Retired (started P20)
+
+## Pit Strategy
+
+10 drivers on 1-stop, 5 on 2-stop, 1 on 3+ stops
