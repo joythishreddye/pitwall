@@ -34,9 +34,9 @@ class Settings(BaseSettings):
     # Hard ceiling on billable HuggingFace requests per UTC month. Counted in
     # Postgres so it survives restarts. 0 disables HuggingFace calls entirely.
     hf_monthly_call_limit: int = Field(default=5000, ge=0)
-    # Cross-encoder reranking. Off: on the 55-question eval it lowered hit@5
-    # (100% -> 96.4%) and MRR (0.912 -> 0.717) while adding ~0.9s and HF spend.
-    # See backend/evals/results and the README's retrieval table.
+    # Cross-encoder reranking. Off: on the 55-question eval it found the same
+    # documents (hit@5 98.2%) but ranked them worse (MRR@5 0.850 -> 0.755) and
+    # added ~0.7 s plus HF spend. See backend/evals/results and the README.
     rerank_enabled: bool = False
 
     # Chat abuse protection: requests per minute, per client and overall

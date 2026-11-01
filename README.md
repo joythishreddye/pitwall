@@ -23,17 +23,24 @@ Answers come from a retrieval pipeline over 238 knowledge documents (1,128 chunk
 The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
 
 ### Retrieval quality, measured
-`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5.
+`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run and is scored on the same classifier outputs.
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
-| Vector search alone | 61.8% | 0.59 |
-| + LLM intent filters (as first built) | 78.2% | 0.68 |
-| + entity linking and fixes (current) | **100%** | **0.91** |
-| + cross-encoder reranking | 96.4% | 0.72 |
-| Full-text fallback, no embeddings | 87.3% | 0.81 |
+| Vector search alone | 60.0% | 0.57 |
+| + the classifier's filters, used as-is | 78.2% | 0.67 |
+| + entity linking (production) | **98.2%** | **0.85** |
+| + cross-encoder reranking | 98.2% | 0.76 |
+| Full-text fallback (no embeddings), linked filters | 83.6% | 0.77 |
 
-Reranking made results worse and added about 0.9s per question, so it ships switched off (`RERANK_ENABLED`). The fixes were developed against this gold set's failures, so the next step is a held-out question set before treating these numbers as general.
+Entity linking alone is worth 20 points of hit@5. Reranking found the same documents but ranked them worse, and added about 0.7s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+
+Caveats:
+- The gold set is small and hand-written, and the linker was built against its failures.
+- Three questions that matched the classifier's own prompt examples were paraphrased.
+- False-positive cases (a word like "stroll" or "China" turning into a filter) are covered by unit tests, not by the eval.
+
+A held-out question set is next.
 
 ### Season data
 Standings, results, qualifying and driver profiles for 2018–2026, with lap times, tyre stints and pit stops from 2022. Ingested from Jolpica and FastF1 into Supabase Postgres and served by FastAPI.
@@ -47,7 +54,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 - **Readiness, not just liveness:** `GET /health/ready` checks the database, both models and the embedding service. A twice-daily GitHub Actions job keeps the free database awake and emails on outages.
 - **Spend guardrails:** paid inference calls go through a monthly ceiling counted in Postgres, which fails closed. Chat has per-client and global rate limits.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 126 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 139 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 
