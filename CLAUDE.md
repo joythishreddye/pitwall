@@ -25,7 +25,7 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
   - **Defaults:** 150 MB a day overall, 15 MB a day per client, 120 requests a minute per client.
   - **Past the global budget,** the API answers 503 until midnight UTC.
   - **Not capped:** refusals and CORS preflights. One source sending 100 refused requests a second adds about 3.5 GB a day.
-  - **Alerting:** refusals are counted in `/health/ready` (`traffic`). `keepalive.yml` fails, and GitHub emails the owner, when the budget closes or refusals pass 100k a day.
+  - **Alerting:** refusals and unmetered requests (health checks, preflights) are counted in `/health/ready` (`traffic`). `keepalive.yml` fails, and GitHub emails the owner, when the budget closes or either count passes 100k a day.
   - **Hard cap:** only an edge rate limit could cap refusals.
   - **Why:** Render bills outbound bandwidth beyond 5 GB a month and can't cap it, and the Render bill must stay at $7 a month.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).
@@ -64,7 +64,7 @@ cd frontend && pnpm build               # production build
 
 # Backend
 cd backend && python -m uvicorn app.main:app --reload
-cd backend && pytest                    # 171 tests, all external services mocked
+cd backend && pytest                    # 172 tests, all external services mocked
 cd backend && ruff check . && ruff format --check .
 
 # Data

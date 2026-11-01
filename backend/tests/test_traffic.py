@@ -302,3 +302,19 @@ def test_stats_keep_yesterday_for_the_twice_daily_check() -> None:
     assert stats["today"]["served_mb"] == 0
     assert stats["yesterday"]["budget_closed"] is True
     assert stats["yesterday"]["refused_requests"] == 1
+
+
+def test_health_checks_and_preflights_are_counted_but_never_refused() -> None:
+    budget = _budget(daily_bytes=1)
+    budget.add("anyone", 10)  # the API is closed for the day
+    client = TestClient(_app(budget))
+
+    assert client.get("/health").status_code == 200
+    client.options(
+        "/api/v1/big",
+        headers={"Origin": ORIGIN, "Access-Control-Request-Method": "GET"},
+    )
+
+    assert (
+        budget.stats()["today"]["unmetered_requests"] == 1
+    )  # CORS answers preflights itself

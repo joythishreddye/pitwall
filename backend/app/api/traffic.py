@@ -13,13 +13,15 @@ budgets:
 
 Clients are also limited to a number of requests a minute.
 
-What it can't cap: the refusals themselves (about 0.3 KB each) and CORS
-preflights. They still cost bandwidth: one source sending 100 refused
-requests a second would add about 3.5 GB a day. Only a rate limit at the
-network edge could stop that, so refusals are counted instead. /health/ready
-reports today's and yesterday's traffic, and the keep-alive workflow fails
-(GitHub emails the owner) when refusals spike or the budget closes. That
-warning comes days before the 5 GB allowance could run out.
+What it can't cap: the refusals themselves (about 0.3 KB each), health
+checks and CORS preflights. They still cost bandwidth: one source sending
+100 refused requests a second would add about 3.5 GB a day. Only a rate
+limit at the network edge could stop that, so they're counted instead.
+/health/ready reports today's and yesterday's traffic. The keep-alive
+workflow fails (GitHub emails the owner) when refusals or unmetered
+requests spike, or the budget closes. For most floods that warning comes
+days before the 5 GB allowance runs out. A flood above about 60 requests a
+second could use the allowance up between two twice-daily checks.
 
 Counters live in process memory: PitWall runs one instance, and a deploy or
 restart resets them. The default 150 MB a day keeps a month under 4.5 GB.
@@ -130,6 +132,14 @@ class TrafficBudget:
             self._refused += 1
             self._refused_bytes += max(n, 0)
 
+    def count_unmetered(self, now: float | None = None) -> None:
+        """Record one request the guard lets through unmetered (health
+        checks and preflights), so floods of them still raise an alert."""
+        t = time.time() if now is None else now
+        with self._lock:
+            self._roll(t)
+            self._unmetered += 1
+
     def stats(self, now: float | None = None) -> dict:
         """Today's traffic and yesterday's (served in MB, refusals in KB)."""
         t = time.time() if now is None else now
@@ -143,6 +153,7 @@ class TrafficBudget:
             "budget_mb": round(self._daily / 1_000_000, 2),
             "refused_requests": self._refused,
             "refused_kb": round(self._refused_bytes / 1_000, 1),
+            "unmetered_requests": self._unmetered,
             "budget_closed": self._total >= self._daily,
         }
 
@@ -167,6 +178,7 @@ class TrafficBudget:
             self._closed_logged = False
             self._refused = 0
             self._refused_bytes = 0
+            self._unmetered = 0
             self._yesterday: dict | None = None
         self._limiter = SlidingWindowLimiter(
             per_key=self._per_minute, global_limit=self._global_per_minute
@@ -192,6 +204,7 @@ class TrafficBudget:
             self._closed_logged = False
             self._refused = 0
             self._refused_bytes = 0
+            self._unmetered = 0
 
     def _key(self, client: str) -> str:
         if client in self._clients or len(self._clients) < _MAX_TRACKED_CLIENTS:
@@ -228,11 +241,11 @@ class ApiTrafficGuard:
         return any(path == p or path.startswith(p + "/") for p in self.exempt)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if (
-            scope["type"] != "http"
-            or scope["method"] == "OPTIONS"
-            or self._is_exempt(scope["path"])
-        ):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        if scope["method"] == "OPTIONS" or self._is_exempt(scope["path"]):
+            self.budget.count_unmetered()
             await self.app(scope, receive, send)
             return
 
