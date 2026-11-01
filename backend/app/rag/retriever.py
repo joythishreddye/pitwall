@@ -333,20 +333,29 @@ class Retriever:
                     candidates.append(chunk)
                     seen.add(key)
 
-        # Stage 2c: If still too few, retry unfiltered
+        # Stage 2c: Too few results? Relax the filter one step at a time.
+        # Season-only comes first: a race named for one country but held in
+        # another ("Bahrain Grand Prix" at Sepang in 2026) fails the circuit
+        # filter but is still a race of that season.
         if len(candidates) < 5 and metadata_filter:
-            logger.info(
-                "Too few filtered results (%d), retrying unfiltered",
-                len(candidates),
-            )
-            unfiltered = await self.vector_search(query, {}, top_k=20)
-            for chunk in unfiltered:
-                key = chunk.source + chunk.content[:50]
-                if key not in seen:
-                    candidates.append(chunk)
-                    seen.add(key)
-                    if len(candidates) >= 20:
-                        break
+            fallbacks: list[dict] = []
+            if "season" in metadata_filter and len(metadata_filter) > 1:
+                fallbacks.append({"season": metadata_filter["season"]})
+            fallbacks.append({})
+            for fallback in fallbacks:
+                logger.info(
+                    "Too few filtered results (%d), relaxing filter to %s",
+                    len(candidates),
+                    fallback or "none",
+                )
+                for chunk in await self.vector_search(query, fallback, top_k=20):
+                    key = chunk.source + chunk.content[:50]
+                    if key not in seen:
+                        candidates.append(chunk)
+                        seen.add(key)
+                if len(candidates) >= 5:
+                    break
+            del candidates[20:]
 
         # Stage 3: Rerank
         if self.rerank_enabled:

@@ -49,7 +49,18 @@ ROOT = Path(__file__).resolve().parents[1]
 GOLD_PATH = ROOT / "evals" / "rag_gold.json"
 RESULTS_DIR = ROOT / "evals" / "results"
 MODELS_DIR = ROOT / "models"
-MODES = ("fulltext", "fulltext+intent", "vector", "vector+intent", "full")
+# "(raw)" modes use the classifier's filters as-is; the others go through the
+# entity linker. Both come from the same classifier output, so the difference
+# between them is the linker's effect alone.
+MODES = (
+    "fulltext",
+    "fulltext+intent(raw)",
+    "fulltext+intent",
+    "vector",
+    "vector+intent(raw)",
+    "vector+intent",
+    "full",
+)
 TOP_K = 5
 # Groq allows 30 requests/min per model; one intent call per question
 _SECONDS_BETWEEN_INTENT_CALLS = 2.1
@@ -144,11 +155,17 @@ async def run_question(
     async def no_rerank(query, chunks, top_k=TOP_K):
         return chunks[:top_k]
 
-    def pipeline(rerank: bool) -> Retriever:
-        r = Retriever(db=db, llm=intent_llm, embedder=embedder, linker=linker)
+    def pipeline(rerank: bool, use_linker: bool = True) -> Retriever:
+        r = Retriever(
+            db=db,
+            llm=intent_llm,
+            embedder=embedder,
+            linker=linker if use_linker else None,
+        )
         r.classify_intent = cached_intent  # type: ignore[method-assign]
         if rerank and reranker is not None:
             r._hf_rerank = reranker  # type: ignore[method-assign]
+            r.rerank_enabled = True  # settings default it off in production
         else:
             # Never fall through to the hosted reranker by accident
             r.rerank = no_rerank  # type: ignore[method-assign]
@@ -156,8 +173,14 @@ async def run_question(
 
     runs = {
         "fulltext": base.fulltext_search(question, TOP_K, {}),
+        "fulltext+intent(raw)": base.fulltext_search(
+            question, TOP_K, result.raw_filter
+        ),
         "fulltext+intent": base.fulltext_search(question, TOP_K, intent_filter),
         "vector": base.vector_search(question, {}, top_k=TOP_K),
+        "vector+intent(raw)": pipeline(rerank=False, use_linker=False).retrieve(
+            question
+        ),
         "vector+intent": pipeline(rerank=False).retrieve(question),
         "full": pipeline(rerank=True).retrieve(question),
     }
@@ -235,7 +258,16 @@ async def main() -> None:
     if args.reranker == "local":
         reranker = make_local_reranker()
     elif args.reranker == "hf":
-        reranker = Retriever(db=db, llm=intent_llm, embedder=embedder)._hf_rerank
+        # Hosted reranker: spend goes through the same monthly ceiling as prod
+        from app.rag.budget import ApiBudget
+
+        budget = ApiBudget(db, settings.hf_monthly_call_limit)
+        hf_rerank = Retriever(db=db, llm=intent_llm, embedder=embedder)._hf_rerank
+
+        async def reranker(query, chunks):
+            if not await asyncio.to_thread(budget.consume):
+                raise ValueError("HuggingFace budget reached")
+            return await hf_rerank(query, chunks)
 
     results: list[QuestionResult] = []
     for i, item in enumerate(gold, start=1):

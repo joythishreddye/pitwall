@@ -510,3 +510,34 @@ class TestRetrieverResilience:
             source="races/2020-r11-nurburgring.md",
         )
         assert not retriever._covers(nurburgring, "rb")
+
+    @pytest.mark.asyncio()
+    async def test_empty_filters_relax_to_season_before_dropping_all(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.llm.generate.return_value = (
+            '{"intent": "factual", "entities": {"drivers": [], "teams": [],'
+            ' "circuits": [], "seasons": [2026]},'
+            ' "metadata_filter": {"circuit_ref": "bahrain", "season": 2026}}'
+        )
+        season_rows = [
+            {
+                "content": f"2026 race {i}",
+                "metadata": {"season": 2026},
+                "similarity": 0.8,
+                "source": f"races/2026-r{i:02d}.md",
+            }
+            for i in range(6)
+        ]
+        retriever.db.rpc.return_value.execute.side_effect = [
+            MagicMock(data=[]),  # circuit + season: nothing
+            MagicMock(data=season_rows),  # season only
+        ]
+
+        chunks = await retriever.retrieve("Who won the 2026 Bahrain Grand Prix?")
+
+        filters = [
+            c.args[1]["filter_metadata"] for c in retriever.db.rpc.call_args_list
+        ]
+        assert filters == [{"circuit_ref": "bahrain", "season": 2026}, {"season": 2026}]
+        assert [c.source for c in chunks] == [r["source"] for r in season_rows[:5]]
