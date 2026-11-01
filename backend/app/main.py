@@ -8,9 +8,9 @@ from contextlib import asynccontextmanager
 from typing import Annotated, Any
 
 from fastapi import FastAPI, Header, HTTPException, Request, Response, status
-from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import chat, drivers, notify, races, seasons, standings
+from app.api.traffic import TrafficBudget, protect
 from app.config import settings
 from app.db.redis import get_redis
 from app.db.supabase import get_supabase, ping_supabase
@@ -67,16 +67,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
 API_PREFIX = "/api/v1"
+
+# Bandwidth guard plus CORS (see app/api/traffic.py). Render bills outbound
+# bandwidth past 5 GB a month and can't cap it, so the API caps itself.
+traffic_budget = TrafficBudget(
+    per_minute=settings.api_requests_per_minute_per_ip,
+    client_daily_bytes=settings.api_daily_mb_per_ip * 1_000_000,
+    daily_bytes=settings.api_daily_mb * 1_000_000,
+)
+protect(
+    app,
+    budget=traffic_budget,
+    cors_origins=settings.cors_origins,
+    prefix=API_PREFIX,
+)
 
 app.include_router(seasons.router, prefix=API_PREFIX)
 app.include_router(races.router, prefix=API_PREFIX)

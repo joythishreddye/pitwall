@@ -43,6 +43,14 @@ class Settings(BaseSettings):
     chat_rate_limit_per_ip: int = Field(default=6, ge=1)
     chat_rate_limit_global: int = Field(default=20, ge=1)
 
+    # Bandwidth guard for every /api/v1 route. Render's Hobby plan includes
+    # 5 GB of outbound bandwidth a month, then bills $0.15/GB with no cap.
+    # Uncompressed response bytes are counted: 150 MB a day keeps a month
+    # under 4.5 GB even for clients that don't accept gzip.
+    api_requests_per_minute_per_ip: int = Field(default=120, ge=1)
+    api_daily_mb: int = Field(default=150, ge=1)
+    api_daily_mb_per_ip: int = Field(default=15, ge=1)
+
     # Data ingestion
     fastf1_cache_dir: str = "fastf1_cache"
 
