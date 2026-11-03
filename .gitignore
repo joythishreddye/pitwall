@@ -72,3 +72,4 @@ temp/
 .playwright-mcp/
 screenshots/
 .Rhistory
+.brain/
