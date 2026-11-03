@@ -15,4 +15,4 @@ paths:
 - Components go in `frontend/components/`, pages in `frontend/app/`
 - Use barrel exports from component directories
 - Prefer named exports over default exports
-- API calls go through `frontend/lib/api-client.ts`. Two exceptions: the chat stream (`lib/hooks/use-chat.ts`) and the browser headshot lookup (`lib/hooks/use-driver-photos.ts`), which moves server-side in Phase 1
+- API calls go through `frontend/lib/api-client.ts`. Three exceptions: the chat stream (`lib/hooks/use-chat.ts`), the notify-me POST (`components/ui/notify-form.tsx`), and the browser headshot lookup (`lib/hooks/use-driver-photos.ts`), which moves server-side in Phase 1
