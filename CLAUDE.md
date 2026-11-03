@@ -27,22 +27,22 @@ In order (see `~/.claude/CLAUDE.md`): the project gates, floor, verify-outcome f
 
 The project gates, run from the repo root, in the foreground and unpiped:
 ```bash
-cd backend && source venv/bin/activate && ruff check . && ruff format --check .
-cd backend && source venv/bin/activate && pytest -q   # all external services mocked
-cd frontend && pnpm lint                              # ESLint (must be 0 errors)
-cd frontend && node_modules/.bin/tsc --noEmit         # type-check
-cd frontend && pnpm build                             # production build
+(cd backend && source venv/bin/activate && ruff check . && ruff format --check .)
+(cd backend && source venv/bin/activate && pytest -q)   # all external services mocked
+(cd frontend && pnpm lint)                              # ESLint (must be 0 errors)
+(cd frontend && node_modules/.bin/tsc --noEmit)         # type-check
+(cd frontend && pnpm build)                             # production build
 # (no frontend unit tests yet; vitest is planned)
 ```
-Use these exact forms. `pytest` and `ruff` live in `backend/venv`, so a bare call exits 127. The gate hooks (the save nudge and the gate-failure record) recognize only the command forms in `~/.claude/brain/bin/gate-re.sh`, so another runner or path goes unrecorded.
+Use these exact forms. The parentheses keep each `cd` (and the venv) inside a subshell: Claude Code's shell keeps a successful `cd`, so without them the next line's `cd` fails. `pytest` and `ruff` live in `backend/venv`, so a bare call exits 127. The gate hooks (the save nudge and the gate-failure record) recognize only the command forms in `~/.claude/brain/bin/gate-re.sh`, so another runner or path goes unrecorded.
 
 ## Other commands (not gates)
 ```bash
-cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload   # API dev server
-cd frontend && pnpm dev                                                             # web dev server
-cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1   # Jolpica refresh
-cd backend && source venv/bin/activate && python scripts/ingest_knowledge.py        # regenerate docs + re-embed locally
-cd backend && source venv/bin/activate && python scripts/eval_rag.py                # retrieval eval (55 Qs, local models, ~4 min)
+(cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload)   # API dev server
+(cd frontend && pnpm dev)                                                             # web dev server
+(cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1)   # Jolpica refresh
+(cd backend && source venv/bin/activate && python scripts/ingest_knowledge.py)        # regenerate docs + re-embed locally
+(cd backend && source venv/bin/activate && python scripts/eval_rag.py)                # retrieval eval (55 Qs, local models, ~4 min)
 curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header
 ```
 `eval_rag.py` isn't a gate yet: it exits 0 even on a regression. Compare its new file in `backend/evals/results/` with the last recorded run yourself.

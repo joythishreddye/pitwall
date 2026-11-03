@@ -47,7 +47,7 @@ You are building PitWall, a product for Formula 1 fans. Every UI element must fe
 
 Animation ownership:
 - **GSAP:** DrawSVG circuit outlines, SplitText reveals, ScrollTrigger scroll choreography, Flip layout reordering, CustomEase counters, complex timelines
-- **Framer Motion (keep):** `AnimatePresence` route transitions, `whileHover`/`whileTap` on Card micro-states only
+- **Motion (keep):** the `motion` package, imported from `motion/react` (formerly Framer Motion). Use it only for route transitions (`AnimatePresence`) and `whileHover`/`whileTap` micro-states on Card, through `m.*` components: `components/providers.tsx` wraps the app in `LazyMotion` with `domAnimation`
 
 Rules:
 - All GSAP animations inside `useGSAP(() => { ... }, { scope: ref })` — never bare `gsap.to()` in components

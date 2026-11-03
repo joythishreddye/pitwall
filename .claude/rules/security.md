@@ -23,5 +23,5 @@ paths:
 
 ## Authentication
 - Use Supabase Auth for user management
-- Validate JWT tokens on every protected endpoint
+- Validate JWT tokens on every protected user endpoint. The deep readiness check (`/health/ready?deep=true`, in `backend/app/main.py`) is the exception: it takes the `X-Health-Token` header instead, compared with `hmac.compare_digest`
 - Row Level Security (RLS) policies on Supabase tables
