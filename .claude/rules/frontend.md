@@ -9,8 +9,8 @@ paths:
 - Use React Server Components where possible, add "use client" only when needed
 - Use 2-space indentation
 - Use TypeScript strict mode — no `any` types
-- Use Zod for runtime validation of API responses
-- Use TanStack Query for all server state (no useState for API data)
+- Use Zod for runtime validation of API responses, except the chat stream (`lib/hooks/use-chat.ts`), which parses its SSE events with `JSON.parse` and a cast
+- Use TanStack Query for all server state (no useState for API data), except the chat stream (`lib/hooks/use-chat.ts`), which keeps its streamed messages in useState
 - Use Tailwind CSS v4 and the project's own primitives in `frontend/components/ui/` (shadcn/ui isn't installed) — no custom CSS unless absolutely necessary
 - Components go in `frontend/components/`, pages in `frontend/app/`
 - Use barrel exports from component directories

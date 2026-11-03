@@ -5,7 +5,7 @@ paths:
 
 # Backend Rules (Python FastAPI)
 
-- Use async/await for all I/O operations
+- Don't block the event loop. Routes that use the sync Supabase client are plain `def`, which FastAPI runs in its threadpool; an `async def` route wraps each blocking call in `asyncio.to_thread`, as chat.py does. The exception is notify.py's `subscribe`, which calls the client directly (a known bug)
 - Use Pydantic v2 for all request/response schemas
 - Use dependency injection via FastAPI's Depends()
 - Use Google-style docstrings for public functions
