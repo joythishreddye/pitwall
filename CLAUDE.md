@@ -81,8 +81,8 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 ```
 
 ## Claude Code Tools Available
-**Skills:** `/frontend`, `/backend`, `/test`, `/issue`
-**Agents:** `frontend-expert`, `backend-expert`, `ml-expert`, `code-reviewer` (run before pushes)
+**Skills:** `/issue`
+**Gates** (in order; see `~/.claude/CLAUDE.md`): the project gates, floor, verify-outcome for UI changes once `verify.json` exists, then codex-review (Codex plus the reviewer agent) at task end and before any push
 **Rules** (auto-loaded by path): `frontend.md`, `design.md`, `backend.md`, `security.md`, `testing.md`, `workflow.md`
 
 ## Code Conventions

@@ -8,7 +8,7 @@ paths:
 Every feature follows this pipeline:
 
 1. **Plan** — Break down the feature, identify files to create/modify, check for existing patterns
-2. **Test first** — Write failing tests before implementation (pytest for backend, vitest for frontend)
+2. **Test first** — Write failing tests before implementation (pytest for the backend; the frontend has no unit test runner yet)
 3. **Implement** — Write minimal code to make tests pass
 4. **Review** — Self-review: check for security issues, type safety, error handling
 5. **Commit** — Conventional commit with issue reference (e.g., `feat: add race prediction endpoint (closes #8)`)

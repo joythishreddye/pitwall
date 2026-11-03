@@ -8,7 +8,7 @@ paths:
 ## Secrets Management
 - ALL secrets in environment variables, never in code
 - Use backend/app/config.py (pydantic-settings) to load and validate at startup
-- If a secret is accidentally committed: rotate immediately, force-push removal, update .gitignore
+- If a secret is accidentally committed: rotate it immediately (rotation is the real fix: a pushed secret stays in clones and caches even after a history rewrite), remove it in a new commit, update .gitignore, and ask Joythish before any history rewrite or force-push
 
 ## Patterns to NEVER commit
 - API keys: sk-, ghp_, gho_, AKIA, xox-, Bearer
