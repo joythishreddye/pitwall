@@ -35,11 +35,14 @@ class NotifyResponse(BaseModel):
 
 
 @router.post("", response_model=NotifyResponse, status_code=status.HTTP_200_OK)
-async def subscribe(
+def subscribe(
     body: NotifyRequest,
     db: Annotated[Client, Depends(get_supabase)],
 ) -> NotifyResponse:
     """Record an email subscription.
+
+    A plain ``def`` because the Supabase client is synchronous: FastAPI runs it
+    in its threadpool, so the network call never blocks the event loop.
 
     Upserts on the unique email constraint so duplicate submissions return the
     same success response without leaking whether the address was already stored.
