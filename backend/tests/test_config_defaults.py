@@ -10,11 +10,11 @@ def required_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("SUPABASE_URL", "https://x.supabase.co")
     monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "key")
     monkeypatch.setenv("SECRET_KEY", "secret")
+    monkeypatch.setenv("LLM_MODEL", "answer-model")
+    monkeypatch.setenv("LLM_INTENT_MODEL", "intent-model")
     for name in (
         "UPSTASH_REDIS_REST_URL",
         "UPSTASH_REDIS_REST_TOKEN",
-        "LLM_MODEL",
-        "LLM_INTENT_MODEL",
         "LLM_REASONING_EFFORT",
         "HF_MONTHLY_CALL_LIMIT",
         "HEALTH_CHECK_TOKEN",
@@ -28,11 +28,22 @@ def test_redis_is_optional(required_env) -> None:
     assert s.upstash_redis_rest_token is None
 
 
-def test_llm_defaults_to_gpt_oss_with_low_effort(required_env) -> None:
+def test_llm_models_come_from_env_with_low_effort(required_env) -> None:
     s = Settings(_env_file=None)
-    assert s.llm_model == "openai/gpt-oss-120b"
-    assert s.llm_intent_model == "openai/gpt-oss-20b"
+    assert s.llm_model == "answer-model"
+    assert s.llm_intent_model == "intent-model"
     assert s.llm_reasoning_effort == "low"
+
+
+@pytest.mark.parametrize("missing", ["LLM_MODEL", "LLM_INTENT_MODEL"])
+def test_a_missing_model_id_fails_at_startup(
+    required_env, monkeypatch, missing
+) -> None:
+    # No code default: a retired model must not keep running unnoticed
+    # (Groq shut Llama 3.3 70B down on 2026-08-16).
+    monkeypatch.delenv(missing)
+    with pytest.raises(ValueError, match=missing.lower()):
+        Settings(_env_file=None)
 
 
 def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:

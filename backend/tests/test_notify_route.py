@@ -1,5 +1,6 @@
 """Notify endpoint: stores the email off the event loop and hides DB errors."""
 
+import logging
 import threading
 from collections.abc import Iterator
 from unittest.mock import MagicMock
@@ -52,6 +53,23 @@ async def test_a_database_error_returns_500_without_details(db: MagicMock) -> No
 
     assert response.status_code == 500
     assert response.json() == {"detail": "Could not record subscription"}
+
+
+async def test_a_database_error_never_logs_the_email(
+    db: MagicMock, caplog: pytest.LogCaptureFixture
+) -> None:
+    # A PostgREST error can echo the failing row, so the exception text carries
+    # the address too, not just the log call's own arguments.
+    db.table.return_value.upsert.return_value.execute.side_effect = RuntimeError(
+        "Failing row contains (fan@example.com, live)"
+    )
+
+    with caplog.at_level(logging.DEBUG, logger="app.api.routes.notify"):
+        response = await _post({"email": "fan@example.com", "source": "live"})
+
+    assert response.status_code == 500
+    assert "fan@example.com" not in caplog.text
+    assert "source=live" in caplog.text
 
 
 async def test_rejects_an_invalid_email(db: MagicMock) -> None:

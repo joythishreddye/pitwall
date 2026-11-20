@@ -53,7 +53,14 @@ def subscribe(
             on_conflict="email",
         ).execute()
     except Exception as exc:
-        logger.exception("Failed to store subscription email=%s", body.email)
+        # Never log the address. A PostgREST error's text can echo the failing
+        # row, so log only the error's type and code, not its message.
+        logger.error(
+            "Failed to store subscription source=%s error=%s code=%s",
+            body.source,
+            type(exc).__name__,
+            getattr(exc, "code", None),
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not record subscription",

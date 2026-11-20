@@ -21,10 +21,13 @@ class Settings(BaseSettings):
 
     # LLM
     llm_provider: str = "groq"
-    llm_model: str = "openai/gpt-oss-120b"
+    # Model ids are required, from env (LLM_MODEL, LLM_INTENT_MODEL), with no
+    # code default: a missing one fails at startup instead of running a model
+    # the provider may have retired (Groq shut Llama 3.3 70B down on 2026-08-16).
+    llm_model: str
     # Smaller model for intent/entity extraction. Groq rate-limits each model
     # separately, so this keeps the answer model's token budget for answers.
-    llm_intent_model: str = "openai/gpt-oss-20b"
+    llm_intent_model: str
     llm_reasoning_effort: Literal["low", "medium", "high"] = "low"
     groq_api_key: str | None = None
     anthropic_api_key: str | None = None
