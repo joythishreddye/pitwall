@@ -12,6 +12,9 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        # A startup error must not print the settings it read: Render logs it,
+        # and pydantic would show the merged values, ending with a secret's tail.
+        hide_input_in_errors=True,
     )
 
     # Supabase

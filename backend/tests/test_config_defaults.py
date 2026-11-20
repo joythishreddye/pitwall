@@ -58,6 +58,17 @@ def test_a_blank_model_id_fails_at_startup(
         Settings(_env_file=None)
 
 
+def test_a_startup_error_never_prints_setting_values(required_env, monkeypatch) -> None:
+    # Render logs the startup traceback. Without hide_input_in_errors, pydantic
+    # prints the merged settings dict, cut to its ends: the tail of a secret.
+    monkeypatch.setenv("SECRET_KEY", "secret-head-" + "x" * 40 + "-secret-tail")
+    monkeypatch.delenv("LLM_MODEL")
+    with pytest.raises(ValueError) as info:
+        Settings(_env_file=None)
+    assert "input_value" not in str(info.value)
+    assert "secret-tail" not in str(info.value)
+
+
 def test_model_ids_are_trimmed(required_env, monkeypatch) -> None:
     monkeypatch.setenv("LLM_MODEL", " answer-model ")
     assert Settings(_env_file=None).llm_model == "answer-model"
