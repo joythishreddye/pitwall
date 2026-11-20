@@ -14,24 +14,26 @@ tags:
 
 **Full Name:** Haas F1 Team
 **Nationality:** American
-**2026 Drivers:** Esteban Ocon (OCO), Oliver Bearman (BEA)
+**2026 Drivers:** Esteban Ocon (OCO), Oliver Bearman (BEA), Rafael Camara (CAM), Ryo Hirakawa (HIR)
 
 ## 2026 Season Performance
 
 - **Championship Position:** P7
-- **Points:** 30
+- **Points:** 31
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 6
+- **DNFs:** 7
 
 ## 2026 Driver Breakdown
 
-- **Oliver Bearman:** 19 pts, best P5 in 18 races
+- **Oliver Bearman:** 19 pts, best P5 in 20 races
 - **Esteban Ocon:** 7 pts, best P8 in 18 races
+- **Ryo Hirakawa:** 1 pts, best P10 in 1 races
+- **Rafael Camara:** 0 pts, best P20 in 1 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 382
+- **Race Entries:** 386
 - **Wins:** 0
 - **Podiums:** 0
-- **Total Points:** 316.0
+- **Total Points:** 317.0
