@@ -20,26 +20,26 @@ tags:
 
 ## Statistics since 2018 (not full career totals)
 
-- **Races:** 88
+- **Races:** 90
 - **Wins:** 9
 - **Podiums:** 28
 - **Pole Positions:** 6
-- **Points:** 851.0
+- **Points:** 859.0
 - **World Championships since 2018:** 0
 
 ## 2026 Season Performance
 
-- **Points (including sprints):** 144
+- **Points (including sprints):** 152
 - **Wins:** 0
 - **Podiums:** 2
 - **Best Finish:** P2
 - **DNFs:** 3
-- **Races Completed:** 18
+- **Races Completed:** 20
 
 ## Recent Results (2026)
 
-- Round 14 Spanish Grand Prix: P8 (started P7)
-- Round 15 Azerbaijan Grand Prix: P13 (started P3)
 - Round 16 Bahrain Grand Prix in Malaysia: P6 (started P6)
 - Round 17 Singapore Grand Prix: P5 (started P6)
 - Round 18 United States Grand Prix: P7 (started P7)
+- Round 19 Mexico City Grand Prix: P13 (started P12)
+- Round 20 Brazilian Grand Prix: P6 (started P10)

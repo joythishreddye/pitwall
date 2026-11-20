@@ -19,19 +19,19 @@ tags:
 ## 2026 Season Performance
 
 - **Championship Position:** P4
-- **Points:** 355
-- **Wins:** 2
-- **Podiums:** 7
+- **Points:** 398
+- **Wins:** 3
+- **Podiums:** 8
 - **DNFs:** 7
 
 ## 2026 Driver Breakdown
 
-- **Lando Norris:** 178 pts, best P1 in 18 races
-- **Oscar Piastri:** 123 pts, best P2 in 18 races
+- **Lando Norris:** 213 pts, best P1 in 20 races
+- **Oscar Piastri:** 131 pts, best P2 in 20 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 382
-- **Wins:** 23
-- **Podiums:** 80
-- **Total Points:** 2784.0
+- **Race Entries:** 386
+- **Wins:** 24
+- **Podiums:** 81
+- **Total Points:** 2827.0
