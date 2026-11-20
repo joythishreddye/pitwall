@@ -7,12 +7,18 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 
 ## Critical Rules
 - Check GitHub issues (`gh issue view <N>`) before starting work
-- **Ask Joythish before any push, and before any merge to main:** a push to main deploys Vercel and Render (production)
+- **Claude decides when to push and merge to main,** after the gates pass. Joythish reviews the UI and features.
+  - Main takes pull requests only: a GitHub ruleset requires both CI checks and has no bypass, Joythish included. Merge with `gh pr merge`.
+  - Cloud sessions (claude.ai/code) push only their own `claude/` branch and never merge. Merges happen in the local session, after the gates.
+  - A merge to main deploys Vercel, and Render only when it changes `backend/`.
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval change re-runs `backend/scripts/eval_rag.py` and must not regress the last recorded run in `backend/evals/results/` (gold v2). No question may go from hit to miss, and production mode (vector+intent) hit@5 and MRR@5 may not drop. Last run: 2026-11-01T2233Z, 100% / 0.912.
-- Every knowledge ingest re-runs the eval too, under the same rule (`ingest_knowledge.py`, including the one after a data refresh)
+- Every chat or retrieval change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v2). No question may go from hit to miss, and production mode (vector+intent) hit@5 and MRR@5 may not drop. Last run: 2026-11-20T0057Z, 100% / 0.891 (after the round 19–20 data refresh).
+- Every knowledge ingest re-runs the eval too (`ingest_knowledge.py`, including the one after a data refresh), with a data-update bar.
+  - **It passes** if no question goes from hit to miss and production-mode hit@5 doesn't drop.
+  - **An MRR@5 drop is reported to Joythish, not blocking.** New numbers reorder near-tied pages after most refreshes, and the chat reads all five top chunks for each answer (`backend/app/rag/retriever.py`).
+  - **An automated refresh** runs the eval before it swaps the new knowledge in, and swaps only if the bar passes.
 - Self-review before committing: security, types, error handling
 - The pillar is "Academy". Never call it "F1 Academy" (F1 ACADEMY is a trademark).
 
@@ -86,6 +92,7 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
   - **So:** ingest after sessions end, retrying on 401; pre-ingest replays; and don't depend on OpenF1 when a page is viewed.
   - **One exception:** the browser headshot lookup (`frontend/lib/hooks/use-driver-photos.ts`). It falls back to the driver code and moves server-side in Phase 1.
 - **FastF1:** since 2026-10-15 F1's archive returns 401 without an F1 TV login, and F1 blocks cloud IPs. FastF1 ≥3.9 runs **locally only**, with the owner's own F1 TV login. Never use it in CI or on Render.
+  - **A free F1 account's live feed lacks the track map and telemetry.** `fastf1.livetiming save` with a free sign-in gets timing, tyres, pit in/out, race control and weather, but never subscribes `Position.z` or `CarData.z` (checked 2026-11-19, Vegas FP2).
 - **f1db:** 1950–2017 backfill (#18), CC BY 4.0.
 - PostgREST caps responses at 1,000 rows. Page with `.range()` (see `fetch_all` in `backend/app/db/supabase.py`); `.limit()` alone silently truncates.
 
@@ -97,5 +104,5 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 - **TypeScript:** strict, 2-space indent, App Router, Zod for API validation, React Compiler lint rules (no refs read during render, no synchronous setState in effects)
 - **Python:** Ruff (lint + format), Pydantic v2, async I/O; providers raise `LLMError`, and routes never import a vendor SDK
 - **Commits:** `feat|fix|refactor|test|docs|chore|data: description (closes #N)`
-- **Branches:** `main` (production; pushing deploys Vercel and Render), `feature/*`, `fix/*`
+- **Branches:** `main` (production; pull requests only, see Critical Rules), `feature/*`, `fix/*`, and `claude/*` from cloud sessions
 - **Claude Code:** the `/issue` skill. Rules auto-load by path from `.claude/rules/`: `frontend.md`, `design.md`, `backend.md`, `security.md`, `testing.md`, `workflow.md`
