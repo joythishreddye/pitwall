@@ -46,6 +46,15 @@ def test_a_missing_model_id_fails_at_startup(
         Settings(_env_file=None)
 
 
+@pytest.mark.parametrize("blank", ["LLM_MODEL", "LLM_INTENT_MODEL"])
+def test_a_blank_model_id_fails_at_startup(required_env, monkeypatch, blank) -> None:
+    # A placeholder like LLM_INTENT_MODEL= must not pass either: the factory
+    # would fall back to the answer model and share its rate limit.
+    monkeypatch.setenv(blank, "")
+    with pytest.raises(ValueError, match=blank.lower()):
+        Settings(_env_file=None)
+
+
 def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:
     s = Settings(_env_file=None)
     assert s.hf_monthly_call_limit == 5000
