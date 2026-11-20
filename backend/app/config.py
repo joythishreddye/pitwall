@@ -1,7 +1,10 @@
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import Field
+from pydantic import Field, StringConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# A model id from env: trimmed, and never blank.
+ModelId = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class Settings(BaseSettings):
@@ -9,6 +12,9 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        # A startup error must not print the settings it read: Render logs it,
+        # and pydantic would show the merged values, ending with a secret's tail.
+        hide_input_in_errors=True,
     )
 
     # Supabase
@@ -21,10 +27,14 @@ class Settings(BaseSettings):
 
     # LLM
     llm_provider: str = "groq"
-    llm_model: str = "openai/gpt-oss-120b"
+    # Model ids are required, from env (LLM_MODEL, LLM_INTENT_MODEL), with no
+    # code default: a missing or blank one fails at startup instead of running
+    # a model the provider may have retired (Groq shut Llama 3.3 70B down on
+    # 2026-08-16).
+    llm_model: ModelId
     # Smaller model for intent/entity extraction. Groq rate-limits each model
     # separately, so this keeps the answer model's token budget for answers.
-    llm_intent_model: str = "openai/gpt-oss-20b"
+    llm_intent_model: ModelId
     llm_reasoning_effort: Literal["low", "medium", "high"] = "low"
     groq_api_key: str | None = None
     anthropic_api_key: str | None = None

@@ -6,6 +6,8 @@ os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "test-key")
 os.environ.setdefault("SECRET_KEY", "test-secret")
 os.environ.setdefault("LLM_PROVIDER", "groq")
 os.environ.setdefault("GROQ_API_KEY", "gsk_test")
+os.environ.setdefault("LLM_MODEL", "openai/gpt-oss-120b")
+os.environ.setdefault("LLM_INTENT_MODEL", "openai/gpt-oss-20b")
 
 
 import pytest

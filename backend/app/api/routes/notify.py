@@ -35,11 +35,14 @@ class NotifyResponse(BaseModel):
 
 
 @router.post("", response_model=NotifyResponse, status_code=status.HTTP_200_OK)
-async def subscribe(
+def subscribe(
     body: NotifyRequest,
     db: Annotated[Client, Depends(get_supabase)],
 ) -> NotifyResponse:
     """Record an email subscription.
+
+    A plain ``def`` because the Supabase client is synchronous: FastAPI runs it
+    in its threadpool, so the network call never blocks the event loop.
 
     Upserts on the unique email constraint so duplicate submissions return the
     same success response without leaking whether the address was already stored.
@@ -50,7 +53,14 @@ async def subscribe(
             on_conflict="email",
         ).execute()
     except Exception as exc:
-        logger.exception("Failed to store subscription email=%s", body.email)
+        # Never log the address. A PostgREST error's text can echo the failing
+        # row, so log only the error's type and code, not its message.
+        logger.error(
+            "Failed to store subscription source=%s error=%s code=%s",
+            body.source,
+            type(exc).__name__,
+            getattr(exc, "code", None),
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not record subscription",

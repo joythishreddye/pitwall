@@ -10,11 +10,11 @@ def required_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("SUPABASE_URL", "https://x.supabase.co")
     monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "key")
     monkeypatch.setenv("SECRET_KEY", "secret")
+    monkeypatch.setenv("LLM_MODEL", "answer-model")
+    monkeypatch.setenv("LLM_INTENT_MODEL", "intent-model")
     for name in (
         "UPSTASH_REDIS_REST_URL",
         "UPSTASH_REDIS_REST_TOKEN",
-        "LLM_MODEL",
-        "LLM_INTENT_MODEL",
         "LLM_REASONING_EFFORT",
         "HF_MONTHLY_CALL_LIMIT",
         "HEALTH_CHECK_TOKEN",
@@ -28,11 +28,50 @@ def test_redis_is_optional(required_env) -> None:
     assert s.upstash_redis_rest_token is None
 
 
-def test_llm_defaults_to_gpt_oss_with_low_effort(required_env) -> None:
+def test_llm_models_come_from_env_with_low_effort(required_env) -> None:
     s = Settings(_env_file=None)
-    assert s.llm_model == "openai/gpt-oss-120b"
-    assert s.llm_intent_model == "openai/gpt-oss-20b"
+    assert s.llm_model == "answer-model"
+    assert s.llm_intent_model == "intent-model"
     assert s.llm_reasoning_effort == "low"
+
+
+@pytest.mark.parametrize("missing", ["LLM_MODEL", "LLM_INTENT_MODEL"])
+def test_a_missing_model_id_fails_at_startup(
+    required_env, monkeypatch, missing
+) -> None:
+    # No code default: a retired model must not keep running unnoticed
+    # (Groq shut Llama 3.3 70B down on 2026-08-16).
+    monkeypatch.delenv(missing)
+    with pytest.raises(ValueError, match=missing.lower()):
+        Settings(_env_file=None)
+
+
+@pytest.mark.parametrize("value", ["", "   "])
+@pytest.mark.parametrize("blank", ["LLM_MODEL", "LLM_INTENT_MODEL"])
+def test_a_blank_model_id_fails_at_startup(
+    required_env, monkeypatch, blank, value
+) -> None:
+    # A placeholder like LLM_INTENT_MODEL= must not pass either: the factory
+    # would fall back to the answer model and share its rate limit.
+    monkeypatch.setenv(blank, value)
+    with pytest.raises(ValueError, match=blank.lower()):
+        Settings(_env_file=None)
+
+
+def test_a_startup_error_never_prints_setting_values(required_env, monkeypatch) -> None:
+    # Render logs the startup traceback. Without hide_input_in_errors, pydantic
+    # prints the merged settings dict, cut to its ends: the tail of a secret.
+    monkeypatch.setenv("SECRET_KEY", "secret-head-" + "x" * 40 + "-secret-tail")
+    monkeypatch.delenv("LLM_MODEL")
+    with pytest.raises(ValueError) as info:
+        Settings(_env_file=None)
+    assert "input_value" not in str(info.value)
+    assert "secret-tail" not in str(info.value)
+
+
+def test_model_ids_are_trimmed(required_env, monkeypatch) -> None:
+    monkeypatch.setenv("LLM_MODEL", " answer-model ")
+    assert Settings(_env_file=None).llm_model == "answer-model"
 
 
 def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:
