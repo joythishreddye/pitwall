@@ -20,7 +20,8 @@ It's for F1 fans, from newcomers to hardcore.
   - `lib/hooks/use-countdown.ts`.
   - `lib/hooks/use-chat.ts` and `components/chat/*`: the ask box.
   - `components/ui/team-color-provider.tsx` and `lib/constants/teams.ts`.
-  - `lib/hooks/use-driver-photos.ts`: headshots, falling back to the driver code.
+  - `lib/hooks/use-driver-photos.ts`: headshots, falling back to the driver code. It calls OpenF1 from the
+    browser, so switch to brief 002's headshot links once they land.
   - `lib/hooks/use-standings.ts` and `lib/hooks/use-races.ts`.
 - `components/home/*` holds today's homepage tiles. The new page replaces them; keep only what fits.
 
@@ -36,7 +37,7 @@ content is at most 1400 px wide.
 |         | | Radio check. I'm your AI ...  | | title             [badge]   | |
 |         | | [faces] TAG                + | | race week: outline drawing   | |
 |         | |         one-line call        | |   in, START / FINISH,         | |
-|         | | [icon]  TAG                + | |   LIGHTS OUT IN 4d 21h ...    | |
+|         | | [icon]  TAG                + | |   LIGHTS OUT IN 3d 21h ...    | |
 |         | |         one-line call        | | after a race: highlights,     | |
 |         | | ... 4 to 6 lines             | |   WATCH THE FULL REPLAY       | |
 |         | +------------------------------+ | off-season: the title fight   | |
@@ -76,17 +77,20 @@ The clock picks the view. All times are in the visitor's time zone, with its abb
   - Before lights out: a countdown to the race start.
   - From the start until 2 h 30 after it, the picture says RACE UNDER WAY. After that it says RESULTS SOON, until
     the data has the result.
-  - The LIVE dot (pulsing green) shows only between a session's start and its scheduled end.
+  - The LIVE dot (pulsing green) shows only between a session's start and its scheduled end. Jolpica gives start
+    times only, so a session ends at its start plus its standard length: 1 h for practice, qualifying and the
+    sprint, 45 min for sprint qualifying, 2 h for the race.
 - **Off-season:** no race in the season is left without results, and the after-race window has ended. It runs
   until 14 days before the next season's first race, if that race is in the data. Then race week starts for
   round 1.
 
-Fixed-clock examples, for tests on fixture data (race starts: Qatar 2026-11-29T16:00Z, Abu Dhabi
-2026-12-06T13:00Z):
+Fixed-clock examples, for tests on fixture data (race starts: Las Vegas 2026-11-22T04:00Z, Qatar
+2026-11-29T16:00Z, Abu Dhabi 2026-12-06T13:00Z):
 
 | Clock (UTC) | Data | View |
 |---|---|---|
-| 2026-11-24T19:00Z | rounds 1–21 have results | race week, Qatar: LIGHTS OUT IN 4 days 21 h |
+| 2026-11-24T19:00Z | rounds 1–21 have results | after a race, Las Vegas (until 2026-11-25T04:00Z) |
+| 2026-11-25T19:00Z | rounds 1–21 have results | race week, Qatar: LIGHTS OUT IN 3 days 21 h |
 | 2026-11-24T19:00Z | rounds 1–20 only (Vegas missing) | race week, Las Vegas: RESULTS SOON |
 | 2026-11-29T20:00Z | Qatar's result in | after a race, Qatar |
 | 2026-12-02T16:00Z | Qatar's result in | race week, Abu Dhabi |
@@ -201,7 +205,12 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 - Live data during sessions (January to February).
 
 ## Landmines
-- **OpenF1 returns 401 to everyone during a live F1 session.** Never fetch it when a page is viewed.
+- **OpenF1 returns 401 to everyone during a live F1 session.** Never fetch it when a page is viewed. The one
+  exception today is the headshot lookup (`use-driver-photos.ts`, with its code fallback, per CLAUDE.md), and
+  brief 002 moves headshots server-side.
+- **A race's start is its date plus its time, in UTC, but check night races.** The stored 2024 Las Vegas race
+  reads 2024-11-23 06:00, 24 h before its real start (2024-11-24T06:00Z). 2025 and 2026 are right. Test the views
+  against a night race.
 - **`verify-outcome` loads pages live, not through the e2e mocks.** So the page must not call the chat on load,
   and it must render without errors on live data.
 - **Don't port the mockup's code.** It ran on another runtime, with a mock clock. This brief is the spec.

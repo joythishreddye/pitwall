@@ -9,7 +9,8 @@
 Every 2026 race gets the data the briefing homepage and the race page (brief 003) draw on:
 - a compact replay file;
 - the circuit's outline;
-- the weekend's session start times.
+- the weekend's session start times;
+- driver headshot links, fetched between sessions and served with the data, so no page calls OpenF1.
 
 And after each race, a refresh runs by itself. It brings in the results and standings, refreshes the engineer's
 knowledge (testing it before the swap), and builds the new race's replay file.
@@ -73,6 +74,10 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   Check each one's current free-tier limits in its own docs before choosing. Don't assume them.
 
 ## The automatic after-race refresh (#17)
+- **Approval:** Joythish approved a refresh that runs by itself and writes production, gated by the eval bar
+  below (Nov 19, 2026). Turning it on is still his call. He adds the secrets himself, sees a dry run's output
+  (criterion 5), and OKs the schedule before the first unattended run. He can turn it off at any time (GitHub,
+  Actions, Disable workflow).
 - **When:** after each race, once Jolpica has the result. It can lag the flag by hours, so check and retry rather
   than fire once.
 - **Steps, in order:**
@@ -84,10 +89,17 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
      - production-mode hit@5 doesn't drop;
      - an MRR@5 drop is reported to Joythish, not blocking.
      
-     Today `ingest_knowledge.py` swaps first and evaluates after, so this step changes it.
+     Today `ingest_knowledge.py` swaps first and evaluates after, so this step changes it. The eval must search
+     only the new knowledge: `rag_ingest.py` inserts the new chunks before deleting the old ones, so both sets
+     are live at once. Use a version or id-range filter in the search, or a staging table. Either one likely
+     needs a migration, which Joythish OKs first, so ask early in the window.
   4. Open a pull request with the regenerated docs and the eval results file. Main takes pull requests only.
+     A PR opened with the default `GITHUB_TOKEN` starts no CI runs, so the required checks never report and it
+     can't merge. Use a GitHub App token or a fine-grained token that can trigger CI, and check that the repo
+     lets Actions create pull requests.
 - **Runner:** GitHub Actions on a schedule. Its free minutes for a public repo are the default choice.
-  - The secrets it needs (the Supabase service key, the Groq key and both model ids) are a secrets change.
+  - The secrets it needs (everything `app/config.py` requires at startup: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SECRET_KEY,
+    LLM_MODEL and LLM_INTENT_MODEL, plus the Groq key and the PR token) are a secrets change.
     Joythish adds them himself, after he OKs it at build time.
   - Any paid runner or cron (a Render cron job, say) needs his OK first.
   - Cache the embedding model between runs. Ingestion embeds locally with sentence-transformers.
@@ -107,8 +119,9 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
    - a replay file for every 2026 race with results, and an outline for every 2026 circuit, in the chosen
      storage;
    - a check script fetches each one and validates its shape.
-5. **A dry run on a past race** (round 20, Brazil) runs the workflow end to end on a branch, with the swap and
-   the PR turned off by a flag, and prints what it would have changed.
+5. **A dry run on a past race** (round 20, Brazil) runs the workflow end to end on a branch, with the swap turned
+   off by a flag and the PR opened as a draft, and prints what it would have changed. The schedule is enabled only after
+   Joythish has seen that output and OK'd it.
 6. **No Render egress for the files:** the e2e suite asserts that the homepage fetches the replay file from the
    storage's host, not the API's.
 7. **The project gates, `floor` and `codex-review` pass.** If the review input passes codex-review's 400 KB cap
@@ -125,3 +138,7 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   401 until it ends.
 - **The repo is public:** keys go in GitHub secrets or env vars, never in files or logs.
 - **Cloud sessions push only their own `claude/` branch and never merge** (CLAUDE.md).
+- **GitHub turns off a scheduled workflow after 60 days without repo activity** (keepalive.yml notes it). Abu
+  Dhabi to the 2027 opener is about three months, so re-enable it before round 1, or keep the repo active.
+- **Take lights out from OpenF1's session start, and cross-check Jolpica's date and time.** The stored 2024 Las
+  Vegas row is 24 h early.
