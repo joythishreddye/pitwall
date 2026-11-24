@@ -12,8 +12,8 @@ Every 2026 race gets the data the briefing homepage and the race page (brief 003
 - the weekend's session start times;
 - driver headshot links, fetched between sessions and served with the data, so no page calls OpenF1.
 
-And after each race, a refresh runs by itself. It brings in the results and standings, refreshes the engineer's
-knowledge (testing it before the swap), and builds the new race's replay file.
+And after each race, a refresh runs by itself. It brings in the results and standings, then refreshes the
+engineer's knowledge, testing it before the swap, and publishes the new race's replay file once that test passes.
 
 ## Sources (both CC BY-NC-SA 4.0, credited on the site)
 - **OpenF1 (2023 on):** laps, position, intervals, stints, pit, race_control, weather, and location (for the
@@ -74,26 +74,30 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   Check each one's current free-tier limits in its own docs before choosing. Don't assume them.
 
 ## The automatic after-race refresh (#17)
-- **Approval:** Joythish approved a refresh that runs by itself and writes production, gated by the eval bar
-  below (Nov 19, 2026). Turning it on is still his call. He adds the secrets himself, sees a dry run's output
-  (criterion 5), and OKs the schedule before the first unattended run. He can turn it off at any time (GitHub,
-  Actions, Disable workflow).
+- **Approval:** Joythish approved a refresh that runs by itself and writes production, with its knowledge swap
+  gated by the eval bar below (Nov 19, 2026). Turning it on is still his call. He adds the secrets himself, sees
+  a dry run's output (criterion 5), and OKs the schedule before the first unattended run. He can turn it off at
+  any time (GitHub, Actions, Disable workflow).
 - **When:** after each race, once Jolpica has the result. It can lag the flag by hours, so check and retry rather
   than fire once.
 - **Steps, in order:**
-  1. `seed_database.py --seasons <year> --skip-fastf1`: results and standings.
-  2. Build the race's replay file and publish it to the storage.
-  3. Regenerate the knowledge, with the eval before the swap (CLAUDE.md's data-update rule). Run
-     `eval_rag.py` on the new knowledge, and swap it into production only if the bar passes:
+  1. `seed_database.py --seasons <year> --skip-fastf1`: results and standings. This is the only production write
+     before the eval. The knowledge is generated from the database (`generate_all` in `ingest_knowledge.py`), so
+     the new knowledge can't exist until the seed has run, and the eval tests the chat's retrieval, not the
+     results.
+  2. Build the race's replay file. Don't publish it yet.
+  3. Regenerate the knowledge and run `eval_rag.py` on it before the swap (CLAUDE.md's data-update rule). The bar:
      - no gold question goes from hit to miss in production mode (vector+intent);
      - production-mode hit@5 doesn't drop;
      - an MRR@5 drop is reported to Joythish, not blocking.
-     
-     Today `ingest_knowledge.py` swaps first and evaluates after, so this step changes it. The eval must search
-     only the new knowledge: `rag_ingest.py` inserts the new chunks before deleting the old ones, so both sets
-     are live at once. Use a version or id-range filter in the search, or a staging table. Either one likely
-     needs a migration, which Joythish OKs first, so ask early in the window.
-  4. Open a pull request with the regenerated docs and the eval results file. Main takes pull requests only.
+
+     Production search must never return the new knowledge before the swap, and a run that doesn't swap (a failed
+     bar or a dry run) must leave only the old set. Today `ingest_knowledge.py` swaps first and evaluates after,
+     and `rag_ingest.py` inserts the new chunks into the live table before deleting the old ones, so this step
+     changes both. A staging table does it. A new table is a migration, which Joythish OKs first, so ask early in
+     the window.
+  4. Only if the bar passes: swap the new knowledge in, then publish the replay file to the storage.
+  5. Open a pull request with the regenerated docs and the eval results file. Main takes pull requests only.
      A PR opened with the default `GITHUB_TOKEN` starts no CI runs, so the required checks never report and it
      can't merge. Use a GitHub App token or a fine-grained token that can trigger CI, and check that the repo
      lets Actions create pull requests.
@@ -103,9 +107,11 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
     Joythish adds them himself, after he OKs it at build time.
   - Any paid runner or cron (a Render cron job, say) needs his OK first.
   - Cache the embedding model between runs. Ingestion embeds locally with sentence-transformers.
-- **Merging the refresh PR:** decided at build time by the local session, as every merge is, and recorded in
-  the PR. Either it merges itself when CI and the eval bar pass, or it waits for review.
-- **Failures:** a failed run fails the workflow, so GitHub emails the owner (as `keepalive.yml` does).
+- **Merging the refresh PR:** the local session merges it after the gates, like every PR. It never merges itself.
+  The merge redeploys Render, since the PR changes `backend/`.
+- **Failures:** a failed run fails the workflow, so GitHub emails the owner (as `keepalive.yml` does). After a
+  failed bar, production has the new results and standings, the chat keeps the last knowledge that passed, and
+  the race has no replay file yet, so the homepage shows its podium without the animation.
 
 ## Acceptance criteria (each one is a check)
 1. **pytest, the replay builder:** a small recorded OpenF1 and Jolpica fixture (a few laps, checked in under
@@ -114,14 +120,17 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
 2. **pytest, the outlines:** each fixture outline runs in its circuit's real direction on screen, and its
    start / finish point lies inside the outline's bounds.
 3. **pytest, the swap guard:** when the mocked eval results have one production-mode question going from hit to
-   miss, the refresh doesn't swap and exits non-zero. When they pass, it swaps.
+   miss, the refresh doesn't swap, doesn't publish the replay file and exits non-zero, and afterwards production
+   search returns none of the new set's rows. When they pass, it swaps and publishes.
 4. **The 2026 files exist:**
    - a replay file for every 2026 race with results, and an outline for every 2026 circuit, in the chosen
      storage;
    - a check script fetches each one and validates its shape.
-5. **A dry run on a past race** (round 20, Brazil) runs the workflow end to end on a branch, with the swap turned
-   off by a flag and the PR opened as a draft, and prints what it would have changed. The schedule is enabled only after
-   Joythish has seen that output and OK'd it.
+5. **A dry run on a past race** (round 20, Brazil) runs the workflow end to end on a branch with a dry-run flag,
+   and leaves production as it was: the seed only prints what it would write, the replay file stays a run
+   artifact, the new knowledge goes to staging only and the run clears it after the eval, and the PR opens as a
+   draft. It prints what it would have changed. The schedule is enabled only after Joythish has seen that output
+   and OK'd it.
 6. **No Render egress for the files:** the e2e suite asserts that the homepage fetches the replay file from the
    storage's host, not the API's.
 7. **The project gates, `floor` and `codex-review` pass.** If the review input passes codex-review's 400 KB cap

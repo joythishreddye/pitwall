@@ -49,10 +49,14 @@ content is at most 1400 px wide.
 ```
 
 Below 1360 px it's one column, in the order brief, picture, ask (the picture's content at most 760 px wide).
-Below 768 px the sidebar becomes a top bar and the page padding is 16 px.
+Below 768 px the page padding is 16 px.
+
+**The site's shell doesn't change in this build:** `components/sidebar.tsx` (with its phone tab bar),
+`components/topbar.tsx` and the footer stay as they are. The layout and look rules here cover the homepage's own
+content. The mockup's phone header stood in for the shell, and the DESIGN.md work owns any change to it.
 
 ```
-+-- PITWALL ------------ menu --+
++-------------------------------+
 | RACE WEEK · ROUND 22 OF 23    |
 | Qatar Grand Prix              |
 | ENGINEER'S BRIEFING           |
@@ -71,21 +75,22 @@ its column, with no empty panel under its content. He judges this one in the scr
 The clock picks the view. All times are in the visitor's time zone, with its abbreviation; the e2e suite runs in
 `America/Los_Angeles`.
 
-- **After a race:** from when the season's latest race has results in PitWall's data, for 72 hours from that
-  race's scheduled start (at exactly 72 hours the next view takes over).
-- **Race week:** otherwise, while the season has a race without results. It shows the first such race.
+- **After a race:** for 72 hours from the scheduled start of the latest race that has results in PitWall's data
+  (at exactly 72 hours the next view takes over).
+- **Race week:** otherwise, for the first race without results, once its season is under way (an earlier race of
+  that season has results) or the race starts in 14 days or less (at exactly 14 days, race week takes over).
   - Before lights out: a countdown to the race start.
   - From the start until 2 h 30 after it, the picture says RACE UNDER WAY. After that it says RESULTS SOON, until
     the data has the result.
   - The LIVE dot (pulsing green) shows only between a session's start and its scheduled end. Jolpica gives start
     times only, so a session ends at its start plus its standard length: 1 h for practice, qualifying and the
     sprint, 45 min for sprint qualifying, 2 h for the race.
-- **Off-season:** no race in the season is left without results, and the after-race window has ended. It runs
-  until 14 days before the next season's first race, if that race is in the data. Then race week starts for
-  round 1.
+- **Off-season:** otherwise. The season is complete, the after-race window has ended, and the next season's first
+  race is more than 14 days away or not in the data yet.
 
-Fixed-clock examples, for tests on fixture data (race starts: Las Vegas 2026-11-22T04:00Z, Qatar
-2026-11-29T16:00Z, Abu Dhabi 2026-12-06T13:00Z):
+Fixed-clock examples, for tests on fixture data (race starts: Brazil 2026-11-08T17:00Z, Las Vegas
+2026-11-22T04:00Z, Qatar 2026-11-29T16:00Z, Abu Dhabi 2026-12-06T13:00Z, and in the last two rows a made-up 2027
+round 1 at 2027-03-07T04:00Z):
 
 | Clock (UTC) | Data | View |
 |---|---|---|
@@ -96,6 +101,8 @@ Fixed-clock examples, for tests on fixture data (race starts: Las Vegas 2026-11-
 | 2026-12-02T16:00Z | Qatar's result in | race week, Abu Dhabi |
 | 2026-12-06T18:00Z | Abu Dhabi's result in | after a race, Abu Dhabi |
 | 2026-12-09T13:00Z | season complete, no 2027 dates | off-season |
+| 2027-02-20T04:00Z | 2026 complete, 2027 round 1 in the data | off-season (round 1 is 15 days away) |
+| 2027-02-22T04:00Z | 2026 complete, 2027 round 1 in the data | race week, 2027 round 1: LIGHTS OUT IN 13 days 0 h |
 
 ## The engineer's briefing
 - **Built by rules from the data,** with no LLM call on page load. Put the rules in the backend, behind one
@@ -163,7 +170,8 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 ## Look (until DESIGN.md lands, then DESIGN.md wins)
 - **The pit-wall look:** a `#0F0F0F` background; Inter for body text, IBM Plex Sans for headings, JetBrains Mono
   (tabular numbers) for labels and figures.
-- **No text under 11 px** at 1440, 768 or 390.
+- **No text under 11 px** in the page's content at 1440, 768 or 390 (the shell's 10 px labels belong to the
+  DESIGN.md work).
 - **Small red text uses `#FF5C5C`.** The site's `#DC0000` is 3.7:1 on `#0F0F0F`.
 - **Team colour goes beyond thin bars:** the face tiles use a team-colour gradient.
 - **On phones,** the tag and time sit above the call, not beside it.
