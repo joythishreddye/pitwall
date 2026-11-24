@@ -131,14 +131,14 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 | View | Lines, in order |
 |---|---|
 | Race week | RACE WEEK ("Race week: Lusail, round 22 of 23."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("Antonelli is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (when two or more can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
-| After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two Mercedes on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when; detail: the round and the races after it) |
+| After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two Mercedes on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when, or "No 2027 dates yet." when no later race is in the data; detail: the round and the races after it) |
 | Off-season | CHAMPION · SECOND PLACE · TEAMS · REPLAYS (only once race-page replays exist: brief 003) · NEXT SEASON (round 1's date when it's in the data, else "No 2027 dates yet.") |
 
 **TRY ASKING chips** (four per view; tapping one sends it):
 - **Race week:** When does the race start? · Can anyone catch {leader}? · Who's fighting for second? · Who won here
   last year?
 - **After a race:** Who won in {race}? · How did {P2} get to second? · one question about the race's biggest moment
-  (rain, a safety car, a red flag), only when the data has one · When's the next race?
+  (rain, a safety car, a red flag) when the data has one, else Who gained the most places? · When's the next race?
 - **Off-season:** How did {champion} win it? · Who's second overall? · Who won the teams' title? · When does {next
   season} start?
 
@@ -181,7 +181,12 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 ## Data
 - **Exists:**
   - `/api/v1/standings/{year}`: drivers and constructors.
-  - `/api/v1/standings/{year}/progression`: points after each round.
+  - `/api/v1/standings/{year}/progression`: points after each round, **but without sprints,** whatever its
+    docstring says. The seed stores race results only (`results.json`), so after round 20 it has Antonelli on 359
+    while the standings have 390, and its order differs. The title fight needs points that include sprints, from
+    a static file or a cached fetch (Jolpica's standings after each round, or its sprint results). Storing sprint
+    results in the database is a migration, which Joythish OKs first. The /standings page's chart reads the same
+    endpoint.
   - `/api/v1/seasons/{year}/races`: the calendar, with each race's start and winner.
   - `/api/v1/races/{id}`: results, with grid slots.
   - `/api/v1/chat`.
@@ -196,6 +201,7 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
    - every call is at most 52 characters;
    - no line contains "undefined", "NaN" or "None";
    - the title maths is right for a decided and an undecided fixture;
+   - in the title fight, each driver's last point equals his standings total, on a fixture with a sprint weekend;
    - the view is right at each fixed-clock example above.
 2. **The e2e suite (Playwright, mocked API, fixed clock):**
    - the page shows the right view and countdown at three of the examples;
@@ -221,6 +227,8 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
   against a night race.
 - **`verify-outcome` loads pages live, not through the e2e mocks.** So the page must not call the chat on load,
   and it must render without errors on live data.
+- **The season is hard-coded today:** `lib/constants/season.ts` says 2026, and today's homepage passes it to its
+  hooks. Take the season from the calendar data instead, so the 2027 round 1 examples work on live data.
 - **Don't port the mockup's code.** It ran on another runtime, with a mock clock. This brief is the spec.
 - **The repo is public:** no secrets, keys or private notes in code, tests or briefs.
 - **Cloud sessions push only their own `claude/` branch and never merge** (CLAUDE.md).

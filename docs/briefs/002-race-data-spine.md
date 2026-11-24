@@ -99,8 +99,8 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   4. Only if the bar passes: swap the new knowledge in, then publish the replay file to the storage.
   5. Open a pull request with the regenerated docs and the eval results file. Main takes pull requests only.
      A PR opened with the default `GITHUB_TOKEN` starts no CI runs, so the required checks never report and it
-     can't merge. Use a GitHub App token or a fine-grained token that can trigger CI, and check that the repo
-     lets Actions create pull requests.
+     can't merge. Use a GitHub App token or a fine-grained token that can trigger CI. The PR body and the job
+     summary give hit@5 and MRR@5 before and after, and flag an MRR@5 drop: that's how a drop reaches Joythish.
 - **Runner:** GitHub Actions on a schedule. Its free minutes for a public repo are the default choice.
   - The secrets it needs (everything `app/config.py` requires at startup: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SECRET_KEY,
     LLM_MODEL and LLM_INTENT_MODEL, plus the Groq key and the PR token) are a secrets change.
@@ -151,3 +151,6 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   Dhabi to the 2027 opener is about three months, so re-enable it before round 1, or keep the repo active.
 - **Take lights out from OpenF1's session start, and cross-check Jolpica's date and time.** The stored 2024 Las
   Vegas row is 24 h early.
+- **The season is hard-coded:** `CURRENT_SEASON = 2026` in `backend/app/ingestion/generate_knowledge.py`, and
+  driver profiles come from that season's results only. Take the season from the data, or update it before the
+  2027 opener.
