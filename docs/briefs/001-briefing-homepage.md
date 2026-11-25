@@ -17,7 +17,9 @@ It's for F1 fans, from newcomers to hardcore.
 - Code to reuse:
   - `components/ui/draw-path.tsx`: the track drawing in.
   - `components/championship-chart.tsx`: the title fight.
-  - `lib/hooks/use-countdown.ts`.
+  - `lib/hooks/use-countdown.ts`, changed to count to an instant. Today it counts to the visitor's local midnight
+    of a `YYYY-MM-DD` date (line 21), and LIGHTS OUT counts to the race's start in UTC. Its other caller,
+    `components/races/RaceCard.tsx`, passes a bare date and changes with it.
   - `lib/hooks/use-chat.ts` and `components/chat/*`: the ask box.
   - `components/ui/team-color-provider.tsx` and `lib/constants/teams.ts`.
   - `lib/hooks/use-driver-photos.ts`: headshots, falling back to the driver code. It calls OpenF1 from the
@@ -73,7 +75,10 @@ its column, with no empty panel under its content. He judges this one in the scr
 
 ## The three views
 The clock picks the view. All times are in the visitor's time zone, with its abbreviation; the e2e suite runs in
-`America/Los_Angeles`.
+`America/Los_Angeles`. The page sends its IANA zone (`Intl.DateTimeFormat().resolvedOptions().timeZone`) with its
+one request, and the endpoint formats the briefing's times in it. An unknown or missing zone falls back to UTC.
+Add the `tzdata` package to `backend/requirements.txt`, so zone lookups don't depend on the server image's own
+zone files (it's `python:3.12-slim`).
 
 - **After a race:** for 72 hours from the scheduled start of the latest race that has results in PitWall's data
   (at exactly 72 hours the next view takes over).
@@ -130,9 +135,9 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 
 | View | Lines, in order |
 |---|---|
-| Race week | RACE WEEK ("Race week: Lusail, round 22 of 23."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("Antonelli is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (when two or more can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
-| After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two Mercedes on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when, or "No 2027 dates yet." when no later race is in the data; detail: the round and the races after it) |
-| Off-season | CHAMPION · SECOND PLACE · TEAMS · REPLAYS (only once race-page replays exist: brief 003) · NEXT SEASON (round 1's date when it's in the data, else "No 2027 dates yet.") |
+| Race week | RACE WEEK ("Race week: {city}, round {N} of {total}."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("{champion} is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (when two or more can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
+| After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two {team} on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when, or "No {next season} dates yet." when no later race is in the data; detail: the round and the races after it) |
+| Off-season | CHAMPION · SECOND PLACE · TEAMS · REPLAYS (only once race-page replays exist: brief 003) · NEXT SEASON (round 1's date when it's in the data, else "No {next season} dates yet.") |
 
 **TRY ASKING chips** (four per view; tapping one sends it):
 - **Race week:** When does the race start? · Can anyone catch {leader}? · Who's fighting for second? · Who won here
@@ -202,9 +207,12 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
    - no line contains "undefined", "NaN" or "None";
    - the title maths is right for a decided and an undecided fixture;
    - in the title fight, each driver's last point equals his standings total, on a fixture with a sprint weekend;
-   - the view is right at each fixed-clock example above.
+   - the view is right at each fixed-clock example above;
+   - the lines are right in `America/Los_Angeles` and in UTC, with each zone's abbreviation, and every call still
+     fits 52 characters.
 2. **The e2e suite (Playwright, mocked API, fixed clock):**
-   - the page shows the right view and countdown at three of the examples;
+   - the page shows the right view at three of the examples, including both countdowns: Qatar's race week
+     (3 days 21 h) and 2027's (13 days 0 h);
    - a line opens and closes;
    - a chip sends exactly one (mocked) chat request;
    - no request goes to `/api/v1/chat` on page load.

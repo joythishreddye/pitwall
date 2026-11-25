@@ -72,6 +72,9 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   - static files served by Vercel with the frontend.
   
   Check each one's current free-tier limits in its own docs before choosing. Don't assume them.
+- **The first upload needs Joythish's OK.** Creating a bucket and uploading the 2026 files (criterion 4) is a
+  production write with the service-role key, outside the refresh's approval, so he OKs it at the time. Files
+  served by Vercel go in through a pull request instead.
 
 ## The automatic after-race refresh (#17)
 - **Approval:** Joythish approved a refresh that runs by itself and writes production, with its knowledge swap
@@ -80,6 +83,8 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
   any time (GitHub, Actions, Disable workflow).
 - **When:** after each race, once Jolpica has the result. It can lag the flag by hours, so check and retry rather
   than fire once.
+- **One run at a time:** a workflow concurrency group makes a later run wait for one still going. A run can back
+  off for a long time on a Jolpica 429 or a live-session 401, and two runs must never share the staged set.
 - **Steps, in order:**
   1. `seed_database.py --seasons <year> --skip-fastf1`: results and standings. This is the only production write
      before the eval. The knowledge is generated from the database (`generate_all` in `ingest_knowledge.py`), so
@@ -93,9 +98,20 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
 
      Production search must never return the new knowledge before the swap, and a run that doesn't swap (a failed
      bar or a dry run) must leave only the old set. Today `ingest_knowledge.py` swaps first and evaluates after,
-     and `rag_ingest.py` inserts the new chunks into the live table before deleting the old ones, so this step
-     changes both. A staging table does it. A new table is a migration, which Joythish OKs first, so ask early in
-     the window.
+     and `rag_ingest.py` inserts the new chunks into the live table before deleting the old ones. So this step
+     stages the new set, under three rules:
+     - **The eval searches exactly the staged set, with production's search logic,** and production chat keeps
+       reading the live set by default. Today every read the eval makes goes to the live `knowledge_chunks`
+       table: the `match_knowledge_chunks` and `search_knowledge_text` database functions behind `Retriever`
+       (`app/rag/retriever.py`), and `EntityLinker.from_db` (`app/rag/entities.py`). Point all three at the
+       staged set without copying the search functions, since a copy can drift from the ranking production
+       serves. One way: a set column on `knowledge_chunks` that both functions and the linker filter on, with
+       the live set as the default.
+     - **The swap is one transaction** (one database function, say). Production sees the old set or the new one,
+       never a mix, and a failed swap leaves the old set.
+     - **A run clears the staged set** when it starts, and when it ends without a swap.
+
+     These changes are a migration, which Joythish OKs first, so ask early in the window.
   4. Only if the bar passes: swap the new knowledge in, then publish the replay file to the storage.
   5. Open a pull request with the regenerated docs and the eval results file. Main takes pull requests only.
      A PR opened with the default `GITHUB_TOKEN` starts no CI runs, so the required checks never report and it
@@ -106,7 +122,8 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
     LLM_MODEL and LLM_INTENT_MODEL, plus the Groq key and the PR token) are a secrets change.
     Joythish adds them himself, after he OKs it at build time.
   - Any paid runner or cron (a Render cron job, say) needs his OK first.
-  - Cache the embedding model between runs. Ingestion embeds locally with sentence-transformers.
+  - Cache the embedding and reranker models between runs. Ingestion embeds locally with sentence-transformers,
+    and `eval_rag.py` loads bge-reranker-base by default.
 - **Merging the refresh PR:** the local session merges it after the gates, like every PR. It never merges itself.
   The merge redeploys Render, since the PR changes `backend/`.
 - **Failures:** a failed run fails the workflow, so GitHub emails the owner (as `keepalive.yml` does). After a
@@ -119,22 +136,29 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
    control events, and a final order with a stewards' change.
 2. **pytest, the outlines:** each fixture outline runs in its circuit's real direction on screen, and its
    start / finish point lies inside the outline's bounds.
-3. **pytest, the swap guard:** when the mocked eval results have one production-mode question going from hit to
-   miss, the refresh doesn't swap, doesn't publish the replay file and exits non-zero, and afterwards production
-   search returns none of the new set's rows. When they pass, it swaps and publishes.
+3. **pytest, the swap guard:**
+   - When the mocked eval results have one production-mode question going from hit to miss, the refresh doesn't
+     swap, doesn't publish the replay file and exits non-zero, and afterwards production search returns none of
+     the new set's rows. When they pass, it swaps and publishes.
+   - The eval searches the staged set. `FakeKnowledgeBase` in `backend/tests/test_rag.py` answers whatever
+     function or set it's asked for today, so extend it to return staged rows only when the staged set is asked
+     for. Then a chunk that exists only in the staged set shows up in the eval's results, and neither search
+     function nor the entity linker reads the live set.
 4. **The 2026 files exist:**
    - a replay file for every 2026 race with results, and an outline for every 2026 circuit, in the chosen
      storage;
    - a check script fetches each one and validates its shape.
 5. **A dry run on a past race** (round 20, Brazil) runs the workflow end to end on a branch with a dry-run flag,
    and leaves production as it was: the seed only prints what it would write, the replay file stays a run
-   artifact, the new knowledge goes to staging only and the run clears it after the eval, and the PR opens as a
-   draft. It prints what it would have changed. The schedule is enabled only after Joythish has seen that output
-   and OK'd it.
+   artifact, the new knowledge goes to staging only (the eval's report names the set it searched) and the run
+   clears it after the eval, and the PR opens as a draft. It prints what it would have changed. The schedule is
+   enabled only after Joythish has seen that output and OK'd it.
 6. **No Render egress for the files:** the e2e suite asserts that the homepage fetches the replay file from the
    storage's host, not the API's.
 7. **The project gates, `floor` and `codex-review` pass.** If the review input passes codex-review's 400 KB cap
    (a full knowledge regeneration can), review it in parts with `--base`.
+8. **The eval passes CLAUDE.md's code-change rule** on the live set before the merge, since this build changes
+   retrieval code (`retriever.py`, `entities.py`).
 
 ## Out of scope
 - Live data during sessions (January to February).
