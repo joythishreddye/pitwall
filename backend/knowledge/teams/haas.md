@@ -26,14 +26,14 @@ tags:
 
 ## 2026 Driver Breakdown
 
-- **Oliver Bearman:** 19 pts, best P5 in 20 races
+- **Oliver Bearman:** 19 pts, best P5 in 21 races
 - **Esteban Ocon:** 7 pts, best P8 in 18 races
 - **Ryo Hirakawa:** 1 pts, best P10 in 1 races
-- **Rafael Camara:** 0 pts, best P20 in 1 races
+- **Rafael Camara:** 0 pts, best P16 in 2 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 386
+- **Race Entries:** 388
 - **Wins:** 0
 - **Podiums:** 0
 - **Total Points:** 317.0

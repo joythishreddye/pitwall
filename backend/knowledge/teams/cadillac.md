@@ -22,16 +22,16 @@ tags:
 - **Points:** 0
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 16
+- **DNFs:** 17
 
 ## 2026 Driver Breakdown
 
-- **Sergio Pérez:** 0 pts, best P14 in 20 races
-- **Valtteri Bottas:** 0 pts, best P13 in 20 races
+- **Sergio Pérez:** 0 pts, best P14 in 21 races
+- **Valtteri Bottas:** 0 pts, best P13 in 21 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 40
+- **Race Entries:** 42
 - **Wins:** 0
 - **Podiums:** 0
 - **Total Points:** 0.0

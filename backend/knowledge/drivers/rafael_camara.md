@@ -20,7 +20,7 @@ tags:
 
 ## Statistics since 2018 (not full career totals)
 
-- **Races:** 1
+- **Races:** 2
 - **Wins:** 0
 - **Podiums:** 0
 - **Pole Positions:** 0
@@ -32,10 +32,11 @@ tags:
 - **Points (including sprints):** 0
 - **Wins:** 0
 - **Podiums:** 0
-- **Best Finish:** P20
+- **Best Finish:** P16
 - **DNFs:** 0
-- **Races Completed:** 1
+- **Races Completed:** 2
 
 ## Recent Results (2026)
 
 - Round 20 Brazilian Grand Prix: P20 (started P11)
+- Round 21 Las Vegas Grand Prix: P16 (started P15)
