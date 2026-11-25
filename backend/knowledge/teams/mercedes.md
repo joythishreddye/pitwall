@@ -19,19 +19,19 @@ tags:
 ## 2026 Season Performance
 
 - **Championship Position:** P1
-- **Points:** 652
+- **Points:** 666
 - **Wins:** 12
 - **Podiums:** 24
 - **DNFs:** 4
 
 ## 2026 Driver Breakdown
 
-- **Andrea Kimi Antonelli:** 359 pts, best P1 in 20 races
-- **George Russell:** 228 pts, best P1 in 20 races
+- **Andrea Kimi Antonelli:** 371 pts, best P1 in 21 races
+- **George Russell:** 230 pts, best P1 in 21 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 386
+- **Race Entries:** 388
 - **Wins:** 67
 - **Podiums:** 180
-- **Total Points:** 4884.5
+- **Total Points:** 4898.5

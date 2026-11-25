@@ -13,7 +13,7 @@ In F1, the pit wall is where race engineers read the data and call the strategy.
 ## What works today
 
 ### Race Engineer chat
-Answers come from a retrieval pipeline over 238 knowledge documents (1,128 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
+Answers come from a retrieval pipeline over 243 knowledge documents (1,150 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
 
 1. **Intent:** `gpt-oss-20b` pulls out the drivers, teams, circuits and seasons a question is about, in JSON mode.
 2. **Entity linking:** a deterministic linker maps those names to the refs the knowledge base uses ("Lando Norris" becomes `norris`, "Singapore" becomes `marina_bay`). It also catches names the model missed and builds the metadata filter.

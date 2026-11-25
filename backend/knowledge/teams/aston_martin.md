@@ -22,16 +22,16 @@ tags:
 - **Points:** 7
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 20
+- **DNFs:** 21
 
 ## 2026 Driver Breakdown
 
-- **Fernando Alonso:** 7 pts, best P8 in 20 races
-- **Lance Stroll:** 0 pts, best P12 in 20 races
+- **Fernando Alonso:** 7 pts, best P8 in 21 races
+- **Lance Stroll:** 0 pts, best P12 in 21 races
 
 ## Statistics since 2018 (not full team history)
 
-- **Race Entries:** 267
+- **Race Entries:** 269
 - **Wins:** 0
 - **Podiums:** 9
 - **Total Points:** 579.0
