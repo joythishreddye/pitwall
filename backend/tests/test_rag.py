@@ -745,6 +745,26 @@ class TestRetrieverResilience:
         assert retriever.last_mode == "vector"
 
     @pytest.mark.asyncio()
+    async def test_a_relocated_race_is_found_when_the_classifier_gives_nothing(
+        self, retriever: Retriever
+    ) -> None:
+        # #42: the intent model returned no filter for this question, so the
+        # linker reads the circuit and the season from the question itself
+        kb = FakeKnowledgeBase(BAHRAIN_KB)
+        retriever.db = kb
+        retriever.linker = EntityLinker.from_rows(
+            [r["metadata"] for r in BAHRAIN_KB], [], [], BAHRAIN_CIRCUITS
+        )
+        retriever.llm.generate.return_value = _intent_json({})
+
+        chunks = await retriever.retrieve(
+            "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?"
+        )
+
+        assert kb.filters[0] == {"circuit_ref": "bahrain", "season": 2026}
+        assert chunks[0].source == "races/2026-r16-sepang.md"
+
+    @pytest.mark.asyncio()
     async def test_each_team_in_a_comparison_gets_its_own_doc(
         self, retriever: Retriever
     ) -> None:

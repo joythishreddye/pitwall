@@ -23,17 +23,17 @@ Answers come from a retrieval pipeline over 243 knowledge documents (1,150 chunk
 The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
 
 ### Retrieval quality, measured
-`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run and is scored on the same classifier outputs.
+`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run (`backend/evals/results/2026-11-25T1805Z-local-local-linked.json`) and is scored on the same classifier outputs.
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
 | Vector search alone | 69.1% | 0.66 |
-| + the classifier's filters, used as-is | 83.6% | 0.72 |
-| + entity linking (production) | **100%** | **0.91** |
-| + cross-encoder reranking | 98.2% | 0.74 |
-| Full-text fallback (no embeddings), linked filters | 87.3% | 0.80 |
+| + the classifier's filters, used as-is | 83.6% | 0.68 |
+| + entity linking (production) | **100%** | **0.89** |
+| + cross-encoder reranking | 98.2% | 0.75 |
+| Full-text fallback (no embeddings), linked filters | 89.1% | 0.81 |
 
-Entity linking adds 16 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added about 0.9s per question on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+Entity linking adds 16 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added 1 to 3 seconds per question on a laptop CPU (median, in two runs on Nov 25), so it ships switched off (`RERANK_ENABLED`).
 
 Caveats:
 - The gold set is small and hand-written, and the linker was built against its failures.
@@ -58,7 +58,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
   - Chat has per-client and global rate limits.
   - The API meters the bandwidth it serves and stops at a daily budget, so normal traffic can't push hosting past the plan. Refused requests still use some bandwidth, so a sustained flood could. The twice-daily health check emails the owner when one starts, usually days before it would cost anything.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 172 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 191 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 

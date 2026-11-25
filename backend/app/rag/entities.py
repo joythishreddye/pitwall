@@ -10,7 +10,9 @@ catalog and spots entities the classifier missed.
 It also enforces the filter rules the eval baseline supports:
 
 * never filter on ``category`` alone (it hid the regulations docs);
-* keep ``season`` only alongside a circuit (profiles carry no season);
+* keep ``season`` only alongside a circuit (profiles carry no season), and
+  take it from the question when the classifier leaves it out and the
+  question names exactly one year;
 * no race or circuit filter for years before the first season the knowledge
   base covers (its race docs start in 2018, so "Suzuka in 1989" lives in
   the history docs);
@@ -276,12 +278,14 @@ class EntityLinker:
         )
 
         season = raw_filter.get("season")
-        years = [int(y) for y in _YEAR.findall(question)]
-        if isinstance(season, int):
-            years.append(season)
+        question_years = {int(y) for y in _YEAR.findall(question)}
+        years = question_years | ({season} if isinstance(season, int) else set())
         if any(y < self.first_season for y in years):
             # No race docs that old: let unfiltered search find the history
             circuit_ref = None
+        if not isinstance(season, int) and len(question_years) == 1:
+            # The classifier sometimes drops a season the question states
+            season = next(iter(question_years))
 
         metadata_filter: dict = {}
         if circuit_ref:
