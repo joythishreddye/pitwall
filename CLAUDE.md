@@ -14,7 +14,7 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v2). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-25T0306Z, 98.2% / 0.873 (after the round 21 data refresh; r26-07 misses because the intent model stopped returning its season, #42).
+- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v2). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-25T1805Z, 100% / 0.891 (after the linker started taking the season from the question, #42; same data as the round 21 refresh).
 - Every knowledge ingest re-runs the eval too (`ingest_knowledge.py`, including the one after a data refresh), with a data-update bar.
   - **It passes** if, in production mode (vector+intent), no question goes from hit to miss and hit@5 doesn't drop.
   - **An MRR@5 drop is reported to Joythish, not blocking.** New numbers reorder near-tied pages after most refreshes, and the chat reads all five top chunks for each answer (`backend/app/rag/retriever.py`).
