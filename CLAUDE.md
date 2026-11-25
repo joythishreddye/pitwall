@@ -64,7 +64,7 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 - **Vector search is exact.** Migration 008 dropped the HNSW index.
   - **Why:** at about 1k chunks a scan takes about 10 ms, while the HNSW graph degraded after swap ingests. It returned unrelated documents for "Who won the 2024 Miami GP?".
   - **When to change:** add an approximate index back only past about 50k chunks, rebuilt after each bulk load.
-- **Reranker:** bge-reranker-base, **off by default** (`RERANK_ENABLED=false`). On the eval it lowered hit@5 from 100% to 98.2% and MRR@5 from 0.91 to 0.74, and added ~0.9 s.
+- **Reranker:** bge-reranker-base, **off by default** (`RERANK_ENABLED=false`). On the Nov 1 eval it lowered hit@5 from 100% to 98.2% and MRR@5 from 0.91 to 0.74, and added ~0.9 s.
 - **Entity linker:** `backend/app/rag/entities.py` maps classifier entities to knowledge-base refs and builds the filter. Category-only filters are never used (they hid the regulations docs).
 - **Entity linking rule:** filters come from entities the classifier named (repaired to KB refs) and from unambiguous names in the question: full names, team and circuit names, circuit cities. The classifier doesn't know the 2026 newcomers, so the scan is needed.
   - **Weak aliases** only repair classifier output; a scan skips them. They are country names (including the refs `bahrain` and `monaco`), places that are also people or words (`americas`, `villeneuve`, `rodriguez`, `ricard`, `vegas`), word-like surnames (`stroll`) and `aston`.

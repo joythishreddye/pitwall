@@ -58,7 +58,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
   - Chat has per-client and global rate limits.
   - The API meters the bandwidth it serves and stops at a daily budget, so normal traffic can't push hosting past the plan. Refused requests still use some bandwidth, so a sustained flood could. The twice-daily health check emails the owner when one starts, usually days before it would cost anything.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 172 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** 191 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
 
 ## Roadmap
 
