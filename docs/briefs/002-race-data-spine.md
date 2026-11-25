@@ -84,7 +84,10 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
 - **When:** after each race, once Jolpica has the result. It can lag the flag by hours, so check and retry rather
   than fire once.
 - **One run at a time:** a workflow concurrency group makes a later run wait for one still going. A run can back
-  off for a long time on a Jolpica 429 or a live-session 401, and two runs must never share the staged set.
+  off for a long time on a Jolpica 429 or a live-session 401, and two runs must never share the staged set. Give
+  the group one fixed name, so runs on every branch share it.
+- **Once per round:** a scheduled run doesn't redo a round that already has a refresh PR (open or merged), and
+  doesn't retry a round that failed its bar; a manual run does, after a fix. The PR says how a run tells.
 - **Steps, in order:**
   1. `seed_database.py --seasons <year> --skip-fastf1`: results and standings. This is the only production write
      before the eval. The knowledge is generated from the database (`generate_all` in `ingest_knowledge.py`), so
@@ -108,7 +111,10 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
        serves. One way: a set column on `knowledge_chunks` that both functions and the linker filter on, with
        the live set as the default.
      - **The swap is one transaction** (one database function, say). Production sees the old set or the new one,
-       never a mix, and a failed swap leaves the old set.
+       never a mix, and a failed swap leaves the old set. It refuses a staged set that's empty or isn't this run's
+       own (tag the staged rows with the run's id, and check their count against what the run inserted), since
+       another writer can clear them: a hand run of today's `ingest_knowledge.py` deletes every row up to the
+       highest id it saw (`rag_ingest.py:106`).
      - **A run clears the staged set** when it starts, and when it ends without a swap.
 
      These changes are a migration, which Joythish OKs first, so ask early in the window.
@@ -154,11 +160,13 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
    clears it after the eval, and the PR opens as a draft. It prints what it would have changed. The schedule is
    enabled only after Joythish has seen that output and OK'd it.
 6. **No Render egress for the files:** the e2e suite asserts that the homepage fetches the replay file from the
-   storage's host, not the API's.
+   storage's host, not the API's, and requests nothing from `api.openf1.org`.
 7. **The project gates, `floor` and `codex-review` pass.** If the review input passes codex-review's 400 KB cap
    (a full knowledge regeneration can), review it in parts with `--base`.
 8. **The eval passes CLAUDE.md's code-change rule** on the live set before the merge, since this build changes
    retrieval code (`retriever.py`, `entities.py`).
+9. **pytest, session times and headshots:** a normal and a sprint weekend's schedule give the right sessions and
+   start times, and each driver in a race gets one headshot link.
 
 ## Out of scope
 - Live data during sessions (January to February).

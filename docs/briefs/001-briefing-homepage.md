@@ -3,8 +3,9 @@
 - **Status:** design approved (mockup v2, Joythish's OK on 2026-11-24). Build Nov 27 to Dec 3, 2026.
 - **Tracking issue:** #38
 - **Depends on:** `DESIGN.md` (lands Nov 26), the e2e suite and `verify.json` (same day), and brief
-  [002](002-race-data-spine.md) for circuit outlines, replay files and session times. The race-week and off-season
-  views can be built before 002 lands. The after-race highlights can't.
+  [002](002-race-data-spine.md) for circuit outlines, replay files and session times. The off-season view can be
+  built before 002 lands. Race week needs its outlines and session times (THIS WEEKEND, the lights-out detail and
+  the sprint count in the title maths), and the after-race highlights need its replay files.
 
 ## Goal
 The homepage becomes the AI race engineer's briefing: a short radio briefing on F1 right now, beside one big
@@ -76,7 +77,8 @@ its column, with no empty panel under its content. He judges this one in the scr
 ## The three views
 The clock picks the view. All times are in the visitor's time zone, with its abbreviation; the e2e suite runs in
 `America/Los_Angeles`. The page sends its IANA zone (`Intl.DateTimeFormat().resolvedOptions().timeZone`) with its
-one request, and the endpoint formats the briefing's times in it. An unknown or missing zone falls back to UTC.
+one request, and the endpoint formats the briefing's times in it. Any zone `ZoneInfo` rejects falls back to UTC,
+whichever error it raises: an empty value or a path raises `ValueError`, an unknown name `ZoneInfoNotFoundError`.
 Add the `tzdata` package to `backend/requirements.txt`, so zone lookups don't depend on the server image's own
 zone files (it's `python:3.12-slim`).
 
@@ -138,6 +140,12 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 | Race week | RACE WEEK ("Race week: {city}, round {N} of {total}."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("{champion} is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (when two or more can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
 | After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two {team} on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when, or "No {next season} dates yet." when no later race is in the data; detail: the round and the races after it) |
 | Off-season | CHAMPION · SECOND PLACE · TEAMS · REPLAYS (only once race-page replays exist: brief 003) · NEXT SEASON (round 1's date when it's in the data, else "No {next season} dates yet.") |
+
+**Race week before a season's first result** (the run-up to an opener) has no standings for that season yet, so
+the lines and chips that need them change. TITLE says "{champion} is the reigning champion." and TEAMS says "{team}
+are the reigning team champions." (both last season's). SECOND PLACE drops. The chips "Can anyone catch
+{leader}?" and "Who's fighting for second?" become "How did {champion} win the {last season} title?" and "Who won
+the teams' title?".
 
 **TRY ASKING chips** (four per view; tapping one sends it):
 - **Race week:** When does the race start? · Can anyone catch {leader}? · Who's fighting for second? · Who won here
@@ -204,12 +212,13 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 ## Acceptance criteria (each one is a check)
 1. **pytest, on fixture data, for each view:**
    - every call is at most 52 characters;
-   - no line contains "undefined", "NaN" or "None";
+   - no line or chip contains "undefined", "NaN" or "None";
    - the title maths is right for a decided and an undecided fixture;
    - in the title fight, each driver's last point equals his standings total, on a fixture with a sprint weekend;
-   - the view is right at each fixed-clock example above;
+   - the view, the lines and the chips are right at each fixed-clock example above, the 2027 race week before its
+     first result included;
    - the lines are right in `America/Los_Angeles` and in UTC, with each zone's abbreviation, and every call still
-     fits 52 characters.
+     fits 52 characters; an empty, a spaces-only and a path-like zone (`Europe/../UTC`) fall back to UTC.
 2. **The e2e suite (Playwright, mocked API, fixed clock):**
    - the page shows the right view at three of the examples, including both countdowns: Qatar's race week
      (3 days 21 h) and 2027's (13 days 0 h);
@@ -217,7 +226,8 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
    - a chip sends exactly one (mocked) chat request;
    - no request goes to `/api/v1/chat` on page load.
 3. **`verify-outcome` passes** at 1440, 768 and 390 (overflow, contrast, fonts, console errors, reduced motion),
-   and its screenshot judgment says PASS.
+   and its screenshot judgment says PASS. This assumes the DESIGN.md task (Nov 25–26) leaves the site's shell
+   passing it, with the shell's six 10 px labels lifted. A failure in the shell goes back to that task.
 4. **The project gates, `floor` and `codex-review` pass.**
 5. **Before the merge, Joythish sees the three views** in screenshots and OKs the look.
 
