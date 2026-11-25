@@ -261,15 +261,22 @@ def test_places_that_are_also_countries_or_people_need_a_race_name() -> None:
 def test_a_race_name_or_circuit_name_is_enough() -> None:
     linker = _circuit_linker()
     cases = {
-        "Who won the 2025 Monaco Grand Prix?": "monaco",
-        "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?": "bahrain",
-        "Is the Singapore GP hard on brakes?": "marina_bay",
-        "Who won in Monte Carlo?": "monaco",
-        "What makes Circuit Gilles Villeneuve tricky?": "villeneuve",
+        # A year in the question becomes the season (#42)
+        "Who won the 2025 Monaco Grand Prix?": {
+            "circuit_ref": "monaco",
+            "season": 2025,
+        },
+        "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?": {
+            "circuit_ref": "bahrain",
+            "season": 2026,
+        },
+        "Is the Singapore GP hard on brakes?": {"circuit_ref": "marina_bay"},
+        "Who won in Monte Carlo?": {"circuit_ref": "monaco"},
+        "What makes Circuit Gilles Villeneuve tricky?": {"circuit_ref": "villeneuve"},
     }
-    for question, ref in cases.items():
+    for question, expected in cases.items():
         out = linker.link(_intent(), question)
-        assert out["metadata_filter"] == {"circuit_ref": ref}, question
+        assert out["metadata_filter"] == expected, question
 
 
 def test_a_country_in_passing_leaves_the_classifier_filter_alone() -> None:
@@ -374,3 +381,49 @@ def test_first_season_comes_from_the_knowledge_base() -> None:
         [{"season": 1950, "circuit_ref": "monza"}], [], [], []
     )
     assert linker.first_season == 1950
+
+
+# Season fallback (#42): the intent model sometimes leaves the season out
+# (r26-07 on 2026-11-25), but the year is written in the question.
+
+
+def test_a_year_in_the_question_fills_a_missing_season() -> None:
+    out = _circuit_linker().link(
+        _intent(),
+        "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?",
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "bahrain", "season": 2026}
+
+
+def test_the_same_year_twice_still_fills_the_season() -> None:
+    out = _linker().link(
+        _intent({"circuit_ref": "suzuka"}),
+        "Who won at Suzuka in 2026, and was 2026 his first win there?",
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "suzuka", "season": 2026}
+
+
+def test_two_different_years_leave_the_season_out() -> None:
+    out = _linker().link(_intent(), "Who won at Suzuka in 2025 and in 2026?")
+    assert out["metadata_filter"] == {"circuit_ref": "suzuka"}
+
+
+def test_a_year_before_the_knowledge_base_still_skips_the_filter() -> None:
+    linker = EntityLinker.from_rows(
+        [*KB, {"season": 2018, "circuit_ref": "suzuka"}], DRIVERS, TEAMS, CIRCUITS
+    )
+    out = linker.link(_intent(), "Who won at Suzuka in 1989?")
+    assert out["metadata_filter"] == {}
+
+
+def test_a_classifier_season_beats_the_year_in_the_question() -> None:
+    out = _linker().link(
+        _intent({"circuit_ref": "suzuka", "season": 2025}),
+        "Who won at Suzuka in 2026?",
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "suzuka", "season": 2025}
+
+
+def test_a_year_in_the_question_is_not_added_to_profile_filters() -> None:
+    out = _linker().link(_intent(), "How many wins has Lando Norris taken in 2026?")
+    assert out["metadata_filter"] == {"driver_ref": "norris"}
