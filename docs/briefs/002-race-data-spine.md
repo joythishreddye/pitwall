@@ -18,8 +18,9 @@ engineer's knowledge, testing it before the swap, and publishes the new race's r
 ## Sources (both CC BY-NC-SA 4.0, credited on the site)
 - **OpenF1 (2023 on):** laps, position, intervals, stints, pit, race_control, weather, and location (for the
   outlines).
-  - The free tier needs no auth and allows 3 requests a second.
-  - It returns 401 to everyone during any live F1 session. Run after sessions end, and retry on 401 with backoff.
+  - The free tier needs no auth and allows 3 requests a second and 30 a minute.
+  - It returns 401 to free clients from 30 minutes before any live F1 session until 30 minutes after it ends. Run
+    after that, and retry on 401 with backoff.
 - **Jolpica:** results, qualifying, standings, and the schedule (session times). Back off 60 s on a 429.
 - **Not FastF1.** It needs an F1 TV login, and F1 blocks cloud IPs (CLAUDE.md). Never use it in CI, in a cloud
   session or on Render.
@@ -175,8 +176,8 @@ A new DB column or table is a migration, and Joythish OKs it first. A static fil
 
 ## Landmines
 - **PostgREST caps responses at 1,000 rows.** Page with `.range()` (`fetch_all` in `backend/app/db/supabase.py`).
-- **OpenF1's live-session 401 hits scheduled runs too.** A retry that fires while a later session is running gets
-  401 until it ends.
+- **OpenF1's live-session 401 hits scheduled runs too.** A retry that fires during a later session, or in the 30
+  minutes either side of it, gets 401 until 30 minutes after it ends.
 - **The repo is public:** keys go in GitHub secrets or env vars, never in files or logs.
 - **Cloud sessions push only their own `claude/` branch and never merge** (CLAUDE.md).
 - **GitHub turns off a scheduled workflow after 60 days without repo activity** (keepalive.yml notes it). Abu
