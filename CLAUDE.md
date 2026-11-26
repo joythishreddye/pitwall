@@ -29,7 +29,7 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - Ask Joythish before any new paid service. Joythish makes every payment.
 
 ## Gates
-In order (see `~/.claude/CLAUDE.md`): the project gates, floor, verify-outcome for UI changes once `verify.json` exists, then codex-review (Codex plus the reviewer agent) at task end and before any push.
+In order (see `~/.claude/CLAUDE.md`): the project gates, floor, verify-outcome for any change under `frontend/` (`verify.json`), then codex-review (Codex plus the reviewer agent) at task end and before any push.
 
 The project gates, run from the repo root, in the foreground and unpiped:
 ```bash
@@ -41,6 +41,11 @@ The project gates, run from the repo root, in the foreground and unpiped:
 # (no frontend unit tests yet; vitest is planned)
 ```
 Use these exact forms. The parentheses keep each `cd` (and the venv) inside a subshell: Claude Code's shell keeps a successful `cd`, so without them the next line's `cd` fails. `pytest` and `ruff` live in `backend/venv`, so a bare call exits 127. The gate hooks (the save nudge and the gate-failure record) recognize only the command forms in `~/.claude/brain/bin/gate-re.sh`, so another runner or path goes unrecorded.
+
+The UI gate (`python3 ~/.claude/gates/bin/gates.py verify-outcome`, from the repo root) builds with `pnpm build:e2e`, serves with `e2e/serve.mjs` and runs `frontend/e2e/` (Playwright 1.64.1, exact) at 1440, 768 and 390. `DESIGN.md` is the design source it judges against.
+- **Pages talk only to the fixture API** (`frontend/e2e/fixture-api.mjs`, saved JSON in `e2e/fixtures/`). A page that calls a path with no fixture gets a 404, a console error and a FAIL: add the fixture, never point the build at production.
+- **Baselines** (`e2e/*-snapshots/`, darwin only, so e2e stays out of CI): regenerating needs Joythish's OK, then `(cd frontend && pnpm build:e2e)` and `(cd frontend && npm run e2e -- --update-snapshots=all --workers=1)`, not `pnpm build`. Approving needs a second OK (the verify-outcome skill).
+- **After a gate run `.next` holds the fixture build;** `serve.mjs` refuses any other build, and `pnpm build` restores the real one.
 
 ## Other commands (not gates)
 ```bash
