@@ -21,7 +21,7 @@ export function ChartPreview({ progressions, roundLabels }: ChartPreviewProps) {
         </div>
         <Link
           href="/standings"
-          className="flex items-center gap-1 text-xs text-f1-cyan font-data hover:text-f1-text transition-colors duration-100 cursor-pointer"
+          className="flex items-center gap-1 shrink-0 whitespace-nowrap text-xs text-f1-cyan font-data hover:text-f1-text transition-colors duration-100 cursor-pointer"
         >
           View Full <ArrowRight className="h-3 w-3" />
         </Link>

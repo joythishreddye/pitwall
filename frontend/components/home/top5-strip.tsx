@@ -29,13 +29,13 @@ export function Top5Strip({ standings }: Top5StripProps) {
         </div>
 
         {/* Drivers row — scrollable on mobile, 5-col grid on desktop */}
-        <div className="flex overflow-x-auto divide-x divide-f1-grid md:grid md:grid-cols-5 md:overflow-visible">
+        <div className="flex overflow-x-auto divide-x divide-f1-grid lg:grid lg:grid-cols-5 lg:overflow-visible">
           {top5.map((driver) => {
             const teamHex = getTeamHexColor(driver.constructor_name ?? "");
             const posColor = POSITION_COLORS[driver.position] ?? "var(--color-f1-muted)";
 
             return (
-              <div key={driver.driver_ref} className="px-4 py-3 flex items-center gap-2.5 shrink-0 md:shrink w-[160px] md:w-auto">
+              <div key={driver.driver_ref} className="px-4 py-3 flex items-center gap-2.5 shrink-0 lg:shrink min-w-[150px] lg:min-w-0">
                 {/* Position + team color bar */}
                 <div className="flex items-center gap-2 shrink-0">
                   <span
@@ -53,10 +53,10 @@ export function Top5Strip({ standings }: Top5StripProps) {
                     {driver.surname}
                   </p>
                   <div className="flex items-baseline gap-1">
-                    <span className="font-data text-base font-bold" style={{ color: teamHex }}>
+                    <span className="font-data text-base font-bold text-f1-text">
                       <NumberCounter value={driver.points} duration={0.8 + driver.position * 0.05} />
                     </span>
-                    <span className="font-data text-[10px] text-f1-muted">PTS</span>
+                    <span className="font-data text-[11px] text-f1-muted">PTS</span>
                   </div>
                 </div>
               </div>

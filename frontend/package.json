@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:e2e": "NEXT_PUBLIC_API_URL=http://127.0.0.1:8100 NEXT_PUBLIC_OPENF1_URL=http://127.0.0.1:8100/openf1 next build",
+    "start:e2e": "node e2e/serve.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -24,6 +27,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

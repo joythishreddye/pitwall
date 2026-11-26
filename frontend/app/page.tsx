@@ -6,8 +6,7 @@ import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings
 import { useRaceCalendar } from "@/lib/hooks/use-races";
 import { DataLinkDown } from "@/components/data-link-down";
 import { ScannerLine } from "@/components/ui/scanner-line";
-import { SplitReveal } from "@/components/ui/split-reveal";
-import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import {
   ChampionshipLeaderTile,
   ConstructorLeaderTile,
@@ -18,11 +17,6 @@ import {
 } from "@/components/home";
 
 type TileId = "leader" | "constructor" | "next-race" | "top5" | "recent" | "chart";
-
-// Stagger between each tile reveal (seconds)
-const TILE_STAGGER = 0.1;
-// Delay before first tile starts (after data loads)
-const TILE_INITIAL_DELAY = 0.15;
 
 export default function HomePage() {
   const {
@@ -97,50 +91,12 @@ export default function HomePage() {
       const ids = tiles.map((el) => el.dataset.tileId as TileId);
       ids.forEach((id) => scheduled.add(id));
 
-      if (respectsReducedMotion()) {
-        // Only the tiles on screen now; tiles that mount later get their turn
-        gsap.set(tiles, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(".home-subtext", { opacity: 1 });
-        setRevealedTiles((prev) => new Set([...prev, ...ids]));
-        return;
-      }
-
-      const tl = gsap.timeline();
-
-      // Subheading fades in first — signals data is ready
-      if (firstReveal) {
-        tl.fromTo(
-          ".home-subtext",
-          { opacity: 0 },
-          { opacity: 1, duration: 0.35, ease: "pitwall-accel" },
-          0
-        );
-      }
-
-      tiles.forEach((el, i) => {
-        const tileId = el.dataset.tileId as TileId;
-        const isHero = tileId === "leader";
-
-        tl.fromTo(
-          el,
-          {
-            opacity: 0,
-            y: isHero ? 0 : 10,
-            scale: isHero ? 0.97 : 1,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: isHero ? 0.45 : 0.3,
-            ease: "pitwall-accel",
-            onStart() {
-              setRevealedTiles((prev) => new Set([...prev, tileId]));
-            },
-          },
-          TILE_INITIAL_DELAY + i * TILE_STAGGER
-        );
-      });
+      // Tiles show at once: the old cascade ran past a second, and text must be
+      // settled when it appears (DESIGN.md, Motion). Only the tiles on screen
+      // now; tiles that mount later get their turn.
+      gsap.set(tiles, { opacity: 1, y: 0, scale: 1 });
+      if (firstReveal) gsap.set(".home-subtext", { opacity: 1 });
+      setRevealedTiles((prev) => new Set([...prev, ...ids]));
     },
     { scope: containerRef, dependencies: [shouldAnimate, standings, races, progression] }
   );
@@ -150,17 +106,9 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-grid-lines opacity-40 pointer-events-none" />
 
       <div className="relative p-6 md:p-8 space-y-3">
-        {/* Page header — heading sweeps in on mount; subtext reveals after data */}
+        {/* Page header: the subtext shows once data has arrived */}
         <div className="mb-6">
-          <SplitReveal
-            text="Race Control"
-            type="chars"
-            stagger={0.035}
-            delay={0}
-            duration={0.3}
-            tag="h1"
-            className="font-heading text-2xl font-bold text-f1-text tracking-tight"
-          />
+          <h1 className="font-heading text-2xl font-bold text-f1-text tracking-tight">Race Control</h1>
           <p className="home-subtext text-f1-muted text-sm mt-0.5 font-data" style={{ opacity: 0 }}>
             {CURRENT_SEASON} Season
             {standings ? ` — After Round ${standings.round}` : ""}
@@ -171,7 +119,7 @@ export default function HomePage() {
         {!allLoaded && (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
             <ScannerLine className="w-full max-w-md" />
-            <p className="font-data text-[10px] text-f1-muted tracking-widest uppercase">
+            <p className="font-data text-[11px] text-f1-muted tracking-widest uppercase">
               Loading Race Data...
             </p>
           </div>

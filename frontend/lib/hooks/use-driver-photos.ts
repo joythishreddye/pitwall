@@ -10,10 +10,11 @@ const OpenF1DriverSchema = z.object({
 
 export type OpenF1Driver = z.infer<typeof OpenF1DriverSchema>;
 
+// The e2e build points this at the local fixture API (`build:e2e` in package.json).
+const OPENF1_BASE = process.env.NEXT_PUBLIC_OPENF1_URL ?? "https://api.openf1.org";
+
 async function fetchOpenF1Drivers(): Promise<OpenF1Driver[]> {
-  const res = await fetch(
-    "https://api.openf1.org/v1/drivers?session_key=latest"
-  );
+  const res = await fetch(`${OPENF1_BASE}/v1/drivers?session_key=latest`);
   if (!res.ok) return [];
   const raw = await res.json();
   // OpenF1 returns {"detail":"No results found."} (not an array) on empty results

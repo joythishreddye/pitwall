@@ -56,7 +56,7 @@ export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
           </div>
           {isToday ? (
             <div className="flex items-center gap-1.5">
-              <StatusDot variant="live" pulse />
+              <StatusDot variant="live" />
               <span className="text-xs font-data text-f1-green">RACE DAY</span>
             </div>
           ) : (
@@ -99,10 +99,10 @@ export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
 function CountdownSegment({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <span className="font-data text-2xl font-bold text-f1-text tabular-nums w-10 text-center">
+      <span className="font-data text-2xl font-bold text-f1-text tabular-nums w-8 lg:w-10 text-center">
         {String(value).padStart(2, "0")}
       </span>
-      <span className="font-data text-[9px] text-f1-muted uppercase tracking-widest">{label}</span>
+      <span className="font-data text-[11px] text-f1-muted uppercase tracking-widest">{label}</span>
     </div>
   );
 }

@@ -12,8 +12,8 @@ interface NumberCounterProps {
   duration?: number;
   className?: string;
   /**
-   * When true the counter stays at 0 and does not animate.
-   * Flip to false to fire the count-up (e.g. after a tile reveal).
+   * When true the counter stays at 0. Flip to false to show the value
+   * (e.g. after a tile reveal); only later value changes animate.
    */
   paused?: boolean;
 }
@@ -26,18 +26,20 @@ export function NumberCounter({
   paused = false,
 }: NumberCounterProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
-  // Start from 0 so the counter always counts up to the value on mount.
-  // The ref persists the current position between renders, so live updates
-  // count from the last animated value (not from 0 again).
-  const [display, setDisplay] = useState(() => (0).toFixed(decimals));
-  const obj = useRef({ val: 0 });
+  // The first value shows at once: text must be settled when it appears, so
+  // nothing counts up on load (DESIGN.md, Motion). Later changes animate from
+  // the last value, which the ref keeps between renders.
+  const [display, setDisplay] = useState(() => (paused ? 0 : value).toFixed(decimals));
+  const obj = useRef({ val: paused ? 0 : value });
+  const shown = useRef(!paused);
 
   useGSAP(
     () => {
-      // Don't animate until the tile containing this counter is revealed
+      // Stay at 0 until the tile containing this counter is revealed
       if (paused) return;
 
-      if (respectsReducedMotion()) {
+      if (!shown.current || respectsReducedMotion()) {
+        shown.current = true;
         setDisplay(value.toFixed(decimals));
         obj.current.val = value;
         return;

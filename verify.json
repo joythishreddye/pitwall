@@ -1,0 +1,9 @@
+{
+  "dir": "frontend",
+  "ui": ["frontend/**"],
+  "build": "npm run build:e2e",
+  "start": "npm run start:e2e",
+  "port": 3100,
+  "routes": ["/"],
+  "e2e": "e2e"
+}

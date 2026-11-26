@@ -18,6 +18,8 @@
 
   /* ── Semantic ── */
   --color-f1-red: #DC0000;
+  /* Small red text: #DC0000 is 3.69:1 on f1-dark, this is 6.33:1 (DESIGN.md) */
+  --color-f1-red-text: #FF5C5C;
   --color-f1-green: #00FF00;
   --color-f1-yellow: #FFED00;
   --color-f1-orange: #FF6B00;
