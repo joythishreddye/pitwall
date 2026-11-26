@@ -68,8 +68,8 @@ Tokens live in `frontend/app/globals.css` (`@theme`); use the Tailwind classes (
 ## Do
 - **Data over decoration.** Every colour has a data meaning (the tokens above). Density beats whitespace.
 - **Numbers in `font-data`** (JetBrains Mono, tabular): lap times, positions, points, gaps, speeds, counts, and
-  small uppercase labels and eyebrows. Names, prose and nav items use Inter (the phone tab bar is the one
-  exception; see The shell); headings use IBM Plex Sans.
+  small uppercase labels and eyebrows. Names, prose and nav menu items use Inter (the phone tab bar is the one
+  nav menu in mono, and the breadcrumb counts as a small label; see The shell); headings use IBM Plex Sans.
 - **Formats:** lap times to 3 decimals (`1:23.456`), gaps and deltas with a sign (`+0.123`), points as integers
   (`402`), positions as `P1`.
 - **Elevation by surface step and border,** never shadows: page `f1-dark`, card `f1-dark-2` with a 1px `f1-grid`
@@ -126,7 +126,8 @@ Tokens live in `frontend/app/globals.css` (`@theme`); use the Tailwind classes (
   of the row on desktop; `f1-red-text` label on the phone tab bar.
 - Type: the wordmark in IBM Plex Sans, the sidebar's nav rows in Inter (14px), and the small labels in
   `font-data`: the tagline, NAVIGATION, the season and version lines (11px), the breadcrumb (12px, in capitals)
-  and the phone tab bar's labels (11px). The tab bar is the one nav in mono, as in the approved screenshots.
+  and the phone tab bar's labels (11px). The tab bar is the one nav menu in mono, as in the approved screenshots;
+  the breadcrumb is a small label, not a menu.
 
 ## Checks
 - `verify.json` (repo root) runs the UI check on every change under `frontend/`: the production build against the
