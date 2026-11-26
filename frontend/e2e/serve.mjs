@@ -3,36 +3,17 @@
 // Playwright's webServer runs it when the suite is started by hand.
 // It refuses a build that wasn't made by `build:e2e`, because that build would call the production API.
 import { spawn } from "node:child_process";
-import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { startFixtureApi } from "./fixture-api.mjs";
+import { FIXTURE_API_PORT, FIXTURE_API_URL, missingFixtureUrls, refusalMessage } from "./fixture-build.mjs";
 
-export const FIXTURE_API_PORT = 8100;
-const FIXTURE_API_URL = `http://127.0.0.1:${FIXTURE_API_PORT}`;
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const port = process.env.PORT || "3100";
 
-async function builtForFixtures() {
-  const dir = path.join(ROOT, ".next", "static", "chunks");
-  let names;
-  try {
-    names = await readdir(dir, { recursive: true });
-  } catch {
-    return false;
-  }
-  for (const name of names) {
-    if (!name.endsWith(".js")) continue;
-    if ((await readFile(path.join(dir, name), "utf8")).includes(FIXTURE_API_URL)) return true;
-  }
-  return false;
-}
-
-if (!(await builtForFixtures())) {
-  console.error(
-    `serve: .next wasn't built by \`build:e2e\` (no chunk calls ${FIXTURE_API_URL}). ` +
-      "Run `pnpm build:e2e` first, so the pages talk to the fixture API and not to production.",
-  );
+const missing = await missingFixtureUrls(path.join(ROOT, ".next", "static", "chunks"));
+if (missing.length > 0) {
+  console.error(refusalMessage(missing));
   process.exit(1);
 }
 
