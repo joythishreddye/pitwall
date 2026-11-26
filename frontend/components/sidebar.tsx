@@ -42,21 +42,7 @@ export function Sidebar() {
   const navRef = useRef<HTMLElement>(null);
   const hasPositioned = useRef(false);
 
-  // Entrance stagger — runs once on mount
-  useGSAP(
-    () => {
-      if (respectsReducedMotion()) return;
-      gsap.from(".nav-item", {
-        x: -20,
-        opacity: 0,
-        stagger: 0.06,
-        duration: 0.4,
-        ease: "pitwall-accel",
-        delay: 0.1,
-      });
-    },
-    { scope: sidebarRef }
-  );
+  // No entrance animation: the nav is on every page and must be settled at load (DESIGN.md, Motion).
 
   // Sliding active indicator — follows route changes
   useGSAP(
@@ -115,13 +101,13 @@ export function Sidebar() {
           </div>
           <div className="leading-none">
             <p className="text-sm font-semibold tracking-tight font-heading">PITWALL</p>
-            <p className="text-[10px] text-f1-muted font-data tracking-widest mt-0.5">AI RACE ENGINEER</p>
+            <p className="text-[11px] text-f1-muted font-data tracking-widest mt-0.5">AI RACE ENGINEER</p>
           </div>
         </Link>
 
         {/* Nav section label */}
         <div className="px-4 pt-4 pb-1">
-          <p className="text-[10px] font-data text-f1-muted tracking-widest uppercase">Navigation</p>
+          <p className="text-[11px] font-data text-f1-muted tracking-widest uppercase">Navigation</p>
         </div>
 
         {/* Navigation — relative so the absolute indicator positions against it */}
@@ -167,14 +153,12 @@ export function Sidebar() {
         </nav>
 
         {/* Footer */}
+        {/* No LIVE label or pulsing dot here: LIVE means a session is running (DESIGN.md) */}
         <div className="px-4 py-3 border-t border-f1-grid space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-f1-green animate-pulse-dot shrink-0" />
-            <p className="text-[10px] font-data text-f1-muted tracking-wider uppercase">
-              {CURRENT_SEASON} Season · Live
-            </p>
-          </div>
-          <p className="text-[10px] text-f1-muted/50 font-data">F1 Data Platform v1.5</p>
+          <p className="text-[11px] font-data text-f1-muted tracking-wider uppercase">
+            {CURRENT_SEASON} Season
+          </p>
+          <p className="text-[11px] text-f1-muted font-data">F1 Data Platform v1.5</p>
         </div>
       </aside>
 
@@ -204,13 +188,13 @@ function MobileTabBar({ pathname }: { pathname: string }) {
             aria-current={active ? "page" : undefined}
             className={cn(
               "flex flex-1 flex-col items-center justify-center gap-1 py-2 min-h-[52px] transition-colors duration-100 cursor-pointer",
-              active ? "text-f1-red" : "text-f1-muted"
+              active ? "text-f1-red-text" : "text-f1-muted"
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
             <span className={cn(
-              "text-[10px] font-data tracking-wide",
-              active ? "text-f1-red" : "text-f1-muted"
+              "text-[11px] font-data tracking-wide",
+              active ? "text-f1-red-text" : "text-f1-muted"
             )}>
               {shortLabel}
             </span>

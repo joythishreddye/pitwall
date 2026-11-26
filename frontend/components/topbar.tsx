@@ -46,7 +46,7 @@ export function Topbar() {
   const crumbs = buildBreadcrumbs(pathname);
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between h-10 px-4 border-b border-f1-grid bg-f1-dark/90 backdrop-blur-[2px]">
+    <header className="sticky top-0 z-10 flex items-center justify-between h-10 px-4 border-b border-f1-grid bg-f1-dark">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb">
         <ol className="flex items-center gap-1">
@@ -81,14 +81,11 @@ export function Topbar() {
         </ol>
       </nav>
 
-      {/* Season indicator */}
+      {/* Season indicator: no pulsing dot, which would read as LIVE (DESIGN.md) */}
       <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-f1-green animate-pulse-dot" />
-          <span className="text-[10px] font-data text-f1-muted tracking-widest uppercase">
-            {CURRENT_SEASON} Season
-          </span>
-        </div>
+        <span className="hidden sm:inline text-[11px] font-data text-f1-muted tracking-widest uppercase">
+          {CURRENT_SEASON} Season
+        </span>
       </div>
     </header>
   );
