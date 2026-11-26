@@ -18,6 +18,9 @@ void DrawSVGPlugin;
 const SVG_H = 240;
 const PAD = { t: 20, r: 24, b: 44, l: 48 };
 const INNER_H = SVG_H - PAD.t - PAD.b;
+// Axis labels: 11px is DESIGN.md's floor
+const AXIS_FONT_PX = 11;
+const TICK_LABEL_GAP_PX = 8;
 
 function innerW(svgW: number) {
   return Math.max(0, svgW - PAD.l - PAD.r);
@@ -196,6 +199,20 @@ export function ChampionshipChart({
   ).filter((r, i, arr) => arr.indexOf(r) === i);
   if (maxRound > 0 && !ticks.includes(1)) ticks.unshift(1);
 
+  // Tick labels that would overlap a neighbour are dropped (their tick marks stay). Working from the latest
+  // round leftwards keeps the most recent label. JetBrains Mono advances 0.6em per character.
+  const labelWidth = (r: number) => (roundLabels?.[r] ?? String(r)).length * AXIS_FONT_PX * 0.6;
+  const labeledTicks = new Set<number>();
+  let leftEdge = Infinity;
+  for (const r of [...ticks].reverse()) {
+    const x = xScale(r, maxRound, svgW);
+    const half = labelWidth(r) / 2;
+    if (x + half + TICK_LABEL_GAP_PX <= leftEdge) {
+      labeledTicks.add(r);
+      leftEdge = x - half;
+    }
+  }
+
   // ── GSAP animation ────────────────────────────────────────────────────────
   // Solid lines: DrawSVG left-to-right draw.
   // Dashed lines: opacity fade-in — DrawSVG overwrites strokeDasharray so we
@@ -209,16 +226,14 @@ export function ChampionshipChart({
       }
       gsap.from(".chart-line", {
         drawSVG: "0%",
-        duration: 1.8,
+        // Settled within 300ms, so the chart is complete when it's judged (DESIGN.md, Motion)
+        duration: 0.3,
         ease: "pitwall-accel",
-        stagger: 0.04,
       });
       gsap.from(".chart-line-dash", {
         opacity: 0,
-        duration: 1.0,
+        duration: 0.3,
         ease: "pitwall-accel",
-        stagger: 0.04,
-        delay: 0.5,
       });
     },
     { scope: svgRef, dependencies: [progressions, mode, svgW] }
@@ -361,7 +376,7 @@ export function ChampionshipChart({
                     x={PAD.l - 6}
                     y={y + 4}
                     fill="var(--color-f1-muted)"
-                    fontSize={10}
+                    fontSize={AXIS_FONT_PX}
                     textAnchor="end"
                     fontFamily="var(--font-mono)"
                   >
@@ -394,16 +409,18 @@ export function ChampionshipChart({
                     stroke="var(--color-f1-grid)"
                     strokeWidth={0.5}
                   />
-                  <text
-                    x={x}
-                    y={PAD.t + INNER_H + 14}
-                    fill="var(--color-f1-muted)"
-                    fontSize={9}
-                    textAnchor="middle"
-                    fontFamily="var(--font-mono)"
-                  >
-                    {roundLabels?.[r] ?? String(r)}
-                  </text>
+                  {labeledTicks.has(r) && (
+                    <text
+                      x={x}
+                      y={PAD.t + INNER_H + 14}
+                      fill="var(--color-f1-muted)"
+                      fontSize={AXIS_FONT_PX}
+                      textAnchor="middle"
+                      fontFamily="var(--font-mono)"
+                    >
+                      {roundLabels?.[r] ?? String(r)}
+                    </text>
+                  )}
                 </g>
               );
             })}
@@ -473,7 +490,7 @@ export function ChampionshipChart({
                         idx === 0 && "bg-white/[0.02]"
                       )}
                     >
-                      <span className="font-data tabular-nums text-[10px] text-f1-muted w-3 shrink-0">
+                      <span className="font-data tabular-nums text-[11px] text-f1-muted w-3 shrink-0">
                         {idx + 1}
                       </span>
                       <div
@@ -500,7 +517,7 @@ export function ChampionshipChart({
                       {row.scored != null && (
                         <span
                           className={cn(
-                            "font-data tabular-nums text-[10px] shrink-0",
+                            "font-data tabular-nums text-[11px] shrink-0",
                             row.scored > 0 ? "text-f1-green" : "text-f1-muted"
                           )}
                         >

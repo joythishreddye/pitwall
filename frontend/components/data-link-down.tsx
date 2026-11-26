@@ -53,7 +53,7 @@ export function DataLinkDown({
       <p role="status" className="sr-only">
         {liveMessage}
       </p>
-      <p className="flex items-center gap-2 font-data text-[10px] uppercase tracking-widest text-f1-red">
+      <p className="flex items-center gap-2 font-data text-[11px] uppercase tracking-widest text-f1-red-text">
         <span className="h-1.5 w-1.5 rounded-full bg-f1-red" aria-hidden="true" />
         Data link lost
       </p>

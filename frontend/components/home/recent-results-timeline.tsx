@@ -44,10 +44,10 @@ function RecentRaceCard({ race, rank }: { race: RaceCalendarItem; rank: number }
     >
       {/* Round + date */}
       <div className="flex items-center justify-between mb-2">
-        <span className="font-data text-[10px] text-f1-muted uppercase tracking-widest">
+        <span className="font-data text-[11px] text-f1-muted uppercase tracking-widest">
           RD {race.round}
         </span>
-        <span className="font-data text-[10px] text-f1-muted">{race.date}</span>
+        <span className="font-data text-[11px] text-f1-muted">{race.date}</span>
       </div>
 
       {/* Race name */}

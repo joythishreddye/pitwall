@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { NumberCounter } from "@/components/ui/number-counter";
-import { SplitReveal } from "@/components/ui/split-reveal";
 import { getTeamHexColor } from "@/lib/constants/teams";
 import { useDriverPhotos, findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
 import type { DriverStanding } from "@/lib/schemas/standings";
@@ -16,7 +15,7 @@ interface ChampionshipLeaderTileProps {
 }
 
 export function ChampionshipLeaderTile({ leader, revealed = false }: ChampionshipLeaderTileProps) {
-  const { data: driverPhotos, isPending: photosPending } = useDriverPhotos();
+  const { data: driverPhotos } = useDriverPhotos();
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
   const photoUrl = findHeadshotUrl(driverPhotos, {
@@ -25,9 +24,9 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
   });
   // Remember which URL failed, so a new leader's photo gets its own chance
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  // No photo (OpenF1 refuses free clients during live sessions): the tile
+  // shows text only. The old faded driver-code watermark failed contrast.
   const showPhoto = Boolean(photoUrl) && photoUrl !== failedUrl;
-  // Wait for the lookup to settle, or the watermark flashes before the photo
-  const showWatermark = !showPhoto && !photosPending && Boolean(leader.driver_code);
 
   return (
     <div className="relative overflow-hidden bg-f1-dark-2 border border-f1-grid group cursor-pointer h-full">
@@ -36,16 +35,12 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
       {/* Team color top bar — z-[6] to sit above the photo layer */}
       <div className="absolute top-0 left-0 right-0 h-0.5 z-[6]" style={{ backgroundColor: teamHex }} />
 
-      {/* No photo: OpenF1 refuses free clients during live sessions, so the
-          driver code fills the space, as on the /drivers grid */}
-      {showWatermark && (
-        <span
-          className="absolute top-4 right-5 font-mono font-black leading-none select-none pointer-events-none tabular-nums"
-          style={{ fontSize: "clamp(72px, 10vw, 144px)", color: teamHex, opacity: 0.12 }}
-          aria-hidden="true"
-        >
-          {leader.driver_code}
-        </span>
+      {/* No photo: a team-colour wash fills the tile (DESIGN.md: team colour beyond thin bars) */}
+      {!showPhoto && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: `linear-gradient(135deg, transparent 35%, ${teamHex}26)` }}
+        />
       )}
 
       {/* Driver photo — bottom-anchored portrait, natural proportions */}
@@ -98,19 +93,12 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
             <span className="text-f1-muted text-sm font-sans">{leader.constructor_name}</span>
           </div>
 
-          {/* Name — forename static, surname SplitReveal char-by-char */}
+          {/* Name: shown at once, since text must be settled when it appears */}
           <div className="mb-3">
             <span className="text-f1-muted font-heading text-xl font-medium">{leader.forename} </span>
-            <SplitReveal
-              text={leader.surname.toUpperCase()}
-              type="chars"
-              stagger={0.08}
-              duration={0.4}
-              delay={0.2}
-              tag="span"
-              className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight"
-              paused={!revealed}
-            />
+            <span className="text-f1-text font-heading text-xl font-bold uppercase tracking-tight">
+              {leader.surname.toUpperCase()}
+            </span>
           </div>
 
           {/* Points + wins */}
