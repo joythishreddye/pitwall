@@ -15,7 +15,7 @@ interface ChampionshipLeaderTileProps {
 }
 
 export function ChampionshipLeaderTile({ leader, revealed = false }: ChampionshipLeaderTileProps) {
-  const { data: driverPhotos } = useDriverPhotos();
+  const { data: driverPhotos, isPending: photosPending } = useDriverPhotos();
   const teamHex = getTeamHexColor(leader.constructor_name ?? "");
 
   const photoUrl = findHeadshotUrl(driverPhotos, {
@@ -35,8 +35,9 @@ export function ChampionshipLeaderTile({ leader, revealed = false }: Championshi
       {/* Team color top bar — z-[6] to sit above the photo layer */}
       <div className="absolute top-0 left-0 right-0 h-0.5 z-[6]" style={{ backgroundColor: teamHex }} />
 
-      {/* No photo: a team-colour wash fills the tile (DESIGN.md: team colour beyond thin bars) */}
-      {!showPhoto && (
+      {/* No photo: a team-colour wash fills the tile (DESIGN.md: team colour beyond thin bars). It waits for
+          the lookup to settle, or it flashes before the photo arrives. */}
+      {!showPhoto && !photosPending && (
         <div
           className="absolute inset-0 pointer-events-none"
           style={{ background: `linear-gradient(135deg, transparent 35%, ${teamHex}26)` }}
