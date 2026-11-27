@@ -9,7 +9,9 @@ import type { ConstructorStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-const COLS = "grid-cols-[3rem_2fr_4rem_5rem_1fr]";
+// Phones get position, constructor, wins and points; the points bar joins from 768 px
+const COLS =
+  "grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.5rem] gap-x-3 md:grid-cols-[3rem_2fr_4rem_5rem_1fr] md:gap-x-4";
 
 export function ConstructorsTable({
   constructors,
@@ -40,7 +42,7 @@ export function ConstructorsTable({
       {/* Sticky header */}
       <div
         className={cn(
-          "sticky top-0 z-10 grid gap-x-4 items-center py-2",
+          "sticky top-0 z-10 grid items-center py-2",
           "text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark",
           "px-4 select-none",
           COLS
@@ -49,8 +51,8 @@ export function ConstructorsTable({
         <span>Pos</span>
         <span>Constructor</span>
         <span className="text-right">Wins</span>
-        <span className="text-right">Pts</span>
-        <span />
+        <span className="standings-pts-heading text-right">Pts</span>
+        <span className="hidden md:block" />
       </div>
 
       {constructors.map((c, i) => {
@@ -63,7 +65,7 @@ export function ConstructorsTable({
           <div
             key={c.constructor_ref}
             className={cn(
-              "standings-row-constructor grid gap-x-4 items-center h-11 text-sm px-4",
+              "standings-row-constructor grid items-center h-11 text-sm px-4",
               "border-b border-f1-grid/50",
               "transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3",
@@ -86,7 +88,7 @@ export function ConstructorsTable({
                 className="w-0.5 h-5 shrink-0"
                 style={{ backgroundColor: teamColor }}
               />
-              <span className="font-semibold truncate">{c.name}</span>
+              <span className="standings-name min-w-0 flex-1 truncate font-semibold">{c.name}</span>
             </div>
 
             {/* Wins */}
@@ -95,12 +97,12 @@ export function ConstructorsTable({
             </span>
 
             {/* Points */}
-            <span className="text-right font-data tabular-nums font-semibold">
+            <span className="standings-pts text-right font-data tabular-nums font-semibold">
               {Math.floor(c.points)}
             </span>
 
             {/* Win bar */}
-            <div className="h-1.5 bg-f1-grid/30 overflow-hidden">
+            <div className="hidden h-1.5 overflow-hidden bg-f1-grid/30 md:block">
               <div
                 className="h-full"
                 style={{
