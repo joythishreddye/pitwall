@@ -10,6 +10,7 @@ from datetime import datetime
 import httpx
 from supabase import Client
 
+from app.db.supabase import fetch_all
 from app.ingestion._helpers import (
     RateLimiter,
     batch_upsert,
@@ -341,6 +342,61 @@ def ingest_qualifying(
     return total
 
 
+# The two kinds of standings: Jolpica's path name, its list key, its entity key
+_STANDINGS_KINDS = (
+    ("driver", "driverStandings", "DriverStandings", "Driver", "driverId"),
+    (
+        "constructor",
+        "constructorStandings",
+        "ConstructorStandings",
+        "Constructor",
+        "constructorId",
+    ),
+)
+
+
+def _standings_rows(
+    standings_list: dict,
+    season: int,
+    kind: str,
+    list_key: str,
+    entity_key: str,
+    id_key: str,
+    lookup: dict[str, int],
+) -> tuple[int, list[dict]]:
+    """Map one Jolpica StandingsList to (its round, standings table rows)."""
+    rnd = int(standings_list.get("round", 0))
+    rows = []
+    for entry in standings_list.get(list_key, []):
+        entity_id = lookup.get(entry[entity_key][id_key])
+        if entity_id is None:
+            continue
+        rows.append(
+            {
+                "season": season,
+                "round": rnd,
+                "type": kind,
+                "entity_id": entity_id,
+                "position": safe_int(entry["position"]),
+                "points": safe_float(entry["points"], 0.0),
+                "wins": safe_int(entry.get("wins"), 0),
+            }
+        )
+    return rnd, rows
+
+
+def _stored_standings_rounds(supabase: Client, season: int, kind: str) -> set[int]:
+    """The rounds that already have standings rows of this kind."""
+    rows = fetch_all(
+        lambda: supabase.table("standings")
+        .select("id, round")
+        .eq("season", season)
+        .eq("type", kind)
+        .order("id")
+    )
+    return {row["round"] for row in rows}
+
+
 def ingest_standings(
     supabase: Client,
     http: httpx.Client,
@@ -348,82 +404,87 @@ def ingest_standings(
     seasons: list[int],
     driver_lookup: dict[str, int],
     constructor_lookup: dict[str, int],
+    *,
+    every_round: bool = False,
 ) -> int:
-    """Fetch and upsert end-of-season standings."""
+    """Fetch and upsert each season's latest standings.
+
+    With ``every_round``, also fetch the standings after each earlier round
+    that has no stored rows yet, so points can be charted round by round with
+    sprints included. Only missing rounds are fetched: about two calls per
+    round the first time, none after that.
+    """
+    lookups = {"driver": driver_lookup, "constructor": constructor_lookup}
     total = 0
     for season in seasons:
-        # Driver standings
-        try:
-            data = fetch_json(
-                http,
-                f"{BASE_URL}/{season}/driverStandings.json",
-                rl,
-            )
-            standings_list = data.get("StandingsTable", {}).get("StandingsLists", [])
-            if standings_list:
-                sl = standings_list[0]
-                rnd = int(sl.get("round", 0))
-                rows = []
-                for ds in sl.get("DriverStandings", []):
-                    entity_id = driver_lookup.get(ds["Driver"]["driverId"])
-                    if entity_id is None:
-                        continue
-                    rows.append(
-                        {
-                            "season": season,
-                            "round": rnd,
-                            "type": "driver",
-                            "entity_id": entity_id,
-                            "position": safe_int(ds["position"]),
-                            "points": safe_float(ds["points"], 0.0),
-                            "wins": safe_int(ds.get("wins"), 0),
-                        }
-                    )
+        for kind, path, list_key, entity_key, id_key in _STANDINGS_KINDS:
+            try:
+                data = fetch_json(http, f"{BASE_URL}/{season}/{path}.json", rl)
+                standings_list = data.get("StandingsTable", {}).get(
+                    "StandingsLists", []
+                )
+                if not standings_list:
+                    continue
+                latest, rows = _standings_rows(
+                    standings_list[0],
+                    season,
+                    kind,
+                    list_key,
+                    entity_key,
+                    id_key,
+                    lookups[kind],
+                )
                 total += batch_upsert(
                     supabase,
                     "standings",
                     rows,
                     on_conflict="season,round,type,entity_id",
                 )
-        except Exception:
-            logger.warning("No driver standings for %d", season)
-
-        # Constructor standings
-        try:
-            data = fetch_json(
-                http,
-                f"{BASE_URL}/{season}/constructorStandings.json",
-                rl,
-            )
-            standings_list = data.get("StandingsTable", {}).get("StandingsLists", [])
-            if standings_list:
-                sl = standings_list[0]
-                rnd = int(sl.get("round", 0))
-                rows = []
-                for cs in sl.get("ConstructorStandings", []):
-                    cref = cs["Constructor"]["constructorId"]
-                    entity_id = constructor_lookup.get(cref)
-                    if entity_id is None:
+                if not every_round:
+                    continue
+                stored = _stored_standings_rounds(supabase, season, kind)
+                for rnd in range(1, latest):
+                    if rnd in stored:
                         continue
-                    rows.append(
-                        {
-                            "season": season,
-                            "round": rnd,
-                            "type": "constructor",
-                            "entity_id": entity_id,
-                            "position": safe_int(cs["position"]),
-                            "points": safe_float(cs["points"], 0.0),
-                            "wins": safe_int(cs.get("wins"), 0),
-                        }
-                    )
-                total += batch_upsert(
-                    supabase,
-                    "standings",
-                    rows,
-                    on_conflict="season,round,type,entity_id",
-                )
-        except Exception:
-            logger.warning("No constructor standings for %d", season)
+                    # A round that fails doesn't stop the later ones; the next
+                    # run tries it again
+                    try:
+                        data = fetch_json(
+                            http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl
+                        )
+                        lists = data.get("StandingsTable", {}).get("StandingsLists", [])
+                        if not lists:
+                            logger.warning(
+                                "No %s standings for %d round %d", kind, season, rnd
+                            )
+                            continue
+                        _, rows = _standings_rows(
+                            lists[0],
+                            season,
+                            kind,
+                            list_key,
+                            entity_key,
+                            id_key,
+                            lookups[kind],
+                        )
+                        total += batch_upsert(
+                            supabase,
+                            "standings",
+                            rows,
+                            on_conflict="season,round,type,entity_id",
+                        )
+                    except Exception as exc:
+                        logger.warning(
+                            "%s standings for %d round %d failed: %s",
+                            kind,
+                            season,
+                            rnd,
+                            exc,
+                        )
+            except Exception as exc:
+                # One season's failure doesn't stop the others; the next run
+                # fetches whatever rounds are still missing
+                logger.warning("%s standings for %d stopped: %s", kind, season, exc)
 
     logger.info("Standings: %d total upserted", total)
     return total
@@ -435,8 +496,13 @@ def ingest_standings(
 def run_jolpica_ingest(
     supabase: Client,
     seasons: list[int] | None = None,
+    *,
+    standings_every_round: bool = False,
 ) -> dict[str, int]:
     """Run the full Jolpica ingestion pipeline.
+
+    ``standings_every_round`` also fills in the standings after every earlier
+    round of each season that has none stored (see ingest_standings).
 
     Returns dict of {table_name: rows_upserted}.
     """
@@ -491,6 +557,7 @@ def run_jolpica_ingest(
             seasons,
             driver_lookup,
             constructor_lookup,
+            every_round=standings_every_round,
         )
 
     logger.info("Jolpica ingest complete: %s", counts)

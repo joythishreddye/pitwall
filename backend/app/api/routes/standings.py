@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from supabase import Client
 
-from app.db.supabase import get_supabase
+from app.db.supabase import fetch_all, get_supabase
 
 logger = logging.getLogger(__name__)
 
@@ -263,6 +263,26 @@ def get_standings(
     )
 
 
+def _driver_standings_by_round(
+    db: Client, season: int
+) -> dict[int, dict[int, tuple[float, int | None]]]:
+    """{round: {driver_id: (points, position)}} from the season's standings rows."""
+    rows = fetch_all(
+        lambda: db.table("standings")
+        .select("id, entity_id, round, points, position")
+        .eq("type", "driver")
+        .eq("season", season)
+        .order("id")
+    )
+    by_round: dict[int, dict[int, tuple[float, int | None]]] = defaultdict(dict)
+    for row in rows:
+        by_round[row["round"]][row["entity_id"]] = (
+            float(row["points"] or 0),
+            row["position"],
+        )
+    return by_round
+
+
 @router.get("/{year}/progression", response_model=list[DriverPointsProgression])
 def get_standings_progression(
     year: int,
@@ -271,9 +291,10 @@ def get_standings_progression(
 ) -> list[DriverPointsProgression]:
     """Return round-by-round cumulative championship points for the top N drivers.
 
-    Computes progression from race_results (which has per-race points for every
-    round including sprints) rather than standings (which may only store the
-    final round).
+    When the standings table holds the standings after every round that has
+    results (seed_database.py --standings-every-round), the points and the top N
+    come from them, sprints included. Otherwise they're summed from race_results,
+    which hold Grand Prix points only, so sprint points are missing.
 
     Args:
         year: The F1 season year (e.g. 2024).
@@ -306,23 +327,40 @@ def get_standings_progression(
     if not season_rows:
         return []
 
-    # Sum points per driver per round (sprints + race in same round).
-    points_by_driver: dict[int, dict[int, float]] = defaultdict(
-        lambda: defaultdict(float)
-    )
-    for row in season_rows:
-        did = row["driver_id"]
-        rnd = race_id_to_round[row["race_id"]]
-        pts = float(row.get("points") or 0)
-        points_by_driver[did][rnd] += pts
-
-    # Total points per driver to find the top N.
-    driver_totals = {
-        did: sum(rounds.values()) for did, rounds in points_by_driver.items()
-    }
-    top_driver_ids = sorted(
-        driver_totals, key=lambda d: driver_totals[d], reverse=True
-    )[:top]
+    rounds_with_results = {race_id_to_round[row["race_id"]] for row in season_rows}
+    by_round = _driver_standings_by_round(db, year)
+    # {driver_id: {round: points after that round}}
+    totals_after: dict[int, dict[int, float]] = defaultdict(dict)
+    if rounds_with_results <= by_round.keys():
+        # The standings after each round include sprints
+        latest = by_round[max(by_round)]
+        top_driver_ids = sorted(
+            latest,
+            key=lambda d: (latest[d][1] is None, latest[d][1] or 0, -latest[d][0]),
+        )[:top]
+        for rnd, entries in by_round.items():
+            for did, (points, _) in entries.items():
+                totals_after[did][rnd] = points
+    else:
+        # Grand Prix points only: race_results hold no sprint results
+        points_by_driver: dict[int, dict[int, float]] = defaultdict(
+            lambda: defaultdict(float)
+        )
+        for row in season_rows:
+            did = row["driver_id"]
+            rnd = race_id_to_round[row["race_id"]]
+            points_by_driver[did][rnd] += float(row.get("points") or 0)
+        driver_totals = {
+            did: sum(rounds.values()) for did, rounds in points_by_driver.items()
+        }
+        top_driver_ids = sorted(
+            driver_totals, key=lambda d: driver_totals[d], reverse=True
+        )[:top]
+        for did, rounds in points_by_driver.items():
+            running = 0.0
+            for rnd in sorted(rounds):
+                running += rounds[rnd]
+                totals_after[did][rnd] = running
 
     if not top_driver_ids:
         return []
@@ -358,14 +396,9 @@ def get_standings_progression(
     result: list[DriverPointsProgression] = []
     for driver_id in top_driver_ids:
         driver_info = drivers_map.get(driver_id, {})
-        round_points = points_by_driver[driver_id]
-        sorted_rounds = sorted(round_points.keys())
-
-        cumulative: list[float] = []
-        running = 0.0
-        for rnd in sorted_rounds:
-            running += round_points[rnd]
-            cumulative.append(running)
+        after = totals_after[driver_id]
+        sorted_rounds = sorted(after)
+        cumulative = [after[rnd] for rnd in sorted_rounds]
 
         result.append(
             DriverPointsProgression(

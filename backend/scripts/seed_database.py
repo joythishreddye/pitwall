@@ -69,6 +69,12 @@ def main() -> None:
         action="store_true",
         help="Skip FastF1 ingestion (laps, pit stops, weather)",
     )
+    parser.add_argument(
+        "--standings-every-round",
+        action="store_true",
+        help="Also store the standings after each earlier round that has none"
+        " (about 2 Jolpica calls per missing round; use with --seasons)",
+    )
     args = parser.parse_args()
 
     supabase = get_supabase()
@@ -87,7 +93,11 @@ def main() -> None:
     # Jolpica
     jolpica_seasons = args.seasons or list(range(2018, current_year + 1))
     logger.info("═══ Jolpica Ingest (seasons %s) ═══", jolpica_seasons)
-    run_jolpica_ingest(supabase, seasons=jolpica_seasons)
+    run_jolpica_ingest(
+        supabase,
+        seasons=jolpica_seasons,
+        standings_every_round=args.standings_every_round,
+    )
 
     # FastF1
     if not args.skip_fastf1:
