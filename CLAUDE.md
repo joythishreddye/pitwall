@@ -61,7 +61,7 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 ## Local Prerequisites
 - **Python:** 3.12 (`/opt/homebrew/bin/python3.12`). Not 3.14; ML packages lag.
 - **Virtual env:** `backend/venv`
-- **Node.js:** 20.9+ (v23 at /opt/homebrew/bin/node); **pnpm** 10
+- **Node.js:** 20.19+ or 22.12+ (vitest runs on vite 7, which needs it; Next needs 20.9+). v23 at /opt/homebrew/bin/node; **pnpm** 10
 
 ## Gotchas
 
