@@ -1,9 +1,11 @@
 /** Format milliseconds as lap time: 1:23.456 */
 export function formatLapTime(ms: number | null | undefined): string {
   if (ms == null || ms <= 0) return "\u2014";
-  const totalSeconds = ms / 1000;
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
+  // Round to whole milliseconds first: toFixed alone rounds 59.9996 s up to "60.000" after the minutes were split
+  // off, which printed "60.000" for a minute and "1:60.000" for two
+  const total = Math.round(ms);
+  const minutes = Math.floor(total / 60000);
+  const seconds = (total - minutes * 60000) / 1000;
   if (minutes > 0) {
     return `${minutes}:${seconds.toFixed(3).padStart(6, "0")}`;
   }

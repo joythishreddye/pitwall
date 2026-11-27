@@ -15,6 +15,13 @@ describe("formatLapTime", () => {
     expect(formatLapTime(59999)).toBe("59.999");
   });
 
+  it("rounds to the thousandth before splitting minutes from seconds", () => {
+    // OpenF1's lap durations carry more than three decimals: 59.9996 s is a minute, and 119.9997 s two
+    expect(formatLapTime(59999.6)).toBe("1:00.000");
+    expect(formatLapTime(119999.7)).toBe("2:00.000");
+    expect(formatLapTime(83456.4)).toBe("1:23.456");
+  });
+
   it("shows a dash for no time", () => {
     expect(formatLapTime(null)).toBe("—");
     expect(formatLapTime(undefined)).toBe("—");
