@@ -15,6 +15,8 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from app.race_starts import race_time
+
 DATA_DIR = Path(__file__).resolve().parent / "data" / "schedule"
 SOURCE = "Jolpica F1 API (api.jolpi.ca), CC BY-NC-SA 4.0"
 
@@ -76,8 +78,10 @@ def round_from_jolpica(race: dict[str, Any]) -> dict[str, Any]:
         _session(name, race[key]) for key, name in _JOLPICA_SESSIONS if key in race
     ]
     sessions.sort(key=lambda s: (s["date"], s["start"] or "~"))
-    # The race always comes last: its date and time sit at the top level
-    sessions.append(_session("race", race))
+    # The race always comes last: its date and time sit at the top level, and a
+    # start Jolpica stores wrong is fixed (app/race_starts.py)
+    time = race_time(race["season"], race["round"], race.get("time"))
+    sessions.append(_session("race", {**race, "time": time}))
     return {
         "round": int(race["round"]),
         "race_name": race["raceName"],
