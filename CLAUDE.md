@@ -14,7 +14,7 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v2). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-25T1805Z, 100% / 0.891 (after the linker started taking the season from the question, #42; same data as the round 21 refresh).
+- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v2). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-27T1744Z, 100% / 0.891 (with the chat limits; same data as the round 21 refresh).
 - Every knowledge ingest re-runs the eval too (`ingest_knowledge.py`, including the one after a data refresh), with a data-update bar.
   - **It passes** if, in production mode (vector+intent), no question goes from hit to miss and hit@5 doesn't drop.
   - **An MRR@5 drop is reported to Joythish, not blocking.** New numbers reorder near-tied pages after most refreshes, and the chat reads all five top chunks for each answer (`backend/app/rag/retriever.py`).
@@ -51,7 +51,7 @@ The UI gate (`python3 ~/.claude/gates/bin/gates.py verify-outcome`, from the rep
 ```bash
 (cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload)   # API dev server
 (cd frontend && pnpm dev)                                                             # web dev server
-(cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1 --standings-every-round)   # Jolpica refresh; the flag stores any round's standings still missing, for the points chart
+(cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1 --standings-every-round)   # Jolpica refresh; the flag re-reads every round's standings, for the points chart
 (cd backend && source venv/bin/activate && python scripts/ingest_knowledge.py)        # regenerate docs + re-embed locally
 (cd backend && source venv/bin/activate && python scripts/eval_rag.py)                # retrieval eval (55 Qs, local models, ~4 min)
 curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header

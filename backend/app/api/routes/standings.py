@@ -107,11 +107,11 @@ def _has_round(db: Client, season: int, kind: str, rnd: int) -> bool:
 def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
     """The round to answer for the asked kinds of standings.
 
-    A refresh can hold one kind back while the other moves on: a round, or more
-    while its repair keeps failing (each such run exits 1). Asking for both
-    then answers the lagging kind's latest round when the other kind has it
-    too, so neither table comes back empty, though both are as old as the
-    lagging one; otherwise the latest round of either, as before.
+    A refresh can store one kind's latest round while the other's fetch fails
+    (that run exits 1). Asking for both then answers the lagging kind's latest
+    round when the other kind has it too, so neither table comes back empty,
+    though both are as old as the lagging one; otherwise the latest round of
+    either, as before.
     """
     latest = {
         kind: rnd
@@ -326,16 +326,38 @@ def _driver_standings_by_round(
 def _standings_hold_results(
     by_round: dict[int, dict[int, tuple[float, int | None]]],
     wins: dict[int, int],
-    rounds_with_results: list[int],
+    drivers_by_round: dict[int, set[int]],
 ) -> bool:
-    """Whether every round with results has standings that include its Grand Prix.
+    """Whether every round with results has whole standings that include its
+    Grand Prix.
 
     Jolpica's wins count Grand Prix wins only, so the standings after round N
     hold N wins once its Grand Prix is in. Standings stored between a sprint and
     its Grand Prix, and not fetched again since, are one short. Points can't
     tell: earlier sprint points can cover a missing Grand Prix.
+
+    So the wins after round N must add up to the rounds up to N that have
+    results (a Grand Prix cancelled after its sprint has none, nor a win).
+    Wins can't show a missing driver who never won (a round stored short), so
+    the standings after round N must also list every driver with a Grand Prix
+    result in rounds 1 to N. They may list more (a sprint-only driver).
+
+    Args:
+        by_round: {round: {driver_id: (points, position)}} from the standings.
+        wins: Each round's wins added up.
+        drivers_by_round: {round: driver ids with a result in that round}, for
+            every round with results.
     """
-    return all(rnd in by_round and wins[rnd] >= rnd for rnd in rounds_with_results)
+    seen: set[int] = set()
+    for grands_prix, rnd in enumerate(sorted(drivers_by_round), start=1):
+        seen |= drivers_by_round[rnd]
+        if (
+            rnd not in by_round
+            or wins[rnd] < grands_prix
+            or not seen <= by_round[rnd].keys()
+        ):
+            return False
+    return True
 
 
 @router.get("/{year}/progression", response_model=list[DriverPointsProgression])
@@ -383,11 +405,14 @@ def get_standings_progression(
     if not season_rows:
         return []
 
-    rounds_with_results = sorted({race_id_to_round[r["race_id"]] for r in season_rows})
+    drivers_by_round: dict[int, set[int]] = defaultdict(set)
+    for r in season_rows:
+        drivers_by_round[race_id_to_round[r["race_id"]]].add(r["driver_id"])
+    rounds_with_results = sorted(drivers_by_round)
     by_round, wins = _driver_standings_by_round(db, year)
     # {driver_id: {round: points after that round}}
     totals_after: dict[int, dict[int, float]] = defaultdict(dict)
-    if _standings_hold_results(by_round, wins, rounds_with_results):
+    if _standings_hold_results(by_round, wins, drivers_by_round):
         # The standings after each round include sprints. A round stored after
         # its sprint but before its results (a sprint Saturday) isn't charted.
         latest = by_round[rounds_with_results[-1]]

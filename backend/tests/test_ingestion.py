@@ -2,6 +2,8 @@
 
 from unittest.mock import MagicMock
 
+import pytest
+
 from app.ingestion._helpers import (
     RateLimiter,
     batch_upsert,
@@ -42,11 +44,66 @@ def test_safe_float_none_and_invalid():
 # ── RateLimiter ──────────────────────────────────────────────────
 
 
-def test_rate_limiter_allows_under_limit():
-    rl = RateLimiter(max_requests=5, window_seconds=60)
-    for _ in range(5):
+class _FakeClock:
+    """Stands in for the time module: sleeping moves the clock, nothing else does."""
+
+    def __init__(self) -> None:
+        self.now = 1_000.0
+
+    def time(self) -> float:
+        return self.now
+
+    def monotonic(self) -> float:
+        return self.now
+
+    def sleep(self, seconds: float) -> None:
+        assert seconds >= 0
+        self.now += seconds
+
+
+def _stamps(monkeypatch, rl: RateLimiter, calls: int) -> list[float]:
+    """When each of `calls` back-to-back requests would go out, on a fake clock."""
+    clock = _FakeClock()
+    monkeypatch.setattr("app.ingestion._helpers.time", clock)
+    stamps = []
+    for _ in range(calls):
         rl.wait_if_needed()
+        stamps.append(clock.now)
+    return stamps
+
+
+def test_rate_limiter_allows_under_limit(monkeypatch):
+    rl = RateLimiter(max_requests=5, window_seconds=60)
+    stamps = _stamps(monkeypatch, rl, 5)
     assert len(rl._timestamps) == 5
+    assert stamps[-1] - stamps[0] < 60  # only the one-second window made anyone wait
+
+
+def test_rate_limiter_paces_bursts_under_jolpicas_four_a_second(monkeypatch):
+    # Jolpica allows 4 requests a second unauthenticated. A burst past it draws a 429,
+    # then a 60 s backoff.
+    stamps = _stamps(monkeypatch, RateLimiter(), 12)
+    for first, fourth in zip(stamps, stamps[3:], strict=False):
+        assert fourth - first >= 1.0, "four requests went out inside one second"
+
+
+def test_rate_limiter_still_holds_the_hourly_window(monkeypatch):
+    stamps = _stamps(monkeypatch, RateLimiter(max_requests=5, window_seconds=60), 6)
+    assert stamps[5] - stamps[0] >= 60
+    assert stamps[4] - stamps[0] < 60  # the first five fit in the window
+
+
+def test_rate_limiter_burst_can_be_turned_off(monkeypatch):
+    rl = RateLimiter(max_requests=5, window_seconds=60, burst=None)
+    stamps = _stamps(monkeypatch, rl, 6)
+    assert stamps[4] == stamps[0]  # no one-second pacing
+    assert stamps[5] - stamps[0] >= 60  # the hourly window still holds
+
+
+@pytest.mark.parametrize("kwargs", [{"burst": 0}, {"burst": -1}, {"max_requests": 0}])
+def test_rate_limiter_rejects_limits_below_one(kwargs):
+    with pytest.raises(ValueError):
+        RateLimiter(**kwargs)
 
 
 # ── batch_upsert ─────────────────────────────────────────────────

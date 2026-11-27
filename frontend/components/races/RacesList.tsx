@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
+import { raceStart } from "@/lib/hooks/use-countdown";
 import { RaceCard } from "./RaceCard";
 import type { RaceCalendarItem } from "@/lib/schemas/races";
 
@@ -13,9 +14,10 @@ export function RacesList({ races }: RacesListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const now = new Date();
 
+  // Next until its lights go out, as on the homepage (not midnight of its day in the reader's zone)
   const nextRaceIndex = races.findIndex((race) => {
     if (!race.date) return false;
-    return new Date(race.date + "T00:00:00") >= now;
+    return raceStart(race.date, race.time) >= now.getTime();
   });
 
   useGSAP(

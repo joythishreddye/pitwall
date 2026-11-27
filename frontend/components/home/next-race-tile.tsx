@@ -3,7 +3,7 @@
 import { Calendar } from "lucide-react";
 import { StatusDot } from "@/components/ui/status-dot";
 import { DrawPath } from "@/components/ui/draw-path";
-import { useCountdown } from "@/lib/hooks/use-countdown";
+import { raceStart, useCountdown } from "@/lib/hooks/use-countdown";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import type { RaceCalendarItem } from "@/lib/schemas/races";
 
@@ -13,15 +13,15 @@ interface NextRaceTileProps {
 }
 
 export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
-  const countdown = useCountdown(race.date ?? undefined);
+  const countdown = useCountdown(race.date ?? undefined, race.time);
   const circuitMeta = getCircuitMeta(race.circuit.name);
   const circuitKey = circuitMeta?.key;
 
+  // Race day is the day the race starts in the reader's zone: in Tokyo, Qatar's 16:00Z Sunday start is Monday.
   const isToday = (() => {
     if (!race.date) return false;
-    const d = new Date(race.date + "T00:00:00");
-    const now = new Date();
-    return d.toDateString() === now.toDateString();
+    const start = new Date(raceStart(race.date, race.time));
+    return start.toDateString() === new Date().toDateString();
   })();
 
   return (
@@ -72,7 +72,7 @@ export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
 
         {/* Live countdown */}
         {countdown !== null ? (
-          <div className="flex items-center gap-1">
+          <div role="timer" aria-label="Time to the race" className="flex items-center gap-1">
             <CountdownSegment value={countdown.days} label="D" />
             <span className="font-data text-f1-muted text-lg font-bold">:</span>
             <CountdownSegment value={countdown.hours} label="H" />
@@ -82,7 +82,7 @@ export function NextRaceTile({ race, revealed = false }: NextRaceTileProps) {
             <CountdownSegment value={countdown.seconds} label="S" />
           </div>
         ) : (
-          <div className="flex items-center gap-1">
+          <div role="timer" aria-label="Time to the race" className="flex items-center gap-1">
             {["D", "H", "M", "S"].map((l) => (
               <CountdownSegment key={l} value={0} label={l} />
             ))}

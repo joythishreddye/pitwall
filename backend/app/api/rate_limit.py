@@ -42,7 +42,8 @@ class SlidingWindowLimiter:
 
         Args:
             key: The client identity, usually an IP address.
-            now: Monotonic timestamp override, for tests.
+            now: Monotonic timestamp override, for tests, or for a caller
+                that may take this hit back with ``release``.
 
         Returns:
             None when the hit is allowed (and recorded). Otherwise the number
@@ -70,6 +71,21 @@ class SlidingWindowLimiter:
             hits.append(t)
             self._all.append(t)
             return None
+
+    def release(self, key: str, at: float) -> None:
+        """Take back the hit ``check`` recorded for ``key`` at ``at`` (the
+        ``now`` it was given), for a request refused after it was counted.
+
+        Only that hit goes, so another request recorded in between keeps its
+        own. Does nothing if that hit is already gone.
+        """
+        with self._lock:
+            hits = self._hits.get(key)
+            if hits is None or at not in hits:
+                return
+            hits.remove(at)
+            if at in self._all:
+                self._all.remove(at)
 
     def _prune(self, cutoff: float) -> None:
         """Forget clients with no hits inside the current window."""

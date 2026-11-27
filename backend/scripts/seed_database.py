@@ -76,8 +76,9 @@ def main() -> None:
     parser.add_argument(
         "--standings-every-round",
         action="store_true",
-        help="Also store the standings after each earlier round that has none"
-        " (about 2 Jolpica calls per missing round; use with --seasons)",
+        help="Also read the standings after every earlier round again, so the"
+        " points charts count sprints (about 2 Jolpica calls per round on every"
+        " run; use with --seasons)",
     )
     args = parser.parse_args()
 

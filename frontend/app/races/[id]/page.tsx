@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
+import { raceStart } from "@/lib/hooks/use-countdown";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
@@ -13,8 +14,9 @@ import { PitStopsTable } from "@/components/races/PitStopsTable";
 
 type Tab = "results" | "pitstops";
 
-function UpcomingRaceMessage({ date }: { date: string | null }) {
-  const isFuture = date != null && new Date(date) > new Date();
+function UpcomingRaceMessage({ date, time }: { date: string | null; time: string | null }) {
+  // Upcoming until lights out, as on the homepage and /races: the start time is UTC (raceStart)
+  const isFuture = date != null && raceStart(date, time) > new Date().getTime();
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
       <Clock className="h-8 w-8 text-f1-muted opacity-40" />
@@ -278,7 +280,7 @@ export default function RaceDetailPage({
 
         {activeTab === "results" ? (
           race.results.length === 0 ? (
-            <UpcomingRaceMessage date={race.date} />
+            <UpcomingRaceMessage date={race.date} time={race.time} />
           ) : (
             <RaceResultsTable results={race.results} winnerMs={winnerMs} />
           )
