@@ -20,8 +20,9 @@ const ROUTES = new Map([
   ["/openf1/v1/drivers", "openf1/drivers.json"],
 ]);
 const RACE_IDS = new Set(["192", "193", "194", "195", "1388"]);
-// Pit-stop strategy for a race page: the races not yet run (Qatar 195, Abu Dhabi 1388) have none.
-const NO_STRATEGY_YET = new Set(["195", "1388"]);
+// Pit-stop strategy for a race page: the races not yet run (Qatar 195, Abu Dhabi 1388) have none, and the API
+// answered none for Brazil 193 too (checked 2026-11-27: 2026's stops aren't in the database yet).
+const NO_STRATEGY = new Set(["193", "195", "1388"]);
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -51,7 +52,7 @@ export function startFixtureApi({ port, host = "127.0.0.1" }) {
         ? undefined
         : race && RACE_IDS.has(race[1])
           ? `api/races-${race[1]}.json`
-          : strategy && NO_STRATEGY_YET.has(strategy[1])
+          : strategy && NO_STRATEGY.has(strategy[1])
             ? "api/races-strategy-none.json"
             : ROUTES.get(pathname);
     if (!file) {

@@ -9,6 +9,13 @@ import { getTeamColor } from "@/lib/constants/teams";
 import { formatLapTime, formatGap, formatLapsDown, positionColor } from "@/lib/format";
 import type { RaceResult } from "@/lib/schemas/races";
 
+// One column layout for the header and the rows. Phones get five columns (the team moves under the driver's
+// name, and the fastest lap shows beside it); from 1024 px, the full seven (at 768 the sidebar leaves too little room).
+// The phone Gap column fits the winner's race time ("95:23.504": formatLapTime has no hours) and a status
+// such as "Disqualified".
+const COLUMNS =
+  "grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem_2.25rem_5.25rem] gap-x-2 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
+
 interface RaceResultsTableProps {
   results: RaceResult[];
   winnerMs: number | null;
@@ -38,14 +45,19 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
 
   return (
     <div ref={containerRef} className="w-full">
-      <div className="sticky top-0 z-10 grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] gap-x-4 px-4 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark">
+      <div
+        className={cn(
+          COLUMNS,
+          "sticky top-0 z-10 py-2 text-xs text-f1-muted uppercase tracking-wider border-b border-f1-grid bg-f1-dark"
+        )}
+      >
         <span>Pos</span>
         <span>Driver</span>
-        <span>Team</span>
+        <span className="hidden lg:block">Team</span>
         <span className="text-right">Grid</span>
         <span className="text-right">Pts</span>
         <span className="text-right">Gap</span>
-        <span className="text-right">FL</span>
+        <span className="hidden lg:block text-right">FL</span>
       </div>
 
       {(() => {
@@ -67,7 +79,8 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             key={r.driver.ref}
             href={`/drivers/${r.driver.ref}`}
             className={cn(
-              "result-row grid grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] gap-x-4 items-center px-4 h-11 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
+              COLUMNS,
+              "result-row items-center min-h-11 py-1 lg:py-0 text-sm border-b border-f1-grid/50 transition-colors duration-100 hover:bg-f1-dark-3",
               i % 2 === 0 ? "bg-f1-dark-2" : "bg-f1-dark-3"
             )}
           >
@@ -80,7 +93,7 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             >
               {isDnf ? (
                 <span className="flex items-center gap-1">
-                  <AlertTriangle size={14} aria-hidden="true" />
+                  <AlertTriangle size={14} aria-hidden="true" className="hidden lg:block" />
                   <span>DNF</span>
                 </span>
               ) : (
@@ -89,20 +102,37 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             </span>
 
             {/* Driver */}
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="result-driver flex items-center gap-2 lg:gap-3 min-w-0">
               <div
                 className="w-1 h-5 shrink-0"
                 style={{ backgroundColor: teamColor }}
                 aria-hidden="true"
               />
-              <span className="truncate">
-                <span className="text-f1-muted">{r.driver.forename} </span>
-                <span className="font-semibold uppercase">{r.driver.surname}</span>
+              <span className="min-w-0">
+                {/* The surname shortens on a narrow screen; the fastest lap badge never does */}
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <span className="result-name truncate min-w-0">
+                    <span className="hidden lg:inline text-f1-muted">{r.driver.forename} </span>
+                    <span className="font-semibold uppercase">{r.driver.surname}</span>
+                  </span>
+                  {isFl && (
+                    <span
+                      className="lg:hidden shrink-0 rounded-sm bg-f1-purple px-1 font-data text-[11px] font-bold leading-4 text-f1-dark"
+                      aria-label="Fastest lap"
+                    >
+                      FL
+                    </span>
+                  )}
+                </span>
+                {/* On phones the team sits under the name */}
+                <span className="lg:hidden block truncate text-xs text-f1-muted">
+                  {r.constructor.name}
+                </span>
               </span>
             </div>
 
             {/* Team */}
-            <span className="text-f1-muted text-xs truncate">{r.constructor.name}</span>
+            <span className="hidden lg:block text-f1-muted text-xs truncate">{r.constructor.name}</span>
 
             {/* Grid position + delta */}
             <div className="text-right flex items-center justify-end gap-1">
@@ -110,8 +140,8 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
               {gridDelta !== 0 && !isDnf && (
                 <span
                   className={cn(
-                    "text-[10px] font-data",
-                    gridDelta > 0 ? "text-f1-green" : "text-f1-red"
+                    "hidden lg:inline text-[11px] font-data",
+                    gridDelta > 0 ? "text-f1-green" : "text-f1-red-text"
                   )}
                 >
                   {gridDelta > 0 ? `+${gridDelta}` : gridDelta}
@@ -136,7 +166,7 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             {/* Fastest lap — purple glow */}
             <span
               className={cn(
-                "text-right font-data text-xs",
+                "hidden lg:block text-right font-data text-xs",
                 isFl ? "text-purple-400" : "text-f1-muted"
               )}
               style={isFl ? { textShadow: "0 0 8px var(--color-f1-purple)" } : undefined}
