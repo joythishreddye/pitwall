@@ -186,8 +186,8 @@ def test_race_week_with_the_title_decided_reads_like_the_mockup() -> None:
         "UTC; qualifying Sat 21 Nov, 4:00 am UTC; lights out Sun 22 Nov, 4:00 am UTC."
     )
     assert details[1] == (
-        "Three races are left, worth 75 points at most with no sprints, so nobody "
-        "can catch him. He has 9 wins this year."
+        "Three races are left, worth 75 points at most with no sprints, so the lead "
+        "can't be caught. Antonelli has 9 wins this year."
     )
     assert details[2] == (
         "Hamilton has 261, Leclerc 249 and Norris 246. With 75 points left, all "
@@ -231,7 +231,7 @@ def test_race_week_with_the_title_open() -> None:
     ]
     assert [line.detail for line in b.lines] == [
         decided.lines[0].detail,
-        "He has 300 points and 9 wins.",
+        "Antonelli has 300 points and 9 wins.",
         decided.lines[4].detail,
     ]
     assert [line.drivers for line in b.lines] == [(), ("ANT",), ("VER",)]
@@ -317,7 +317,7 @@ def test_race_week_before_a_seasons_first_result() -> None:
         "Mercedes are the reigning team champions.",
     ]
     assert b.lines[1].detail == (
-        "He won the 2026 title with 390 points and 9 wins. No 2027 race has a "
+        "Antonelli won the 2026 title with 390 points and 9 wins. No 2027 race has a "
         "result yet."
     )
     assert b.chips == (
@@ -346,12 +346,12 @@ def test_after_a_race_reads_the_result_title_and_next_race() -> None:
         "Antonelli won the Las Vegas Grand Prix for Mercedes, from 3rd on the grid."
     )
     assert b.lines[1].detail == (
-        "Verstappen finished second for Red Bull, from pole. He's second in the "
-        "championship, 17 points ahead of Russell."
+        "Verstappen finished second for Red Bull, from pole. Verstappen is second "
+        "in the championship, 17 points ahead of Russell."
     )
     assert b.lines[3].detail == (
-        "He scored 25 points in Las Vegas and has 390. Two races are left, worth 50 "
-        "points at most with no sprints, so nobody can catch him."
+        "Antonelli scored 25 points in Las Vegas and has 390. Two races are left, "
+        "worth 50 points at most with no sprints, so the lead can't be caught."
     )
     assert b.lines[4].detail == (
         "Round 22 of 23, at the Lusail International Circuit. Lights out Sun 29 "
@@ -372,8 +372,8 @@ def test_after_a_race_without_its_points_drops_the_points_scored() -> None:
 
     assert _calls(b) == _calls(base)
     assert b.lines[3].detail == (
-        "Two races are left, worth 50 points at most with no sprints, so nobody "
-        "can catch him."
+        "Two races are left, worth 50 points at most with no sprints, so the lead "
+        "can't be caught."
     )
     assert [x.detail for i, x in enumerate(b.lines) if i != 3] == [
         x.detail for i, x in enumerate(base.lines) if i != 3
@@ -409,13 +409,13 @@ def test_a_race_named_for_its_country_is_placed_by_its_town() -> None:
     b = build_briefing(View.AFTER_RACE, replace(AFTER_VEGAS, latest=latest), "UTC")
     assert b.lines[0].call == "Antonelli won in Silverstone, from 3rd on the grid."
     assert b.lines[0].detail.startswith("Antonelli won the British Grand Prix for")
-    assert b.lines[3].detail.startswith("He scored 25 points in Silverstone and")
+    assert b.lines[3].detail.startswith("Antonelli scored 25 points in Silverstone")
     assert b.chips[0] == "Who won in Silverstone?"
 
     no_town = replace(latest, race=replace(BRITISH, locality=""))
     b = build_briefing(View.AFTER_RACE, replace(AFTER_VEGAS, latest=no_town), "UTC")
     assert b.lines[0].call == "Antonelli won at the British Grand Prix."
-    assert b.lines[3].detail.startswith("He scored 25 points at the British Grand")
+    assert b.lines[3].detail.startswith("Antonelli scored 25 points at the British")
     assert b.chips[0] == "Who won at the British Grand Prix?"
     texts = [t for x in b.lines for t in (x.call, x.detail)] + list(b.chips)
     assert not [t for t in texts if re.search(r"\bBritish\b(?! Grand Prix)", t)]
@@ -489,7 +489,8 @@ def test_after_the_last_race_with_no_later_race_in_the_data() -> None:
         "When's the next race?",
     )
     assert b.lines[3].detail == (
-        "He scored 25 points in Abu Dhabi and has 390. That was the season's last race."
+        "Antonelli scored 25 points in Abu Dhabi and has 390. "
+        "That was the season's last race."
     )
     assert b.lines[4].call == "No 2027 dates yet."
     assert b.lines[4].detail == (
@@ -532,11 +533,11 @@ def test_one_win_or_one_point_reads_in_the_singular() -> None:
     after = build_briefing(View.AFTER_RACE, final, "UTC")
     off = build_briefing(View.OFF_SEASON, replace(SEASON_OVER, standings=close), "UTC")
 
-    assert week.lines[1].detail == "He has 25 points and 1 win."
+    assert week.lines[1].detail == "Antonelli has 25 points and 1 win."
     assert after.lines[3].call == "Antonelli is champion: 1 point clear."
     assert "1 point ahead of Russell." in after.lines[1].detail
-    assert after.lines[3].detail.startswith("He scored 1 point in Abu Dhabi")
-    assert off.lines[0].detail.startswith("He has 1 win and 300 points after")
+    assert after.lines[3].detail.startswith("Antonelli scored 1 point in Abu Dhabi")
+    assert off.lines[0].detail.startswith("Antonelli has 1 win and 300 points after")
     texts = [
         text
         for b in (week, after, off)
@@ -575,7 +576,7 @@ def test_the_off_season_with_no_next_season_in_the_data() -> None:
         "No 2027 dates yet. I'll brief you when there are.",
     ]
     assert b.lines[0].detail == (
-        "He has 9 wins and 390 points after round 23, 111 clear of Verstappen."
+        "Antonelli has 9 wins and 390 points after round 23, 111 clear of Verstappen."
     )
     assert b.lines[1].detail == "Verstappen has 279, Russell 262 and Hamilton 261."
     assert b.lines[2].detail == (
@@ -626,7 +627,8 @@ def test_points_level_at_the_top_read_as_level_not_a_lead_of_zero() -> None:
 
     over = build_briefing(View.OFF_SEASON, replace(SEASON_OVER, standings=level), "UTC")
     assert over.lines[0].detail == (
-        "He has 9 wins and 390 points after round 23, level on points with Verstappen."
+        "Antonelli has 9 wins and 390 points after round 23, level on points "
+        "with Verstappen."
     )
 
     tied = (STANDINGS[0], STANDINGS[1], replace(STANDINGS[2], points=279))
@@ -636,7 +638,7 @@ def test_points_level_at_the_top_read_as_level_not_a_lead_of_zero() -> None:
     assert second.lines[1].call == "Verstappen is second, level on points with Russell."
     after = build_briefing(View.AFTER_RACE, replace(AFTER_VEGAS, standings=tied), "UTC")
     assert after.lines[1].detail.endswith(
-        "He's second in the championship, level on points with Russell."
+        "Verstappen is second in the championship, level on points with Russell."
     )
     for b in (week, over, second, after):
         texts = [t for x in b.lines for t in (x.call, x.detail)]
@@ -827,6 +829,21 @@ def test_every_call_fits_and_nothing_prints_a_missing_value(
         assert not re.search(r"\bnan\b", text, re.IGNORECASE), text
 
 
+# A driver is named, never "he": the rules can't know anyone's pronouns
+_PRONOUN = re.compile(r"\b(he|him|his|she|her|hers)\b", re.IGNORECASE)
+
+
+@pytest.mark.parametrize(("view", "snap"), EVERY_FIXTURE)
+def test_the_lines_name_drivers_instead_of_guessing_pronouns(
+    view: View, snap: Snapshot
+) -> None:
+    b = build_briefing(view, snap, "UTC")
+
+    texts = [t for line in b.lines for t in (line.call, line.detail)] + list(b.chips)
+    for text in texts:
+        assert not _PRONOUN.search(text), text
+
+
 RACE_LINES = {"RACE WEEK", "NEXT RACE", "NEXT SEASON"}
 
 
@@ -859,7 +876,8 @@ def test_half_points_print_as_they_are() -> None:
     half = (replace(STANDINGS[0], points=390.5), *STANDINGS[1:])
     b = build_briefing(View.OFF_SEASON, replace(SEASON_OVER, standings=half), "UTC")
     assert b.lines[0].detail == (
-        "He has 9 wins and 390.5 points after round 23, 111.5 clear of Verstappen."
+        "Antonelli has 9 wins and 390.5 points after round 23, 111.5 clear of "
+        "Verstappen."
     )
 
 

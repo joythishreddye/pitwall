@@ -93,7 +93,7 @@ class RaceInfo:
 
 @dataclass(frozen=True)
 class Placed:
-    """A podium finisher and the slot he started from (0: the pit lane)."""
+    """A podium finisher and the slot they started from (0: the pit lane)."""
 
     code: str
     last: str
@@ -109,7 +109,7 @@ class LastYear:
     round: int
     podium: tuple[Placed, Placed, Placed]
     # Who started from pole (grid 1), by surname; the detail says "started on
-    # pole", so not qualifying's fastest when a grid penalty moved him back
+    # pole", so not qualifying's fastest when a grid penalty moved them back
     pole: str | None
 
 
@@ -324,7 +324,7 @@ def _title_why(f: _Facts) -> str:
     no_sprints = "" if f.sprints_left else " with no sprints"
     return (
         f"{_races_left_text(f)} left, worth {f.left} points at most{no_sprints}, "
-        "so nobody can catch him."
+        "so the lead can't be caught."
     )
 
 
@@ -407,8 +407,9 @@ def _race_week(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[s
                     f"{champ.last} is the reigning champion.",
                     f"Reigning champion: {champ.last}.",
                 ),
-                f"He won the {prev} title with {_count(champ.points, 'point')} and "
-                f"{_count(champ.wins, 'win')}. No {s.season} race has a result yet.",
+                f"{champ.last} won the {prev} title with "
+                f"{_count(champ.points, 'point')} and {_count(champ.wins, 'win')}. "
+                f"No {s.season} race has a result yet.",
                 drivers=(champ.code,),
             )
         )
@@ -433,7 +434,8 @@ def _race_week(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[s
                 Line(
                     "TITLE",
                     _champion_call(f, leader),
-                    f"{_title_why(f)} He has {_count(leader.wins, 'win')} this year.",
+                    f"{_title_why(f)} {leader.last} has "
+                    f"{_count(leader.wins, 'win')} this year.",
                     drivers=(leader.code,),
                 )
             )
@@ -450,7 +452,7 @@ def _race_week(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[s
                         f"{leader.last} leads the title fight.",
                         f"Title leader: {leader.last}.",
                     ),
-                    f"He has {_count(leader.points, 'point')} and "
+                    f"{leader.last} has {_count(leader.points, 'point')} and "
                     f"{_count(leader.wins, 'win')}.",
                     drivers=(leader.code,),
                 )
@@ -569,9 +571,10 @@ def _after_race(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[
         gap = s.standings[1].points - s.standings[2].points
         third = s.standings[2].last
         championship = (
-            f" He's second in the championship, level on points with {third}."
+            f" {p2.last} is second in the championship, level on points with {third}."
             if gap == 0
-            else f" He's second in the championship, {_count(gap, 'point')} ahead of "
+            else f" {p2.last} is second in the championship, "
+            f"{_count(gap, 'point')} ahead of "
             f"{third}."
         )
     lines.append(
@@ -604,7 +607,8 @@ def _after_race(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[
         leader = f.leader
         scored = (latest.points_this_round or {}).get(leader.code)
         scored_text = (
-            f"He scored {_count(scored, 'point')} {at} and has {_pts(leader.points)}. "
+            f"{leader.last} scored {_count(scored, 'point')} {at} "
+            f"and has {_pts(leader.points)}. "
             if scored is not None
             else ""
         )
@@ -687,7 +691,7 @@ def _off_season(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[
                     f"{leader.last} is champion.",
                     f"Champion: {leader.last}.",
                 ),
-                f"He has {_count(leader.wins, 'win')} and "
+                f"{leader.last} has {_count(leader.wins, 'win')} and "
                 f"{_count(leader.points, 'point')} after round {s.after_round}{clear}.",
                 drivers=(leader.code,),
             )
