@@ -23,3 +23,21 @@ test("the Next Race tile draws Qatar's circuit", async ({ page }) => {
   // The outline sits in its own aria-hidden layer, apart from the calendar icon
   await expect(tile.locator(':scope > div[aria-hidden="true"] svg')).toHaveCount(1);
 });
+
+test.describe("a race's circuit facts", () => {
+  test("a 2026 race shows no DRS zones: the 2026 cars have no DRS", async ({ page }) => {
+    await page.goto("/races/195");
+    await expect(page.getByText("Turns", { exact: true })).toBeVisible();
+    await expect(page.getByText("DRS Zones", { exact: true })).toHaveCount(0);
+  });
+
+  test("a race from the DRS years (2011 to 2025) shows its DRS zones", async ({ page }) => {
+    // The saved Qatar race, served as if it were 2024's
+    await page.route("**/api/v1/races/195", async (route) => {
+      const res = await route.fetch();
+      await route.fulfill({ response: res, json: { ...(await res.json()), season: 2024 } });
+    });
+    await page.goto("/races/195");
+    await expect(page.getByText("DRS Zones", { exact: true })).toBeVisible();
+  });
+});
