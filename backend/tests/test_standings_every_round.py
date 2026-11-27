@@ -213,6 +213,38 @@ def test_progression_falls_back_while_a_rounds_standings_lack_its_grand_prix(
 
 @pytest.mark.parametrize(
     "standings",
+    [
+        # The latest round lost Hamilton (stored short): the top 2 would skip him
+        AFTER_ROUND_1 + AFTER_ROUND_2[:2],
+        # An earlier round lost Russell: his line would skip round 1
+        AFTER_ROUND_1[:2] + AFTER_ROUND_2,
+    ],
+    ids=["latest_round_short", "earlier_round_short"],
+)
+def test_progression_falls_back_while_a_round_lacks_a_driver_with_results(
+    standings: list[dict],
+) -> None:
+    # The wins still add up to each round: only the drivers show it's short
+    progression = get_standings_progression(2026, _season(standings), top=2)
+
+    assert [p.driver_ref for p in progression] == ["antonelli", "hamilton"]
+    assert progression[0].points == [25, 50]
+    assert progression[1].points == [18, 30]
+
+
+def test_progression_uses_standings_that_also_list_a_driver_without_results() -> None:
+    # A driver who only ran a sprint is in the standings, not in race_results
+    sprint_only = _standing(7, 2, 9, 4, 1)
+    progression = get_standings_progression(
+        2026, _season(AFTER_ROUND_1 + AFTER_ROUND_2 + [sprint_only]), top=2
+    )
+
+    assert [p.driver_ref for p in progression] == ["antonelli", "russell"]
+    assert progression[1].points == [12, 35]
+
+
+@pytest.mark.parametrize(
+    "standings",
     [AFTER_ROUND_2, AFTER_ROUND_1 + AFTER_ROUND_2],
     ids=["latest_round_only", "every_round"],
 )
