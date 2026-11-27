@@ -5,6 +5,10 @@ Usage:
     cd backend && python scripts/seed_database.py                # full seed
     cd backend && python scripts/seed_database.py --skip-fastf1  # jolpica only
     cd backend && python scripts/seed_database.py --seasons 2025  # single season
+
+Exits 1 when the Jolpica part left anything behind: a fetch that failed, or
+qualifying or standings that stop short of the latest results round (Jolpica
+often posts standings a while after the results). Rerun it later.
 """
 
 import argparse
@@ -18,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.db.supabase import get_supabase, ping_supabase
 from app.ingestion.fastf1_ingest import run_fastf1_ingest
-from app.ingestion.jolpica_ingest import run_jolpica_ingest
+from app.ingestion.jolpica_ingest import IngestReport, run_jolpica_ingest
 
 logging.basicConfig(
     level=logging.INFO,
@@ -69,6 +73,13 @@ def main() -> None:
         action="store_true",
         help="Skip FastF1 ingestion (laps, pit stops, weather)",
     )
+    parser.add_argument(
+        "--standings-every-round",
+        action="store_true",
+        help="Also read the standings after every earlier round again, so the"
+        " points charts count sprints (about 2 Jolpica calls per round on every"
+        " run; use with --seasons)",
+    )
     args = parser.parse_args()
 
     supabase = get_supabase()
@@ -87,7 +98,13 @@ def main() -> None:
     # Jolpica
     jolpica_seasons = args.seasons or list(range(2018, current_year + 1))
     logger.info("═══ Jolpica Ingest (seasons %s) ═══", jolpica_seasons)
-    run_jolpica_ingest(supabase, seasons=jolpica_seasons)
+    report = IngestReport()
+    run_jolpica_ingest(
+        supabase,
+        seasons=jolpica_seasons,
+        standings_every_round=args.standings_every_round,
+        report=report,
+    )
 
     # FastF1
     if not args.skip_fastf1:
@@ -109,6 +126,14 @@ def main() -> None:
         logger.info("All counts meet expectations.")
     else:
         logger.warning("Some counts below expectations — check logs above.")
+
+    # A refresh that left anything behind fails, so a stale page never looks
+    # fresh; rerun it (Jolpica often posts standings a while after results)
+    if report.problems:
+        logger.error("Jolpica refresh incomplete:")
+        for problem in report.problems:
+            logger.error("  %s", problem)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from supabase import Client
 
-from app.db.supabase import get_supabase
+from app.db.supabase import fetch_all, get_supabase
 
 logger = logging.getLogger(__name__)
 
@@ -77,18 +77,54 @@ class DriverPointsProgression(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def _latest_round(db: Client, season: int) -> int | None:
-    """Return the highest round number present in standings for a season."""
+def _kind_latest_round(db: Client, season: int, kind: str) -> int | None:
     result = (
         db.table("standings")
         .select("round")
         .eq("season", season)
+        .eq("type", kind)
         .order("round", desc=True)
         .limit(1)
         .execute()
     )
     rows = result.data or []
     return rows[0]["round"] if rows else None
+
+
+def _has_round(db: Client, season: int, kind: str, rnd: int) -> bool:
+    result = (
+        db.table("standings")
+        .select("round")
+        .eq("season", season)
+        .eq("type", kind)
+        .eq("round", rnd)
+        .limit(1)
+        .execute()
+    )
+    return bool(result.data)
+
+
+def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
+    """The round to answer for the asked kinds of standings.
+
+    A refresh can store one kind's latest round while the other's fetch fails
+    (that run exits 1). Asking for both then answers the lagging kind's latest
+    round when the other kind has it too, so neither table comes back empty,
+    though both are as old as the lagging one; otherwise the latest round of
+    either, as before.
+    """
+    latest = {
+        kind: rnd
+        for kind in kinds
+        if (rnd := _kind_latest_round(db, season, kind)) is not None
+    }
+    if not latest:
+        return None
+    lagging = min(latest, key=latest.__getitem__)
+    behind = latest[lagging]
+    if all(_has_round(db, season, kind, behind) for kind in latest):
+        return behind
+    return max(latest.values())
 
 
 def _fetch_driver_standings(
@@ -240,7 +276,8 @@ def get_standings(
     Raises:
         HTTPException: 404 when no standings data exists for the requested year.
     """
-    round_number = _latest_round(db, year)
+    kinds = (type,) if type else ("driver", "constructor")
+    round_number = _latest_round(db, year, kinds)
     if round_number is None:
         raise HTTPException(
             status_code=404, detail=f"No standings data found for season {year}"
@@ -263,6 +300,66 @@ def get_standings(
     )
 
 
+def _driver_standings_by_round(
+    db: Client, season: int
+) -> tuple[dict[int, dict[int, tuple[float, int | None]]], dict[int, int]]:
+    """The season's driver standings rows as {round: {driver_id: (points,
+    position)}}, and each round's wins added up."""
+    rows = fetch_all(
+        lambda: db.table("standings")
+        .select("id, entity_id, round, points, position, wins")
+        .eq("type", "driver")
+        .eq("season", season)
+        .order("id")
+    )
+    by_round: dict[int, dict[int, tuple[float, int | None]]] = defaultdict(dict)
+    wins: dict[int, int] = defaultdict(int)
+    for row in rows:
+        by_round[row["round"]][row["entity_id"]] = (
+            float(row["points"] or 0),
+            row["position"],
+        )
+        wins[row["round"]] += row.get("wins") or 0
+    return by_round, wins
+
+
+def _standings_hold_results(
+    by_round: dict[int, dict[int, tuple[float, int | None]]],
+    wins: dict[int, int],
+    drivers_by_round: dict[int, set[int]],
+) -> bool:
+    """Whether every round with results has whole standings that include its
+    Grand Prix.
+
+    Jolpica's wins count Grand Prix wins only, so the standings after round N
+    hold N wins once its Grand Prix is in. Standings stored between a sprint and
+    its Grand Prix, and not fetched again since, are one short. Points can't
+    tell: earlier sprint points can cover a missing Grand Prix.
+
+    So the wins after round N must add up to the rounds up to N that have
+    results (a Grand Prix cancelled after its sprint has none, nor a win).
+    Wins can't show a missing driver who never won (a round stored short), so
+    the standings after round N must also list every driver with a Grand Prix
+    result in rounds 1 to N. They may list more (a sprint-only driver).
+
+    Args:
+        by_round: {round: {driver_id: (points, position)}} from the standings.
+        wins: Each round's wins added up.
+        drivers_by_round: {round: driver ids with a result in that round}, for
+            every round with results.
+    """
+    seen: set[int] = set()
+    for grands_prix, rnd in enumerate(sorted(drivers_by_round), start=1):
+        seen |= drivers_by_round[rnd]
+        if (
+            rnd not in by_round
+            or wins[rnd] < grands_prix
+            or not seen <= by_round[rnd].keys()
+        ):
+            return False
+    return True
+
+
 @router.get("/{year}/progression", response_model=list[DriverPointsProgression])
 def get_standings_progression(
     year: int,
@@ -271,9 +368,11 @@ def get_standings_progression(
 ) -> list[DriverPointsProgression]:
     """Return round-by-round cumulative championship points for the top N drivers.
 
-    Computes progression from race_results (which has per-race points for every
-    round including sprints) rather than standings (which may only store the
-    final round).
+    When the standings table holds the standings after every round that has
+    results (seed_database.py --standings-every-round), each including that
+    round's Grand Prix, the points and the top N come from them, sprints
+    included. Otherwise they're summed from race_results, which hold Grand Prix
+    points only, so sprint points are missing.
 
     Args:
         year: The F1 season year (e.g. 2024).
@@ -306,23 +405,44 @@ def get_standings_progression(
     if not season_rows:
         return []
 
-    # Sum points per driver per round (sprints + race in same round).
-    points_by_driver: dict[int, dict[int, float]] = defaultdict(
-        lambda: defaultdict(float)
-    )
-    for row in season_rows:
-        did = row["driver_id"]
-        rnd = race_id_to_round[row["race_id"]]
-        pts = float(row.get("points") or 0)
-        points_by_driver[did][rnd] += pts
-
-    # Total points per driver to find the top N.
-    driver_totals = {
-        did: sum(rounds.values()) for did, rounds in points_by_driver.items()
-    }
-    top_driver_ids = sorted(
-        driver_totals, key=lambda d: driver_totals[d], reverse=True
-    )[:top]
+    drivers_by_round: dict[int, set[int]] = defaultdict(set)
+    for r in season_rows:
+        drivers_by_round[race_id_to_round[r["race_id"]]].add(r["driver_id"])
+    rounds_with_results = sorted(drivers_by_round)
+    by_round, wins = _driver_standings_by_round(db, year)
+    # {driver_id: {round: points after that round}}
+    totals_after: dict[int, dict[int, float]] = defaultdict(dict)
+    if _standings_hold_results(by_round, wins, drivers_by_round):
+        # The standings after each round include sprints. A round stored after
+        # its sprint but before its results (a sprint Saturday) isn't charted.
+        latest = by_round[rounds_with_results[-1]]
+        top_driver_ids = sorted(
+            latest,
+            key=lambda d: (latest[d][1] is None, latest[d][1] or 0, -latest[d][0]),
+        )[:top]
+        for rnd in rounds_with_results:
+            for did, (points, _) in by_round[rnd].items():
+                totals_after[did][rnd] = points
+    else:
+        # Grand Prix points only: race_results hold no sprint results
+        points_by_driver: dict[int, dict[int, float]] = defaultdict(
+            lambda: defaultdict(float)
+        )
+        for row in season_rows:
+            did = row["driver_id"]
+            rnd = race_id_to_round[row["race_id"]]
+            points_by_driver[did][rnd] += float(row.get("points") or 0)
+        driver_totals = {
+            did: sum(rounds.values()) for did, rounds in points_by_driver.items()
+        }
+        top_driver_ids = sorted(
+            driver_totals, key=lambda d: driver_totals[d], reverse=True
+        )[:top]
+        for did, rounds in points_by_driver.items():
+            running = 0.0
+            for rnd in sorted(rounds):
+                running += rounds[rnd]
+                totals_after[did][rnd] = running
 
     if not top_driver_ids:
         return []
@@ -358,14 +478,9 @@ def get_standings_progression(
     result: list[DriverPointsProgression] = []
     for driver_id in top_driver_ids:
         driver_info = drivers_map.get(driver_id, {})
-        round_points = points_by_driver[driver_id]
-        sorted_rounds = sorted(round_points.keys())
-
-        cumulative: list[float] = []
-        running = 0.0
-        for rnd in sorted_rounds:
-            running += round_points[rnd]
-            cumulative.append(running)
+        after = totals_after[driver_id]
+        sorted_rounds = sorted(after)
+        cumulative = [after[rnd] for rnd in sorted_rounds]
 
         result.append(
             DriverPointsProgression(
