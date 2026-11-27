@@ -20,26 +20,35 @@ import {
 type TileId = "leader" | "constructor" | "next-race" | "top5" | "recent" | "chart";
 
 export default function HomePage() {
+  const standingsQuery = useStandings(CURRENT_SEASON);
+  const racesQuery = useRaceCalendar(CURRENT_SEASON);
   const {
     data: standings,
-    isLoading: standingsLoading,
-    error: standingsError,
     isFetching: standingsFetching,
     refetch: refetchStandings,
-  } = useStandings(CURRENT_SEASON);
-  const {
-    data: races,
-    isLoading: racesLoading,
-    error: racesError,
-    isFetching: racesFetching,
-    refetch: refetchRaces,
-  } = useRaceCalendar(CURRENT_SEASON);
+  } = standingsQuery;
+  const { data: races, isFetching: racesFetching, refetch: refetchRaces } = racesQuery;
   const { data: progression, refetch: refetchProgression } =
     useStandingsProgression(CURRENT_SEASON);
 
-  const allLoaded = !standingsLoading && !racesLoading;
+  // Each request has answered at least once, with data or an error. These, unlike the error and loading
+  // flags, hold through a retry: a refetch with no data clears the error and goes back to pending, which would
+  // unmount the notice and restart its limited auto-retries from zero on every failure.
+  const answered = (q: { dataUpdatedAt: number; errorUpdateCount: number }) =>
+    q.dataUpdatedAt > 0 || q.errorUpdateCount > 0;
+  const allLoaded = answered(standingsQuery) && answered(racesQuery);
   const hasData = Boolean(standings || races);
-  const linkDown = allLoaded && Boolean(standingsError || racesError);
+  const standingsFailed = !standings && standingsQuery.errorUpdateCount > 0;
+  const racesFailed = !races && racesQuery.errorUpdateCount > 0;
+  const linkDown = allLoaded && (standingsFailed || racesFailed);
+  // One request failed and the other arrived: say which part is missing, above the tiles that loaded
+  const partialMessage = !linkDown || !hasData
+    ? null
+    : !standings
+      ? "The standings aren't reaching the pit wall right now. The race calendar loaded."
+      : !races
+        ? "The race calendar isn't reaching the pit wall right now. The standings loaded."
+        : null;
 
   const retryDataLink = useCallback(() => {
     void refetchStandings();
@@ -132,6 +141,17 @@ export default function HomePage() {
         {linkDown && !hasData && (
           <div className="py-16">
             <DataLinkDown
+              onRetry={retryDataLink}
+              isRetrying={standingsFetching || racesFetching}
+            />
+          </div>
+        )}
+
+        {/* Part of the data didn't arrive */}
+        {partialMessage && (
+          <div className="pb-3">
+            <DataLinkDown
+              message={partialMessage}
               onRetry={retryDataLink}
               isRetrying={standingsFetching || racesFetching}
             />

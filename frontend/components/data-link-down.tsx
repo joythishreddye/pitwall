@@ -8,14 +8,17 @@ const MAX_AUTO_RETRIES = 4;
 
 /**
  * Shown when race data can't reach the page. Retries on its own a few times
- * with a visible countdown, then leaves the call to the reader.
+ * with a visible countdown, then leaves the call to the reader. `message`
+ * says what's missing when only part of the page's data failed.
  */
 export function DataLinkDown({
   onRetry,
   isRetrying,
+  message = "Race data isn't reaching the pit wall right now.",
 }: {
   onRetry: () => void;
   isRetrying: boolean;
+  message?: string;
 }) {
   const [attempts, setAttempts] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(AUTO_RETRY_SECONDS);
@@ -49,7 +52,10 @@ export function DataLinkDown({
       : "Still no signal. Use Retry now to try again.";
 
   return (
-    <div className="max-w-xl rounded-sm border border-f1-grid border-l-2 border-l-f1-red bg-f1-dark-2 px-5 py-5">
+    <div
+      data-testid="data-link-down"
+      className="max-w-xl rounded-sm border border-f1-grid border-l-2 border-l-f1-red bg-f1-dark-2 px-5 py-5"
+    >
       <p role="status" className="sr-only">
         {liveMessage}
       </p>
@@ -57,9 +63,7 @@ export function DataLinkDown({
         <span className="h-1.5 w-1.5 rounded-full bg-f1-red" aria-hidden="true" />
         Data link lost
       </p>
-      <p className="mt-2 text-sm text-f1-text">
-        Race data isn&apos;t reaching the pit wall right now.
-      </p>
+      <p className="mt-2 text-sm text-f1-text">{message}</p>
       <p className="mt-1 text-xs text-f1-muted" aria-hidden="true">
         {isRetrying ? (
           "Reconnecting…"
