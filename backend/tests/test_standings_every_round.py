@@ -710,6 +710,40 @@ def test_latest_standings_without_someone_are_stored_but_reported() -> None:
     assert _points(db)[("driver", 3, RUS)] == 29
 
 
+@pytest.mark.parametrize(
+    "unplaced_url", ["/2026/1/driverStandings.json", "/2026/driverStandings.json"]
+)
+def test_a_driver_jolpica_lists_without_a_place_takes_their_place_in_its_list(
+    unplaced_url: str,
+) -> None:
+    # Jolpica's 2026 round 1: Stroll is listed last, positionText "-", no position
+    db = _db({"standings": []})
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def unplaced(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if url.endswith(unplaced_url):
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            last = body["StandingsLists"][0]["DriverStandings"][-1]
+            del last["position"]
+            last["positionText"] = "-"
+        return response
+
+    http.get.side_effect = unplaced
+    report = IngestReport()
+    _ingest(db, http, every_round=True, report=report)
+
+    rnd = 1 if "/1/" in unplaced_url else 3
+    places = {
+        r["entity_id"]: r["position"]
+        for r in db.table("standings").rows
+        if r["type"] == "driver" and r["round"] == rnd
+    }
+    assert places == {ANT: 1, RUS: 2}
+    assert report.problems == []
+
+
 def test_a_round_that_fails_doesnt_stop_the_later_ones() -> None:
     db = _db({"standings": []})
     http, fetched = _jolpica(latest=3)
