@@ -261,6 +261,29 @@ def test_both_tables_answer_the_round_both_kinds_have(
         assert [e.points for e in response.constructor_standings] == [points]
 
 
+def test_both_kinds_at_the_same_round_answer_it_whole() -> None:
+    # The usual shape: the latest refresh stored both kinds after round 2
+    standings = [*AFTER_ROUND_1, *AFTER_ROUND_2, _constructor(7, 1, 37)]
+    response = get_standings(2026, _season([*standings, _constructor(8, 2, 92)]))
+
+    assert response.round == 2
+    assert [e.points for e in response.driver_standings] == [57, 35, 30]
+    assert [e.points for e in response.constructor_standings] == [92]
+
+
+def test_a_kind_held_back_at_a_round_the_other_skipped_answers_as_today() -> None:
+    # Two refreshes each held a different kind back: drivers have rounds 1 and
+    # 3, constructors 1 and 2, so the lagging kind's round 2 has no drivers
+    after_round_3 = [{**row, "id": row["id"] + 10, "round": 3} for row in AFTER_ROUND_2]
+    standings = [*AFTER_ROUND_1, *after_round_3, _constructor(7, 1, 37)]
+    response = get_standings(2026, _season([*standings, _constructor(8, 2, 92)]))
+
+    # The latest round, as before: drivers whole, constructors empty
+    assert response.round == 3
+    assert [e.points for e in response.driver_standings] == [57, 35, 30]
+    assert response.constructor_standings == []
+
+
 def test_when_the_kinds_share_no_latest_round_both_tables_answer_as_today() -> None:
     # Latest-round-only data: drivers stored after round 2, constructors only
     # after round 1 (their round 2 fetch failed), so no round has both
