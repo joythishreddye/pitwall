@@ -89,6 +89,9 @@ zone files (it's `python:3.12-slim`).
   - Before lights out: a countdown to the race start.
   - From the start until 2 h 30 after it, the picture says RACE UNDER WAY. After that it says RESULTS SOON, until
     the data has the result.
+  - A race still without a result 72 hours after its start no longer holds the page: race week moves on to the next
+    race (or the off-season after the finale), while the title maths still counts it as left, so no one is crowned
+    early.
   - The LIVE dot (pulsing green) shows only between a session's start and its scheduled end. Jolpica gives start
     times only, so a session ends at its start plus its standard length: 1 h for practice, qualifying and the
     sprint, 45 min for sprint qualifying, 2 h for the race.
@@ -137,7 +140,7 @@ The lines in each view (from the approved mockup; the wording can tighten, the f
 
 | View | Lines, in order |
 |---|---|
-| Race week | RACE WEEK ("Race week: {city}, round {N} of {total}."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("{champion} is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (when two or more can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
+| Race week | RACE WEEK ("Race week: {city}, round {N} of {total}."; detail: the circuit, the first session, qualifying, lights out) · TITLE ("{champion} is champion: N points clear." once decided, else "X leads by N, with M left.") · SECOND PLACE (once the title is decided and two or more can still finish second; while it's open, the leader can still finish second) · TEAMS (when the constructors' title is decided) · LAST YEAR (last year's winner at this circuit and his grid slot; detail: the podium and the pole) |
 | After a race | RESULT × 3 (winner and his grid slot; second, plus his championship position when it's P2; third, or "two {team} on the podium") · TITLE (when decided, with the points he scored in this race) · NEXT RACE (where and when, or "No {next season} dates yet." when no later race is in the data; detail: the round and the races after it) |
 | Off-season | CHAMPION · SECOND PLACE · TEAMS · REPLAYS (only once race-page replays exist: brief 003) · NEXT SEASON (round 1's date when it's in the data, else "No {next season} dates yet.") |
 
