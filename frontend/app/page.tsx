@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useStandings, useStandingsProgression } from "@/lib/hooks/use-standings";
 import { useRaceCalendar } from "@/lib/hooks/use-races";
+import { raceStart } from "@/lib/hooks/use-countdown";
 import { DataLinkDown } from "@/components/data-link-down";
 import { ScannerLine } from "@/components/ui/scanner-line";
 import { gsap, useGSAP } from "@/lib/gsap";
@@ -49,8 +50,10 @@ export default function HomePage() {
   const leader = standings?.driver_standings?.[0];
   const constructorLeader = standings?.constructor_standings?.[0];
   const now = new Date();
-  const pastRaces = races?.filter((r) => r.date && new Date(r.date + "T00:00:00") < now) ?? [];
-  const nextRace = races?.find((r) => r.date && new Date(r.date + "T00:00:00") >= now);
+  // A race moves from next to recent when its lights go out (its UTC start time), not at midnight
+  // of its day in the reader's zone: east of UTC that midnight comes a day early
+  const pastRaces = races?.filter((r) => r.date && raceStart(r.date, r.time) < now.getTime()) ?? [];
+  const nextRace = races?.find((r) => r.date && raceStart(r.date, r.time) >= now.getTime());
 
   const containerRef = useRef<HTMLDivElement>(null);
 

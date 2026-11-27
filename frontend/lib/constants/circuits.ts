@@ -297,6 +297,7 @@ const CIRCUIT_NAME_OVERRIDES: Array<{ match: string; key: string }> = [
   { match: "enzo e dino",       key: "imola"        }, // Imola / Emilia Romagna
   { match: "algarve",           key: "portimao"     }, // Portimão (no "portimao" in name)
   { match: "burgring",          key: "nurburgring"  }, // Nürburgring (ü blocks keyword match)
+  { match: "lusail",            key: "losail"       }, // Qatar: the API says Lusail, the key is Jolpica's id
 ];
 
 /** Match circuit by name substring (e.g. "Albert Park Grand Prix Circuit" matches "albert_park") */
