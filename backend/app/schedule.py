@@ -57,7 +57,12 @@ def _session(name: str, entry: dict[str, Any]) -> dict[str, str | None]:
     time = entry.get("time")
     start = None
     if time:
-        start = datetime.fromisoformat(f"{day.isoformat()}T{time}").astimezone(UTC)
+        start = datetime.fromisoformat(f"{day.isoformat()}T{time}")
+        # Jolpica's times are UTC: one without a zone is UTC too, never the
+        # local time of the machine running the script
+        if start.tzinfo is None:
+            start = start.replace(tzinfo=UTC)
+        start = start.astimezone(UTC)
     return {
         "name": name,
         "date": day.isoformat(),

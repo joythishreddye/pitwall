@@ -499,9 +499,13 @@ def test_an_older_round_with_a_driver_not_in_the_database_waits_for_him() -> Non
         ("constructor", 3),
     }
     assert report.problems == [
-        f"driver standings for 2026 round {rnd} failed: 1 driver in Jolpica's "
-        "standings isn't in the database"
-        for rnd in (1, 2)
+        "driver standings for 2026 round 3 are stored short: 1 driver in "
+        "Jolpica's standings isn't in the database",
+        *(
+            f"driver standings for 2026 round {rnd} failed: 1 driver in Jolpica's "
+            "standings isn't in the database"
+            for rnd in (1, 2)
+        ),
     ]
 
     # Once he is, the next run fills them in
@@ -509,6 +513,34 @@ def test_an_older_round_with_a_driver_not_in_the_database_waits_for_him() -> Non
     _ingest(db, http, every_round=True)
     assert _points(db)[("driver", 1, RUS)] == 9
     assert _points(db)[("driver", 2, RUS)] == 19
+
+
+def test_latest_standings_without_someone_are_stored_but_reported() -> None:
+    db = _db({"standings": []})
+    http, _ = _jolpica(latest=3)
+    report = IngestReport()
+
+    ingest_standings(
+        db,
+        http,
+        MagicMock(),
+        [2026],
+        {"antonelli": ANT},
+        {"mercedes": 7},
+        report=report,
+    )
+
+    # The table stays up with who is known, and the refresh exits 1
+    assert set(_points(db)) == {("driver", 3, ANT), ("constructor", 3, 7)}
+    assert report.problems == [
+        "driver standings for 2026 round 3 are stored short: 1 driver in "
+        "Jolpica's standings isn't in the database"
+    ]
+
+    # Once he's in the database, the next run stores him
+    http, _ = _jolpica(latest=3)
+    _ingest(db, http, every_round=False)
+    assert _points(db)[("driver", 3, RUS)] == 29
 
 
 def test_a_round_that_fails_doesnt_stop_the_later_ones() -> None:

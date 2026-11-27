@@ -430,6 +430,20 @@ def _standings_rows(
     return rnd, rows
 
 
+def _not_in_database(
+    standings_list: dict, list_key: str, kind: str, rows: list[dict]
+) -> str | None:
+    """Say how many of Jolpica's standings entries weren't mapped to a row
+    (someone not in the database yet), or None when all were."""
+    missing = len(standings_list.get(list_key, [])) - len(rows)
+    if not missing:
+        return None
+    return (
+        f"{missing} {kind}{'s' if missing > 1 else ''} in Jolpica's standings "
+        f"{'aren' if missing > 1 else 'isn'}'t in the database"
+    )
+
+
 def _has_its_grand_prix(rows: list[dict], rnd: int) -> bool:
     """Whether standings rows after round ``rnd`` include its Grand Prix.
 
@@ -490,12 +504,8 @@ def _store_round_standings(
     if not rows:
         raise ValueError(f"no {kind} in Jolpica's standings is in the database")
     # A round stored without someone is never fetched again, so it waits
-    missing = len(lists[0].get(list_key, [])) - len(rows)
-    if missing:
-        raise ValueError(
-            f"{missing} {kind}{'s' if missing > 1 else ''} in Jolpica's standings "
-            f"{'aren' if missing > 1 else 'isn'}'t in the database"
-        )
+    if missing := _not_in_database(lists[0], list_key, kind, rows):
+        raise ValueError(missing)
     if not _has_its_grand_prix(rows, rnd):
         raise ValueError(
             f"Jolpica's standings after round {rnd} still lack its Grand Prix"
@@ -524,7 +534,8 @@ def ingest_standings(
     fails or brings nothing to store, the new round waits too, so the next run
     tries again. Standings that don't yet include the latest Grand Prix (its
     win is missing) count as reaching only the round before it, so the refresh
-    report flags them.
+    report flags them. Latest standings with someone not in the database yet
+    are stored with the rest and reported.
 
     With ``every_round``, also fetch the standings after each earlier round
     that has no stored rows yet, or whose rows were stored before its Grand
@@ -573,6 +584,15 @@ def ingest_standings(
                     rows,
                     on_conflict="season,round,type,entity_id",
                 )
+                # The latest table goes up with who is known (each run stores
+                # it again, so it fills in once they're added); the refresh
+                # still exits 1
+                if missing := _not_in_database(standings_list[0], list_key, kind, rows):
+                    _problem(
+                        report,
+                        f"{kind} standings for {season} round {latest} are "
+                        f"stored short: {missing}",
+                    )
                 if report is not None and rows:
                     # Standings still short of the latest Grand Prix reach only
                     # the round before it

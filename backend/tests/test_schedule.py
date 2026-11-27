@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -87,6 +88,21 @@ def test_a_session_without_a_time_keeps_its_date_and_has_no_start(
     (loaded,) = load_schedule(2026, tmp_path)
     assert loaded.race.start is None
     assert loaded.race.date.isoformat() == "2026-11-29"
+
+
+def test_a_time_without_a_zone_is_read_as_utc_not_the_machines_zone(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Jolpica's times are UTC; run the script on a Pacific-time laptop
+    monkeypatch.setenv("TZ", "America/Los_Angeles")
+    time.tzset()
+    try:
+        stored = round_from_jolpica({**QATAR, "time": "16:00:00"})
+    finally:
+        monkeypatch.undo()
+        time.tzset()
+
+    assert stored["sessions"][-1]["start"] == "2026-11-29T16:00:00Z"
 
 
 def test_the_file_round_trips_into_utc_starts(tmp_path: Path) -> None:

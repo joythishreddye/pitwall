@@ -107,10 +107,11 @@ def _has_round(db: Client, season: int, kind: str, rnd: int) -> bool:
 def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
     """The round to answer for the asked kinds of standings.
 
-    A refresh can hold one kind back a round while the other moves on. Asking
-    for both then answers the lagging kind's latest round when the other kind
-    has it too, so neither table comes back empty; otherwise the latest round
-    of either, as before.
+    A refresh can hold one kind back while the other moves on: a round, or more
+    while its repair keeps failing (each such run exits 1). Asking for both
+    then answers the lagging kind's latest round when the other kind has it
+    too, so neither table comes back empty, though both are as old as the
+    lagging one; otherwise the latest round of either, as before.
     """
     latest = {
         kind: rnd
