@@ -40,6 +40,39 @@ def test_global_limit_applies_across_clients() -> None:
     assert limiter.check("d", now=1) == pytest.approx(59)
 
 
+def test_a_released_hit_frees_its_slot_for_the_client_and_overall() -> None:
+    limiter = SlidingWindowLimiter(per_key=1, global_limit=2, window_seconds=60)
+
+    assert limiter.check("a", now=0) is None
+    limiter.release("a", at=0)
+    assert limiter.check("a", now=1) is None
+    assert limiter.check("b", now=2) is None
+    assert limiter.check("c", now=3) == pytest.approx(58)
+
+
+def test_release_takes_back_only_the_hit_recorded_at_that_time() -> None:
+    limiter = SlidingWindowLimiter(per_key=2, global_limit=3, window_seconds=60)
+
+    assert limiter.check("a", now=0) is None
+    assert limiter.check("b", now=5) is None
+    assert limiter.check("a", now=10) is None
+    limiter.release("a", at=0)
+    assert limiter.check("a", now=20) is None
+    # a's hit at 10 is kept: it decides a's wait, and b's hit still counts overall
+    assert limiter.check("a", now=21) == pytest.approx(49)
+    assert limiter.check("c", now=22) == pytest.approx(43)
+
+
+def test_releasing_a_hit_that_isnt_there_changes_nothing() -> None:
+    limiter = SlidingWindowLimiter(per_key=1, global_limit=1, window_seconds=60)
+
+    limiter.release("a", at=0)
+    assert limiter.check("a", now=0) is None
+    limiter.release("b", at=0)
+    limiter.release("a", at=7)
+    assert limiter.check("b", now=1) == pytest.approx(59)
+
+
 def _request(headers: list[tuple[bytes, bytes]]) -> Request:
     return Request({"type": "http", "headers": headers, "client": ("9.9.9.9", 1234)})
 

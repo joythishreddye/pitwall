@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import math
 import time
 from collections.abc import AsyncIterator
 from typing import Annotated
@@ -16,7 +17,7 @@ from app.api.rate_limit import SlidingWindowLimiter, client_ip
 from app.config import settings
 from app.db.supabase import get_supabase
 from app.llm.base import LLMError, LLMProvider, Message
-from app.rag.budget import ApiBudget
+from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
@@ -107,6 +108,16 @@ _chat_limiter = SlidingWindowLimiter(
 )
 
 
+# Each client's share of the day. The day's total is the answer budget's job
+# (Postgres); this one only stops a single client from taking all of it. The
+# per-minute limit runs first, so it sees a few thousand questions a day at most.
+_reader_day_limiter = SlidingWindowLimiter(
+    per_key=settings.chat_daily_questions_per_ip,
+    global_limit=1_000_000,
+    window_seconds=24 * 60 * 60,
+)
+
+
 def enforce_chat_rate_limit(request: Request) -> None:
     """Reject bursts that would drain the shared LLM and embedding quotas."""
     retry_after = _chat_limiter.check(client_ip(request))
@@ -115,6 +126,42 @@ def enforce_chat_rate_limit(request: Request) -> None:
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Too many questions in a short time. Try again in a minute.",
             headers={"Retry-After": str(max(1, round(retry_after)))},
+        )
+
+
+def enforce_reader_day_limit(request: Request, asked_at: float) -> None:
+    """Refuse a client that has asked its share of the day's answers.
+
+    ``asked_at`` (monotonic) is the time the question is counted at, so the
+    caller can take it back with ``_reader_day_limiter.release``.
+    """
+    retry_after = _reader_day_limiter.check(client_ip(request), now=asked_at)
+    if retry_after is not None:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="You've asked your questions for today. "
+            f"Ask again in {_wait_in_words(retry_after)}.",
+            headers={"Retry-After": str(max(1, round(retry_after)))},
+        )
+
+
+def get_answer_budget(request: Request) -> DailyBudget | None:
+    """Return the daily answer budget, if one is configured."""
+    return getattr(request.app.state, "answer_budget", None)
+
+
+AnswerBudget = Annotated[DailyBudget | None, Depends(get_answer_budget)]
+
+
+def enforce_daily_answers(budget: AnswerBudget) -> None:
+    """Refuse once today's answers are spent, with a clear message rather than
+    the model provider's own refusal ("busy") on every try until midnight."""
+    if budget is not None and not budget.consume():
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="PitWall has given all of today's answers. "
+            "Ask again after midnight UTC.",
+            headers={"Retry-After": str(seconds_to_next_day())},
         )
 
 
@@ -279,15 +326,38 @@ def _sse(event: dict) -> str:
     return f"data: {json.dumps(event)}\n\n"
 
 
+# Past this, a rate limit is the day's budget, not a burst
+_LONG_WAIT_SECONDS = 120
+
+
+def _wait_in_words(seconds: float) -> str:
+    """A wait as the reader would say it: about a minute, about 5 minutes,
+    about 3 hours."""
+    minutes = math.ceil(seconds / 60)
+    if minutes < 2:
+        return "about a minute"
+    if minutes < 120:
+        return f"about {minutes} minutes"
+    return f"about {round(seconds / 3600)} hours"
+
+
 def _llm_error_message(exc: LLMError) -> str:
     """What the reader sees when the model fails mid-answer."""
     if exc.rate_limited:
+        # Groq asks for hours once the day's tokens are spent (its limits are
+        # per organization, so local runs count too)
+        if exc.retry_after is not None and exc.retry_after > _LONG_WAIT_SECONDS:
+            return (
+                "PitWall has run out of answers for now. "
+                f"Ask again in {_wait_in_words(exc.retry_after)}."
+            )
         return "PitWall is busy right now. Try again in a minute."
     return "The AI service didn't answer. Try again in a moment."
 
 
 @router.post("", dependencies=[Depends(enforce_chat_rate_limit)])
 async def chat(
+    request: Request,
     body: ChatRequest,
     db: DB,
     llm: LLM,
@@ -295,8 +365,21 @@ async def chat(
     embedder: Embedder,
     budget: Budget,
     linker: Linker,
+    answers: AnswerBudget,
 ) -> StreamingResponse:
     """Stream a RAG-powered chat response via SSE."""
+    # Here, not as route dependencies: FastAPI runs those before it checks the
+    # body, so a refused burst or a question that fails its checks would
+    # spend one of the day's answers. The client's share comes first, so a
+    # question it refuses spends none of the day's, and a question the day
+    # refuses gives the client's slot back.
+    asked_at = time.monotonic()
+    enforce_reader_day_limit(request, asked_at)
+    try:
+        await asyncio.to_thread(enforce_daily_answers, answers)
+    except HTTPException:
+        _reader_day_limiter.release(client_ip(request), asked_at)
+        raise
     retriever = Retriever(
         db=db,
         llm=intent_llm,
