@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from supabase import Client
 
-from app.db.supabase import get_supabase
+from app.db.supabase import fetch_all, get_supabase
 
 logger = logging.getLogger(__name__)
 
@@ -74,10 +74,9 @@ def list_seasons(db: DB) -> list[SeasonSummary]:
     """Return all distinct seasons with the number of races in each.
 
     Results are ordered by year descending so the most recent season appears
-    first.
+    first. Reads in pages, because PostgREST caps each response at 1,000 rows.
     """
-    result = db.table("races").select("season").execute()
-    rows = result.data or []
+    rows = fetch_all(lambda: db.table("races").select("id, season").order("id"))
 
     counts: dict[int, int] = {}
     for row in rows:
