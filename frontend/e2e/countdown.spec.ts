@@ -65,5 +65,32 @@ for (const timezoneId of ["America/Los_Angeles", "Asia/Tokyo"]) {
       await expect(page.getByRole("combobox", { name: "Select season" })).toContainText("2026 (23 races)");
       expect(errors).toEqual([]);
     });
+
+    test("the race's own page agrees: before the start, the race hasn't taken place yet", async ({ page }) => {
+      const errors: string[] = [];
+      page.on("console", (msg) => {
+        if (msg.type() === "error") errors.push(msg.text());
+      });
+      // Sun 29 Nov 12:00 UTC: past midnight UTC of Qatar's date, where the page used to stop calling it upcoming,
+      // and 4 hours before the start
+      await page.clock.setFixedTime(new Date("2026-11-29T12:00:00Z"));
+      await page.goto("/races/195");
+      await expect(page.getByText("This race hasn't taken place yet.", { exact: false })).toBeVisible();
+      await expect(page.getByText("Results for this race are not yet available.")).toHaveCount(0);
+      expect(errors).toEqual([]);
+    });
+
+    test("after the start and before results, the race's own page says results aren't in yet", async ({ page }) => {
+      const errors: string[] = [];
+      page.on("console", (msg) => {
+        if (msg.type() === "error") errors.push(msg.text());
+      });
+      // Sun 29 Nov 17:00 UTC: an hour after lights out, with no results stored yet
+      await page.clock.setFixedTime(new Date("2026-11-29T17:00:00Z"));
+      await page.goto("/races/195");
+      await expect(page.getByText("Results for this race are not yet available.")).toBeVisible();
+      await expect(page.getByText("This race hasn't taken place yet.", { exact: false })).toHaveCount(0);
+      expect(errors).toEqual([]);
+    });
   });
 }

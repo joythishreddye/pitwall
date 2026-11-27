@@ -20,6 +20,8 @@ const ROUTES = new Map([
   ["/openf1/v1/drivers", "openf1/drivers.json"],
 ]);
 const RACE_IDS = new Set(["192", "193", "194", "195", "1388"]);
+// Pit-stop strategy for a race page: the races not yet run (Qatar 195, Abu Dhabi 1388) have none.
+const NO_STRATEGY_YET = new Set(["195", "1388"]);
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -43,8 +45,15 @@ export function startFixtureApi({ port, host = "127.0.0.1" }) {
     // Race details: the last three races and the two after them (ids 192–195 and 1388), so the homepage
     // finds its recent results whatever today's date is during the rest of the 2026 season.
     const race = /^\/api\/v1\/races\/(\d+)$/.exec(pathname);
+    const strategy = /^\/api\/v1\/races\/(\d+)\/strategy$/.exec(pathname);
     const file =
-      req.method !== "GET" ? undefined : race && RACE_IDS.has(race[1]) ? `api/races-${race[1]}.json` : ROUTES.get(pathname);
+      req.method !== "GET"
+        ? undefined
+        : race && RACE_IDS.has(race[1])
+          ? `api/races-${race[1]}.json`
+          : strategy && NO_STRATEGY_YET.has(strategy[1])
+            ? "api/races-strategy-none.json"
+            : ROUTES.get(pathname);
     if (!file) {
       console.error(`fixture-api: no fixture for ${req.method} ${pathname}`);
       send(res, 404, { detail: `fixture-api: no fixture for ${req.method} ${pathname}` });
