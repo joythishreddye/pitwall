@@ -64,11 +64,11 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
 
 | Phase | Target | What ships |
 |---|---|---|
-| Data spine v2 | Nov 2026 | OpenF1 ingestion, an automated post-race pipeline, pace and time-loss analytics |
-| Predictions | Nov 2026 | Race predictions logged publicly before each session and scored after, with a championship simulator |
+| Data spine v2 | Dec 2026 | A briefing homepage, OpenF1 ingestion, an automated post-race pipeline, pace and time-loss analytics |
 | Live | Dec 2026 | Replay any recent session "as if live": track map, timing tower, AI insights |
-| Race Engineer agent | Dec 2026 | Tool-calling agent: "why" answers built from time-loss data, simulated what-ifs, rulebook search |
+| Predictions | Jan 2027 | Race predictions and a championship simulator, tested on past seasons. The public log, posted before each session and scored after, starts with the 2027 season |
 | Academy | Jan 2027 | A learning path for new fans: lessons that replay real race moments, quizzes, streaks |
+| Race Engineer agent | Feb 2027 | Tool-calling agent: "why" answers built from time-loss data, simulated what-ifs, rulebook search |
 | Launch | Feb 2027 | Polish, mobile and accessibility, ready for the 2027 season |
 
 ## Architecture
