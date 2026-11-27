@@ -9,7 +9,8 @@
 
 A race still without results 3 days after its start is taken as cancelled and
 skipped, so a race dropped after the calendar was seeded can't hold the page on
-RESULTS SOON for good.
+RESULTS SOON for good. Only the view moves on: the title maths (lines.py) still
+counts the race as left to run, since a late result looks the same.
 
 A result counts only once its race has started by the clock, so any clock gives
 the view of that moment, even with later results in the data (a test or a

@@ -13,7 +13,7 @@ race's own results (a sprint's points aren't counted in them).
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from datetime import UTC, datetime, tzinfo
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -671,11 +671,39 @@ def _after_race(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[
     return lines, chips
 
 
+def _no_result_yet(s: Snapshot, f: _Facts) -> str:
+    """The season's races still without a result, as the off-season says them."""
+    left = f"worth {f.left} points at most."
+    if f.races_left == 1:
+        return f"The {s.remaining[0].name} has no result in the data yet, {left}"
+    races = f"{_word(f.races_left).capitalize()} races"
+    return f"{races} have no result in the data yet, {left}"
+
+
 def _off_season(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[str]]:
     lines: list[Line] = []
     leader = f.leader
     st = s.standings
-    if leader is not None:
+    if leader is not None and not f.decided:
+        lines.append(
+            Line(
+                "TITLE",
+                _level_call(leader, st[1], f.left)
+                if f.level
+                else fit_call(f"Title leader: {leader.last}.")
+                if len(st) == 1
+                else fit_call(
+                    f"{leader.last} leads by {_pts(f.lead)} after round "
+                    f"{s.after_round}.",
+                    f"{leader.last} leads the title fight.",
+                    f"Title leader: {leader.last}.",
+                ),
+                f"{leader.last} has {_count(leader.wins, 'win')} and "
+                f"{_count(leader.points, 'point')}. {_no_result_yet(s, f)}",
+                drivers=(leader.code,),
+            )
+        )
+    elif leader is not None:
         clear = ""
         if len(st) > 1:
             clear = (
@@ -771,9 +799,11 @@ def _off_season(s: Snapshot, f: _Facts, zone: tzinfo) -> tuple[list[Line], list[
 
     champion = leader.last if leader else "the champion"
     chips = [
-        f"How did {champion} win it?",
+        f"How did {champion} win it?" if f.decided else f"Can anyone catch {champion}?",
         "Who's second overall?",
-        "Who won the teams' title?",
+        "Who won the teams' title?"
+        if f.cons_decided
+        else "Who leads the teams' title?",
         f"When does {coming} start?",
     ]
     return lines, chips
@@ -818,8 +848,8 @@ def build_briefing(view: View | str, snapshot: Snapshot, zone: str | None) -> Br
     elif view is View.AFTER_RACE:
         lines, chips = _after_race(snapshot, facts, tz)
     else:
-        # The off-season comes only once every race of the season has run or
-        # been taken as cancelled (part 1's pick_view), so none is left to count
-        done = _facts(replace(snapshot, remaining=()))
-        lines, chips = _off_season(snapshot, done, tz)
+        # A race of the season still without a result counts as left to run,
+        # even once pick_view has moved on from it: a cancelled race and a late
+        # result look the same in the data, so a title it could change stays open
+        lines, chips = _off_season(snapshot, facts, tz)
     return Briefing(view, _zone_key(tz), tuple(lines), tuple(chips))

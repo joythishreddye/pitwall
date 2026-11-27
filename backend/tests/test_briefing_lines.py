@@ -608,15 +608,52 @@ def test_the_off_season_gives_round_one_when_its_in_the_data() -> None:
     )
 
 
-def test_the_off_season_counts_no_race_left_to_run() -> None:
-    # A race still in the data in the off-season was taken as cancelled (part 1),
-    # so the champion is the champion and nothing "can change"
+def test_the_off_season_crowns_no_one_a_race_without_a_result_could_still_change() -> (
+    None
+):
+    # Part 1 leaves a race with no result 3 days after its start, so the off-season
+    # can come with the finale still in the data. A cancelled race and a late
+    # result look the same there, so the race still counts as left to run
     close = (replace(STANDINGS[0], points=299), *STANDINGS[1:])
-    snap = replace(SEASON_OVER, standings=close, remaining=(ABU_DHABI,))
+    snap = replace(SEASON_OVER, after_round=22, standings=close, remaining=(ABU_DHABI,))
     b = build_briefing(View.OFF_SEASON, snap, "UTC")
-    assert b.lines[0].call == "Antonelli is the 2026 champion."
-    assert b.lines[1].detail == "Verstappen has 279, Russell 262 and Hamilton 261."
-    assert _tags(b) == ["CHAMPION", "SECOND PLACE", "TEAMS", "NEXT SEASON"]
+    assert _tags(b) == ["TITLE", "SECOND PLACE", "TEAMS", "NEXT SEASON"]
+    assert b.lines[0].call == "Antonelli leads by 20 after round 22."
+    assert b.lines[0].detail == (
+        "Antonelli has 9 wins and 299 points. The Abu Dhabi Grand Prix has no "
+        "result in the data yet, worth 25 points at most."
+    )
+    texts = [t for x in b.lines for t in (x.call, x.detail)] + list(b.chips)
+    assert not [t for t in texts if "champion" in t.lower()]
+    assert b.chips[0] == "Can anyone catch Antonelli?"
+    # 142 clear with 43 left: the teams' title is decided all the same
+    assert b.lines[2].call == "Mercedes won the teams' title: 652 points."
+    assert b.chips[2] == "Who won the teams' title?"
+
+    # A lead bigger than what's left still names the champion
+    clear = build_briefing(View.OFF_SEASON, replace(snap, standings=STANDINGS), "UTC")
+    assert clear.lines[0].call == "Antonelli is the 2026 champion."
+    assert clear.chips[0] == "How did Antonelli win it?"
+
+    # And a teams' fight the race could change names no team champion
+    teams = (CONSTRUCTORS[0], replace(CONSTRUCTORS[1], points=630), *CONSTRUCTORS[2:])
+    open_teams = build_briefing(
+        View.OFF_SEASON, replace(snap, constructors=teams), "UTC"
+    )
+    assert "TEAMS" not in _tags(open_teams)
+    assert open_teams.chips[2] == "Who leads the teams' title?"
+
+
+def test_the_off_season_counts_every_race_without_a_result() -> None:
+    late = replace(ABU_DHABI, round=22, name="Qatar Grand Prix")
+    close = (replace(STANDINGS[0], points=299), *STANDINGS[1:])
+    two = replace(
+        SEASON_OVER, after_round=21, standings=close, remaining=(late, ABU_DHABI)
+    )
+    b = build_briefing(View.OFF_SEASON, two, "UTC")
+    assert b.lines[0].detail.endswith(
+        "Two races have no result in the data yet, worth 50 points at most."
+    )
 
 
 def test_points_level_at_the_top_read_as_level_not_a_lead_of_zero() -> None:
