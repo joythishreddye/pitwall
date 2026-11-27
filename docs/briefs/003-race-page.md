@@ -5,8 +5,8 @@
 - **Dates (D16 step 4):** Dec 4 to 20, started early. Part A (the summary and the replay at 1× and 2×) by Dec 11.
   Part B (the engineer answering from the replay's moment) by Dec 20.
 - **Tracking issue:** #12 (the replay frontend, P3). A race page issue can open at his review.
-- **Sources:** D13 and D14 (`.brain/tasks/002-replan/decisions.md`), mockup v2's race board
-  (`.brain/tasks/002-replan/mockup/parts/race-head.html`, `engine-v2.js`, `race-logic.js`), brief
+- **Sources:** decisions D13 and D14 and mockup v2's race board, which live in the local project notes (a cloud
+  session can't read them: the build runs locally, or the wording it needs is copied into the PR), and brief
   [002](002-race-data-spine.md) for the replay files.
 
 ## Goal
@@ -33,7 +33,9 @@ What a race gets depends on its year (D13):
   - the start: every starter's tyre when they all match, with race control's grip and rain notes;
   - the first cars onto slicks, and a return to intermediates;
   - a stewards' change after the flag (the file's `resultChanges`), with the seconds added;
-  - a late start, as at Malaysia 2026 (below);
+  - a late start, as at Malaysia 2026 (below), only when race control announced the delay (its "STARTING
+    PROCEDURE SUSPENDED" or new start time message). A gap between lights out and the stored start alone is
+    never a late start: a wrong stored time looks the same (Miami 2026, and 2024 Las Vegas, stored a day early);
   - retirements and non-starters.
 - **A race without a replay file** gets the result lines and the OUT line only.
 
@@ -66,11 +68,13 @@ What a race gets depends on its year (D13):
   It never names the exact place he'd rejoin.
 - **Part B (by Dec 20):** a typed question carries the replay's moment (the lap, the order, the gaps, the tyres)
   to the chat, so the engineer answers about that moment.
+  - The moment is a bounded Pydantic model on the chat request: at most 22 rows of fixed fields (code, position,
+    numeric gap, a tyre from a fixed set, lap), with no free text. The prompt gives it to the model as data, and
+    it never goes into the text that gets embedded or classified, so retrieval doesn't change.
 
 ## Open calls, with the recommended option
 1. **How the replay starts.** Recommended: paused on the grid at 1×, with a play button. The mockup auto-plays
-   at 30×, but D13's point was a replay people can watch slowly ("whats the point of replay if someone cant see a
-   slowed version?").
+   at 30×, but D13's point was a replay people can watch slowly, at real speed.
 2. **Where the page gets the file.** Recommended: from the site itself, `/replays/<season>/<round>.json`
    (brief 002's storage), fetched in the browser. No Render egress, and nothing calls OpenF1.
 3. **Knowing which races have a file.** Recommended: each season's `index.json`, which brief 002's build script
@@ -86,7 +90,7 @@ What a race gets depends on its year (D13):
    its own small PR. Today at 390 it scrolls sideways (571 px wide) and the driver and team columns shrink to
    nothing (found 2026-11-27 on 2024 Bahrain), which the race page's gate would fail.
 8. **2023 to 2025 files.** Recommended: the same storage and script as 2026. About 20 KB a race, so about
-   1.3 MB for 66 races.
+   1.4 MB for 70 races (22, 24 and 24).
 
 ## Race start times: Miami 2026 and Malaysia 2026
 - **Miami (round 4) is stored wrong.** Jolpica says 20:00 UTC. The real start was 17:00 UTC: OpenF1's session
@@ -102,7 +106,14 @@ What a race gets depends on its year (D13):
 - **Malaysia (round 16) isn't wrong; its start was late.** Jolpica's 07:00 UTC is the scheduled time, and OpenF1
   agrees. Race control suspended the starting procedure at 07:45 UTC and set a new start for 16:33 local time.
   Lights out came at 08:33 UTC, 93 minutes late. No override: the summary's START line says the start was 93
-  minutes late. The replay file's `checks.storedStartWrong` flags both races; after the override, only Malaysia.
+  minutes late, from race control's own messages. The replay file's `checks.storedStartWrong` flags both races;
+  after the override, only Malaysia. It's a check for the build, never summary text.
+- **2024 Las Vegas is stored a day early** (brief 002's landmine). The override file holds times only, so before
+  the 2023 to 2025 files are built, it gains a date for that race (and any other the builder's check flags), or
+  their files keep the flag and their summaries say nothing about the start.
+- **Production's Miami row** changes at the next 2026 seed run, the by-hand refresh after Qatar (his OK).
+- **Built on `fix/miami-start`** (the seed and the session times file, with tests). The builder's part waits for
+  brief 002's builder to merge.
 
 ## Acceptance criteria (each one is a check)
 1. **e2e, the page at 1440 and 390,** with the fixture API and a fixture replay file: the summary with the winner
@@ -125,7 +136,10 @@ What a race gets depends on its year (D13):
 10. **pytest, start times:** the seed and the schedule script write 17:00 UTC for 2026 round 4 and Jolpica's
     time for every other race; the builder's stored-start check uses the override.
 11. **The 2023 to 2025 files** pass `check_replays.py`, like 2026's.
-12. **The project gates, floor, verify-outcome with its screenshot judgment, and codex-review pass.** No new
+12. **The chat eval bar:** Part A's typed question with the race named and Part B's moment are chat changes, so
+    each one re-runs `backend/scripts/eval_rag.py` and must pass CLAUDE.md's bar (no question from hit to miss,
+    hit@5 and MRR@5 not lower).
+13. **The project gates, floor, verify-outcome with its screenshot judgment, and codex-review pass.** No new
     screenshot baselines without his two OKs: the specs check content and behavior, and the judgment covers the
     look.
 
@@ -142,6 +156,9 @@ What a race gets depends on its year (D13):
   replay file in the fixtures). A route adds screenshots for the judgment, not baselines.
 - **Circuits off the 2026 calendar** (Bahrain, Jeddah, Imola and others in 2023 to 2025) need their direction
   in the builder's list, or their outlines go unchecked for mirroring.
+- **The replay file isn't an API call.** It's a same-origin static file, fetched with a plain `fetch("/replays/...")`
+  and kept out of `frontend/lib/api-client.ts`, whose base URL is the Render API: routing it there would 404 or
+  spend Render's bandwidth. The build adds it to `.claude/rules/frontend.md`'s list of exceptions.
 - **No second `header` or `aside`** on any page: frontend/e2e/shell.spec.ts takes them unscoped.
 - **React Compiler lint:** no refs read during render and no synchronous setState in effects. The replay clock
   runs on `requestAnimationFrame` with refs, and the UI reads it at about 10 updates a second.
