@@ -37,15 +37,26 @@ test("standings cut off: the page says so, the race tiles still show, and a retr
   const notice = page.getByTestId("data-link-down");
   await expect(notice).toContainText("Data link lost");
   await expect(notice).toContainText("The standings aren't reaching the pit wall");
-  // the calendar arrived, so the next race shows
+  // the calendar arrived, so the next race shows (revealed: the tiles start at opacity 0)
   await expect(page.getByRole("timer", { name: "Time to the race" })).toBeVisible();
+  await expect(page.locator('[data-tile-id="next-race"]')).toHaveCSS("opacity", "1");
   await expect(page.locator('[data-tile-id="leader"]')).toHaveCount(0);
   await expect(page.locator('[data-tile-id="top5"]')).toHaveCount(0);
+
+  // a retry that fails again keeps the same notice up (a remount would restart its auto-retries from zero)
+  await notice.evaluate((el) => el.setAttribute("data-first", "yes"));
+  const failedAgain = page.waitForEvent("requestfailed", (req) => STANDINGS.test(req.url()));
+  await notice.getByRole("button", { name: "Retry now" }).click();
+  await failedAgain;
+  await expect(page.getByRole("button", { name: "Retry now" })).toBeEnabled();
+  await expect(page.locator('[data-testid="data-link-down"][data-first="yes"]')).toHaveCount(1);
+  await expect(page.getByText("Loading Race Data")).toHaveCount(0);
 
   await page.unroute(STANDINGS);
   await notice.getByRole("button", { name: "Retry now" }).click();
   await expect(page.getByTestId("data-link-down")).toHaveCount(0);
   await expect(page.locator('[data-tile-id="leader"]')).toContainText("ANTONELLI");
+  await expect(page.locator('[data-tile-id="leader"]')).toHaveCSS("opacity", "1");
   expect(errors).toEqual([]);
 });
 
@@ -57,6 +68,7 @@ test("calendar cut off: the page says so and the standings still show", async ({
   const notice = page.getByTestId("data-link-down");
   await expect(notice).toContainText("The race calendar isn't reaching the pit wall");
   await expect(page.locator('[data-tile-id="leader"]')).toContainText("ANTONELLI");
+  await expect(page.locator('[data-tile-id="leader"]')).toHaveCSS("opacity", "1");
   await expect(page.getByRole("timer", { name: "Time to the race" })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
