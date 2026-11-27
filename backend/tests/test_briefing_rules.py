@@ -256,6 +256,15 @@ def test_a_session_with_no_time_is_never_live() -> None:
     ]
 
 
+def test_an_unknown_session_name_is_refused_when_built() -> None:
+    # Jolpica's own names (FirstPractice) or a typo would otherwise fail later,
+    # as a KeyError, wherever the session's end is read
+    with pytest.raises(ValueError, match="unknown session 'FirstPractice'"):
+        Session("FirstPractice", _utc("2026-11-27T13:30Z"))
+    with pytest.raises(ValueError, match="unknown session"):
+        Session("sprint_shootout", None)
+
+
 def test_the_next_session_change_is_the_next_start_or_end() -> None:
     assert next_session_change(_utc("2026-11-27T17:30Z"), QATAR_WEEKEND) == _utc(
         "2026-11-27T18:00Z"

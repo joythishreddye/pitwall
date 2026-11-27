@@ -83,6 +83,9 @@ class Session:
     start: datetime | None  # None: a date but no time, so never LIVE; kept in UTC
 
     def __post_init__(self) -> None:
+        if self.name not in SESSION_LENGTH:
+            known = ", ".join(SESSION_LENGTH)
+            raise ValueError(f"unknown session {self.name!r}; known: {known}")
         if self.start is not None:
             object.__setattr__(self, "start", _utc(self.start))
 
