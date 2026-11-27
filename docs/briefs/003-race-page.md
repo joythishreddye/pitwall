@@ -8,6 +8,11 @@
 - **Sources:** decisions D13 and D14 and mockup v2's race board, which live in the local project notes (a cloud
   session can't read them: the build runs locally, or the wording it needs is copied into the PR), and brief
   [002](002-race-data-spine.md) for the replay files.
+- **Depends on brief 002's builder and files PRs** (`feature/replay-files`, parked at its review cap on
+  2026-11-27, and the files PR after it). They define the file's fields this brief uses (`pitLoss`,
+  `resultChanges`, `checks.storedStartWrong`, `trackFrom`), ship the files as static files on the site under
+  `frontend/public/replays/<season>/` with each season's `index.json`, and add `check_replays.py`. If the files
+  PR picks a Supabase Storage bucket instead, open calls 2 and 3 and criterion 7 move to its host.
 
 ## Goal
 Opening any race (`/races/<id>`) shows, top to bottom:
@@ -27,6 +32,9 @@ What a race gets depends on its year (D13):
 - **Made by rules from the data, not by the LLM.** Every fact comes from the replay file or the result.
 - **Up to 8 lines.** Each one fits one line at 1440 (52 characters, as in the mockup) and starts with a stamp:
   RESULT, START, L<lap>, AFTER or OUT. Its details are a tap away.
+  - **A line too long** uses surnames, then driver codes, then a count ("OUT: VER, HAM, LEC and 3 more").
+  - **Past 8 lines,** these go first, in order: the return to intermediates, the first cars onto slicks, then
+    third place folds into second's line. RESULT and OUT lines never drop.
 - **The lines, in order, when the data has them:**
   - the winner and where he started ("<Name> wins from pole." or "from 4th on the grid"), then second and
     third;
@@ -35,7 +43,8 @@ What a race gets depends on its year (D13):
   - a stewards' change after the flag (the file's `resultChanges`), with the seconds added;
   - a late start, as at Malaysia 2026 (below), only when race control announced the delay (its "STARTING
     PROCEDURE SUSPENDED" or new start time message). A gap between lights out and the stored start alone is
-    never a late start: a wrong stored time looks the same (Miami 2026, and 2024 Las Vegas, stored a day early);
+    never a late start: a wrong stored time can look like one (2024 Las Vegas, stored a day early) or like an
+    early start (Miami 2026, stored three hours late);
   - retirements and non-starters.
 - **A race without a replay file** gets the result lines and the OUT line only.
 
@@ -60,8 +69,12 @@ What a race gets depends on its year (D13):
 ## The engineer on standby
 - **Part A:** the ask box and the TRY ASKING chips: "Who's leading?", "Should <driver> pit now?", "How's <driver>
   doing?", "Who's moving up?" and "What do the columns mean?". The chips are answered in the browser from the
-  replay at its current moment, as the mockup does. A typed question goes to the chat with the race named, under
-  the chat limits.
+  replay at its current moment, as the mockup does. A typed question goes to the chat, under the chat limits,
+  with the race in its own request field (season and round), never added to the message text.
+  - **Why:** the chat retrieves on the message. With the race in the text, the entity linker would filter every
+    question by that circuit and season, so "What does DRS mean?" would only find race pages.
+  - **Recommended:** retrieval runs on the question as typed, plus one guaranteed slot for the race's own page
+    (as a comparison's entities get today), and the prompt names the race to the model.
 - **"Should <driver> pit now?" uses the file's `pitLoss`,** the median time in the pit lane from Jolpica's stop
   durations. That's a few seconds more than a stop really costs (a car on track covers the same stretch in that
   time), so the answer says "a stop here takes about 24 s in the pit lane" and the cars within that gap behind.
@@ -81,8 +94,9 @@ What a race gets depends on its year (D13):
    writes beside the files (its rounds and outlines), imported by the page at build time. The page then never
    asks for a file that isn't there, so there's no 404 in the console (verify-outcome fails on console errors).
 4. **The chips.** Recommended: answered in the browser from the replay (above). They cost nothing, answer at
-   once, and can't spend the day's Groq answers (brief 001's chip landmine). The other option, sending each chip
-   to the chat, is slower and spends the shared budget.
+   once, and can't spend the day's Groq answers (the chat's daily answer limit, `chat_daily_answer_limit`, 40 by
+   default, in `backend/app/config.py`). The other option, sending each chip to the chat, is slower and spends
+   the shared budget.
 5. **The summary.** Recommended: rules, not the LLM. No spend, facts only from the data, and tests can check
    every line.
 6. **Phones (390).** Recommended: one column, in the order summary, standby, map with its controls, tower, radio.
@@ -129,17 +143,22 @@ What a race gets depends on its year (D13):
    `api.openf1.org`, and a chip sends no chat request.
 8. **e2e, a race with no file:** the summary from the result and the table show; no replay section and no console
    error.
-9. **Unit tests for the summary and the replay's state at a moment.** These are plain functions under
-   `frontend/lib/replay/`. Vitest (planned in CLAUDE.md) comes in its own PR first: a step in the existing
-   frontend CI job (a new job would be a check the main ruleset doesn't require), and a line in CLAUDE.md's
-   gates.
-10. **pytest, start times:** the seed and the schedule script write 17:00 UTC for 2026 round 4 and Jolpica's
+9. **e2e, the result table on phones** (open call 7's own check, at 390, 375 and 360): no sideways scroll, no
+   row wider than itself, every driver's name box above 24 px (its `clientWidth`, which clipping shrinks, not
+   the text's box), and the fastest-lap mark inside its row.
+10. **Unit tests for the summary and the replay's state at a moment.** These are plain functions under
+    `frontend/lib/replay/`, tested with Vitest. Vitest comes in its own PR first (#60): a step in the existing
+    frontend CI job (a new job would be a check the main ruleset doesn't require), and a line in CLAUDE.md's
+    gates.
+11. **pytest, start times:** the seed and the schedule script write 17:00 UTC for 2026 round 4 and Jolpica's
     time for every other race; the builder's stored-start check uses the override.
-11. **The 2023 to 2025 files** pass `check_replays.py`, like 2026's.
-12. **The chat eval bar:** Part A's typed question with the race named and Part B's moment are chat changes, so
-    each one re-runs `backend/scripts/eval_rag.py` and must pass CLAUDE.md's bar (no question from hit to miss,
-    hit@5 and MRR@5 not lower).
-13. **The project gates, floor, verify-outcome with its screenshot judgment, and codex-review pass.** No new
+12. **The 2023 to 2025 files** pass `check_replays.py`, like 2026's.
+13. **The chat eval bar:** Part A's race field and Part B's moment are chat changes, so each one re-runs
+    `backend/scripts/eval_rag.py` and must pass CLAUDE.md's bar (no question from hit to miss, hit@5 and MRR@5
+    not lower). Part A also adds 3 to 5 gold questions asked from a race page (with the race field set), in a new
+    gold version with its own baseline run first: today's gold questions carry no race, so they never reach
+    this path.
+14. **The project gates, floor, verify-outcome with its screenshot judgment, and codex-review pass.** No new
     screenshot baselines without his two OKs: the specs check content and behavior, and the judgment covers the
     look.
 
