@@ -77,29 +77,53 @@ class DriverPointsProgression(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
-    """The latest round that every asked kind of standings has reached.
+def _kind_latest_round(db: Client, season: int, kind: str) -> int | None:
+    result = (
+        db.table("standings")
+        .select("round")
+        .eq("season", season)
+        .eq("type", kind)
+        .order("round", desc=True)
+        .limit(1)
+        .execute()
+    )
+    rows = result.data or []
+    return rows[0]["round"] if rows else None
 
-    A refresh can hold one kind back a round while the other moves on, so
-    asking for both answers the round both have rather than one with an empty
-    table. A kind with no rows at all (a season before constructor standings)
-    doesn't count.
+
+def _has_round(db: Client, season: int, kind: str, rnd: int) -> bool:
+    result = (
+        db.table("standings")
+        .select("round")
+        .eq("season", season)
+        .eq("type", kind)
+        .eq("round", rnd)
+        .limit(1)
+        .execute()
+    )
+    return bool(result.data)
+
+
+def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
+    """The round to answer for the asked kinds of standings.
+
+    A refresh can hold one kind back a round while the other moves on. Asking
+    for both then answers the lagging kind's latest round when the other kind
+    has it too, so neither table comes back empty; otherwise the latest round
+    of either, as before.
     """
-    latest: list[int] = []
-    for kind in kinds:
-        result = (
-            db.table("standings")
-            .select("round")
-            .eq("season", season)
-            .eq("type", kind)
-            .order("round", desc=True)
-            .limit(1)
-            .execute()
-        )
-        rows = result.data or []
-        if rows:
-            latest.append(rows[0]["round"])
-    return min(latest, default=None)
+    latest = {
+        kind: rnd
+        for kind in kinds
+        if (rnd := _kind_latest_round(db, season, kind)) is not None
+    }
+    if not latest:
+        return None
+    lagging = min(latest, key=latest.__getitem__)
+    behind = latest[lagging]
+    if all(_has_round(db, season, kind, behind) for kind in latest):
+        return behind
+    return max(latest.values())
 
 
 def _fetch_driver_standings(

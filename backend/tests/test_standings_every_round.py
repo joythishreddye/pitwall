@@ -261,6 +261,16 @@ def test_both_tables_answer_the_round_both_kinds_have(
         assert [e.points for e in response.constructor_standings] == [points]
 
 
+def test_when_the_kinds_share_no_latest_round_both_tables_answer_as_today() -> None:
+    # Latest-round-only data: drivers stored after round 2, constructors only
+    # after round 1 (their round 2 fetch failed), so no round has both
+    response = get_standings(2026, _season([*AFTER_ROUND_2, _constructor(7, 1, 37)]))
+
+    assert response.round == 2
+    assert [e.points for e in response.driver_standings] == [57, 35, 30]
+    assert response.constructor_standings == []
+
+
 # ── The Jolpica fill ─────────────────────────────────────────────
 
 
@@ -516,6 +526,68 @@ def test_an_empty_refetch_also_holds_the_new_round_back() -> None:
     points = _points(db)
     assert points[("driver", 2, ANT)] == 20
     assert points[("driver", 3, ANT)] == 30
+
+
+def test_a_refetch_still_short_of_its_grand_prix_holds_the_new_round_back() -> None:
+    db = _db({"standings": []})
+    _ingest(db, _after_round_2s_sprint(), every_round=False)
+
+    # Jolpica has moved on to round 3 but still sends round 2 without its
+    # Grand Prix
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_stale(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if "/2026/2/" in url:
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            standings = body["StandingsLists"][0]
+            entries = (
+                standings.get("DriverStandings") or standings["ConstructorStandings"]
+            )
+            entries[0]["wins"] = "1"
+        return response
+
+    http.get.side_effect = round_2_stale
+    report = IngestReport()
+    _ingest(db, http, every_round=False, report=report)
+
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        ("driver", 2),
+        ("constructor", 2),
+    }
+    assert report.problems == [
+        f"{kind} standings for 2026 round 2 failed: Jolpica's standings after "
+        "round 2 still lack its Grand Prix"
+        for kind in ("driver", "constructor")
+    ]
+
+
+def test_a_refetch_answered_with_another_round_holds_the_new_round_back() -> None:
+    db = _db({"standings": []})
+    _ingest(db, _after_round_2s_sprint(), every_round=False)
+
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_as_3(url: str, params: object = None) -> MagicMock:
+        if "/2026/2/" in url:
+            url = url.replace("/2026/2/", "/2026/3/")
+        return serve(url, params)
+
+    http.get.side_effect = round_2_as_3
+    report = IngestReport()
+    _ingest(db, http, every_round=False, report=report)
+
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        ("driver", 2),
+        ("constructor", 2),
+    }
+    assert report.problems == [
+        f"{kind} standings for 2026 round 2 failed: Jolpica sent round 3's "
+        "standings, not round 2's"
+        for kind in ("driver", "constructor")
+    ]
 
 
 def test_when_the_refetch_fails_the_new_round_waits_and_the_next_run_retries() -> None:

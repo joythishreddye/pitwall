@@ -473,18 +473,26 @@ def _store_round_standings(
 ) -> int:
     """Fetch and upsert the standings after one round.
 
-    Raises on a failed fetch, and on an answer with nothing to store, so a
-    caller repairing a round knows the repair didn't happen.
+    Raises on a failed fetch, and on an answer that isn't that round's whole
+    standings (none, another round's, or still without its Grand Prix), so a
+    caller repairing a round knows the repair didn't happen and the next run
+    tries again.
     """
     data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
     lists = data.get("StandingsTable", {}).get("StandingsLists", [])
     if not lists:
         raise ValueError("Jolpica sent no standings")
-    _, rows = _standings_rows(
+    got, rows = _standings_rows(
         lists[0], season, kind, list_key, entity_key, id_key, lookup
     )
+    if got != rnd:
+        raise ValueError(f"Jolpica sent round {got}'s standings, not round {rnd}'s")
     if not rows:
         raise ValueError(f"no {kind} in Jolpica's standings is in the database")
+    if not _has_its_grand_prix(rows, rnd):
+        raise ValueError(
+            f"Jolpica's standings after round {rnd} still lack its Grand Prix"
+        )
     return batch_upsert(
         supabase, "standings", rows, on_conflict="season,round,type,entity_id"
     )
