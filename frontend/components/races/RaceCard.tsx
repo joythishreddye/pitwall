@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { DrawPath } from "@/components/ui/draw-path";
 import { circuitPaths, getCircuitMeta } from "@/lib/constants/circuits";
 import { getTeamColor } from "@/lib/constants/teams";
-import { useCountdown } from "@/lib/hooks/use-countdown";
+import { raceStart, useCountdown } from "@/lib/hooks/use-countdown";
 import type { RaceCalendarItem } from "@/lib/schemas/races";
 
 interface RaceCardProps {
@@ -18,9 +18,10 @@ interface RaceCardProps {
 export function RaceCard({ race, isNext, index }: RaceCardProps) {
   const now = new Date();
   const raceDate = race.date ? new Date(race.date + "T00:00:00") : null;
-  const isPast = raceDate ? raceDate < now : false;
+  // Past once its lights go out, so a race isn't COMPLETED on its own morning east of UTC
+  const isPast = race.date ? raceStart(race.date, race.time) < now.getTime() : false;
 
-  const countdown = useCountdown(isNext && race.date ? race.date : undefined);
+  const countdown = useCountdown(isNext && race.date ? race.date : undefined, race.time);
 
   const circuitMeta = getCircuitMeta(race.circuit.name);
   const circuitPath = circuitMeta ? circuitPaths[circuitMeta.key] : null;

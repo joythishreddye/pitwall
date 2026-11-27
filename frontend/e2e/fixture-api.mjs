@@ -11,6 +11,8 @@ const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), "fixtur
 
 // pathname -> fixture file (relative to FIXTURES). Query strings are ignored.
 const ROUTES = new Map([
+  // The season picker on /races: the 2026 count matches seasons-2026-races.json.
+  ["/api/v1/seasons", "api/seasons.json"],
   ["/api/v1/standings/2026", "api/standings-2026.json"],
   ["/api/v1/standings/2026/progression", "api/standings-2026-progression.json"],
   ["/api/v1/seasons/2026/races", "api/seasons-2026-races.json"],
