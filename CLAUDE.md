@@ -36,9 +36,9 @@ The project gates, run from the repo root, in the foreground and unpiped:
 (cd backend && source venv/bin/activate && ruff check . && ruff format --check .)
 (cd backend && source venv/bin/activate && pytest -q)   # all external services mocked
 (cd frontend && pnpm lint)                              # ESLint (must be 0 errors)
+(cd frontend && pnpm test)                              # unit tests (vitest) for plain functions under lib/
 (cd frontend && node_modules/.bin/tsc --noEmit)         # type-check
 (cd frontend && pnpm build)                             # production build
-# (no frontend unit tests yet; vitest is planned)
 ```
 Use these exact forms. The parentheses keep each `cd` (and the venv) inside a subshell: Claude Code's shell keeps a successful `cd`, so without them the next line's `cd` fails. `pytest` and `ruff` live in `backend/venv`, so a bare call exits 127. The gate hooks (the save nudge and the gate-failure record) recognize only the command forms in `~/.claude/brain/bin/gate-re.sh`, so another runner or path goes unrecorded.
 
@@ -61,7 +61,7 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 ## Local Prerequisites
 - **Python:** 3.12 (`/opt/homebrew/bin/python3.12`). Not 3.14; ML packages lag.
 - **Virtual env:** `backend/venv`
-- **Node.js:** 20.9+ (v23 at /opt/homebrew/bin/node); **pnpm** 10
+- **Node.js:** 20.19+ or 22.12+ (vitest runs on vite 7, which needs it; Next needs 20.9+). v23 at /opt/homebrew/bin/node; **pnpm** 10
 
 ## Gotchas
 

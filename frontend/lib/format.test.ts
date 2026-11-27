@@ -1,0 +1,68 @@
+import { describe, expect, it } from "vitest";
+import { formatGap, formatLapTime, formatLapsDown, formatPitDuration, stripMarkdown } from "@/lib/format";
+
+describe("formatLapTime", () => {
+  it("shows minutes, seconds and thousandths", () => {
+    expect(formatLapTime(83456)).toBe("1:23.456");
+    expect(formatLapTime(5723504)).toBe("95:23.504"); // a race time: minutes past 60 stay minutes
+  });
+
+  it("pads seconds under ten", () => {
+    expect(formatLapTime(65004)).toBe("1:05.004");
+  });
+
+  it("shows seconds alone under a minute", () => {
+    expect(formatLapTime(59999)).toBe("59.999");
+  });
+
+  it("shows a dash for no time", () => {
+    expect(formatLapTime(null)).toBe("—");
+    expect(formatLapTime(undefined)).toBe("—");
+    expect(formatLapTime(0)).toBe("—");
+  });
+});
+
+describe("formatGap", () => {
+  it("shows a finisher's gap to the winner", () => {
+    expect(formatGap(5730000, 5723504, "Finished")).toBe("+6.496s");
+  });
+
+  it("shows the status for a car that didn't finish on the lead lap", () => {
+    expect(formatGap(null, 5723504, "Retired")).toBe("Retired");
+  });
+
+  it("shows the winner's own time", () => {
+    expect(formatGap(5723504, 5723504, "Finished")).toBe("95:23.504");
+  });
+});
+
+describe("formatLapsDown", () => {
+  it("counts the laps behind the winner", () => {
+    expect(formatLapsDown(70, 71)).toBe("+1 Lap");
+    expect(formatLapsDown(68, 71)).toBe("+3 Laps");
+  });
+
+  it("shows a dash on the lead lap or with no data", () => {
+    expect(formatLapsDown(71, 71)).toBe("—");
+    expect(formatLapsDown(null, 71)).toBe("—");
+  });
+});
+
+describe("formatPitDuration", () => {
+  it("shows tenths of a second", () => {
+    expect(formatPitDuration(22449)).toBe("22.4s");
+    expect(formatPitDuration(null)).toBe("—");
+  });
+});
+
+describe("stripMarkdown", () => {
+  it("removes the decoration and keeps the words and numbered lists", () => {
+    expect(stripMarkdown("## Pace\n**Norris** led *by far* today.\n1. `SOFT`\n- done")).toBe(
+      "Pace\nNorris led by far today.\n1. SOFT\ndone",
+    );
+  });
+
+  it("leaves a star inside a word alone", () => {
+    expect(stripMarkdown("2*3*4 laps")).toBe("2*3*4 laps");
+  });
+});
