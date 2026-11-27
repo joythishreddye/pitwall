@@ -5,6 +5,7 @@ qualifying_results, standings for 2018-present.
 """
 
 import logging
+from dataclasses import dataclass, field
 from datetime import datetime
 
 import httpx
@@ -25,6 +26,42 @@ logger = logging.getLogger(__name__)
 
 BASE_URL = "http://api.jolpi.ca/ergast/f1"
 PAGE_LIMIT = 100  # Jolpica API caps at ~100 results per page
+
+
+@dataclass
+class IngestReport:
+    """What a run couldn't do, so a refresh that leaves the qualifying or the
+    standings behind the results never ends green (seed_database exits 1)."""
+
+    problems: list[str] = field(default_factory=list)
+    # Each season's latest round with results, and the latest round the
+    # qualifying and each kind of standings reached
+    results_round: dict[int, int] = field(default_factory=dict)
+    caught_up: dict[tuple[int, str], int] = field(default_factory=dict)
+
+    def add(self, problem: str) -> None:
+        logger.warning(problem)
+        self.problems.append(problem)
+
+    def check_caught_up(self) -> None:
+        """Qualifying and standings must reach the latest results round. A
+        season with no results yet (next season in the off-season) needs none,
+        and standings ahead of the results (after a sprint) are fine."""
+        for season, rnd in sorted(self.results_round.items()):
+            for what in ("qualifying", "driver standings", "constructor standings"):
+                got = self.caught_up.get((season, what), 0)
+                if got < rnd:
+                    self.add(
+                        f"{what} for {season} reach round {got}, "
+                        f"the results round {rnd}"
+                    )
+
+
+def _problem(report: IngestReport | None, text: str) -> None:
+    if report is None:
+        logger.warning(text)
+    else:
+        report.add(text)
 
 
 def _fetch_all_pages(
@@ -248,6 +285,7 @@ def ingest_results(
     race_lookup: dict[tuple[int, int], int],
     driver_lookup: dict[str, int],
     constructor_lookup: dict[str, int],
+    report: IngestReport | None = None,
 ) -> int:
     """Fetch and upsert race results for given seasons."""
     total = 0
@@ -284,6 +322,9 @@ def ingest_results(
                 rows,
                 on_conflict="race_id,driver_id",
             )
+            if report is not None and rows:
+                latest = report.results_round.get(season, 0)
+                report.results_round[season] = max(latest, key[1])
         logger.info("Results %d: %d upserted", season, season_count)
         total += season_count
     return total
@@ -297,6 +338,7 @@ def ingest_qualifying(
     race_lookup: dict[tuple[int, int], int],
     driver_lookup: dict[str, int],
     constructor_lookup: dict[str, int],
+    report: IngestReport | None = None,
 ) -> int:
     """Fetch and upsert qualifying results for given seasons."""
     total = 0
@@ -310,8 +352,8 @@ def ingest_qualifying(
                 "RaceTable",
                 "Races",
             )
-        except Exception:
-            logger.warning("No qualifying data for %d", season)
+        except Exception as exc:
+            _problem(report, f"No qualifying data for {season}: {exc}")
             continue
         # Merge qualifying from duplicate race entries across pages
         merged: dict[tuple, list] = {}
@@ -337,6 +379,9 @@ def ingest_qualifying(
                 rows,
                 on_conflict="race_id,driver_id",
             )
+            if report is not None and rows:
+                latest = report.caught_up.get((season, "qualifying"), 0)
+                report.caught_up[(season, "qualifying")] = max(latest, key[1])
         logger.info("Qualifying %d: %d upserted", season, season_count)
         total += season_count
     return total
@@ -406,6 +451,7 @@ def ingest_standings(
     constructor_lookup: dict[str, int],
     *,
     every_round: bool = False,
+    report: IngestReport | None = None,
 ) -> int:
     """Fetch and upsert each season's latest standings.
 
@@ -440,6 +486,8 @@ def ingest_standings(
                     rows,
                     on_conflict="season,round,type,entity_id",
                 )
+                if report is not None and rows:
+                    report.caught_up[(season, f"{kind} standings")] = latest
                 if not every_round:
                     continue
                 stored = _stored_standings_rounds(supabase, season, kind)
@@ -454,8 +502,8 @@ def ingest_standings(
                         )
                         lists = data.get("StandingsTable", {}).get("StandingsLists", [])
                         if not lists:
-                            logger.warning(
-                                "No %s standings for %d round %d", kind, season, rnd
+                            _problem(
+                                report, f"No {kind} standings for {season} round {rnd}"
                             )
                             continue
                         _, rows = _standings_rows(
@@ -474,17 +522,14 @@ def ingest_standings(
                             on_conflict="season,round,type,entity_id",
                         )
                     except Exception as exc:
-                        logger.warning(
-                            "%s standings for %d round %d failed: %s",
-                            kind,
-                            season,
-                            rnd,
-                            exc,
+                        _problem(
+                            report,
+                            f"{kind} standings for {season} round {rnd} failed: {exc}",
                         )
             except Exception as exc:
                 # One season's failure doesn't stop the others; the next run
                 # fetches whatever rounds are still missing
-                logger.warning("%s standings for %d stopped: %s", kind, season, exc)
+                _problem(report, f"{kind} standings for {season} stopped: {exc}")
 
     logger.info("Standings: %d total upserted", total)
     return total
@@ -498,11 +543,14 @@ def run_jolpica_ingest(
     seasons: list[int] | None = None,
     *,
     standings_every_round: bool = False,
+    report: IngestReport | None = None,
 ) -> dict[str, int]:
     """Run the full Jolpica ingestion pipeline.
 
     ``standings_every_round`` also fills in the standings after every earlier
     round of each season that has none stored (see ingest_standings).
+    ``report`` collects what the run couldn't do, including qualifying or
+    standings that stop short of the latest results round.
 
     Returns dict of {table_name: rows_upserted}.
     """
@@ -540,6 +588,7 @@ def run_jolpica_ingest(
             race_lookup,
             driver_lookup,
             constructor_lookup,
+            report,
         )
         counts["qualifying_results"] = ingest_qualifying(
             supabase,
@@ -549,6 +598,7 @@ def run_jolpica_ingest(
             race_lookup,
             driver_lookup,
             constructor_lookup,
+            report,
         )
         counts["standings"] = ingest_standings(
             supabase,
@@ -558,7 +608,10 @@ def run_jolpica_ingest(
             driver_lookup,
             constructor_lookup,
             every_round=standings_every_round,
+            report=report,
         )
 
+    if report is not None:
+        report.check_caught_up()
     logger.info("Jolpica ingest complete: %s", counts)
     return counts
