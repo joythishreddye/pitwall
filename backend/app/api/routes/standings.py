@@ -283,6 +283,30 @@ def _driver_standings_by_round(
     return by_round
 
 
+def _standings_hold_results(
+    by_round: dict[int, dict[int, tuple[float, int | None]]],
+    points_by_driver: dict[int, dict[int, float]],
+    rounds_with_results: list[int],
+) -> bool:
+    """Whether every round with results has standings that include its Grand Prix.
+
+    Standings add sprint points to the Grand Prix points, so after each round a
+    driver's standings total is at least his Grand Prix points up to it.
+    Standings stored between a sprint and its Grand Prix, and not fetched again
+    since, fall short of that once the Grand Prix's results are in.
+    """
+    if not set(rounds_with_results) <= by_round.keys():
+        return False
+    for did, rounds in points_by_driver.items():
+        running = 0.0
+        for rnd in rounds_with_results:
+            running += rounds.get(rnd, 0.0)
+            stored = by_round[rnd].get(did)
+            if running > 0 and (stored is None or stored[0] < running - 1e-6):
+                return False
+    return True
+
+
 @router.get("/{year}/progression", response_model=list[DriverPointsProgression])
 def get_standings_progression(
     year: int,
@@ -292,9 +316,10 @@ def get_standings_progression(
     """Return round-by-round cumulative championship points for the top N drivers.
 
     When the standings table holds the standings after every round that has
-    results (seed_database.py --standings-every-round), the points and the top N
-    come from them, sprints included. Otherwise they're summed from race_results,
-    which hold Grand Prix points only, so sprint points are missing.
+    results (seed_database.py --standings-every-round), each including that
+    round's Grand Prix, the points and the top N come from them, sprints
+    included. Otherwise they're summed from race_results, which hold Grand Prix
+    points only, so sprint points are missing.
 
     Args:
         year: The F1 season year (e.g. 2024).
@@ -327,29 +352,31 @@ def get_standings_progression(
     if not season_rows:
         return []
 
-    rounds_with_results = {race_id_to_round[row["race_id"]] for row in season_rows}
+    # Grand Prix points only: race_results hold no sprint results
+    points_by_driver: dict[int, dict[int, float]] = defaultdict(
+        lambda: defaultdict(float)
+    )
+    for row in season_rows:
+        did = row["driver_id"]
+        rnd = race_id_to_round[row["race_id"]]
+        points_by_driver[did][rnd] += float(row.get("points") or 0)
+
+    rounds_with_results = sorted({race_id_to_round[r["race_id"]] for r in season_rows})
     by_round = _driver_standings_by_round(db, year)
     # {driver_id: {round: points after that round}}
     totals_after: dict[int, dict[int, float]] = defaultdict(dict)
-    if rounds_with_results <= by_round.keys():
-        # The standings after each round include sprints
-        latest = by_round[max(by_round)]
+    if _standings_hold_results(by_round, points_by_driver, rounds_with_results):
+        # The standings after each round include sprints. A round stored after
+        # its sprint but before its results (a sprint Saturday) isn't charted.
+        latest = by_round[rounds_with_results[-1]]
         top_driver_ids = sorted(
             latest,
             key=lambda d: (latest[d][1] is None, latest[d][1] or 0, -latest[d][0]),
         )[:top]
-        for rnd, entries in by_round.items():
-            for did, (points, _) in entries.items():
+        for rnd in rounds_with_results:
+            for did, (points, _) in by_round[rnd].items():
                 totals_after[did][rnd] = points
     else:
-        # Grand Prix points only: race_results hold no sprint results
-        points_by_driver: dict[int, dict[int, float]] = defaultdict(
-            lambda: defaultdict(float)
-        )
-        for row in season_rows:
-            did = row["driver_id"]
-            rnd = race_id_to_round[row["race_id"]]
-            points_by_driver[did][rnd] += float(row.get("points") or 0)
         driver_totals = {
             did: sum(rounds.values()) for did, rounds in points_by_driver.items()
         }

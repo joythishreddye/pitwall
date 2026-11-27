@@ -170,6 +170,26 @@ def test_progression_falls_back_to_race_results_while_a_round_has_no_standings()
     assert progression[1].constructor_ref == "ferrari"
 
 
+# Round 2's results are in, but its standings were stored after the sprint:
+# the sprint's points only (ANT 25+7, RUS 12+8, HAM 18+0)
+ROUND_2_SPRINT_ONLY = [
+    _standing(4, 2, ANT, 1, 32),
+    _standing(5, 2, RUS, 2, 20),
+    _standing(6, 2, HAM, 3, 18),
+]
+
+
+def test_progression_falls_back_while_a_rounds_standings_lack_its_grand_prix() -> None:
+    progression = get_standings_progression(
+        2026, _season(AFTER_ROUND_1 + ROUND_2_SPRINT_ONLY), top=2
+    )
+
+    # Race sums, as with no standings: never 32 for Antonelli after round 2
+    assert [p.driver_ref for p in progression] == ["antonelli", "hamilton"]
+    assert progression[0].points == [25, 50]
+    assert progression[1].points == [18, 30]
+
+
 @pytest.mark.parametrize(
     "standings",
     [AFTER_ROUND_2, AFTER_ROUND_1 + AFTER_ROUND_2],
@@ -206,7 +226,8 @@ def _jolpica_standings(kind: str, rnd: int, refs: list[str]) -> dict:
         {
             "position": str(i + 1),
             "points": str(10 * rnd - i),
-            "wins": "0",
+            # Jolpica counts Grand Prix wins only: one per round so far
+            "wins": str(rnd if i == 0 else 0),
             entity_key: {id_key: ref},
         }
         for i, ref in enumerate(refs)
@@ -266,16 +287,23 @@ SPRINT_ONLY = 5  # round 2's Grand Prix points Jolpica hasn't added yet
 
 def _after_round_2s_sprint() -> MagicMock:
     """Jolpica on a sprint Saturday: round 2's standings hold its sprint's
-    points but not yet its Grand Prix's."""
+    points but not yet its Grand Prix's, nor its win."""
     http, _ = _jolpica(latest=2)
     serve = http.get.side_effect
 
     def get(url: str, params: object = None) -> MagicMock:
         response = serve(url, params)
-        if url.endswith("/2026/driverStandings.json"):
+        if url.endswith(
+            ("/2026/driverStandings.json", "/2026/constructorStandings.json")
+        ):
             body = response.json.return_value["MRData"]["StandingsTable"]
-            for entry in body["StandingsLists"][0]["DriverStandings"]:
+            standings = body["StandingsLists"][0]
+            entries = (
+                standings.get("DriverStandings") or standings["ConstructorStandings"]
+            )
+            for entry in entries:
                 entry["points"] = str(float(entry["points"]) - SPRINT_ONLY)
+            entries[0]["wins"] = "1"
         return response
 
     http.get.side_effect = get
@@ -375,6 +403,41 @@ def test_a_round_stored_after_its_sprint_is_fetched_again_once_jolpica_moves_on(
     assert f"{BASE_URL}/2026/2/driverStandings.json" in fetched
     points = _points(db)
     assert points[("driver", 2, ANT)] == 20  # the Grand Prix's points are in
+    assert points[("driver", 3, ANT)] == 30
+
+
+def test_an_empty_refetch_also_holds_the_new_round_back() -> None:
+    db = _db({"standings": []})
+    _ingest(db, _after_round_2s_sprint(), every_round=False)
+
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_empty(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if "/2026/2/" in url:
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            body["StandingsLists"] = []
+        return response
+
+    http.get.side_effect = round_2_empty
+    report = IngestReport()
+    _ingest(db, http, every_round=False, report=report)
+
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        ("driver", 2),
+        ("constructor", 2),
+    }
+    assert report.problems == [
+        "driver standings for 2026 round 2 failed: Jolpica sent no standings",
+        "constructor standings for 2026 round 2 failed: Jolpica sent no standings",
+    ]
+
+    # The next run, with round 2 back, repairs it and stores round 3
+    http, _ = _jolpica(latest=3)
+    _ingest(db, http, every_round=False)
+    points = _points(db)
+    assert points[("driver", 2, ANT)] == 20
     assert points[("driver", 3, ANT)] == 30
 
 

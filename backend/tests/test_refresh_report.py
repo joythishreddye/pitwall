@@ -15,7 +15,13 @@ from app.ingestion.jolpica_ingest import (
     ingest_standings,
     run_jolpica_ingest,
 )
-from tests.test_standings_every_round import ANT, RUS, _db, _jolpica
+from tests.test_standings_every_round import (
+    ANT,
+    RUS,
+    _after_round_2s_sprint,
+    _db,
+    _jolpica,
+)
 
 DOWN = RuntimeError("Jolpica is down")
 
@@ -163,6 +169,20 @@ def test_a_season_with_no_results_yet_needs_no_standings() -> None:
     report.check_caught_up()
 
     assert report.problems == []
+
+
+def test_standings_still_short_of_the_latest_grand_prix_arent_caught_up() -> None:
+    # Round 2's results are in, but Jolpica's standings still stop at its sprint
+    report = IngestReport(results_round={2026: 2}, caught_up={(2026, "qualifying"): 2})
+
+    _standings(_db({"standings": []}), _after_round_2s_sprint(), 2026, report)
+    report.check_caught_up()
+
+    assert report.caught_up[(2026, "driver standings")] == 1
+    assert report.problems == [
+        "driver standings for 2026 reach round 1, the results round 2",
+        "constructor standings for 2026 reach round 1, the results round 2",
+    ]
 
 
 def _race(rnd: int) -> dict:

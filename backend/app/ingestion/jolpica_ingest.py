@@ -430,6 +430,16 @@ def _standings_rows(
     return rnd, rows
 
 
+def _has_its_grand_prix(rows: list[dict], rnd: int) -> bool:
+    """Whether standings rows after round ``rnd`` include its Grand Prix.
+
+    Jolpica's wins count Grand Prix wins only (2025's add up to its 24 rounds,
+    its 6 sprint wins not counted), so after round ``rnd``'s Grand Prix they add
+    up to ``rnd``; stored after its sprint, they're one short.
+    """
+    return sum(row["wins"] or 0 for row in rows) >= rnd
+
+
 def _stored_standings_rounds(supabase: Client, season: int, kind: str) -> set[int]:
     """The rounds that already have standings rows of this kind."""
     rows = fetch_all(
@@ -454,17 +464,21 @@ def _store_round_standings(
     entity_key: str,
     id_key: str,
     lookup: dict[str, int],
-    report: IngestReport | None,
 ) -> int:
-    """Fetch and upsert the standings after one round. Raises on a failed fetch."""
+    """Fetch and upsert the standings after one round.
+
+    Raises on a failed fetch, and on an answer with nothing to store, so a
+    caller repairing a round knows the repair didn't happen.
+    """
     data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
     lists = data.get("StandingsTable", {}).get("StandingsLists", [])
     if not lists:
-        _problem(report, f"No {kind} standings for {season} round {rnd}")
-        return 0
+        raise ValueError("Jolpica sent no standings")
     _, rows = _standings_rows(
         lists[0], season, kind, list_key, entity_key, id_key, lookup
     )
+    if not rows:
+        raise ValueError(f"no {kind} in Jolpica's standings is in the database")
     return batch_upsert(
         supabase, "standings", rows, on_conflict="season,round,type,entity_id"
     )
@@ -486,7 +500,10 @@ def ingest_standings(
     The latest round stored by an earlier run may have been stored between a
     sprint and its Grand Prix, so once Jolpica's latest round has moved past it,
     that round is fetched again before the new one is stored. If that fetch
-    fails, the new round waits too, so the next run tries again.
+    fails or brings nothing to store, the new round waits too, so the next run
+    tries again. Standings that don't yet include the latest Grand Prix (its
+    win is missing) count as reaching only the round before it, so the refresh
+    report flags them.
 
     With ``every_round``, also fetch the standings after each earlier round
     that has no stored rows yet, so points can be charted round by round with
@@ -519,7 +536,7 @@ def ingest_standings(
                 if 0 < last_stored < latest:
                     try:
                         total += _store_round_standings(
-                            supabase, http, rl, season, last_stored, *names, report
+                            supabase, http, rl, season, last_stored, *names
                         )
                     except Exception as exc:
                         _problem(
@@ -535,7 +552,11 @@ def ingest_standings(
                     on_conflict="season,round,type,entity_id",
                 )
                 if report is not None and rows:
-                    report.caught_up[(season, f"{kind} standings")] = latest
+                    # Standings still short of the latest Grand Prix reach only
+                    # the round before it
+                    full = _has_its_grand_prix(rows, latest)
+                    reached = latest if full else latest - 1
+                    report.caught_up[(season, f"{kind} standings")] = reached
                 if not every_round:
                     continue
                 for rnd in range(1, latest):
@@ -545,7 +566,7 @@ def ingest_standings(
                     # run tries it again
                     try:
                         total += _store_round_standings(
-                            supabase, http, rl, season, rnd, *names, report
+                            supabase, http, rl, season, rnd, *names
                         )
                     except Exception as exc:
                         _problem(
