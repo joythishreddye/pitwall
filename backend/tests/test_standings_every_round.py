@@ -539,6 +539,42 @@ def test_the_fill_overwrites_an_older_round_stored_before_its_grand_prix() -> No
     assert _points(db)[("driver", 2, ANT)] == 20
 
 
+def test_an_older_round_jolpica_still_serves_short_of_its_grand_prix_isnt_stored() -> (
+    None
+):
+    # Round 2's Grand Prix result is in, but Jolpica's round 2 standings still
+    # stop at its sprint (one win): the stored round stays, and the run fails
+    stored = [_standing(2, 2, ANT, 1, 20, wins=2)]
+    db = _db({"standings": stored})
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_at_its_sprint(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if "/2026/2/" in url:
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            standings = body["StandingsLists"][0]
+            entries = (
+                standings.get("DriverStandings") or standings["ConstructorStandings"]
+            )
+            entries[0]["wins"] = "1"
+            entries[0]["points"] = "15"
+        return response
+
+    http.get.side_effect = round_2_at_its_sprint
+    report = IngestReport(results_round={2026: 3}, results_rounds={2026: {1, 2, 3}})
+    _ingest(db, http, every_round=True, report=report)
+
+    assert _points(db)[("driver", 2, ANT)] == 20
+    assert ("constructor", 2, 7) not in _points(db)
+    assert [p for p in report.problems if "round 2" in p] == [
+        "driver standings for 2026 round 2 failed: Jolpica's standings after "
+        "round 2 hold 1 win, short of the 2 Grands Prix run by then",
+        "constructor standings for 2026 round 2 failed: Jolpica's standings after "
+        "round 2 hold 1 win, short of the 2 Grands Prix run by then",
+    ]
+
+
 def test_an_older_round_without_someone_is_stored_reported_and_filled_in_later() -> (
     None
 ):

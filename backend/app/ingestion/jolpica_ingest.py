@@ -502,9 +502,12 @@ def _store_round_standings(
     standings (none, another round's, or no one in the database). Standings
     with someone not in the database yet are stored with who is known and
     reported; an every-round refresh reads the round again, so they fill in
-    once that person is added. Standings still without the round's Grand Prix
-    are stored as Jolpica has them: a Grand Prix cancelled after its sprint
-    never adds its win.
+    once that person is added.
+
+    A round this run read Grand Prix results for must have their wins: one
+    whose standings still stop at its sprint raises, and what's stored stays.
+    A round without results (a Grand Prix cancelled after its sprint, which
+    never adds its win) is stored as Jolpica has it.
     """
     data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
     lists = data.get("StandingsTable", {}).get("StandingsLists", [])
@@ -517,6 +520,16 @@ def _store_round_standings(
         raise ValueError(f"Jolpica sent round {got}'s standings, not round {rnd}'s")
     if not rows:
         raise ValueError(f"no {kind} in Jolpica's standings is in the database")
+    if report is not None and rnd in report.results_rounds.get(season, set()):
+        # Jolpica's own wins, so someone not in the database can't hide them
+        wins = sum(int(e.get("wins") or 0) for e in lists[0].get(list_key, []))
+        grands_prix = report.grands_prix_by(season, rnd)
+        if wins < grands_prix:
+            raise ValueError(
+                f"Jolpica's standings after round {rnd} hold "
+                f"{wins} win{'s' if wins != 1 else ''}, "
+                f"short of the {grands_prix} Grands Prix run by then"
+            )
     if missing := _not_in_database(lists[0], list_key, kind, rows):
         _problem(
             report,
