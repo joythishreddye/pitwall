@@ -33,7 +33,7 @@ What a race gets depends on its year (D13):
   - the start: every starter's tyre when they all match, with race control's grip and rain notes;
   - the first cars onto slicks, and a return to intermediates;
   - a stewards' change after the flag (the file's `resultChanges`), with the seconds added;
-  - a late start (see Miami and Malaysia below);
+  - a late start, as at Malaysia 2026 (below);
   - retirements and non-starters.
 - **A race without a replay file** gets the result lines and the OUT line only.
 
@@ -69,16 +69,18 @@ What a race gets depends on its year (D13):
    slowed version?").
 2. **Where the page gets the file.** Recommended: from the site itself, `/replays/<season>/<round>.json`
    (brief 002's storage), fetched in the browser. No Render egress, and nothing calls OpenF1.
-3. **Knowing which races have a file.** Recommended: the build script also writes a manifest the page imports at
-   build time (season to rounds). The page then never asks for a file that isn't there, so there's no 404 in the
-   console (verify-outcome fails on console errors).
+3. **Knowing which races have a file.** Recommended: each season's `index.json`, which brief 002's build script
+   writes beside the files (its rounds and outlines), imported by the page at build time. The page then never
+   asks for a file that isn't there, so there's no 404 in the console (verify-outcome fails on console errors).
 4. **The chips.** Recommended: answered in the browser from the replay (above). They cost nothing, answer at
    once, and can't spend the day's Groq answers (brief 001's chip landmine). The other option, sending each chip
    to the chat, is slower and spends the shared budget.
 5. **The summary.** Recommended: rules, not the LLM. No spend, facts only from the data, and tests can check
    every line.
 6. **Phones (390).** Recommended: one column, in the order summary, standby, map with its controls, tower, radio.
-7. **The result table.** Recommended: kept below the replay, unchanged, with its pit stops tab.
+7. **The result table.** Recommended: kept below the replay, with its pit stops tab, and fixed at 390 first, in
+   its own small PR. Today at 390 it scrolls sideways (571 px wide) and the driver and team columns shrink to
+   nothing (found 2026-11-27 on 2024 Bahrain), which the race page's gate would fail.
 8. **2023 to 2025 files.** Recommended: the same storage and script as 2026. About 20 KB a race, so about
    1.3 MB for 66 races.
 
@@ -113,7 +115,9 @@ What a race gets depends on its year (D13):
 8. **e2e, a race with no file:** the summary from the result and the table show; no replay section and no console
    error.
 9. **Unit tests for the summary and the replay's state at a moment.** These are plain functions under
-   `frontend/lib/replay/`. Vitest (planned in CLAUDE.md) comes in with this build.
+   `frontend/lib/replay/`. Vitest (planned in CLAUDE.md) comes in its own PR first: a step in the existing
+   frontend CI job (a new job would be a check the main ruleset doesn't require), and a line in CLAUDE.md's
+   gates.
 10. **pytest, start times:** the seed and the schedule script write 17:00 UTC for 2026 round 4 and Jolpica's
     time for every other race; the builder's stored-start check uses the override.
 11. **The 2023 to 2025 files** pass `check_replays.py`, like 2026's.
@@ -130,6 +134,10 @@ What a race gets depends on its year (D13):
 ## Landmines
 - **The fixture API 404s on a path with no fixture,** which fails verify-outcome. The race page's e2e needs
   fixtures for `/api/v1/races/<id>` and its strategy route.
+- **verify.json lists only `/`,** so verify-outcome never opens a race page. Add a race route (one with a
+  replay file in the fixtures). A route adds screenshots for the judgment, not baselines.
+- **Circuits off the 2026 calendar** (Bahrain, Jeddah, Imola and others in 2023 to 2025) need their direction
+  in the builder's list, or their outlines go unchecked for mirroring.
 - **No second `header` or `aside`** on any page: frontend/e2e/shell.spec.ts takes them unscoped.
 - **React Compiler lint:** no refs read during render and no synchronous setState in effects. The replay clock
   runs on `requestAnimationFrame` with refs, and the UI reads it at about 10 updates a second.
