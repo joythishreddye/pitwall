@@ -62,6 +62,7 @@ def _db(tables: dict[str, list[dict]]) -> MagicMock:
 # ── The progression ──────────────────────────────────────────────
 
 ANT, RUS, HAM = 3, 2, 1
+MERCEDES = 7
 
 
 def _result(rid: int, race_id: int, driver_id: int, points: float) -> dict:
@@ -124,6 +125,9 @@ def _season(standings: list[dict]) -> MagicMock:
                 _driver(ANT, "antonelli", "Kimi", "Antonelli"),
                 _driver(RUS, "russell", "George", "Russell"),
                 _driver(HAM, "hamilton", "Lewis", "Hamilton"),
+            ],
+            "constructors": [
+                {"id": MERCEDES, "ref": "mercedes", "name": "Mercedes"},
             ],
             "standings": standings,
         }
@@ -229,6 +233,32 @@ def test_the_standings_endpoint_still_reads_the_latest_round(
         assert response.constructor_standings == []
     else:
         assert response.constructor_standings is None
+
+
+def _constructor(sid: int, rnd: int, points: float) -> dict:
+    return {
+        **_standing(sid, rnd, MERCEDES, 1, points, wins=rnd),
+        "type": "constructor",
+    }
+
+
+@pytest.mark.parametrize(
+    ("kind", "answer"), [(None, 1), ("driver", 1), ("constructor", 2)]
+)
+def test_both_tables_answer_the_round_both_kinds_have(
+    kind: str | None, answer: int
+) -> None:
+    # A refresh held the driver standings back at round 1 (their repair fetch
+    # failed) while the constructor standings moved on to round 2
+    constructors = [_constructor(7, 1, 37), _constructor(8, 2, 92)]
+    response = get_standings(2026, _season(AFTER_ROUND_1 + constructors), type=kind)
+
+    assert response.round == answer
+    if kind != "constructor":
+        assert [e.points for e in response.driver_standings] == [25, 18, 12]
+    if kind != "driver":
+        points = 37 if answer == 1 else 92
+        assert [e.points for e in response.constructor_standings] == [points]
 
 
 # ── The Jolpica fill ─────────────────────────────────────────────
@@ -379,6 +409,36 @@ def test_ingest_fills_in_only_the_rounds_with_no_standings() -> None:
     http, fetched = _jolpica(latest=3)
     _ingest(db, http, every_round=True)
     assert len(fetched) == 2
+
+
+def test_the_fill_also_repairs_an_older_round_stored_before_its_grand_prix() -> None:
+    # An older run stored round 2 on its sprint Saturday (its win missing), and
+    # later runs stored round 3
+    stored = [
+        _standing(1, 1, ANT, 1, 10, wins=1),
+        _standing(2, 2, ANT, 1, 15, wins=1),
+        _standing(3, 3, ANT, 1, 30, wins=3),
+    ]
+    db = _db({"standings": stored})
+    http, fetched = _jolpica(latest=4)
+
+    _ingest(db, http, every_round=True)
+
+    # The latest, then round 3 as the last stored round, then round 2; round 1
+    # holds its Grand Prix and isn't fetched
+    assert [url for url in fetched if "driverStandings" in url] == [
+        f"{BASE_URL}/2026/driverStandings.json",
+        f"{BASE_URL}/2026/3/driverStandings.json",
+        f"{BASE_URL}/2026/2/driverStandings.json",
+    ]
+    assert _points(db)[("driver", 2, ANT)] == 20
+
+    # Once repaired, a second run fetches only the latest
+    http, fetched = _jolpica(latest=4)
+    _ingest(db, http, every_round=True)
+    assert [url for url in fetched if "driverStandings" in url] == [
+        f"{BASE_URL}/2026/driverStandings.json",
+    ]
 
 
 def test_a_round_that_fails_doesnt_stop_the_later_ones() -> None:

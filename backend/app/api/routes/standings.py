@@ -77,18 +77,29 @@ class DriverPointsProgression(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def _latest_round(db: Client, season: int) -> int | None:
-    """Return the highest round number present in standings for a season."""
-    result = (
-        db.table("standings")
-        .select("round")
-        .eq("season", season)
-        .order("round", desc=True)
-        .limit(1)
-        .execute()
-    )
-    rows = result.data or []
-    return rows[0]["round"] if rows else None
+def _latest_round(db: Client, season: int, kinds: tuple[str, ...]) -> int | None:
+    """The latest round that every asked kind of standings has reached.
+
+    A refresh can hold one kind back a round while the other moves on, so
+    asking for both answers the round both have rather than one with an empty
+    table. A kind with no rows at all (a season before constructor standings)
+    doesn't count.
+    """
+    latest: list[int] = []
+    for kind in kinds:
+        result = (
+            db.table("standings")
+            .select("round")
+            .eq("season", season)
+            .eq("type", kind)
+            .order("round", desc=True)
+            .limit(1)
+            .execute()
+        )
+        rows = result.data or []
+        if rows:
+            latest.append(rows[0]["round"])
+    return min(latest, default=None)
 
 
 def _fetch_driver_standings(
@@ -240,7 +251,8 @@ def get_standings(
     Raises:
         HTTPException: 404 when no standings data exists for the requested year.
     """
-    round_number = _latest_round(db, year)
+    kinds = (type,) if type else ("driver", "constructor")
+    round_number = _latest_round(db, year, kinds)
     if round_number is None:
         raise HTTPException(
             status_code=404, detail=f"No standings data found for season {year}"

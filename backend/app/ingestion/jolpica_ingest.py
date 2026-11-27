@@ -440,16 +440,22 @@ def _has_its_grand_prix(rows: list[dict], rnd: int) -> bool:
     return sum(row["wins"] or 0 for row in rows) >= rnd
 
 
-def _stored_standings_rounds(supabase: Client, season: int, kind: str) -> set[int]:
-    """The rounds that already have standings rows of this kind."""
+def _stored_standings_rounds(
+    supabase: Client, season: int, kind: str
+) -> dict[int, bool]:
+    """The rounds that already have standings rows of this kind, each with
+    whether its rows include the round's Grand Prix."""
     rows = fetch_all(
         lambda: supabase.table("standings")
-        .select("id, round")
+        .select("id, round, wins")
         .eq("season", season)
         .eq("type", kind)
         .order("id")
     )
-    return {row["round"] for row in rows}
+    by_round: dict[int, list[dict]] = {}
+    for row in rows:
+        by_round.setdefault(row["round"], []).append(row)
+    return {rnd: _has_its_grand_prix(got, rnd) for rnd, got in by_round.items()}
 
 
 def _store_round_standings(
@@ -506,9 +512,10 @@ def ingest_standings(
     report flags them.
 
     With ``every_round``, also fetch the standings after each earlier round
-    that has no stored rows yet, so points can be charted round by round with
-    sprints included. Only missing rounds are fetched: about two calls per
-    round the first time, none after that.
+    that has no stored rows yet, or whose rows were stored before its Grand
+    Prix (an older run on a sprint Saturday), so points can be charted round
+    by round with sprints included. About two calls per round the first time,
+    none after that.
     """
     lookups = {"driver": driver_lookup, "constructor": constructor_lookup}
     total = 0
@@ -560,7 +567,8 @@ def ingest_standings(
                 if not every_round:
                     continue
                 for rnd in range(1, latest):
-                    if rnd in stored:
+                    # Skip rounds stored whole, and the one just fetched again
+                    if stored.get(rnd) or rnd == last_stored:
                         continue
                     # A round that fails doesn't stop the later ones; the next
                     # run tries it again
