@@ -11,7 +11,8 @@ import type { RaceResult } from "@/lib/schemas/races";
 
 // One column layout for the header and the rows. Phones get five columns (the team moves under the driver's
 // name, and the fastest lap shows beside it); from 1024 px, the full seven (at 768 the sidebar leaves too little room).
-// The phone Gap column fits the winner's race time ("1:35:23.504").
+// The phone Gap column fits the winner's race time ("95:23.504": formatLapTime has no hours) and a status
+// such as "Disqualified".
 const COLUMNS =
   "grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem_2.25rem_5.25rem] gap-x-2 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
 

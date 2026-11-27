@@ -130,7 +130,7 @@ export default function RaceDetailPage({
         <div className="h-screen flex items-center justify-center bg-f1-dark">
           <div className="w-72 h-72 bg-f1-grid/10 animate-pulse" />
         </div>
-        <div className="px-8 pb-8 pt-6">
+        <div className="px-4 pb-8 pt-6 md:px-8">
           <div className="h-8 w-80 bg-f1-grid/30 rounded-sm animate-pulse mb-2" />
           <div className="h-4 w-60 bg-f1-grid/30 rounded-sm animate-pulse" />
         </div>
@@ -140,7 +140,7 @@ export default function RaceDetailPage({
 
   if (error || !race) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <button
           onClick={() => router.back()}
           className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6 cursor-pointer"
@@ -179,7 +179,7 @@ export default function RaceDetailPage({
       )}
 
       {/* Content section — fades in after hero collapses */}
-      <div ref={contentRef} className="px-8 pb-8">
+      <div ref={contentRef} className="px-4 pb-8 md:px-8">
         <button
           onClick={() => router.back()}
           className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mt-6 mb-2 cursor-pointer"
