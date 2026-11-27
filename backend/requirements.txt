@@ -20,6 +20,9 @@ groq==0.25.0
 # pandas==2.2.3
 # numpy==2.2.4
 
+# Time zones for the homepage briefing: the slim image may have no zone files
+tzdata==2025.3
+
 # Data ingestion
 fastf1==3.5.3
 httpx==0.28.1
