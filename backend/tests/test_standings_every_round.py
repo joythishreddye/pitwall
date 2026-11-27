@@ -77,7 +77,9 @@ def _result(rid: int, race_id: int, driver_id: int, points: float) -> dict:
     }
 
 
-def _standing(sid: int, rnd: int, driver_id: int, position: int, points: float):
+def _standing(
+    sid: int, rnd: int, driver_id: int, position: int, points: float, wins: int = 0
+):
     return {
         "id": sid,
         "season": 2026,
@@ -86,7 +88,7 @@ def _standing(sid: int, rnd: int, driver_id: int, position: int, points: float):
         "entity_id": driver_id,
         "position": position,
         "points": points,
-        "wins": 0,
+        "wins": wins,
     }
 
 
@@ -129,13 +131,14 @@ def _season(standings: list[dict]) -> MagicMock:
 
 
 # The sprint gave RUS 8 and ANT 7, so after round 2 Russell is ahead of Hamilton
+# Antonelli won both Grands Prix: the wins add up to the round
 AFTER_ROUND_1 = [
-    _standing(1, 1, ANT, 1, 25),
+    _standing(1, 1, ANT, 1, 25, wins=1),
     _standing(2, 1, HAM, 2, 18),
     _standing(3, 1, RUS, 3, 12),
 ]
 AFTER_ROUND_2 = [
-    _standing(4, 2, ANT, 1, 57),
+    _standing(4, 2, ANT, 1, 57, wins=2),
     _standing(5, 2, RUS, 2, 35),
     _standing(6, 2, HAM, 3, 30),
 ]
@@ -173,15 +176,29 @@ def test_progression_falls_back_to_race_results_while_a_round_has_no_standings()
 # Round 2's results are in, but its standings were stored after the sprint:
 # the sprint's points only (ANT 25+7, RUS 12+8, HAM 18+0)
 ROUND_2_SPRINT_ONLY = [
-    _standing(4, 2, ANT, 1, 32),
+    _standing(4, 2, ANT, 1, 32, wins=1),
     _standing(5, 2, RUS, 2, 20),
     _standing(6, 2, HAM, 3, 18),
 ]
+# The same, for drivers whose earlier sprint points (made up here) already put
+# each one above his Grand Prix points to round 2: only the wins show it's stale
+ROUND_2_SPRINT_ONLY_MASKED = [
+    _standing(4, 2, ANT, 1, 60, wins=1),
+    _standing(5, 2, RUS, 2, 31),
+    _standing(6, 2, HAM, 3, 30),
+]
 
 
-def test_progression_falls_back_while_a_rounds_standings_lack_its_grand_prix() -> None:
+@pytest.mark.parametrize(
+    "round_2",
+    [ROUND_2_SPRINT_ONLY, ROUND_2_SPRINT_ONLY_MASKED],
+    ids=["short_on_points", "points_masked_by_sprints"],
+)
+def test_progression_falls_back_while_a_rounds_standings_lack_its_grand_prix(
+    round_2: list[dict],
+) -> None:
     progression = get_standings_progression(
-        2026, _season(AFTER_ROUND_1 + ROUND_2_SPRINT_ONLY), top=2
+        2026, _season(AFTER_ROUND_1 + round_2), top=2
     )
 
     # Race sums, as with no standings: never 32 for Antonelli after round 2

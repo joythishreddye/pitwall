@@ -265,46 +265,40 @@ def get_standings(
 
 def _driver_standings_by_round(
     db: Client, season: int
-) -> dict[int, dict[int, tuple[float, int | None]]]:
-    """{round: {driver_id: (points, position)}} from the season's standings rows."""
+) -> tuple[dict[int, dict[int, tuple[float, int | None]]], dict[int, int]]:
+    """The season's driver standings rows as {round: {driver_id: (points,
+    position)}}, and each round's wins added up."""
     rows = fetch_all(
         lambda: db.table("standings")
-        .select("id, entity_id, round, points, position")
+        .select("id, entity_id, round, points, position, wins")
         .eq("type", "driver")
         .eq("season", season)
         .order("id")
     )
     by_round: dict[int, dict[int, tuple[float, int | None]]] = defaultdict(dict)
+    wins: dict[int, int] = defaultdict(int)
     for row in rows:
         by_round[row["round"]][row["entity_id"]] = (
             float(row["points"] or 0),
             row["position"],
         )
-    return by_round
+        wins[row["round"]] += row.get("wins") or 0
+    return by_round, wins
 
 
 def _standings_hold_results(
     by_round: dict[int, dict[int, tuple[float, int | None]]],
-    points_by_driver: dict[int, dict[int, float]],
+    wins: dict[int, int],
     rounds_with_results: list[int],
 ) -> bool:
     """Whether every round with results has standings that include its Grand Prix.
 
-    Standings add sprint points to the Grand Prix points, so after each round a
-    driver's standings total is at least his Grand Prix points up to it.
-    Standings stored between a sprint and its Grand Prix, and not fetched again
-    since, fall short of that once the Grand Prix's results are in.
+    Jolpica's wins count Grand Prix wins only, so the standings after round N
+    hold N wins once its Grand Prix is in. Standings stored between a sprint and
+    its Grand Prix, and not fetched again since, are one short. Points can't
+    tell: earlier sprint points can cover a missing Grand Prix.
     """
-    if not set(rounds_with_results) <= by_round.keys():
-        return False
-    for did, rounds in points_by_driver.items():
-        running = 0.0
-        for rnd in rounds_with_results:
-            running += rounds.get(rnd, 0.0)
-            stored = by_round[rnd].get(did)
-            if running > 0 and (stored is None or stored[0] < running - 1e-6):
-                return False
-    return True
+    return all(rnd in by_round and wins[rnd] >= rnd for rnd in rounds_with_results)
 
 
 @router.get("/{year}/progression", response_model=list[DriverPointsProgression])
@@ -352,20 +346,11 @@ def get_standings_progression(
     if not season_rows:
         return []
 
-    # Grand Prix points only: race_results hold no sprint results
-    points_by_driver: dict[int, dict[int, float]] = defaultdict(
-        lambda: defaultdict(float)
-    )
-    for row in season_rows:
-        did = row["driver_id"]
-        rnd = race_id_to_round[row["race_id"]]
-        points_by_driver[did][rnd] += float(row.get("points") or 0)
-
     rounds_with_results = sorted({race_id_to_round[r["race_id"]] for r in season_rows})
-    by_round = _driver_standings_by_round(db, year)
+    by_round, wins = _driver_standings_by_round(db, year)
     # {driver_id: {round: points after that round}}
     totals_after: dict[int, dict[int, float]] = defaultdict(dict)
-    if _standings_hold_results(by_round, points_by_driver, rounds_with_results):
+    if _standings_hold_results(by_round, wins, rounds_with_results):
         # The standings after each round include sprints. A round stored after
         # its sprint but before its results (a sprint Saturday) isn't charted.
         latest = by_round[rounds_with_results[-1]]
@@ -377,6 +362,14 @@ def get_standings_progression(
             for did, (points, _) in by_round[rnd].items():
                 totals_after[did][rnd] = points
     else:
+        # Grand Prix points only: race_results hold no sprint results
+        points_by_driver: dict[int, dict[int, float]] = defaultdict(
+            lambda: defaultdict(float)
+        )
+        for row in season_rows:
+            did = row["driver_id"]
+            rnd = race_id_to_round[row["race_id"]]
+            points_by_driver[did][rnd] += float(row.get("points") or 0)
         driver_totals = {
             did: sum(rounds.values()) for did, rounds in points_by_driver.items()
         }
