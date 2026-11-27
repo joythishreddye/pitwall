@@ -170,10 +170,17 @@ def test_progression_falls_back_to_race_results_while_a_round_has_no_standings()
     assert progression[1].constructor_ref == "ferrari"
 
 
-def test_the_standings_endpoint_still_reads_the_latest_round() -> None:
-    response = get_standings(
-        2026, _season(AFTER_ROUND_1 + AFTER_ROUND_2), type="driver"
-    )
+@pytest.mark.parametrize(
+    "standings",
+    [AFTER_ROUND_2, AFTER_ROUND_1 + AFTER_ROUND_2],
+    ids=["latest_round_only", "every_round"],
+)
+@pytest.mark.parametrize("kind", ["driver", None])
+def test_the_standings_endpoint_still_reads_the_latest_round(
+    standings: list[dict], kind: str | None
+) -> None:
+    # Today's table holds only the latest round; after the fill it holds every round
+    response = get_standings(2026, _season(standings), type=kind)
 
     assert response.round == 2
     assert [(e.driver_ref, e.points) for e in response.driver_standings] == [
@@ -181,6 +188,10 @@ def test_the_standings_endpoint_still_reads_the_latest_round() -> None:
         ("russell", 35),
         ("hamilton", 30),
     ]
+    if kind is None:
+        assert response.constructor_standings == []
+    else:
+        assert response.constructor_standings is None
 
 
 # ── The Jolpica fill ─────────────────────────────────────────────
