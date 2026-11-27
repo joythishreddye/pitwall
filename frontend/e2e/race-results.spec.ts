@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-// The race results table at every width: 22 rows, each driver's name showing, and nothing wider than the screen.
+// The race results table at every width: 22 rows, each driver's name showing, the fastest lap showing, and nothing
+// wider than the screen.
 // Brazil 2026 (race 193) from the saved fixture.
 
 // Nothing reaches the network beyond this machine (as in shell.spec.ts).
@@ -24,12 +25,28 @@ test("the results table fits the screen and shows every driver's name", async ({
   );
   expect(overflow).toBeLessThanOrEqual(0);
 
-  // every surname has room to show at least a few letters
+  // every name's box has room to show at least a few letters (its own width, which clipping can shrink, not the
+  // text's)
   for (const row of await rows.all()) {
-    const name = row.locator("span.font-semibold.uppercase");
-    const box = await name.boundingBox();
-    expect(box?.width ?? 0).toBeGreaterThan(24);
+    const width = await row.locator(".result-name").evaluate((el) => el.clientWidth);
+    expect(width).toBeGreaterThan(24);
   }
+});
+
+test("the fastest lap shows once, inside its row, even beside a long surname", async ({ page }) => {
+  await page.goto("/races/193");
+  // Antonelli set it, and his surname is long enough to be shortened on a phone
+  const fl = page.getByLabel("Fastest lap").filter({ visible: true });
+  await expect(fl).toHaveCount(1);
+  const row = page.locator("a.result-row").filter({ has: fl });
+  await expect(row).toContainText("Antonelli");
+  const badge = (await fl.boundingBox())!;
+  const phone = (page.viewportSize()?.width ?? 0) < 1024;
+  // beside the name below 1024 px, so it must sit inside the driver's cell; in its own column from 1024 px
+  const box = (await (phone ? row.locator(".result-driver") : row).boundingBox())!;
+  expect(badge.width).toBeGreaterThan(8);
+  expect(badge.x).toBeGreaterThanOrEqual(box.x);
+  expect(badge.x + badge.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
 });
 
 test("the team shows under the name below 1024 px and in its own column from 1024 px", async ({ page }) => {

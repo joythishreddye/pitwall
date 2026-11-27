@@ -11,8 +11,9 @@ import type { RaceResult } from "@/lib/schemas/races";
 
 // One column layout for the header and the rows. Phones get five columns (the team moves under the driver's
 // name, and the fastest lap shows beside it); from 1024 px, the full seven (at 768 the sidebar leaves too little room).
+// The phone Gap column fits the winner's race time ("1:35:23.504").
 const COLUMNS =
-  "grid grid-cols-[2.75rem_minmax(0,1fr)_2.25rem_2.25rem_4.75rem] gap-x-2 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
+  "grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem_2.25rem_5.25rem] gap-x-2 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
 
 interface RaceResultsTableProps {
   results: RaceResult[];
@@ -100,18 +101,26 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             </span>
 
             {/* Driver */}
-            <div className="flex items-center gap-2 lg:gap-3 min-w-0">
+            <div className="result-driver flex items-center gap-2 lg:gap-3 min-w-0">
               <div
                 className="w-1 h-5 shrink-0"
                 style={{ backgroundColor: teamColor }}
                 aria-hidden="true"
               />
               <span className="min-w-0">
-                <span className="block truncate">
-                  <span className="hidden lg:inline text-f1-muted">{r.driver.forename} </span>
-                  <span className="font-semibold uppercase">{r.driver.surname}</span>
+                {/* The surname shortens on a narrow screen; the fastest lap badge never does */}
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <span className="result-name truncate min-w-0">
+                    <span className="hidden lg:inline text-f1-muted">{r.driver.forename} </span>
+                    <span className="font-semibold uppercase">{r.driver.surname}</span>
+                  </span>
                   {isFl && (
-                    <span className="lg:hidden ml-1.5 font-data text-xs text-purple-400">FL</span>
+                    <span
+                      className="lg:hidden shrink-0 rounded-sm bg-f1-purple px-1 font-data text-[11px] font-bold leading-4 text-f1-dark"
+                      aria-label="Fastest lap"
+                    >
+                      FL
+                    </span>
                   )}
                 </span>
                 {/* On phones the team sits under the name */}
