@@ -9,6 +9,8 @@ import httpx
 import pandas as pd
 from supabase import Client
 
+from app.db.supabase import fetch_all
+
 logger = logging.getLogger(__name__)
 
 BATCH_SIZE = 500
@@ -74,23 +76,22 @@ def build_lookup(
     key_col: str,
     value_col: str = "id",
 ) -> dict:
-    """Load a {key: value} mapping from a Supabase table."""
-    rows = (
-        supabase.table(table)
-        .select(f"{value_col}, {key_col}")
-        .limit(10000)
-        .execute()
-        .data
+    """Load a {key: value} mapping from every row of a Supabase table.
+
+    Paged with fetch_all: the database answers at most 1,000 rows a request,
+    so one read would cut the lookup short without a word. ``value_col`` must
+    be unique (the default, ``id``, is), since the pages are ordered on it.
+    """
+    rows = fetch_all(
+        lambda: supabase.table(table).select(f"{value_col}, {key_col}").order(value_col)
     )
-    if len(rows) == 10000:
-        logger.warning("Lookup for %s hit 10K limit — may be truncated", table)
     return {r[key_col]: r[value_col] for r in rows}
 
 
 def build_race_lookup(supabase: Client) -> dict[tuple[int, int], int]:
-    """Load {(season, round): id} mapping from races table."""
-    rows = (
-        supabase.table("races").select("id, season, round").limit(10000).execute().data
+    """Load {(season, round): id} mapping from every row of the races table."""
+    rows = fetch_all(
+        lambda: supabase.table("races").select("id, season, round").order("id")
     )
     return {(r["season"], r["round"]): r["id"] for r in rows}
 
