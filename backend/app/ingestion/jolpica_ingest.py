@@ -420,10 +420,15 @@ def _standings_rows(
     id_key: str,
     lookup: dict[str, int],
 ) -> tuple[int, list[dict]]:
-    """Map one Jolpica StandingsList to (its round, standings table rows)."""
+    """Map one Jolpica StandingsList to (its round, standings table rows).
+
+    Jolpica lists someone it hasn't placed yet (2026 round 1's Stroll: no
+    classified finish, positionText "-") with no ``position``, last in its
+    list. The table needs a position, so they take their place in the list.
+    """
     rnd = int(standings_list.get("round", 0))
     rows = []
-    for entry in standings_list.get(list_key, []):
+    for place, entry in enumerate(standings_list.get(list_key, []), start=1):
         entity_id = lookup.get(entry[entity_key][id_key])
         if entity_id is None:
             continue
@@ -433,7 +438,7 @@ def _standings_rows(
                 "round": rnd,
                 "type": kind,
                 "entity_id": entity_id,
-                "position": safe_int(entry["position"]),
+                "position": safe_int(entry.get("position"), place),
                 "points": safe_float(entry["points"], 0.0),
                 "wins": safe_int(entry.get("wins"), 0),
             }
