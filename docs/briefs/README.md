@@ -7,9 +7,7 @@ names the file. Build exactly what the brief says, and check its acceptance crit
 |---|---|---|
 | [001](001-briefing-homepage.md) | The briefing homepage | Nov 27 to Dec 3, 2026 |
 | [002](002-race-data-spine.md) | Race data behind the pages, and the automatic after-race refresh | Nov 27 to Dec 6, 2026 |
-
-Next: 003, the race page (the engineer's summary, the engineer on standby, and the replay at 1× and 2× with the
-big moments marked), Dec 4 to 20.
+| [003](003-race-page.md) | The race page: the engineer's summary, the engineer on standby, and the replay (his review pending) | Dec 4 to 20, 2026, started early |
 
 Rules for every build:
 - Follow `CLAUDE.md` and `.claude/rules/`, and `DESIGN.md` once it exists.
