@@ -116,7 +116,7 @@ export default function AcademyPage() {
             Phase 4 · Not yet active
           </p>
           <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-ibm-plex)]">
-            F1 Academy
+            Academy
           </h1>
         </div>
         <div className="flex-shrink-0 border border-f1-grid bg-f1-dark-2 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-right">
