@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { z } from "zod/v4";
 import { API_BASE } from "@/lib/api-client";
 
@@ -70,9 +70,11 @@ function saveSession(messages: ChatMessage[]) {
   }
 }
 
+// sessionStorage never notifies this hook, so the subscription does nothing.
+const subscribeNever = () => () => {};
+
 export function useChat() {
   // Start with [] on both server and client so hydration always matches.
-  // Load from sessionStorage in a useEffect after hydration completes.
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,16 +82,23 @@ export function useChat() {
 
   const clearError = useCallback(() => setError(null), []);
 
-  // Restore session after hydration
-  useEffect(() => {
+  // False on the server and during hydration, true on every render after.
+  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const [restored, setRestored] = useState(false);
+
+  // Restore the tab's earlier messages on the first render after hydration.
+  // A guarded state update during render runs once and needs no effect.
+  if (hydrated && !restored) {
+    setRestored(true);
     const stored = loadSession();
     if (stored.length > 0) setMessages(stored);
-  }, []);
+  }
 
-  // Persist completed messages to sessionStorage whenever messages change
+  // Persist completed messages whenever they change, but only after the
+  // restore, so the empty first render can't overwrite the stored session.
   useEffect(() => {
-    saveSession(messages);
-  }, [messages]);
+    if (restored) saveSession(messages);
+  }, [messages, restored]);
 
   const sendMessage = useCallback(
     async (content: string) => {

@@ -173,7 +173,11 @@ def test_a_season_with_no_results_yet_needs_no_standings() -> None:
 
 def test_standings_still_short_of_the_latest_grand_prix_arent_caught_up() -> None:
     # Round 2's results are in, but Jolpica's standings still stop at its sprint
-    report = IngestReport(results_round={2026: 2}, caught_up={(2026, "qualifying"): 2})
+    report = IngestReport(
+        results_round={2026: 2},
+        results_rounds={2026: {1, 2}},
+        caught_up={(2026, "qualifying"): 2},
+    )
 
     _standings(_db({"standings": []}), _after_round_2s_sprint(), 2026, report)
     report.check_caught_up()
@@ -222,6 +226,7 @@ def test_the_results_round_counts_only_races_in_the_database() -> None:
     )
 
     assert report.results_round == {2026: 21}
+    assert report.results_rounds == {2026: {21}}
 
 
 def test_the_full_ingest_hands_its_report_on_and_checks_it(

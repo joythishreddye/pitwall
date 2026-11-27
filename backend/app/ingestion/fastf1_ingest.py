@@ -14,6 +14,7 @@ import pandas as pd
 from supabase import Client
 
 from app.config import settings
+from app.db.supabase import fetch_all
 from app.ingestion._helpers import (
     BATCH_SIZE,
     batch_upsert,
@@ -42,13 +43,11 @@ def _init_cache() -> None:
 
 def _build_driver_code_lookup(supabase: Client) -> dict[str, int]:
     """Map 3-letter driver codes to database IDs."""
-    rows = (
-        supabase.table("drivers")
+    rows = fetch_all(
+        lambda: supabase.table("drivers")
         .select("id, code")
         .not_.is_("code", "null")
-        .limit(10000)
-        .execute()
-        .data
+        .order("id")
     )
     return {r["code"]: r["id"] for r in rows}
 

@@ -1,16 +1,43 @@
 """Groq-backed LLM provider."""
 
+import logging
+import math
 from collections.abc import AsyncIterator
 from typing import Any
 
 import groq
+import httpx
 from groq import AsyncGroq
 
 from app.config import settings
 from app.llm.base import LLMError, LLMProvider, Message
 
+logger = logging.getLogger(__name__)
+
 # Models that spend completion tokens on hidden reasoning before answering.
 _REASONING_MODEL_PREFIXES = ("openai/gpt-oss",)
+
+
+def _log_usage(model: str, usage: Any) -> None:
+    """Log one request's token counts, so real usage shows against Groq's limits."""
+    if usage is None:
+        return
+    logger.info(
+        "groq usage model=%s prompt=%s completion=%s total=%s",
+        model,
+        usage.prompt_tokens,
+        usage.completion_tokens,
+        usage.total_tokens,
+    )
+
+
+def _retry_after(response: httpx.Response) -> float | None:
+    """Groq's retry-after header, in seconds, or None when it's missing or odd."""
+    try:
+        wait = float(response.headers.get("retry-after", ""))
+    except ValueError:
+        return None
+    return wait if math.isfinite(wait) and wait >= 0 else None
 
 
 def _to_llm_error(exc: groq.GroqError) -> LLMError:
@@ -19,6 +46,7 @@ def _to_llm_error(exc: groq.GroqError) -> LLMError:
         return LLMError(
             f"Groq returned {exc.status_code}: {exc.message}",
             status_code=exc.status_code,
+            retry_after=_retry_after(exc.response),
         )
     if isinstance(exc, groq.APIConnectionError):
         return LLMError("Could not reach Groq")
@@ -85,6 +113,7 @@ class GroqProvider(LLMProvider):
             response = await self.client.chat.completions.create(**request)
         except groq.GroqError as exc:
             raise _to_llm_error(exc) from exc
+        _log_usage(self.model, response.usage)
         return response.choices[0].message.content or ""
 
     async def stream_chat(
@@ -95,9 +124,12 @@ class GroqProvider(LLMProvider):
         max_tokens: int = 1024,
     ) -> AsyncIterator[str]:
         request = self._request(messages, temperature, max_tokens)
+        usage = None
         try:
             stream = await self.client.chat.completions.create(**request, stream=True)
             async for chunk in stream:
+                # Groq reports the totals once, on the last chunk.
+                usage = chunk.usage or (chunk.x_groq and chunk.x_groq.usage) or usage
                 if not chunk.choices:  # usage-only chunks carry no choices
                     continue
                 delta = chunk.choices[0].delta.content
@@ -105,6 +137,7 @@ class GroqProvider(LLMProvider):
                     yield delta
         except groq.GroqError as exc:
             raise _to_llm_error(exc) from exc
+        _log_usage(self.model, usage)
 
     async def health_check(self) -> None:
         try:
