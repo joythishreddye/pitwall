@@ -115,6 +115,15 @@ async def test_rate_limited_llm_gets_a_specific_message(wire) -> None:
 
 @pytest.mark.parametrize(
     ("wait", "said"),
+    [(1, "about a minute"), (60, "about a minute"), (61, "about 2 minutes")],
+)
+def test_a_wait_under_two_minutes_says_a_minute(wait: int, said: str) -> None:
+    # A reader's 24 hours can end within the minute: never "about 1 minutes"
+    assert chat_route._wait_in_words(wait) == said
+
+
+@pytest.mark.parametrize(
+    ("wait", "said"),
     [(121, "about 3 minutes"), (300, "about 5 minutes"), (5 * 3600, "about 5 hours")],
 )
 async def test_a_long_wait_from_the_model_says_how_long(

@@ -331,8 +331,11 @@ _LONG_WAIT_SECONDS = 120
 
 
 def _wait_in_words(seconds: float) -> str:
-    """A long wait as the reader would say it: about 5 minutes, about 3 hours."""
+    """A wait as the reader would say it: about a minute, about 5 minutes,
+    about 3 hours."""
     minutes = math.ceil(seconds / 60)
+    if minutes < 2:
+        return "about a minute"
     if minutes < 120:
         return f"about {minutes} minutes"
     return f"about {round(seconds / 3600)} hours"
