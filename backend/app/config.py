@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     chat_rate_limit_global: int = Field(default=3, ge=1)
     # Questions answered per UTC day, counted in Postgres; 0 turns the chat off
     chat_daily_answer_limit: int = Field(default=40, ge=0)
+    # Questions one client can ask in any 24 hours, so one reader can't spend
+    # the whole day's answers. Kept in memory: a deploy or restart forgets it.
+    chat_daily_questions_per_ip: int = Field(default=10, ge=1)
 
     # Bandwidth guard for every route except /health. Render's Hobby plan includes
     # 5 GB of outbound bandwidth a month, then bills $0.15/GB with no cap.

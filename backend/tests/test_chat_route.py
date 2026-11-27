@@ -37,6 +37,11 @@ def wire(monkeypatch: pytest.MonkeyPatch) -> Iterator[callable]:
         "_chat_limiter",
         SlidingWindowLimiter(per_key=100, global_limit=100),
     )
+    monkeypatch.setattr(
+        chat_route,
+        "_reader_day_limiter",
+        SlidingWindowLimiter(per_key=100, global_limit=100, window_seconds=86400),
+    )
 
     def apply(llm: MagicMock) -> None:
         db = MagicMock()
@@ -229,3 +234,73 @@ async def test_a_short_wait_from_the_model_reads_as_busy(wire, wait) -> None:
     events = _events((await _ask()).text)
 
     assert "busy" in events[-1]["data"]
+
+
+async def test_a_reader_past_their_share_of_the_day_gets_429_and_spends_none_of_it(
+    wire, monkeypatch
+) -> None:
+    llm = _llm(tokens=["Box"])
+    wire(llm)
+    monkeypatch.setattr(
+        chat_route,
+        "_reader_day_limiter",
+        SlidingWindowLimiter(per_key=1, global_limit=100, window_seconds=86400),
+    )
+    budget = MagicMock()
+    budget.consume.return_value = True
+    app.dependency_overrides[chat_route.get_answer_budget] = lambda: budget
+
+    first = await _ask()
+    second = await _ask()
+
+    assert first.status_code == 200
+    assert second.status_code == 429
+    assert second.json()["detail"].startswith("You've asked your questions for today.")
+    assert "about 24 hours" in second.json()["detail"]
+    assert 86000 < int(second.headers["Retry-After"]) <= 86400
+    assert budget.consume.call_count == 1
+
+
+async def test_one_readers_share_leaves_other_readers_theirs(wire, monkeypatch) -> None:
+    wire(_llm(tokens=["Box"]))
+    monkeypatch.setattr(
+        chat_route,
+        "_reader_day_limiter",
+        SlidingWindowLimiter(per_key=1, global_limit=100, window_seconds=86400),
+    )
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+
+        async def ask(ip: str) -> int:
+            response = await client.post(
+                "/api/v1/chat",
+                json={"message": "Who won Monza in 2025?"},
+                headers={"cf-connecting-ip": ip},
+            )
+            return response.status_code
+
+        assert await ask("203.0.113.1") == 200
+        assert await ask("203.0.113.1") == 429
+        assert await ask("203.0.113.2") == 200
+
+
+async def test_a_question_the_day_refuses_leaves_the_readers_share(
+    wire, monkeypatch
+) -> None:
+    wire(_llm(tokens=["Box"]))
+    monkeypatch.setattr(
+        chat_route,
+        "_reader_day_limiter",
+        SlidingWindowLimiter(per_key=1, global_limit=100, window_seconds=86400),
+    )
+    budget = MagicMock()
+    budget.consume.side_effect = [False, True]
+    app.dependency_overrides[chat_route.get_answer_budget] = lambda: budget
+
+    refused = await _ask()
+    answered = await _ask()
+
+    assert refused.status_code == 429
+    assert refused.json()["detail"].startswith("PitWall has given all of today's")
+    assert answered.status_code == 200

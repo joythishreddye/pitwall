@@ -81,6 +81,7 @@ def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:
     assert s.chat_rate_limit_per_ip == 2
     assert s.chat_rate_limit_global == 3
     assert s.chat_daily_answer_limit == 40
+    assert s.chat_daily_questions_per_ip == 10
     assert s.health_check_token is None
 
 
