@@ -40,6 +40,14 @@ export default function HomePage() {
   const allLoaded = !standingsLoading && !racesLoading;
   const hasData = Boolean(standings || races);
   const linkDown = allLoaded && Boolean(standingsError || racesError);
+  // One request failed and the other arrived: say which part is missing, above the tiles that loaded
+  const partialMessage = !linkDown || !hasData
+    ? null
+    : !standings
+      ? "The standings aren't reaching the pit wall right now. The race calendar loaded."
+      : !races
+        ? "The race calendar isn't reaching the pit wall right now. The standings loaded."
+        : null;
 
   const retryDataLink = useCallback(() => {
     void refetchStandings();
@@ -132,6 +140,17 @@ export default function HomePage() {
         {linkDown && !hasData && (
           <div className="py-16">
             <DataLinkDown
+              onRetry={retryDataLink}
+              isRetrying={standingsFetching || racesFetching}
+            />
+          </div>
+        )}
+
+        {/* Part of the data didn't arrive */}
+        {partialMessage && (
+          <div className="pb-3">
+            <DataLinkDown
+              message={partialMessage}
               onRetry={retryDataLink}
               isRetrying={standingsFetching || racesFetching}
             />
