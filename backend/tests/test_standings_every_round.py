@@ -408,7 +408,17 @@ def test_ingest_stores_only_the_latest_standings_by_default() -> None:
     ]
 
 
-def test_ingest_fills_in_only_the_rounds_with_no_standings() -> None:
+EVERY_ROUND_URLS = [
+    f"{BASE_URL}/2026/driverStandings.json",
+    f"{BASE_URL}/2026/1/driverStandings.json",
+    f"{BASE_URL}/2026/2/driverStandings.json",
+    f"{BASE_URL}/2026/constructorStandings.json",
+    f"{BASE_URL}/2026/1/constructorStandings.json",
+    f"{BASE_URL}/2026/2/constructorStandings.json",
+]
+
+
+def test_the_fill_reads_every_earlier_round_on_each_run() -> None:
     # Round 1's driver standings are already stored; nothing else is
     stored = [
         {**_standing(1, 1, ANT, 1, 10), "type": "driver"},
@@ -417,17 +427,8 @@ def test_ingest_fills_in_only_the_rounds_with_no_standings() -> None:
     db = _db({"standings": stored})
     http, fetched = _jolpica(latest=3)
 
-    # Round 1 is also the last stored driver round and Jolpica has moved on,
-    # so it's fetched again; round 2 is the only one missing
     assert _ingest(db, http, every_round=True) == 2 + 2 + 2 + 1 + 1 + 1
-    assert fetched == [
-        f"{BASE_URL}/2026/driverStandings.json",
-        f"{BASE_URL}/2026/1/driverStandings.json",
-        f"{BASE_URL}/2026/2/driverStandings.json",
-        f"{BASE_URL}/2026/constructorStandings.json",
-        f"{BASE_URL}/2026/1/constructorStandings.json",
-        f"{BASE_URL}/2026/2/constructorStandings.json",
-    ]
+    assert fetched == EVERY_ROUND_URLS
     rounds = {(r["type"], r["round"]) for r in stored}
     assert rounds == {
         ("driver", 1),
@@ -438,13 +439,13 @@ def test_ingest_fills_in_only_the_rounds_with_no_standings() -> None:
         ("constructor", 3),
     }
 
-    # A second run finds every round stored and fetches only the latest
+    # A second run reads every round again: nothing stored is trusted
     http, fetched = _jolpica(latest=3)
     _ingest(db, http, every_round=True)
-    assert len(fetched) == 2
+    assert fetched == EVERY_ROUND_URLS
 
 
-def test_the_fill_also_repairs_an_older_round_stored_before_its_grand_prix() -> None:
+def test_the_fill_overwrites_an_older_round_stored_before_its_grand_prix() -> None:
     # An older run stored round 2 on its sprint Saturday (its win missing), and
     # later runs stored round 3
     stored = [
@@ -453,34 +454,21 @@ def test_the_fill_also_repairs_an_older_round_stored_before_its_grand_prix() -> 
         _standing(3, 3, ANT, 1, 30, wins=3),
     ]
     db = _db({"standings": stored})
-    http, fetched = _jolpica(latest=4)
+    http, _ = _jolpica(latest=4)
 
     _ingest(db, http, every_round=True)
 
-    # The latest, then round 3 as the last stored round, then round 2; round 1
-    # holds its Grand Prix and isn't fetched
-    assert [url for url in fetched if "driverStandings" in url] == [
-        f"{BASE_URL}/2026/driverStandings.json",
-        f"{BASE_URL}/2026/3/driverStandings.json",
-        f"{BASE_URL}/2026/2/driverStandings.json",
-    ]
     assert _points(db)[("driver", 2, ANT)] == 20
 
-    # Once repaired, a second run fetches only the latest
-    http, fetched = _jolpica(latest=4)
-    _ingest(db, http, every_round=True)
-    assert [url for url in fetched if "driverStandings" in url] == [
-        f"{BASE_URL}/2026/driverStandings.json",
-    ]
 
-
-def test_an_older_round_with_a_driver_not_in_the_database_waits_for_him() -> None:
+def test_an_older_round_without_someone_is_stored_reported_and_filled_in_later() -> (
+    None
+):
     db = _db({"standings": []})
     http, _ = _jolpica(latest=3)
     report = IngestReport()
 
-    # Russell isn't in the database yet, so rounds 1 and 2 would be stored
-    # without him and never fetched again
+    # Russell isn't in the database yet
     ingest_standings(
         db,
         http,
@@ -492,27 +480,56 @@ def test_an_older_round_with_a_driver_not_in_the_database_waits_for_him() -> Non
         report=report,
     )
 
-    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
-        ("driver", 3),
-        ("constructor", 1),
-        ("constructor", 2),
-        ("constructor", 3),
+    assert set(_points(db)) == {
+        ("driver", 1, ANT),
+        ("driver", 2, ANT),
+        ("driver", 3, ANT),
+        ("constructor", 1, 7),
+        ("constructor", 2, 7),
+        ("constructor", 3, 7),
     }
     assert report.problems == [
-        "driver standings for 2026 round 3 are stored short: 1 driver in "
-        "Jolpica's standings isn't in the database",
-        *(
-            f"driver standings for 2026 round {rnd} failed: 1 driver in Jolpica's "
-            "standings isn't in the database"
-            for rnd in (1, 2)
-        ),
+        f"driver standings for 2026 round {rnd} are stored short: 1 driver in "
+        "Jolpica's standings isn't in the database"
+        for rnd in (3, 1, 2)
     ]
 
-    # Once he is, the next run fills them in
+    # Once he is, the next run fills him in on every round
     http, _ = _jolpica(latest=3)
     _ingest(db, http, every_round=True)
     assert _points(db)[("driver", 1, RUS)] == 9
     assert _points(db)[("driver", 2, RUS)] == 19
+    assert _points(db)[("driver", 3, RUS)] == 29
+
+
+def test_an_older_round_still_short_of_its_grand_prix_is_stored_as_jolpica_has_it() -> (
+    None
+):
+    # A Grand Prix cancelled after its sprint never adds its win, so its round
+    # must not fail every refresh
+    db = _db({"standings": []})
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_without_its_win(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if "/2026/2/" in url:
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            standings = body["StandingsLists"][0]
+            entries = (
+                standings.get("DriverStandings") or standings["ConstructorStandings"]
+            )
+            entries[0]["wins"] = "1"
+        return response
+
+    http.get.side_effect = round_2_without_its_win
+    report = IngestReport()
+    _ingest(db, http, every_round=True, report=report)
+
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        (kind, rnd) for kind in ("driver", "constructor") for rnd in (1, 2, 3)
+    }
+    assert report.problems == []
 
 
 def test_latest_standings_without_someone_are_stored_but_reported() -> None:
@@ -585,96 +602,50 @@ def test_a_round_stored_after_its_sprint_is_fetched_again_once_jolpica_moves_on(
     assert points[("driver", 3, ANT)] == 30
 
 
-def test_an_empty_refetch_also_holds_the_new_round_back() -> None:
+def _sprint_stored_then(serve_round_2) -> tuple[MagicMock, IngestReport]:
+    """Store round 2 on its sprint Saturday, then run a latest-only refresh
+    after round 3 whose fetch of round 2 goes through ``serve_round_2``."""
     db = _db({"standings": []})
     _ingest(db, _after_round_2s_sprint(), every_round=False)
 
     http, _ = _jolpica(latest=3)
     serve = http.get.side_effect
 
-    def round_2_empty(url: str, params: object = None) -> MagicMock:
-        response = serve(url, params)
+    def get(url: str, params: object = None) -> MagicMock:
         if "/2026/2/" in url:
-            body = response.json.return_value["MRData"]["StandingsTable"]
-            body["StandingsLists"] = []
-        return response
+            return serve_round_2(url, params, serve)
+        return serve(url, params)
 
-    http.get.side_effect = round_2_empty
+    http.get.side_effect = get
     report = IngestReport()
     _ingest(db, http, every_round=False, report=report)
-
-    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
-        ("driver", 2),
-        ("constructor", 2),
-    }
-    assert report.problems == [
-        "driver standings for 2026 round 2 failed: Jolpica sent no standings",
-        "constructor standings for 2026 round 2 failed: Jolpica sent no standings",
-    ]
-
-    # The next run, with round 2 back, repairs it and stores round 3
-    http, _ = _jolpica(latest=3)
-    _ingest(db, http, every_round=False)
-    points = _points(db)
-    assert points[("driver", 2, ANT)] == 20
-    assert points[("driver", 3, ANT)] == 30
+    return db, report
 
 
-def test_a_refetch_still_short_of_its_grand_prix_holds_the_new_round_back() -> None:
-    db = _db({"standings": []})
-    _ingest(db, _after_round_2s_sprint(), every_round=False)
-
-    # Jolpica has moved on to round 3 but still sends round 2 without its
-    # Grand Prix
-    http, _ = _jolpica(latest=3)
-    serve = http.get.side_effect
-
-    def round_2_stale(url: str, params: object = None) -> MagicMock:
+def test_an_empty_refetch_is_reported_and_the_new_round_is_stored() -> None:
+    def empty(url: str, params: object, serve) -> MagicMock:
         response = serve(url, params)
-        if "/2026/2/" in url:
-            body = response.json.return_value["MRData"]["StandingsTable"]
-            standings = body["StandingsLists"][0]
-            entries = (
-                standings.get("DriverStandings") or standings["ConstructorStandings"]
-            )
-            entries[0]["wins"] = "1"
+        response.json.return_value["MRData"]["StandingsTable"]["StandingsLists"] = []
         return response
 
-    http.get.side_effect = round_2_stale
-    report = IngestReport()
-    _ingest(db, http, every_round=False, report=report)
+    db, report = _sprint_stored_then(empty)
 
-    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
-        ("driver", 2),
-        ("constructor", 2),
-    }
+    assert _points(db)[("driver", 3, ANT)] == 30
+    assert _points(db)[("driver", 2, ANT)] == 20 - SPRINT_ONLY
     assert report.problems == [
-        f"{kind} standings for 2026 round 2 failed: Jolpica's standings after "
-        "round 2 still lack its Grand Prix"
+        f"{kind} standings for 2026 round 2 failed: Jolpica sent no standings"
         for kind in ("driver", "constructor")
     ]
 
 
-def test_a_refetch_answered_with_another_round_holds_the_new_round_back() -> None:
-    db = _db({"standings": []})
-    _ingest(db, _after_round_2s_sprint(), every_round=False)
+def test_a_refetch_answered_with_another_round_is_reported_and_not_stored() -> None:
+    def as_round_3(url: str, params: object, serve) -> MagicMock:
+        return serve(url.replace("/2026/2/", "/2026/3/"), params)
 
-    http, _ = _jolpica(latest=3)
-    serve = http.get.side_effect
+    db, report = _sprint_stored_then(as_round_3)
 
-    def round_2_as_3(url: str, params: object = None) -> MagicMock:
-        if "/2026/2/" in url:
-            url = url.replace("/2026/2/", "/2026/3/")
-        return serve(url, params)
-
-    http.get.side_effect = round_2_as_3
-    report = IngestReport()
-    _ingest(db, http, every_round=False, report=report)
-
-    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
-        ("driver", 2),
-        ("constructor", 2),
-    }
+    assert _points(db)[("driver", 2, ANT)] == 20 - SPRINT_ONLY
+    assert _points(db)[("driver", 3, ANT)] == 30
     assert report.problems == [
         f"{kind} standings for 2026 round 2 failed: Jolpica sent round 3's "
         "standings, not round 2's"
@@ -682,35 +653,20 @@ def test_a_refetch_answered_with_another_round_holds_the_new_round_back() -> Non
     ]
 
 
-def test_when_the_refetch_fails_the_new_round_waits_and_the_next_run_retries() -> None:
-    db = _db({"standings": []})
-    _ingest(db, _after_round_2s_sprint(), every_round=False)
+def test_a_failed_refetch_is_reported_and_an_every_round_run_repairs_it() -> None:
+    def down(url: str, params: object, serve) -> MagicMock:
+        raise RuntimeError("Jolpica is down")
 
-    http, fetched = _jolpica(latest=3)
-    serve = http.get.side_effect
+    db, report = _sprint_stored_then(down)
 
-    def round_2_down(url: str, params: object = None) -> MagicMock:
-        if "/2026/2/" in url:
-            fetched.append(url)
-            raise RuntimeError("Jolpica is down")
-        return serve(url, params)
-
-    http.get.side_effect = round_2_down
-    report = IngestReport()
-    _ingest(db, http, every_round=False, report=report)
-
-    # Round 3 isn't stored, so round 2 stays the latest stored round
-    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
-        ("driver", 2),
-        ("constructor", 2),
-    }
+    # The new round is stored anyway, so a latest-only run won't try round 2
+    # again; an every-round run (the refresh command's flag) does
+    assert _points(db)[("driver", 3, ANT)] == 30
     assert report.problems == [
-        "driver standings for 2026 round 2 failed: Jolpica is down",
-        "constructor standings for 2026 round 2 failed: Jolpica is down",
+        f"{kind} standings for 2026 round 2 failed: Jolpica is down"
+        for kind in ("driver", "constructor")
     ]
 
     http, _ = _jolpica(latest=3)
-    _ingest(db, http, every_round=False)
-    points = _points(db)
-    assert points[("driver", 2, ANT)] == 20
-    assert points[("driver", 3, ANT)] == 30
+    _ingest(db, http, every_round=True)
+    assert _points(db)[("driver", 2, ANT)] == 20

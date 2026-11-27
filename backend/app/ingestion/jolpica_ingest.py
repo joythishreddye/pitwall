@@ -11,7 +11,6 @@ from datetime import datetime
 import httpx
 from supabase import Client
 
-from app.db.supabase import fetch_all
 from app.ingestion._helpers import (
     RateLimiter,
     batch_upsert,
@@ -454,22 +453,19 @@ def _has_its_grand_prix(rows: list[dict], rnd: int) -> bool:
     return sum(row["wins"] or 0 for row in rows) >= rnd
 
 
-def _stored_standings_rounds(
-    supabase: Client, season: int, kind: str
-) -> dict[int, bool]:
-    """The rounds that already have standings rows of this kind, each with
-    whether its rows include the round's Grand Prix."""
-    rows = fetch_all(
-        lambda: supabase.table("standings")
-        .select("id, round, wins")
+def _last_stored_round(supabase: Client, season: int, kind: str) -> int:
+    """The latest round with standings rows of this kind stored, or 0."""
+    result = (
+        supabase.table("standings")
+        .select("round")
         .eq("season", season)
         .eq("type", kind)
-        .order("id")
+        .order("round", desc=True)
+        .limit(1)
+        .execute()
     )
-    by_round: dict[int, list[dict]] = {}
-    for row in rows:
-        by_round.setdefault(row["round"], []).append(row)
-    return {rnd: _has_its_grand_prix(got, rnd) for rnd, got in by_round.items()}
+    rows = result.data or []
+    return rows[0]["round"] if rows else 0
 
 
 def _store_round_standings(
@@ -484,13 +480,17 @@ def _store_round_standings(
     entity_key: str,
     id_key: str,
     lookup: dict[str, int],
+    report: IngestReport | None,
 ) -> int:
-    """Fetch and upsert the standings after one round.
+    """Fetch and upsert the standings after one earlier round.
 
-    Raises on a failed fetch, and on an answer that isn't that round's whole
-    standings (none, another round's, someone not in the database, or still
-    without its Grand Prix), so a caller repairing a round knows the repair
-    didn't happen and the next run tries again.
+    Raises on a failed fetch, and on an answer that isn't that round's
+    standings (none, another round's, or no one in the database). Standings
+    with someone not in the database yet are stored with who is known and
+    reported; an every-round refresh reads the round again, so they fill in
+    once that person is added. Standings still without the round's Grand Prix
+    are stored as Jolpica has them: a Grand Prix cancelled after its sprint
+    never adds its win.
     """
     data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
     lists = data.get("StandingsTable", {}).get("StandingsLists", [])
@@ -503,12 +503,10 @@ def _store_round_standings(
         raise ValueError(f"Jolpica sent round {got}'s standings, not round {rnd}'s")
     if not rows:
         raise ValueError(f"no {kind} in Jolpica's standings is in the database")
-    # A round stored without someone is never fetched again, so it waits
     if missing := _not_in_database(lists[0], list_key, kind, rows):
-        raise ValueError(missing)
-    if not _has_its_grand_prix(rows, rnd):
-        raise ValueError(
-            f"Jolpica's standings after round {rnd} still lack its Grand Prix"
+        _problem(
+            report,
+            f"{kind} standings for {season} round {rnd} are stored short: {missing}",
         )
     return batch_upsert(
         supabase, "standings", rows, on_conflict="season,round,type,entity_id"
@@ -528,20 +526,21 @@ def ingest_standings(
 ) -> int:
     """Fetch and upsert each season's latest standings.
 
-    The latest round stored by an earlier run may have been stored between a
-    sprint and its Grand Prix, so once Jolpica's latest round has moved past it,
-    that round is fetched again before the new one is stored. If that fetch
-    fails or brings nothing to store, the new round waits too, so the next run
-    tries again. Standings that don't yet include the latest Grand Prix (its
-    win is missing) count as reaching only the round before it, so the refresh
-    report flags them. Latest standings with someone not in the database yet
-    are stored with the rest and reported.
+    With ``every_round``, also read the standings after every earlier round
+    again and overwrite what's stored, so points can be charted round by round
+    with sprints included, and a round stored on a sprint Saturday or without
+    someone gets fixed by the next run. About two calls per round on every run
+    (2026: about 46).
 
-    With ``every_round``, also fetch the standings after each earlier round
-    that has no stored rows yet, or whose rows were stored before its Grand
-    Prix (an older run on a sprint Saturday), so points can be charted round
-    by round with sprints included. About two calls per round the first time,
-    none after that.
+    Without it, the latest round stored by an earlier run is read once more
+    when Jolpica has moved past it, since it may have been stored between a
+    sprint and its Grand Prix. If that read fails, it's reported and the new
+    round is stored anyway; only an every-round run repairs it later.
+
+    Latest standings with someone not in the database yet are stored with the
+    rest and reported. Standings that don't yet include the latest Grand Prix
+    (its win is missing) count as reaching only the round before it, so the
+    refresh report flags them.
     """
     lookups = {"driver": driver_lookup, "constructor": constructor_lookup}
     total = 0
@@ -564,20 +563,11 @@ def ingest_standings(
                     id_key,
                     lookups[kind],
                 )
-                stored = _stored_standings_rounds(supabase, season, kind)
-                last_stored = max(stored, default=0)
-                if 0 < last_stored < latest:
-                    try:
-                        total += _store_round_standings(
-                            supabase, http, rl, season, last_stored, *names
-                        )
-                    except Exception as exc:
-                        _problem(
-                            report,
-                            f"{kind} standings for {season} round {last_stored} "
-                            f"failed: {exc}",
-                        )
-                        continue
+                if every_round:
+                    earlier = list(range(1, latest))
+                else:
+                    last_stored = _last_stored_round(supabase, season, kind)
+                    earlier = [last_stored] if 0 < last_stored < latest else []
                 total += batch_upsert(
                     supabase,
                     "standings",
@@ -599,17 +589,12 @@ def ingest_standings(
                     full = _has_its_grand_prix(rows, latest)
                     reached = latest if full else latest - 1
                     report.caught_up[(season, f"{kind} standings")] = reached
-                if not every_round:
-                    continue
-                for rnd in range(1, latest):
-                    # Skip rounds stored whole, and the one just fetched again
-                    if stored.get(rnd) or rnd == last_stored:
-                        continue
-                    # A round that fails doesn't stop the later ones; the next
-                    # run tries it again
+                for rnd in earlier:
+                    # A round that fails doesn't stop the later ones; it's
+                    # reported, so the refresh exits 1
                     try:
                         total += _store_round_standings(
-                            supabase, http, rl, season, rnd, *names
+                            supabase, http, rl, season, rnd, *names, report
                         )
                     except Exception as exc:
                         _problem(
@@ -618,7 +603,7 @@ def ingest_standings(
                         )
             except Exception as exc:
                 # One season's failure doesn't stop the others; the next run
-                # fetches whatever rounds are still missing
+                # reads it again
                 _problem(report, f"{kind} standings for {season} stopped: {exc}")
 
     logger.info("Standings: %d total upserted", total)
@@ -637,8 +622,8 @@ def run_jolpica_ingest(
 ) -> dict[str, int]:
     """Run the full Jolpica ingestion pipeline.
 
-    ``standings_every_round`` also fills in the standings after every earlier
-    round of each season that has none stored (see ingest_standings).
+    ``standings_every_round`` also reads the standings after every earlier
+    round of each season again (see ingest_standings).
     ``report`` collects what the run couldn't do, including qualifying or
     standings that stop short of the latest results round.
 

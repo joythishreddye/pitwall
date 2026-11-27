@@ -51,7 +51,7 @@ The UI gate (`python3 ~/.claude/gates/bin/gates.py verify-outcome`, from the rep
 ```bash
 (cd backend && source venv/bin/activate && python -m uvicorn app.main:app --reload)   # API dev server
 (cd frontend && pnpm dev)                                                             # web dev server
-(cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1 --standings-every-round)   # Jolpica refresh; the flag stores any round's standings still missing, for the points chart
+(cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1 --standings-every-round)   # Jolpica refresh; the flag re-reads every round's standings, for the points chart
 (cd backend && source venv/bin/activate && python scripts/ingest_knowledge.py)        # regenerate docs + re-embed locally
 (cd backend && source venv/bin/activate && python scripts/eval_rag.py)                # retrieval eval (55 Qs, local models, ~4 min)
 curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header
