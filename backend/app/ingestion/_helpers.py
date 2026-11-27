@@ -9,35 +9,56 @@ import httpx
 import pandas as pd
 from supabase import Client
 
+from app.db.supabase import fetch_all
+
 logger = logging.getLogger(__name__)
 
 BATCH_SIZE = 500
 
 
 class RateLimiter:
-    """Sliding-window rate limiter for API requests."""
+    """Sliding-window rate limiter for API requests.
 
-    def __init__(self, max_requests: int = 190, window_seconds: int = 3600) -> None:
+    Holds two windows at once: at most ``max_requests`` in any ``window_seconds``,
+    and, unless ``burst`` is None, at most ``burst`` in any one second. The defaults
+    stay inside Jolpica's unauthenticated limits, 500 an hour and 4 a second
+    (jolpica-f1's docs/rate_limits.md). A burst past 4 a second draws a 429, and
+    fetch_json then backs off for 60 s.
+    """
+
+    def __init__(
+        self, max_requests: int = 190, window_seconds: int = 3600, burst: int | None = 3
+    ) -> None:
+        if max_requests < 1 or (burst is not None and burst < 1):
+            raise ValueError("max_requests and burst must be at least 1")
         self.max_requests = max_requests
         self.window_seconds = window_seconds
+        self._windows: list[tuple[int, float]] = [(max_requests, float(window_seconds))]
+        if burst is not None:
+            self._windows.append((burst, 1.0))
+        self._longest = max(window for _, window in self._windows)
         self._timestamps: deque[float] = deque()
 
-    def wait_if_needed(self) -> None:
-        """Block until a request slot is available."""
-        now = time.time()
-        cutoff = now - self.window_seconds
-        while self._timestamps and self._timestamps[0] < cutoff:
+    def _wait_seconds(self, now: float) -> float:
+        """How long until a request fits every window (0 if it fits now)."""
+        while self._timestamps and self._timestamps[0] <= now - self._longest:
             self._timestamps.popleft()
-        if len(self._timestamps) >= self.max_requests:
-            sleep_for = self._timestamps[0] - cutoff + 0.1
-            logger.info("Rate limit reached, sleeping %.1fs", sleep_for)
-            time.sleep(sleep_for)
-            # Re-evaluate after waking
-            now = time.time()
-            cutoff = now - self.window_seconds
-            while self._timestamps and self._timestamps[0] < cutoff:
-                self._timestamps.popleft()
-        self._timestamps.append(time.time())
+        wait = 0.0
+        for limit, window in self._windows:
+            recent = [t for t in self._timestamps if t > now - window]
+            if len(recent) >= limit:
+                # A hundredth of a second past the edge, so float rounding can't
+                # leave a zero-length wait.
+                wait = max(wait, recent[-limit] + window - now + 0.01)
+        return wait
+
+    def wait_if_needed(self) -> None:
+        """Block until a request slot is available, then claim it."""
+        while (wait := self._wait_seconds(time.monotonic())) > 0:
+            if wait >= 1:
+                logger.info("Rate limit reached, sleeping %.1fs", wait)
+            time.sleep(wait)
+        self._timestamps.append(time.monotonic())
 
 
 def fetch_json(
@@ -74,23 +95,22 @@ def build_lookup(
     key_col: str,
     value_col: str = "id",
 ) -> dict:
-    """Load a {key: value} mapping from a Supabase table."""
-    rows = (
-        supabase.table(table)
-        .select(f"{value_col}, {key_col}")
-        .limit(10000)
-        .execute()
-        .data
+    """Load a {key: value} mapping from every row of a Supabase table.
+
+    Paged with fetch_all: the database answers at most 1,000 rows a request,
+    so one read would cut the lookup short without a word. ``value_col`` must
+    be unique (the default, ``id``, is), since the pages are ordered on it.
+    """
+    rows = fetch_all(
+        lambda: supabase.table(table).select(f"{value_col}, {key_col}").order(value_col)
     )
-    if len(rows) == 10000:
-        logger.warning("Lookup for %s hit 10K limit — may be truncated", table)
     return {r[key_col]: r[value_col] for r in rows}
 
 
 def build_race_lookup(supabase: Client) -> dict[tuple[int, int], int]:
-    """Load {(season, round): id} mapping from races table."""
-    rows = (
-        supabase.table("races").select("id, season, round").limit(10000).execute().data
+    """Load {(season, round): id} mapping from every row of the races table."""
+    rows = fetch_all(
+        lambda: supabase.table("races").select("id, season, round").order("id")
     )
     return {(r["season"], r["round"]): r["id"] for r in rows}
 
