@@ -442,6 +442,34 @@ def _stored_standings_rounds(supabase: Client, season: int, kind: str) -> set[in
     return {row["round"] for row in rows}
 
 
+def _store_round_standings(
+    supabase: Client,
+    http: httpx.Client,
+    rl: RateLimiter,
+    season: int,
+    rnd: int,
+    kind: str,
+    path: str,
+    list_key: str,
+    entity_key: str,
+    id_key: str,
+    lookup: dict[str, int],
+    report: IngestReport | None,
+) -> int:
+    """Fetch and upsert the standings after one round. Raises on a failed fetch."""
+    data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
+    lists = data.get("StandingsTable", {}).get("StandingsLists", [])
+    if not lists:
+        _problem(report, f"No {kind} standings for {season} round {rnd}")
+        return 0
+    _, rows = _standings_rows(
+        lists[0], season, kind, list_key, entity_key, id_key, lookup
+    )
+    return batch_upsert(
+        supabase, "standings", rows, on_conflict="season,round,type,entity_id"
+    )
+
+
 def ingest_standings(
     supabase: Client,
     http: httpx.Client,
@@ -455,6 +483,11 @@ def ingest_standings(
 ) -> int:
     """Fetch and upsert each season's latest standings.
 
+    The latest round stored by an earlier run may have been stored between a
+    sprint and its Grand Prix, so once Jolpica's latest round has moved past it,
+    that round is fetched again before the new one is stored. If that fetch
+    fails, the new round waits too, so the next run tries again.
+
     With ``every_round``, also fetch the standings after each earlier round
     that has no stored rows yet, so points can be charted round by round with
     sprints included. Only missing rounds are fetched: about two calls per
@@ -464,6 +497,7 @@ def ingest_standings(
     total = 0
     for season in seasons:
         for kind, path, list_key, entity_key, id_key in _STANDINGS_KINDS:
+            names = (kind, path, list_key, entity_key, id_key, lookups[kind])
             try:
                 data = fetch_json(http, f"{BASE_URL}/{season}/{path}.json", rl)
                 standings_list = data.get("StandingsTable", {}).get(
@@ -480,6 +514,20 @@ def ingest_standings(
                     id_key,
                     lookups[kind],
                 )
+                stored = _stored_standings_rounds(supabase, season, kind)
+                last_stored = max(stored, default=0)
+                if 0 < last_stored < latest:
+                    try:
+                        total += _store_round_standings(
+                            supabase, http, rl, season, last_stored, *names, report
+                        )
+                    except Exception as exc:
+                        _problem(
+                            report,
+                            f"{kind} standings for {season} round {last_stored} "
+                            f"failed: {exc}",
+                        )
+                        continue
                 total += batch_upsert(
                     supabase,
                     "standings",
@@ -490,36 +538,14 @@ def ingest_standings(
                     report.caught_up[(season, f"{kind} standings")] = latest
                 if not every_round:
                     continue
-                stored = _stored_standings_rounds(supabase, season, kind)
                 for rnd in range(1, latest):
                     if rnd in stored:
                         continue
                     # A round that fails doesn't stop the later ones; the next
                     # run tries it again
                     try:
-                        data = fetch_json(
-                            http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl
-                        )
-                        lists = data.get("StandingsTable", {}).get("StandingsLists", [])
-                        if not lists:
-                            _problem(
-                                report, f"No {kind} standings for {season} round {rnd}"
-                            )
-                            continue
-                        _, rows = _standings_rows(
-                            lists[0],
-                            season,
-                            kind,
-                            list_key,
-                            entity_key,
-                            id_key,
-                            lookups[kind],
-                        )
-                        total += batch_upsert(
-                            supabase,
-                            "standings",
-                            rows,
-                            on_conflict="season,round,type,entity_id",
+                        total += _store_round_standings(
+                            supabase, http, rl, season, rnd, *names, report
                         )
                     except Exception as exc:
                         _problem(

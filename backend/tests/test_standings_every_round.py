@@ -2,8 +2,10 @@
 
 from unittest.mock import MagicMock
 
+import pytest
+
 from app.api.routes.standings import get_standings, get_standings_progression
-from app.ingestion.jolpica_ingest import BASE_URL, ingest_standings
+from app.ingestion.jolpica_ingest import BASE_URL, IngestReport, ingest_standings
 
 
 class _Query:
@@ -230,7 +232,12 @@ def _jolpica(latest: int) -> tuple[MagicMock, list[str]]:
     return http, fetched
 
 
-def _ingest(db: MagicMock, http: MagicMock, every_round: bool) -> int:
+def _ingest(
+    db: MagicMock,
+    http: MagicMock,
+    every_round: bool,
+    report: IngestReport | None = None,
+) -> int:
     return ingest_standings(
         db,
         http,
@@ -239,7 +246,36 @@ def _ingest(db: MagicMock, http: MagicMock, every_round: bool) -> int:
         {"antonelli": ANT, "russell": RUS},
         {"mercedes": 7},
         every_round=every_round,
+        report=report,
     )
+
+
+SPRINT_ONLY = 5  # round 2's Grand Prix points Jolpica hasn't added yet
+
+
+def _after_round_2s_sprint() -> MagicMock:
+    """Jolpica on a sprint Saturday: round 2's standings hold its sprint's
+    points but not yet its Grand Prix's."""
+    http, _ = _jolpica(latest=2)
+    serve = http.get.side_effect
+
+    def get(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        if url.endswith("/2026/driverStandings.json"):
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            for entry in body["StandingsLists"][0]["DriverStandings"]:
+                entry["points"] = str(float(entry["points"]) - SPRINT_ONLY)
+        return response
+
+    http.get.side_effect = get
+    return http
+
+
+def _points(db: MagicMock) -> dict[tuple[str, int, int], float]:
+    return {
+        (r["type"], r["round"], r["entity_id"]): r["points"]
+        for r in db.table("standings").rows
+    }
 
 
 def test_ingest_stores_only_the_latest_standings_by_default() -> None:
@@ -262,9 +298,12 @@ def test_ingest_fills_in_only_the_rounds_with_no_standings() -> None:
     db = _db({"standings": stored})
     http, fetched = _jolpica(latest=3)
 
-    assert _ingest(db, http, every_round=True) == 2 + 2 + 1 + 1 + 1
+    # Round 1 is also the last stored driver round and Jolpica has moved on,
+    # so it's fetched again; round 2 is the only one missing
+    assert _ingest(db, http, every_round=True) == 2 + 2 + 2 + 1 + 1 + 1
     assert fetched == [
         f"{BASE_URL}/2026/driverStandings.json",
+        f"{BASE_URL}/2026/1/driverStandings.json",
         f"{BASE_URL}/2026/2/driverStandings.json",
         f"{BASE_URL}/2026/constructorStandings.json",
         f"{BASE_URL}/2026/1/constructorStandings.json",
@@ -308,3 +347,55 @@ def test_a_round_that_fails_doesnt_stop_the_later_ones() -> None:
         ("constructor", 3),
     }
     assert f"{BASE_URL}/2026/2/constructorStandings.json" in fetched
+
+
+@pytest.mark.parametrize("every_round", [False, True])
+def test_a_round_stored_after_its_sprint_is_fetched_again_once_jolpica_moves_on(
+    every_round: bool,
+) -> None:
+    db = _db({"standings": []})
+    _ingest(db, _after_round_2s_sprint(), every_round=every_round)
+    assert _points(db)[("driver", 2, ANT)] == 20 - SPRINT_ONLY
+
+    # The next refresh comes after round 3, so round 2 is no longer the latest
+    http, fetched = _jolpica(latest=3)
+    _ingest(db, http, every_round=every_round)
+
+    assert f"{BASE_URL}/2026/2/driverStandings.json" in fetched
+    points = _points(db)
+    assert points[("driver", 2, ANT)] == 20  # the Grand Prix's points are in
+    assert points[("driver", 3, ANT)] == 30
+
+
+def test_when_the_refetch_fails_the_new_round_waits_and_the_next_run_retries() -> None:
+    db = _db({"standings": []})
+    _ingest(db, _after_round_2s_sprint(), every_round=False)
+
+    http, fetched = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def round_2_down(url: str, params: object = None) -> MagicMock:
+        if "/2026/2/" in url:
+            fetched.append(url)
+            raise RuntimeError("Jolpica is down")
+        return serve(url, params)
+
+    http.get.side_effect = round_2_down
+    report = IngestReport()
+    _ingest(db, http, every_round=False, report=report)
+
+    # Round 3 isn't stored, so round 2 stays the latest stored round
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        ("driver", 2),
+        ("constructor", 2),
+    }
+    assert report.problems == [
+        "driver standings for 2026 round 2 failed: Jolpica is down",
+        "constructor standings for 2026 round 2 failed: Jolpica is down",
+    ]
+
+    http, _ = _jolpica(latest=3)
+    _ingest(db, http, every_round=False)
+    points = _points(db)
+    assert points[("driver", 2, ANT)] == 20
+    assert points[("driver", 3, ANT)] == 30
