@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 
 // Circuit drawings and facts are matched on the API's circuit name (lib/constants/circuits.ts). Qatar's circuit
@@ -22,4 +24,22 @@ test("the Next Race tile draws Qatar's circuit", async ({ page }) => {
   await expect(tile).toContainText("Lusail International Circuit");
   // The outline sits in its own aria-hidden layer, apart from the calendar icon
   await expect(tile.locator(':scope > div[aria-hidden="true"] svg')).toHaveCount(1);
+});
+
+test.describe("a race's circuit facts", () => {
+  test("a 2026 race shows no DRS zones: the 2026 cars have no DRS", async ({ page }) => {
+    await page.goto("/races/195");
+    await expect(page.getByText("Turns", { exact: true })).toBeVisible();
+    await expect(page.getByText("DRS Zones", { exact: true })).toHaveCount(0);
+  });
+
+  test("a race from the DRS years (2011 to 2025) shows its DRS zones", async ({ page }) => {
+    // The saved Qatar race, served as if it were 2024's. Filled from the file, never fetched: a page route
+    // wins over the context's host guard above, so a fetch here could leave the machine
+    const file = path.join(test.info().project.testDir, "fixtures/api/races-195.json");
+    const saved = JSON.parse(await readFile(file, "utf8"));
+    await page.route("**/api/v1/races/195", (route) => route.fulfill({ json: { ...saved, season: 2024 } }));
+    await page.goto("/races/195");
+    await expect(page.getByText("DRS Zones", { exact: true })).toBeVisible();
+  });
 });

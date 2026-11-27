@@ -217,10 +217,13 @@ export default function RaceDetailPage({
                   <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
                   <p className="font-data font-semibold">{circuitMeta.turns}</p>
                 </div>
-                <div>
-                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
-                  <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
-                </div>
+                {/* DRS ran from 2011 to 2025; the 2026 cars have none */}
+                {race.season >= 2011 && race.season <= 2025 && (
+                  <div>
+                    <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
+                    <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
+                  </div>
+                )}
                 {circuitMeta.lapRecord && (
                   <div>
                     <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
