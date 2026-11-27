@@ -60,6 +60,10 @@ What a race gets depends on its year (D13):
   doing?", "Who's moving up?" and "What do the columns mean?". The chips are answered in the browser from the
   replay at its current moment, as the mockup does. A typed question goes to the chat with the race named, under
   the chat limits.
+- **"Should <driver> pit now?" uses the file's `pitLoss`,** the median time in the pit lane from Jolpica's stop
+  durations. That's a few seconds more than a stop really costs (a car on track covers the same stretch in that
+  time), so the answer says "a stop here takes about 24 s in the pit lane" and the cars within that gap behind.
+  It never names the exact place he'd rejoin.
 - **Part B (by Dec 20):** a typed question carries the replay's moment (the lap, the order, the gaps, the tyres)
   to the chat, so the engineer answers about that moment.
 
