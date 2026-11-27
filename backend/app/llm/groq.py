@@ -1,10 +1,12 @@
 """Groq-backed LLM provider."""
 
 import logging
+import math
 from collections.abc import AsyncIterator
 from typing import Any
 
 import groq
+import httpx
 from groq import AsyncGroq
 
 from app.config import settings
@@ -29,12 +31,22 @@ def _log_usage(model: str, usage: Any) -> None:
     )
 
 
+def _retry_after(response: httpx.Response) -> float | None:
+    """Groq's retry-after header, in seconds, or None when it's missing or odd."""
+    try:
+        wait = float(response.headers.get("retry-after", ""))
+    except ValueError:
+        return None
+    return wait if math.isfinite(wait) and wait >= 0 else None
+
+
 def _to_llm_error(exc: groq.GroqError) -> LLMError:
     """Translate a Groq SDK exception into the provider-agnostic LLMError."""
     if isinstance(exc, groq.APIStatusError):
         return LLMError(
             f"Groq returned {exc.status_code}: {exc.message}",
             status_code=exc.status_code,
+            retry_after=_retry_after(exc.response),
         )
     if isinstance(exc, groq.APIConnectionError):
         return LLMError("Could not reach Groq")
