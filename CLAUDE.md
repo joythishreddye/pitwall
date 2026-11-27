@@ -92,8 +92,8 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
 
 ### Data sources (2026 reality)
 - **Jolpica:** results, qualifying, standings, schedules. No auth; CC BY-NC-SA 4.0.
-- **OpenF1:** historical 2023+ laps, stints, pit stops, weather, race control, positions. Free tier: no auth, 3 req/s, CC BY-NC-SA 4.0. Primary timing source from Phase 1.
-  - **Live-session block (verified 2026-11-01):** during any live F1 session, OpenF1 returns 401 to unauthenticated clients for all data, past sessions included.
+- **OpenF1:** historical 2023+ laps, stints, pit stops, weather, race control, positions. Free tier: no auth, 3 requests a second and 30 a minute, CC BY-NC-SA 4.0. Primary timing source from Phase 1.
+  - **Live-session block (verified 2026-11-01):** from 30 minutes before any F1 session until 30 minutes after it ends, OpenF1 returns 401 to unauthenticated clients for all data, past sessions included. The 30 minutes come from OpenF1's FAQ (read 2026-11-26), which calls that window live.
   - **So:** ingest after sessions end, retrying on 401; pre-ingest replays; and don't depend on OpenF1 when a page is viewed.
   - **One exception:** the browser headshot lookup (`frontend/lib/hooks/use-driver-photos.ts`). It falls back to the driver code and moves server-side in Phase 1.
 - **FastF1:** since 2026-10-15 F1's archive returns 401 without an F1 TV login, and F1 blocks cloud IPs. FastF1 ≥3.9 runs **locally only**, with the owner's own F1 TV login. Never use it in CI or on Render.

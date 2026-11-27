@@ -240,9 +240,9 @@ the teams' title?".
 - Live data during sessions (January to February).
 
 ## Landmines
-- **OpenF1 returns 401 to everyone during a live F1 session.** Never fetch it when a page is viewed. The one
-  exception today is the headshot lookup (`use-driver-photos.ts`, with its code fallback, per CLAUDE.md), and
-  brief 002 moves headshots server-side.
+- **OpenF1 returns 401 to free clients from 30 minutes before a live F1 session until 30 minutes after it.**
+  Never fetch it when a page is viewed. The one exception today is the headshot lookup (`use-driver-photos.ts`,
+  with its code fallback, per CLAUDE.md), and brief 002 moves headshots server-side.
 - **A race's start is its date plus its time, in UTC, but check night races.** The stored 2024 Las Vegas race
   reads 2024-11-23 06:00, 24 h before its real start (2024-11-24T06:00Z). 2025 and 2026 are right. Test the views
   against a night race.
