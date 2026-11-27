@@ -1,0 +1,13 @@
+# Version updates for Next.js only, so a new security release opens a pull
+# request instead of waiting to be noticed. The screenshot checks run only on
+# Joythish's Mac, so a Dependabot pull request is never merged from GitHub:
+# Claude takes it locally through the gates first.
+version: 2
+updates:
+  - package-ecosystem: "npm" # pnpm projects use "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-name: "next"
+      - dependency-name: "eslint-config-next"
