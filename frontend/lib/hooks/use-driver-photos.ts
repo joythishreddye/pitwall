@@ -10,8 +10,17 @@ const OpenF1DriverSchema = z.object({
 
 export type OpenF1Driver = z.infer<typeof OpenF1DriverSchema>;
 
-// The e2e build points this at the local fixture API (`build:e2e` in package.json).
-const OPENF1_BASE = process.env.NEXT_PUBLIC_OPENF1_URL ?? "https://api.openf1.org";
+/**
+ * OpenF1's base URL. A blank or spaces-only value counts as unset: otherwise a blank Vercel entry would send the
+ * lookup to this site, and every headshot would vanish without an error.
+ */
+export function openF1Base(value: string | undefined): string {
+  return value?.trim() || "https://api.openf1.org";
+}
+
+// The e2e build points this at the local fixture API (`build:e2e` in package.json). Next inlines only the
+// literal `process.env.NEXT_PUBLIC_*` expression, so keep it spelled out here.
+const OPENF1_BASE = openF1Base(process.env.NEXT_PUBLIC_OPENF1_URL);
 
 async function fetchOpenF1Drivers(): Promise<OpenF1Driver[]> {
   const res = await fetch(`${OPENF1_BASE}/v1/drivers?session_key=latest`);
