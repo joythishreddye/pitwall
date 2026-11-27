@@ -831,8 +831,15 @@ def build_briefing(view: View | str, snapshot: Snapshot, zone: str | None) -> Br
                 f"after a {latest.race.season} race the {latest.race.season} "
                 f"snapshot is needed, not {snapshot.season}'s"
             )
-        if nx is None and snapshot.remaining:
-            # "No 2027 dates yet" with this season's races still to run
+        to_come = [
+            r
+            for r in snapshot.remaining
+            if latest is None or r.start > latest.race.start
+        ]
+        if nx is None and to_come:
+            # "No 2027 dates yet" with this season's races still to come. An
+            # earlier race the clock moved on from without a result still
+            # counts for the title, but it isn't still to come
             raise ValueError("races are left to run but the next race is missing")
     if view is View.OFF_SEASON and nx is not None and nx.season <= snapshot.season:
         # The off-season's next race opens the next season; otherwise the

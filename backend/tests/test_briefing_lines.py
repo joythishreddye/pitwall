@@ -963,6 +963,23 @@ def test_a_champion_alone_in_the_standings_is_clear_of_nobody() -> None:
     assert _title(b).call == "Antonelli is the champion."
 
 
+def test_after_the_finale_a_skipped_race_without_a_result_is_no_next_race() -> None:
+    # Qatar never got a result and the clock moved on (part 1): after Abu Dhabi,
+    # with no 2027 dates, Qatar still counts for the title but isn't still to come
+    finale = replace(
+        AFTER_VEGAS,
+        after_round=23,
+        remaining=(QATAR,),
+        next_race=None,
+        latest=replace(AFTER_VEGAS.latest, race=ABU_DHABI),
+    )
+
+    b = build_briefing(View.AFTER_RACE, finale, "UTC")
+
+    assert b.lines[-1].tag == "NEXT RACE"
+    assert b.lines[-1].call.startswith("No 2027 dates yet")
+
+
 @pytest.mark.parametrize(
     ("view", "snapshot", "message"),
     [
