@@ -3,6 +3,7 @@
 import asyncio
 import json
 import logging
+import math
 import time
 from collections.abc import AsyncIterator
 from typing import Annotated
@@ -16,7 +17,7 @@ from app.api.rate_limit import SlidingWindowLimiter, client_ip
 from app.config import settings
 from app.db.supabase import get_supabase
 from app.llm.base import LLMError, LLMProvider, Message
-from app.rag.budget import ApiBudget
+from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
@@ -115,6 +116,26 @@ def enforce_chat_rate_limit(request: Request) -> None:
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="Too many questions in a short time. Try again in a minute.",
             headers={"Retry-After": str(max(1, round(retry_after)))},
+        )
+
+
+def get_answer_budget(request: Request) -> DailyBudget | None:
+    """Return the daily answer budget, if one is configured."""
+    return getattr(request.app.state, "answer_budget", None)
+
+
+AnswerBudget = Annotated[DailyBudget | None, Depends(get_answer_budget)]
+
+
+def enforce_daily_answers(budget: AnswerBudget) -> None:
+    """Refuse once today's answers are spent, with a clear message rather than
+    the model provider's own refusal ("busy") on every try until midnight."""
+    if budget is not None and not budget.consume():
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="PitWall has given all of today's answers. "
+            "Ask again after midnight UTC.",
+            headers={"Retry-After": str(seconds_to_next_day())},
         )
 
 
@@ -279,9 +300,28 @@ def _sse(event: dict) -> str:
     return f"data: {json.dumps(event)}\n\n"
 
 
+# Past this, a rate limit is the day's budget, not a burst
+_LONG_WAIT_SECONDS = 120
+
+
+def _wait_in_words(seconds: float) -> str:
+    """A long wait as the reader would say it: about 5 minutes, about 3 hours."""
+    minutes = math.ceil(seconds / 60)
+    if minutes < 120:
+        return f"about {minutes} minutes"
+    return f"about {round(seconds / 3600)} hours"
+
+
 def _llm_error_message(exc: LLMError) -> str:
     """What the reader sees when the model fails mid-answer."""
     if exc.rate_limited:
+        # Groq asks for hours once the day's tokens are spent (its limits are
+        # per organization, so local runs count too)
+        if exc.retry_after is not None and exc.retry_after > _LONG_WAIT_SECONDS:
+            return (
+                "PitWall has run out of answers for now. "
+                f"Ask again in {_wait_in_words(exc.retry_after)}."
+            )
         return "PitWall is busy right now. Try again in a minute."
     return "The AI service didn't answer. Try again in a moment."
 
@@ -295,8 +335,13 @@ async def chat(
     embedder: Embedder,
     budget: Budget,
     linker: Linker,
+    answers: AnswerBudget,
 ) -> StreamingResponse:
     """Stream a RAG-powered chat response via SSE."""
+    # Here, not as a route dependency: FastAPI runs those before it checks the
+    # body, so a refused burst or a question that fails its checks would
+    # spend one of the day's answers
+    await asyncio.to_thread(enforce_daily_answers, answers)
     retriever = Retriever(
         db=db,
         llm=intent_llm,

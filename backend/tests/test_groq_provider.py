@@ -58,9 +58,13 @@ def _chunk(
     )
 
 
-def _status_error(cls: type[groq.APIStatusError], code: int) -> groq.APIStatusError:
+def _status_error(
+    cls: type[groq.APIStatusError], code: int, headers: dict[str, str] | None = None
+) -> groq.APIStatusError:
     request = httpx.Request("POST", _URL)
-    response = httpx.Response(code, request=request, json={"error": {"message": "x"}})
+    response = httpx.Response(
+        code, request=request, json={"error": {"message": "x"}}, headers=headers
+    )
     return cls("x", response=response, body=None)
 
 
@@ -133,6 +137,30 @@ async def test_rate_limit_is_flagged() -> None:
         await provider.generate([Message("user", "hi")])
 
     assert info.value.rate_limited
+
+
+@pytest.mark.parametrize(
+    ("header", "wait"),
+    [
+        ("7200", 7200.0),
+        ("0.5", 0.5),
+        ("soon", None),
+        ("", None),
+        ("-5", None),
+        ("inf", None),
+        ("nan", None),
+    ],
+)
+async def test_a_rate_limit_carries_groqs_wait(header: str, wait: float | None) -> None:
+    provider = _provider()
+    provider.client.chat.completions.create.side_effect = _status_error(
+        groq.RateLimitError, 429, {"retry-after": header}
+    )
+
+    with pytest.raises(LLMError) as info:
+        await provider.generate([Message("user", "hi")])
+
+    assert info.value.retry_after == wait
 
 
 async def test_connection_error_becomes_llm_error() -> None:

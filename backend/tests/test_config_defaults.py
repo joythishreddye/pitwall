@@ -78,8 +78,9 @@ def test_spend_and_abuse_guards_have_safe_defaults(required_env) -> None:
     s = Settings(_env_file=None)
     assert s.hf_monthly_call_limit == 5000
     assert s.rerank_enabled is False
-    assert s.chat_rate_limit_per_ip == 6
-    assert s.chat_rate_limit_global == 20
+    assert s.chat_rate_limit_per_ip == 2
+    assert s.chat_rate_limit_global == 3
+    assert s.chat_daily_answer_limit == 40
     assert s.health_check_token is None
 
 

@@ -15,7 +15,7 @@ from app.config import settings
 from app.db.redis import get_redis
 from app.db.supabase import get_supabase, ping_supabase
 from app.llm.factory import create_llm
-from app.rag.budget import ApiBudget
+from app.rag.budget import ApiBudget, DailyBudget
 from app.rag.entities import EntityLinker
 from app.rag.query_embedder import EmbeddingUnavailable, QueryEmbedder
 
@@ -39,6 +39,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.llm = create_llm()
     app.state.intent_llm = create_llm(settings.llm_intent_model)
     app.state.budget = ApiBudget(supabase, settings.hf_monthly_call_limit)
+    app.state.answer_budget = DailyBudget(
+        supabase, settings.chat_daily_answer_limit, "groq-chat"
+    )
     app.state.embedder = QueryEmbedder(budget=app.state.budget)
 
     # Bounded waits: a hung dependency must not stall the boot
