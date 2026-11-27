@@ -474,6 +474,43 @@ def test_the_fill_also_repairs_an_older_round_stored_before_its_grand_prix() -> 
     ]
 
 
+def test_an_older_round_with_a_driver_not_in_the_database_waits_for_him() -> None:
+    db = _db({"standings": []})
+    http, _ = _jolpica(latest=3)
+    report = IngestReport()
+
+    # Russell isn't in the database yet, so rounds 1 and 2 would be stored
+    # without him and never fetched again
+    ingest_standings(
+        db,
+        http,
+        MagicMock(),
+        [2026],
+        {"antonelli": ANT},
+        {"mercedes": 7},
+        every_round=True,
+        report=report,
+    )
+
+    assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
+        ("driver", 3),
+        ("constructor", 1),
+        ("constructor", 2),
+        ("constructor", 3),
+    }
+    assert report.problems == [
+        f"driver standings for 2026 round {rnd} failed: 1 driver in Jolpica's "
+        "standings isn't in the database"
+        for rnd in (1, 2)
+    ]
+
+    # Once he is, the next run fills them in
+    http, _ = _jolpica(latest=3)
+    _ingest(db, http, every_round=True)
+    assert _points(db)[("driver", 1, RUS)] == 9
+    assert _points(db)[("driver", 2, RUS)] == 19
+
+
 def test_a_round_that_fails_doesnt_stop_the_later_ones() -> None:
     db = _db({"standings": []})
     http, fetched = _jolpica(latest=3)

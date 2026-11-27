@@ -474,9 +474,9 @@ def _store_round_standings(
     """Fetch and upsert the standings after one round.
 
     Raises on a failed fetch, and on an answer that isn't that round's whole
-    standings (none, another round's, or still without its Grand Prix), so a
-    caller repairing a round knows the repair didn't happen and the next run
-    tries again.
+    standings (none, another round's, someone not in the database, or still
+    without its Grand Prix), so a caller repairing a round knows the repair
+    didn't happen and the next run tries again.
     """
     data = fetch_json(http, f"{BASE_URL}/{season}/{rnd}/{path}.json", rl)
     lists = data.get("StandingsTable", {}).get("StandingsLists", [])
@@ -489,6 +489,13 @@ def _store_round_standings(
         raise ValueError(f"Jolpica sent round {got}'s standings, not round {rnd}'s")
     if not rows:
         raise ValueError(f"no {kind} in Jolpica's standings is in the database")
+    # A round stored without someone is never fetched again, so it waits
+    missing = len(lists[0].get(list_key, [])) - len(rows)
+    if missing:
+        raise ValueError(
+            f"{missing} {kind}{'s' if missing > 1 else ''} in Jolpica's standings "
+            f"{'aren' if missing > 1 else 'isn'}'t in the database"
+        )
     if not _has_its_grand_prix(rows, rnd):
         raise ValueError(
             f"Jolpica's standings after round {rnd} still lack its Grand Prix"
