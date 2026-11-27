@@ -336,6 +336,8 @@ def _standings_hold_results(
     its Grand Prix, and not fetched again since, are one short. Points can't
     tell: earlier sprint points can cover a missing Grand Prix.
 
+    So the wins after round N must add up to the rounds up to N that have
+    results (a Grand Prix cancelled after its sprint has none, nor a win).
     Wins can't show a missing driver who never won (a round stored short), so
     the standings after round N must also list every driver with a Grand Prix
     result in rounds 1 to N. They may list more (a sprint-only driver).
@@ -347,9 +349,13 @@ def _standings_hold_results(
             every round with results.
     """
     seen: set[int] = set()
-    for rnd in sorted(drivers_by_round):
+    for grands_prix, rnd in enumerate(sorted(drivers_by_round), start=1):
         seen |= drivers_by_round[rnd]
-        if rnd not in by_round or wins[rnd] < rnd or not seen <= by_round[rnd].keys():
+        if (
+            rnd not in by_round
+            or wins[rnd] < grands_prix
+            or not seen <= by_round[rnd].keys()
+        ):
             return False
     return True
 

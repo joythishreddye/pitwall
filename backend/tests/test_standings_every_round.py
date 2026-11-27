@@ -232,6 +232,52 @@ def test_progression_falls_back_while_a_round_lacks_a_driver_with_results(
     assert progression[1].points == [18, 30]
 
 
+def test_progression_counts_wins_against_the_rounds_with_results() -> None:
+    # Round 2's Grand Prix was cancelled after its sprint: no results and no
+    # win, so after round 3 the wins add up to 2, and the standings are whole
+    db = _db(
+        {
+            "races": [
+                {"id": 11, "season": 2026, "round": 1},
+                {"id": 12, "season": 2026, "round": 2},
+                {"id": 13, "season": 2026, "round": 3},
+            ],
+            "race_results": [
+                _result(1, 11, ANT, 25),
+                _result(2, 11, HAM, 18),
+                _result(3, 11, RUS, 12),
+                _result(4, 13, ANT, 25),
+                _result(5, 13, RUS, 15),
+                _result(6, 13, HAM, 12),
+            ],
+            "drivers": [
+                _driver(ANT, "antonelli", "Kimi", "Antonelli"),
+                _driver(RUS, "russell", "George", "Russell"),
+                _driver(HAM, "hamilton", "Lewis", "Hamilton"),
+            ],
+            "constructors": [{"id": MERCEDES, "ref": "mercedes", "name": "Mercedes"}],
+            "standings": [
+                *AFTER_ROUND_1,
+                # Round 2's sprint: RUS 8, ANT 7
+                _standing(4, 2, ANT, 1, 32, wins=1),
+                _standing(5, 2, RUS, 2, 20),
+                _standing(6, 2, HAM, 3, 18),
+                _standing(7, 3, ANT, 1, 57, wins=2),
+                _standing(8, 3, RUS, 2, 35),
+                _standing(9, 3, HAM, 3, 30),
+            ],
+        }
+    )
+
+    progression = get_standings_progression(2026, db, top=2)
+
+    # The standings, sprint in: race sums would pick Hamilton (30) over Russell
+    assert [p.driver_ref for p in progression] == ["antonelli", "russell"]
+    assert progression[0].rounds == [1, 3]
+    assert progression[0].points == [25, 57]
+    assert progression[1].points == [12, 35]
+
+
 def test_progression_uses_standings_that_also_list_a_driver_without_results() -> None:
     # A driver who only ran a sprint is in the standings, not in race_results
     sprint_only = _standing(7, 2, 9, 4, 1)
@@ -561,6 +607,42 @@ def test_an_older_round_still_short_of_its_grand_prix_is_stored_as_jolpica_has_i
     assert {(kind, rnd) for kind, rnd, _ in _points(db)} == {
         (kind, rnd) for kind in ("driver", "constructor") for rnd in (1, 2, 3)
     }
+    assert report.problems == []
+
+
+def test_a_grand_prix_cancelled_after_its_sprint_leaves_the_latest_round_whole() -> (
+    None
+):
+    # Round 2 has a sprint but no Grand Prix: Jolpica's wins after round 3 add
+    # up to 2, the rounds with results, so the refresh is caught up
+    db = _db({"standings": []})
+    http, _ = _jolpica(latest=3)
+    serve = http.get.side_effect
+
+    def without_round_2s_win(url: str, params: object = None) -> MagicMock:
+        response = serve(url, params)
+        latest = url.endswith(
+            ("/2026/driverStandings.json", "/2026/constructorStandings.json")
+        )
+        if latest or "/2026/2/" in url:
+            body = response.json.return_value["MRData"]["StandingsTable"]
+            standings = body["StandingsLists"][0]
+            entries = (
+                standings.get("DriverStandings") or standings["ConstructorStandings"]
+            )
+            entries[0]["wins"] = "2" if latest else "1"
+        return response
+
+    http.get.side_effect = without_round_2s_win
+    report = IngestReport(
+        results_round={2026: 3},
+        results_rounds={2026: {1, 3}},
+        caught_up={(2026, "qualifying"): 3},
+    )
+    _ingest(db, http, every_round=True, report=report)
+    report.check_caught_up()
+
+    assert report.caught_up[(2026, "driver standings")] == 3
     assert report.problems == []
 
 

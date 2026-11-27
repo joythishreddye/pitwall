@@ -37,10 +37,21 @@ class IngestReport:
     # qualifying and each kind of standings reached
     results_round: dict[int, int] = field(default_factory=dict)
     caught_up: dict[tuple[int, str], int] = field(default_factory=dict)
+    # Each season's rounds with results (a Grand Prix cancelled after its
+    # sprint has none)
+    results_rounds: dict[int, set[int]] = field(default_factory=dict)
 
     def add(self, problem: str) -> None:
         logger.warning(problem)
         self.problems.append(problem)
+
+    def grands_prix_by(self, season: int, rnd: int) -> int:
+        """How many rounds up to ``rnd`` have Grand Prix results: ``rnd``
+        itself when this run read no results for the season."""
+        rounds = self.results_rounds.get(season)
+        if rounds is None:
+            return rnd
+        return sum(1 for r in rounds if r <= rnd)
 
     def check_caught_up(self) -> None:
         """Qualifying and standings must reach the latest results round. A
@@ -324,6 +335,7 @@ def ingest_results(
             if report is not None and rows:
                 latest = report.results_round.get(season, 0)
                 report.results_round[season] = max(latest, key[1])
+                report.results_rounds.setdefault(season, set()).add(key[1])
         logger.info("Results %d: %d upserted", season, season_count)
         total += season_count
     return total
@@ -443,14 +455,16 @@ def _not_in_database(
     )
 
 
-def _has_its_grand_prix(rows: list[dict], rnd: int) -> bool:
-    """Whether standings rows after round ``rnd`` include its Grand Prix.
+def _has_its_grand_prix(rows: list[dict], grands_prix: int) -> bool:
+    """Whether standings rows include the latest round's Grand Prix.
 
     Jolpica's wins count Grand Prix wins only (2025's add up to its 24 rounds,
-    its 6 sprint wins not counted), so after round ``rnd``'s Grand Prix they add
-    up to ``rnd``; stored after its sprint, they're one short.
+    its 6 sprint wins not counted), so once the round's Grand Prix is in they
+    add up to ``grands_prix``, the rounds so far with Grand Prix results (a
+    Grand Prix cancelled after its sprint has none); stored after its sprint,
+    they're one short.
     """
-    return sum(row["wins"] or 0 for row in rows) >= rnd
+    return sum(row["wins"] or 0 for row in rows) >= grands_prix
 
 
 def _last_stored_round(supabase: Client, season: int, kind: str) -> int:
@@ -586,7 +600,9 @@ def ingest_standings(
                 if report is not None and rows:
                     # Standings still short of the latest Grand Prix reach only
                     # the round before it
-                    full = _has_its_grand_prix(rows, latest)
+                    full = _has_its_grand_prix(
+                        rows, report.grands_prix_by(season, latest)
+                    )
                     reached = latest if full else latest - 1
                     report.caught_up[(season, f"{kind} standings")] = reached
                 for rnd in earlier:
