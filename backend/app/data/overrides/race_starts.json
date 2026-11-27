@@ -1,0 +1,4 @@
+{
+  "_source": "Races whose start Jolpica stores wrong, by season and round, as Jolpica writes a time. 2026 round 4 (Miami): Jolpica says 20:00 UTC; OpenF1's race session starts at 17:00 UTC and lights out came at 17:04 by the lap data (checked 2026-11-27).",
+  "2026": {"4": "17:00:00Z"}
+}

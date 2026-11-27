@@ -20,6 +20,7 @@ from app.ingestion._helpers import (
     safe_float,
     safe_int,
 )
+from app.race_starts import race_time
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +148,7 @@ def _map_race(r: dict, circuit_lookup: dict[str, int]) -> dict | None:
     if circuit_id is None:
         logger.warning("Unknown circuit ref %s, skipping race", circuit_ref)
         return None
-    time_str = r.get("time")
+    time_str = race_time(r["season"], r["round"], r.get("time"))
     if time_str:
         time_str = time_str.rstrip("Z")
     return {
