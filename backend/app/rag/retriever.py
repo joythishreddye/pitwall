@@ -323,6 +323,38 @@ class Retriever:
             for row in result.data or []
         ]
 
+    async def _race_page_chunks(self, race: RaceRef) -> list[RetrievedChunk]:
+        """The race's own page, read by its metadata (one chunk, its first).
+
+        Uses no embeddings and needs no word of the question. If the read
+        fails, only the race's slot is lost.
+        """
+        try:
+            result = await asyncio.to_thread(
+                lambda: self.db.table("knowledge_chunks")
+                .select("content, metadata, source")
+                .contains("metadata", _race_filter(race))
+                .order("id")
+                .limit(1)
+                .execute(),
+            )
+        except Exception:
+            logger.warning(
+                "Race page read failed (%s); continuing without it",
+                _race_ref(race),
+                exc_info=True,
+            )
+            return []
+        return [
+            RetrievedChunk(
+                content=row["content"],
+                metadata=row.get("metadata") or {},
+                similarity=0.0,
+                source=row.get("source") or "",
+            )
+            for row in result.data or []
+        ]
+
     async def retrieve(
         self, query: str, race: RaceRef | None = None
     ) -> list[RetrievedChunk]:
@@ -365,9 +397,11 @@ class Retriever:
                 metadata_filter=metadata_filter,
             )
             if race is not None:
-                # Full text only finds the race's page through a word of the
-                # question, so here the slot holds when one matches
                 race_hits = await self._fulltext_rpc(query, 5, _race_filter(race))
+                if not race_hits:
+                    # Full text needs a word of the question in the page; with
+                    # none ("Who triumphed?"), read the page's first chunk
+                    race_hits = await self._race_page_chunks(race)
                 chunks = self._ensure_entity_coverage(
                     chunks, {(_RACE_KEY, _race_ref(race)): race_hits}, top_k=5
                 )

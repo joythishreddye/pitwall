@@ -1,7 +1,9 @@
 """Tests for the RAG pipeline: chunker, prompt builder, knowledge level, retriever."""
 
 import json
+import re
 from pathlib import Path
+from typing import Self
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -355,6 +357,77 @@ class FakeKnowledgeBase:
         call = MagicMock()
         call.execute.return_value = MagicMock(data=matched[: params["match_count"]])
         return call
+
+
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"\w+", text.lower()))
+
+
+class LexicalKnowledgeBase(FakeKnowledgeBase):
+    """Answers search_knowledge_text the way Postgres does: a row needs a word
+    of the question. A read of the table itself filters by containment, in id
+    (list) order, and is recorded in ``table_reads``."""
+
+    def __init__(self, rows: list[dict], fail_table: bool = False) -> None:
+        super().__init__(rows)
+        self.fail_table = fail_table
+        self.table_reads: list[dict] = []
+
+    def rpc(self, name: str, params: dict) -> MagicMock:
+        if name != "search_knowledge_text":
+            return super().rpc(name, params)
+        wanted = params["filter_metadata"]
+        self.filters.append(wanted)
+        words = _words(params["query_text"])
+        matched = [
+            r
+            for r in self.rows
+            if words & _words(r["content"])
+            and all(r["metadata"].get(k) == v for k, v in wanted.items())
+        ]
+        call = MagicMock()
+        call.execute.return_value = MagicMock(data=matched[: params["match_count"]])
+        return call
+
+    def table(self, name: str) -> "_TableRead":
+        assert name == "knowledge_chunks"
+        return _TableRead(self)
+
+
+class _TableRead:
+    """select().contains("metadata", ...).order("id").limit(n).execute()"""
+
+    def __init__(self, kb: LexicalKnowledgeBase) -> None:
+        self.kb = kb
+        self.wanted: dict = {}
+        self.count = 1000
+
+    def select(self, _columns: str) -> Self:
+        return self
+
+    def contains(self, column: str, value: dict) -> Self:
+        assert column == "metadata"
+        self.wanted = value
+        return self
+
+    def order(self, column: str) -> Self:
+        assert column == "id"
+        return self
+
+    def limit(self, count: int) -> Self:
+        self.count = count
+        return self
+
+    def execute(self) -> MagicMock:
+        self.kb.table_reads.append(self.wanted)
+        if self.kb.fail_table:
+            raise RuntimeError("canceling statement due to statement timeout")
+        rows = [
+            r
+            for r in self.kb.rows
+            if all(r["metadata"].get(k) == v for k, v in self.wanted.items())
+        ]
+        return MagicMock(data=rows[: self.count])
 
 
 # In 2026 the "Bahrain Grand Prix" ran at Sepang. Older Bahrain races score
@@ -941,6 +1014,71 @@ class TestRacePageQuestions:
 
         assert "races/2026-r20-interlagos.md" in [c.source for c in chunks]
         assert len(chunks) == 5
+        assert retriever.last_mode == "fulltext"
+
+    @staticmethod
+    def _lexical_kb(fail_table: bool = False) -> LexicalKnowledgeBase:
+        # The race's page shares no word with "Who triumphed?"; the explainer does
+        return LexicalKnowledgeBase(
+            [
+                {
+                    **_row("explainers/podium.md", 0.0, category="explainer"),
+                    "content": "Who triumphed: the podium explained",
+                },
+                {
+                    **_row(
+                        "races/2026-r20-interlagos.md",
+                        0.0,
+                        category="race",
+                        season=2026,
+                        round=20,
+                        circuit_ref="interlagos",
+                    ),
+                    "content": "Winner: Lando Norris",
+                },
+            ],
+            fail_table=fail_table,
+        )
+
+    @pytest.mark.asyncio()
+    async def test_without_embeddings_the_race_page_comes_with_no_shared_word(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.db = self._lexical_kb()
+
+        chunks = await retriever.retrieve("Who triumphed?", race=BRAZIL_2026)
+
+        assert [c.source for c in chunks] == [
+            "explainers/podium.md",
+            "races/2026-r20-interlagos.md",
+        ]
+        # full text found nothing in the race, so its page was read directly
+        assert retriever.db.table_reads == [BRAZIL_2026_FILTER]
+        assert retriever.last_mode == "fulltext"
+
+    @pytest.mark.asyncio()
+    async def test_without_embeddings_a_race_found_by_full_text_needs_no_read(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.db = self._lexical_kb()
+
+        chunks = await retriever.retrieve("Who was the winner?", race=BRAZIL_2026)
+
+        assert "races/2026-r20-interlagos.md" in [c.source for c in chunks]
+        assert retriever.db.table_reads == []
+
+    @pytest.mark.asyncio()
+    async def test_a_failed_race_page_read_keeps_the_full_text_answer(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+        retriever.db = self._lexical_kb(fail_table=True)
+
+        chunks = await retriever.retrieve("Who triumphed?", race=BRAZIL_2026)
+
+        assert [c.source for c in chunks] == ["explainers/podium.md"]
         assert retriever.last_mode == "fulltext"
 
     @pytest.mark.asyncio()
