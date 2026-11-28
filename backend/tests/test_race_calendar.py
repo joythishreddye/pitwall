@@ -119,16 +119,36 @@ def test_after_the_last_race_no_later_race_is_known() -> None:
 
 
 def test_next_seasons_first_round_follows_the_last_race() -> None:
-    melbourne = _weekend(
-        2027,
-        1,
-        "Australian Grand Prix",
-        [("practice_1", "2027-03-05T01:30:00Z"), ("race", "2027-03-07T04:00:00Z")],
-    )
-    note = calendar_note(_at("2026-12-10T09:00:00Z"), [*SEASON, melbourne])
+    note = calendar_note(_at("2026-12-10T09:00:00Z"), [*SEASON, MELBOURNE])
 
     assert "Last race: Abu Dhabi Grand Prix (2026, round 23 of 3)" in note
     assert "Next race weekend: Australian Grand Prix (2027, round 1 of 1):" in note
+
+
+MELBOURNE = _weekend(
+    2027,
+    1,
+    "Australian Grand Prix",
+    [("practice_1", "2027-03-05T01:30:00Z"), ("race", "2027-03-07T04:00:00Z")],
+)
+
+
+def test_next_seasons_opener_is_named_while_this_season_runs() -> None:
+    note = calendar_note(_at("2026-11-28T17:42:00Z"), [*SEASON, MELBOURNE])
+
+    assert "After that: Abu Dhabi Grand Prix (2026, round 23 of 3), " in note
+    assert note.endswith(
+        "Next season's first race: Australian Grand Prix (2027, round 1 of 1), "
+        "race Sun 7 Mar 2027, 04:00 UTC."
+    )
+
+
+def test_next_seasons_opener_is_named_once() -> None:
+    # Abu Dhabi's weekend: the opener is already the race after it
+    note = calendar_note(_at("2026-12-05T12:00:00Z"), [*SEASON, MELBOURNE])
+
+    assert "After that: Australian Grand Prix (2027, round 1 of 1), " in note
+    assert "Next season's first race" not in note
 
 
 def test_a_session_with_no_time_shows_its_day() -> None:

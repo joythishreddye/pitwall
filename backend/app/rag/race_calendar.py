@@ -5,7 +5,8 @@ race?" and "When does {next season} start?", and nothing else gives the chat a
 date: the knowledge base has race reports only for races already run.
 
 The note names the last race, the weekend whose race hasn't ended yet with each
-of its sessions, and the race after it. The session times come from the
+of its sessions, the race after it, and next season's first race when the data
+has it. The session times come from the
 schedule files the code ships with (app/schedule.py), and each session is
 tagged by the homepage's own rules (app/briefing/clock.py, session_states), so
 the chat and the page agree on what's done and what's next. No database read:
@@ -115,6 +116,12 @@ def calendar_note(now: datetime, rounds: Sequence[RoundSchedule]) -> str | None:
         lines.append(f"After that: {title(after)}, race {_when(after.race)}.")
     else:
         lines.append("No race after it is in PitWall's schedule yet.")
+    # "When does {next season} start?" can come mid-season too
+    opener = next((r for r in ahead[2:] if r.season > weekend.season), None)
+    if opener is not None and ahead[1].season == weekend.season:
+        lines.append(
+            f"Next season's first race: {title(opener)}, race {_when(opener.race)}."
+        )
     return "\n".join(lines)
 
 
