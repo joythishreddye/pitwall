@@ -22,8 +22,11 @@ test("the Next Race tile draws Qatar's circuit", async ({ page }) => {
     .getByText("Next Race", { exact: true })
     .locator("xpath=ancestor::div[contains(@class, 'overflow-hidden')][1]");
   await expect(tile).toContainText("Lusail International Circuit");
-  // The outline sits in its own aria-hidden layer, apart from the calendar icon
-  await expect(tile.locator(':scope > div[aria-hidden="true"] svg')).toHaveCount(1);
+  // The outline sits in its own aria-hidden column, apart from the calendar icon (shown from a 320 px tile:
+  // next-race-outline.spec.ts checks where)
+  const outline = tile.getByTestId("next-race-outline");
+  await expect(outline).toHaveAttribute("aria-hidden", "true");
+  await expect(outline.locator("svg")).toHaveCount(1);
 });
 
 test.describe("a race's circuit facts", () => {
