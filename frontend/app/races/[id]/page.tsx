@@ -200,35 +200,46 @@ export default function RaceDetailPage({
           <div className="flex-1 min-w-0 flex flex-col gap-4">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">{race.name}</h1>
-              <div className="flex items-center gap-4 mt-1 text-sm text-f1-muted flex-wrap">
-                <span>{race.circuit.name}</span>
-                <span className="text-f1-grid" aria-hidden="true">|</span>
-                <span className="font-data">{race.date}</span>
-                <span className="text-f1-grid" aria-hidden="true">|</span>
-                <span>Round {race.round}</span>
+              {/* Each "|" belongs to the piece after it, and the row is pulled left by one gap inside a clipped box,
+                  so a piece that starts a line has its "|" cut off: a wrapped line never starts or ends with one */}
+              <div className="mt-1 overflow-hidden">
+                <div className="-ml-7 flex flex-wrap gap-y-1 text-sm text-f1-muted">
+                  <span className="relative pl-7">
+                    <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
+                    <span>{race.circuit.name}</span>
+                  </span>
+                  <span className="relative pl-7">
+                    <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
+                    <span className="font-data">{race.date}</span>
+                  </span>
+                  <span className="relative pl-7">
+                    <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
+                    <span>Round {race.round}</span>
+                  </span>
+                </div>
               </div>
             </div>
 
             {circuitMeta && (
               <div className="flex items-center gap-6 px-4 py-3 border border-f1-grid bg-f1-dark-2 rounded-sm text-sm flex-wrap">
                 <div>
-                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Length</span>
+                  <span className="text-[11px] text-f1-muted uppercase tracking-wider block">Length</span>
                   <p className="font-data font-semibold">{circuitMeta.lengthKm} km</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Turns</span>
+                  <span className="text-[11px] text-f1-muted uppercase tracking-wider block">Turns</span>
                   <p className="font-data font-semibold">{circuitMeta.turns}</p>
                 </div>
                 {/* DRS ran from 2011 to 2025; the 2026 cars have none */}
                 {race.season >= 2011 && race.season <= 2025 && (
                   <div>
-                    <span className="text-[10px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
+                    <span className="text-[11px] text-f1-muted uppercase tracking-wider block">DRS Zones</span>
                     <p className="font-data font-semibold">{circuitMeta.drsZones}</p>
                   </div>
                 )}
                 {circuitMeta.lapRecord && (
                   <div>
-                    <span className="text-[10px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
+                    <span className="text-[11px] text-f1-muted uppercase tracking-wider block">Lap Record</span>
                     <p className="font-data font-semibold">
                       {circuitMeta.lapRecord.time}
                       <span className="text-f1-muted font-normal ml-1.5">
