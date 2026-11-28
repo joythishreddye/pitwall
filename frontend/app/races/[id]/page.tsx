@@ -145,13 +145,13 @@ export default function RaceDetailPage({
 
   // No race to show. An id that can't name a race (no request is made) or a 404 means the race doesn't exist; anything
   // else (a server error, a dropped connection, the client's timeout, a request paused while offline) is a failed
-  // load the reader can retry. Retry also reloads the pit stops when they failed too, since nothing else would. A
-  // background refetch that fails keeps the race already on screen.
+  // load the reader can retry. Retry also reloads the pit stops whenever there are none yet (failed, or failing but not
+  // rendered so yet), since nothing else would. A background refetch that fails keeps the race already on screen.
   if (!race) {
     const missing = !isRaceId(raceId) || (error instanceof ApiError && error.status === 404);
     const retry = () => {
       void refetch();
-      if (strategyFailed) void refetchStrategy();
+      if (!strategy) void refetchStrategy();
     };
     return (
       <div className="p-4 md:p-8">

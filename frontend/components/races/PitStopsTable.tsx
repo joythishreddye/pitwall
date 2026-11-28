@@ -15,9 +15,10 @@ interface PitStopsTableProps {
   finished: boolean;
 }
 
-/** Why a race has no stops to show: not run yet, from before stop times start (2022), or not in PitWall's data. */
+/** Why a race has no stops to show: no results yet (not run, or not loaded), from before stop times start (2022),
+ * or not in PitWall's data. */
 function emptyMessage(season: number, finished: boolean): { title: string; text: string } {
-  if (!finished) return { title: "No pit stops yet", text: "Pit stops show here after the race." };
+  if (!finished) return { title: "No pit stops yet", text: "Pit stops show here once the race's results are in." };
   if (season < 2022) {
     return {
       title: "No pit stop telemetry",

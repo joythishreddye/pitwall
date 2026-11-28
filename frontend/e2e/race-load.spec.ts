@@ -45,7 +45,7 @@ const STOPS = [
 type Fail = "server error" | "timeout";
 
 /** Serves `body` from the second call on, after `delayMs`; the first call fails as asked. Returns a counter of the
- * calls and a promise that settles once the first (failed) answer has reached the page. */
+ * calls and a promise that settles once the first (failed) answer has been sent. */
 async function failFirst(page: Page, url: string, fail: Fail, body: unknown, delayMs = 0) {
   const calls = { n: 0 };
   let failed!: () => void;
@@ -76,7 +76,7 @@ async function failsThenLoads(page: Page, fail: Fail) {
   await page.goto("/races/193");
   await expect(page.getByText("Couldn't load this race.")).toBeVisible();
   await expect(page.getByText("Race not found.")).toHaveCount(0);
-  // both failures have landed, so Retry knows the pit stops failed too
+  // both failures have been sent, so each call is made once more after Retry
   await Promise.all([race.firstFailed, stops.firstFailed]);
 
   await page.getByRole("button", { name: "Retry" }).click();
