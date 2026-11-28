@@ -24,8 +24,8 @@ tags:
 **Length:** 5.807 km (3.608 miles)  
 **Race Laps:** 53  
 **Race Distance:** 307.471 km (191.054 miles)  
-**Lap Record:** 1:30.983 — Lewis Hamilton (Mercedes, 2019)  
-**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (back straight after Spoon Curve; DRS zone 2 on main straight)  
+**Lap Record:** 1:30.965 — Kimi Antonelli (Mercedes, 2025)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 1 (main straight)  
 **Corners:** 18  
 **Average Speed:** Approximately 220-230 km/h  
 
@@ -55,18 +55,18 @@ A fast right-hander followed by a tighter right, leading under the crossover bri
 The unique feature of Suzuka's figure-8 layout. Cars on the upper loop pass over cars on the lower loop via a bridge. A visually iconic element unique to Suzuka in the world of F1.
 
 **Hairpin (Turn 14)**
-The slowest corner at Suzuka — a tight hairpin at the back of the circuit. Preceded by the back straight, a DRS zone through 2025. One of the key overtaking spots: the slipstream (and, through 2025, DRS) helps approaching the hairpin, with a long braking zone into a very slow corner allowing late overtaking attempts.
+The slowest corner at Suzuka — a tight hairpin at the back of the circuit, after Degner and the crossover. One of the key overtaking spots, with a long braking zone into a very slow corner allowing late overtaking attempts.
 
 **Spoon Curve (Turns 13-14 in some mappings, turns 15-16)**
-A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight into the hairpin (a DRS zone through 2025). Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
+A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight toward 130R. Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
 
-**130R (Turn 17)**
+**130R (Turn 15)**
 The fastest corner at Suzuka and one of the fastest in all of Formula 1. Named for its 130-meter radius, it was originally taken flat-out by cars of the 1990s and 2000s at over 300 km/h. Modern F1 cars take it almost or fully flat, generating extreme lateral G-forces. When a driver has a problem through 130R — a tyre failure, a loose wing — the consequences are severe. It is one of the corners that defines a driver's commitment.
 
-**Casio Triangle / Chicane (Turns 18-19-20)**
+**Casio Triangle / Chicane (Turns 16-17)**
 A tight chicane immediately after 130R that requires heavy braking and precision. The transition from 130R's extreme speed to the chicane's very low speed in mere meters is one of the most dramatic deceleration sequences in the sport.
 
-**Suzuka Hairpin**
+**Final Corner (Turn 18)**
 The final corner, a right-hander leading onto the start/finish straight.
 
 ## A Balanced Car's Dream, an Imbalanced Car's Nightmare
@@ -95,8 +95,8 @@ Multiple championships have been decided at Suzuka, making it a venue of profoun
 
 Suzuka is the setting for two of the most significant and controversial moments in F1 history.
 
-**1989:** Senna and Prost, teammates turned bitter rivals at McLaren, collided at the chicane on lap 47. Prost turned in on Senna at the chicane; Senna restarted with marshals' help, pitted for a new nose, rejoined, set the fastest lap, and appeared to win — only to be disqualified for missing the chicane during the incident. Prost was champion. The anger between the two men reached a personal level that never fully healed.
+**1989:** Senna and Prost, teammates turned bitter rivals at McLaren, collided at the chicane on lap 47. Prost turned in on Senna at the chicane; Senna restarted with marshals' help, pitted for a new front wing, rejoined, passed Alessandro Nannini and crossed the line first, only to be disqualified for missing the chicane during the incident. Prost was champion. The anger between the two men reached a personal level that never fully healed.
 
-**1990:** Senna and Prost (now at Ferrari) collided at Turn 1 at the start. Both retired. Senna was champion. Senna later admitted — after Prost had retired from F1 — that the collision was deliberate retaliation for 1989. One of the most shocking admissions in sports history.
+**1990:** Senna and Prost (now at Ferrari) collided at Turn 1 at the start. Both retired. Senna was champion. A year later, after winning the 1991 title, Senna admitted that the collision was deliberate retaliation for 1989. One of the most shocking admissions in sports history.
 
 These two races defined the Senna-Prost rivalry's darkest chapter and remain the defining moments of Suzuka's historical legacy.

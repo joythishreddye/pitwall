@@ -23,13 +23,13 @@ Teams with strong electrical engineering departments (Mercedes, Ferrari) were ex
 
 The most visually striking change: active aerodynamic elements are now legal. Cars can adjust front and rear wing angles while on track, not just through DRS. The rear wing features a variable-geometry system that can switch between high-downforce and low-drag configurations. The front wing also has adjustable elements. This replaces the traditional DRS system entirely. The wings switch between corner mode (high downforce) and straight mode (low drag). For overtaking, a driver within one second of the car ahead can use Overtake Mode, an extra allowance of electrical energy (the draft rules called it Manual Override Mode).
 
-Active aero means cars can optimize their aerodynamic setup for each corner and straight, rather than compromising between downforce and drag. Teams with superior control systems and simulation capabilities have an advantage in exploiting these new degrees of freedom.
+Active aero means cars switch between a high-downforce corner mode and a low-drag straight-line mode, rather than compromising between downforce and drag. Teams with superior control systems and simulation capabilities have an advantage in exploiting these new degrees of freedom.
 
-The removal of DRS and introduction of active aero changes overtaking dynamics significantly. Instead of a binary open/closed rear wing, drivers now manage continuous aero adjustments, adding a new layer of driver skill and team strategy.
+The removal of DRS and introduction of active aero changes overtaking dynamics significantly. Instead of an open/closed rear wing only the chasing car may use, every car switches its wings between the two set modes, adding a new layer of driver skill and team strategy.
 
 ## Revised Aerodynamic Rules
 
-Car dimensions change substantially. Cars are narrower (reduced from 2000mm to 1900mm) and shorter, with a reduced floor area. The front wing is simplified with fewer elements, and the overall aerodynamic complexity is reduced to lower costs and improve racing proximity. Underbody aerodynamics (ground effect) remain central to downforce generation, but the floor design rules are tightened to reduce the sensitivity to ride height — addressing the porpoising issues that plagued 2022.
+Car dimensions change substantially. Cars are narrower (reduced from 2000mm to 1900mm) and shorter, with a reduced floor area. The front wing is simplified with fewer elements, and the overall aerodynamic complexity is reduced to lower costs and improve racing proximity. The floor produces less ground effect than in 2022–2025, which also reduces the sensitivity to ride height — addressing the porpoising issues that plagued 2022.
 
 The reduced car size and simplified aero should make cars more nimble and allow closer racing, though the active aero adds complexity back in a different way.
 
@@ -45,7 +45,7 @@ Major regulation changes historically reshuffle the competitive order. Teams tha
 - **Aerodynamic simulation** — active aero requires sophisticated modeling to optimize wing positions across every track section
 - **Adaptability** — teams that can rapidly iterate on their designs during the season will close gaps faster
 
-Teams that dominated under the 2022-2025 regulations (Red Bull's aerodynamic superiority, Mercedes' power unit strength) may find their advantages neutralized or amplified depending on how well their core competencies align with the new rules.
+Teams that dominated under the 2022-2025 regulations (Red Bull's aerodynamic edge, McLaren's constructors' titles in 2024 and 2025) may find their advantages neutralized or amplified depending on how well their core competencies align with the new rules.
 
 ## Effect on Racing and Strategy
 
