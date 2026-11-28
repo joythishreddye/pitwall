@@ -21,7 +21,11 @@ export default function StandingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("drivers");
 
   const { data, isLoading, error, refetch } = useStandings(season);
-  const { data: progressions = [] } = useStandingsProgression(season);
+  const {
+    data: progressions,
+    isLoading: progressionLoading,
+    refetch: refetchProgression,
+  } = useStandingsProgression(season);
   const { data: races = [] } = useRaceCalendar(season);
 
   // Build round → country label map from race calendar
@@ -168,16 +172,32 @@ export default function StandingsPage() {
           </h2>
         </div>
         <div className="w-full bg-f1-dark-2 border-y border-f1-grid py-5 px-6 relative">
-          {!progressions.length && (
-            <div className="absolute inset-x-0 top-0">
-              <ScannerLine />
-            </div>
+          {/* The chart while its data loads (the chart says it's loading) and once it's in. A failed load, or one
+              paused offline, says so and offers a retry: before, "Loading progression data..." stayed for good.
+              A season with no round-by-round standings says that. */}
+          {progressionLoading || progressions?.length ? (
+            <>
+              {progressionLoading && (
+                <div className="absolute inset-x-0 top-0">
+                  <ScannerLine />
+                </div>
+              )}
+              <ChampionshipChart
+                progressions={progressions ?? []}
+                roundLabels={roundLabels}
+                mode={activeTab === "constructors" ? "constructors" : "drivers"}
+              />
+            </>
+          ) : progressions ? (
+            <p className="text-f1-muted text-sm py-8 text-center">
+              No round-by-round standings for {season} yet.
+            </p>
+          ) : (
+            <ErrorState
+              message="Couldn't load the championship chart."
+              onRetry={() => void refetchProgression()}
+            />
           )}
-          <ChampionshipChart
-            progressions={progressions}
-            roundLabels={roundLabels}
-            mode={activeTab === "constructors" ? "constructors" : "drivers"}
-          />
         </div>
       </section>
 
