@@ -153,6 +153,22 @@ class TestChunker:
         assert "s489" in text.split()
         assert "overview" in text.split()
 
+    def test_a_short_section_before_a_long_one_keeps_its_windows_headed(
+        self, tmp_path: Path
+    ) -> None:
+        # flags-and-penalties: a title-only preamble before a 600-word section
+        flags = " ".join(f"f{i}" for i in range(620))
+        md = tmp_path / "flags.md"
+        md.write_text(
+            "# Flags and Penalties — How F1 Polices the Track\n\n"
+            f"## Flag Signals\n\n{flags}\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 2
+        assert all(c["content"].startswith("## Flag Signals") for c in chunks)
+        assert "# Flags and Penalties" in chunks[0]["content"]
+        assert "f619" in chunks[-1]["content"].split()
+
     def test_a_doc_under_20_words_in_all_still_gives_no_chunk(
         self, tmp_path: Path
     ) -> None:

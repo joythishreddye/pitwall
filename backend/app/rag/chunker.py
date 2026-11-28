@@ -54,10 +54,9 @@ def _split_sections(body: str) -> list[tuple[str, str]]:
     return sections
 
 
-def _join(heading: str, text: str, later_heading: str, later_text: str) -> str:
-    """``text`` followed by a later section, its heading kept inside."""
-    later = f"{later_heading}\n\n{later_text}" if later_heading else later_text
-    return f"{text}\n\n{later}"
+def _with_heading(heading: str, text: str) -> str:
+    """A section as it reads in a chunk: its heading line, then its text."""
+    return f"{heading}\n\n{text}" if heading else text
 
 
 def _fold_short_sections(
@@ -65,25 +64,30 @@ def _fold_short_sections(
 ) -> list[tuple[str, str]]:
     """Join each section too short to index to its neighbour.
 
-    A short section joins the next one, under its own heading; a short last
-    section joins the one before. Without this, the chunk floor dropped whole
-    sections: every driver doc's overview (current team included), every race
-    doc's pit strategy.
+    A short section joins the next one, under its own heading, unless the
+    two together are long enough to split into windows: then the next one's
+    heading leads, so every window keeps it. A short last section joins the
+    one before. Without this, the chunk floor dropped whole sections: every
+    driver doc's overview (current team included), every race doc's pit
+    strategy.
     """
     out: list[tuple[str, str]] = []
     carry: tuple[str, str] | None = None
     for heading, text in sections:
         if carry is not None:
-            heading, text = carry[0], _join(*carry, heading, text)
+            joined = f"{carry[1]}\n\n{_with_heading(heading, text)}"
+            if _count_tokens(joined) > MAX_TOKENS:
+                text = f"{_with_heading(*carry)}\n\n{text}"
+            else:
+                heading, text = carry[0], joined
             carry = None
-        full = f"{heading}\n\n{text}" if heading else text
-        if _count_tokens(full) < MIN_CHUNK_TOKENS:
+        if _count_tokens(_with_heading(heading, text)) < MIN_CHUNK_TOKENS:
             carry = (heading, text)
         else:
             out.append((heading, text))
     if carry is not None:
         if out:
-            out[-1] = (out[-1][0], _join(*out[-1], *carry))
+            out[-1] = (out[-1][0], f"{out[-1][1]}\n\n{_with_heading(*carry)}")
         else:
             out.append(carry)
     return out
