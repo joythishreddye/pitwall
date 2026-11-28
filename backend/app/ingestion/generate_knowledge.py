@@ -234,6 +234,31 @@ def _format_gap(ms: int | None, winner_ms: int | None) -> str:
     return f"+{gap:.3f}s"
 
 
+def _title_leaders(supabase: Client) -> list[dict]:
+    """Every round's driver standings leader, all seasons, for the title
+    counts. Read in pages: 1950 to today is well past PostgREST's 1,000-row
+    cap once f1db's backfill (#18) lands."""
+    return _fetch_all(
+        lambda: supabase.table("standings")
+        .select("entity_id, season, round")
+        .eq("type", "driver")
+        .eq("position", 1)
+        .order("id")
+    )
+
+
+def _all_races(supabase: Client) -> list[dict]:
+    """Every race in season and round order, read in pages for the same
+    reason (about 1,150 races from 1950)."""
+    return _fetch_all(
+        lambda: supabase.table("races")
+        .select("id, season, round, name, date, circuits(name, ref)")
+        .order("season")
+        .order("round")
+        .order("id")
+    )
+
+
 def generate_driver_profiles(supabase: Client) -> int:
     """Generate Markdown profiles for all drivers on the current grid."""
     out_dir = KNOWLEDGE_DIR / "drivers"
@@ -351,15 +376,8 @@ def generate_driver_profiles(supabase: Client) -> int:
     current_complete = len({r["race_id"] for r in current_results_raw.data}) >= len(
         race_ids
     )
-    leader_rows = (
-        supabase.table("standings")
-        .select("entity_id, season, round")
-        .eq("type", "driver")
-        .eq("position", 1)
-        .execute()
-    ).data
     championships = _count_titles(
-        leader_rows,
+        _title_leaders(supabase),
         lambda season: season < CURRENT_SEASON or current_complete,
     )
 
@@ -660,21 +678,13 @@ def generate_race_summaries(supabase: Client) -> int:
     out_dir = KNOWLEDGE_DIR / "races"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Fetch all races
-    races = (
-        supabase.table("races")
-        .select("id, season, round, name, date, circuits(name, ref)")
-        .order("season")
-        .order("round")
-        .execute()
-    )
-
-    if not races.data:
+    races = _all_races(supabase)
+    if not races:
         logger.warning("No races found")
         return 0
 
     # Fetch all results in batches by season to avoid huge queries
-    all_race_ids = [r["id"] for r in races.data]
+    all_race_ids = [r["id"] for r in races]
 
     # Process in batches of 50 races
     batch_size = 50
@@ -718,7 +728,7 @@ def generate_race_summaries(supabase: Client) -> int:
             pit_data[row["race_id"]].append(row)
 
     count = 0
-    for race in races.data:
+    for race in races:
         rid = race["id"]
         results = results_by_race.get(rid, [])
         if not results:
