@@ -61,8 +61,9 @@ export default function PredictionsPage() {
 
   return (
     <div ref={containerRef} className="p-6 lg:p-8 space-y-4">
-      {/* Header */}
-      <div className="pred-header flex items-start justify-between gap-4">
+      {/* Header. It wraps, so on a narrow phone the status box drops under the title: side by side they need about
+          370 px, and a 360 px phone scrolled sideways */}
+      <div className="pred-header flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-f1-muted mb-1">
             Phase 2 · Not yet active
