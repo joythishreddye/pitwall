@@ -531,6 +531,31 @@ async def test_a_question_without_a_race_has_no_race_note(wire) -> None:
     assert "race page" not in asked[0][0].content
 
 
+async def test_the_model_gets_the_race_calendar(wire, monkeypatch) -> None:
+    llm, asked = _recording_llm()
+    wire(llm)
+    note = "This race weekend: Qatar Grand Prix (2026, round 22 of 23):"
+    monkeypatch.setattr(chat_route, "race_calendar_note", lambda: note)
+
+    response = await _post({"message": "When does the race start?"})
+
+    assert response.status_code == 200
+    assert f"[Race Calendar]\n{note}" in asked[0][0].content
+
+
+async def test_no_race_calendar_still_answers_without_its_block(
+    wire, monkeypatch
+) -> None:
+    llm, asked = _recording_llm()
+    wire(llm)
+    monkeypatch.setattr(chat_route, "race_calendar_note", lambda: None)
+
+    response = await _post({"message": "When does the race start?"})
+
+    assert response.status_code == 200
+    assert "[Race Calendar]" not in asked[0][0].content
+
+
 @pytest.mark.parametrize(
     "race",
     [

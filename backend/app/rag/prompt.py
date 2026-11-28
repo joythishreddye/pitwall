@@ -105,6 +105,7 @@ def build_rag_prompt(
     standings_context: str | None = None,
     history: list[Message] | None = None,
     race_note: str | None = None,
+    calendar_context: str | None = None,
 ) -> list[Message]:
     """Assemble the full message list for the LLM.
 
@@ -120,6 +121,8 @@ def build_rag_prompt(
 
     if standings_context:
         context_parts.append(f"[Current Championship Standings]\n{standings_context}")
+    if calendar_context:
+        context_parts.append(f"[Race Calendar]\n{calendar_context}")
 
     context_block = "\n\n---\n\n".join(context_parts)
 
