@@ -456,3 +456,79 @@ def test_no_season_or_no_circuit_names_no_circuit_profile() -> None:
     no_circuit = linker.link(_intent(), "How many wins has Lando Norris taken in 2026?")
     assert two_years["circuit_profile"] is None
     assert no_circuit["circuit_profile"] is None
+
+
+def _corner_linker(kb_circuits: tuple[str, ...] = ("monza", "spa", "monaco")):
+    extra = [
+        {
+            "ref": "monza",
+            "name": "Autodromo Nazionale di Monza",
+            "location": "Monza",
+            "country": "Italy",
+        },
+        {
+            "ref": "spa",
+            "name": "Circuit de Spa-Francorchamps",
+            "location": "Spa",
+            "country": "Belgium",
+        },
+        {
+            "ref": "monaco",
+            "name": "Circuit de Monaco",
+            "location": "Monte-Carlo",
+            "country": "Monaco",
+        },
+        {
+            "ref": "silverstone",
+            "name": "Silverstone Circuit",
+            "location": "Silverstone",
+            "country": "UK",
+        },
+    ]
+    return EntityLinker.from_rows(
+        [*KB, *({"circuit_ref": ref} for ref in kb_circuits)],
+        DRIVERS,
+        TEAMS,
+        [*CIRCUITS, *extra],
+    )
+
+
+def test_a_famous_corner_names_its_circuit() -> None:
+    # Before the corner names, a question naming only a corner got no circuit
+    # filter, and vector search returned glossary chunks instead of the track
+    linker = _corner_linker()
+    cases = {
+        "How fast is the Parabolica?": "monza",
+        "Why is Eau Rouge so hard to take flat out?": "spa",
+        "How slow is the Sainte Dévote corner?": "monaco",
+        "Is 130R still flat out?": "suzuka",
+    }
+    for question, ref in cases.items():
+        out = linker.link(_intent(), question)
+        assert out["metadata_filter"] == {"circuit_ref": ref}, question
+        assert out["entities"]["circuits"] == [ref], question
+
+
+def test_a_corner_the_classifier_names_is_repaired_to_its_circuit() -> None:
+    out = _corner_linker().link(
+        _intent({"circuit_ref": "parabolica"}), "Tell me about the Parabolica."
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "monza"}
+
+
+def test_corner_names_that_are_everyday_words_are_not_aliases() -> None:
+    linker = _corner_linker(("monza", "spa", "monaco", "silverstone"))
+    for question in (
+        "Is Copse a fast corner?",
+        "What happened at the Casino?",
+        "Who was Alberto Ascari?",
+        "Where is the Swimming Pool section?",
+    ):
+        out = linker.link(_intent(), question)
+        assert out["metadata_filter"] == {}, question
+
+
+def test_a_corner_needs_its_circuit_in_the_knowledge_base() -> None:
+    # No Spa doc: the corner must not invent a filter that matches nothing
+    out = _corner_linker(("monza",)).link(_intent(), "What is Eau Rouge?")
+    assert out["metadata_filter"] == {}

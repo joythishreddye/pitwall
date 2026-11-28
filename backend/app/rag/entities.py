@@ -21,7 +21,8 @@ It also enforces the filter rules the eval baseline supports:
   the history docs);
 * comparisons use no filter, and entity searches cover each side;
 * a scan of the question trusts only unambiguous names: full names, team and
-  circuit names, circuit cities, and refs that aren't also everyday words.
+  circuit names, circuit cities, famous corner names (``_CORNER_ALIASES``),
+  and refs that aren't also everyday words.
   Weak aliases still repair names the classifier gave, but a scan skips
   them, so a stray word can't filter the answer out. Weak aliases are:
   - country names, including the refs "bahrain" and "monaco";
@@ -64,6 +65,36 @@ _WORD_CIRCUIT_ALIASES = frozenset(
 )
 # A weak circuit alias still counts as part of a race name ("Monaco GP")
 _RACE_NAME_WORDS = ("grand prix", "gp")
+# Corners the circuit docs describe, by names no other circuit, person or
+# everyday word uses. Left out on purpose: Copse, Stowe, Abbey, Club, Spoon,
+# Dunlop, Casino, Tabac, Portier, Swimming Pool, La Source, Bus Stop, Ascari,
+# Massenet, Curva Grande and Brooklands (also a circuit).
+_CORNER_ALIASES = {
+    "parabolica": "monza",
+    "curva alboreto": "monza",
+    "lesmo": "monza",
+    "rettifilo": "monza",
+    "roggia": "monza",
+    "eau rouge": "spa",
+    "raidillon": "spa",
+    "kemmel": "spa",
+    "les combes": "spa",
+    "pouhon": "spa",
+    "blanchimont": "spa",
+    "130r": "suzuka",
+    "degner": "suzuka",
+    "spoon curve": "suzuka",
+    "casio triangle": "suzuka",
+    "maggotts": "silverstone",
+    "becketts": "silverstone",
+    "luffield": "silverstone",
+    "sainte devote": "monaco",
+    "mirabeau": "monaco",
+    "fairmont hairpin": "monaco",
+    "nouvelle chicane": "monaco",
+    "rascasse": "monaco",
+    "anthony noghes": "monaco",
+}
 
 
 def _norm(text: str) -> str:
@@ -212,6 +243,9 @@ class EntityLinker:
                 linker.circuits.add(c["ref"], [alias], weak=weak)
             if country and country_counts[country] == 1:
                 linker.circuits.add(c["ref"], [country], weak=True)
+        for alias, ref in _CORNER_ALIASES.items():
+            if ref in kb_circuits:
+                linker.circuits.add(ref, [alias])
         return linker
 
     @classmethod
