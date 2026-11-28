@@ -54,7 +54,4 @@ tags:
 ## Retirements/DNFs
 
 - Kimi Räikkönen: Overheating (started P14)
-
-## Did not start
-
-- Lando Norris
+- Lando Norris: Withdrew (started P8)

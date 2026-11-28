@@ -84,29 +84,45 @@ def test_metadata_ref_lists_keep_podium_order() -> None:
 # --- #39: non-starters, disqualifications, position codes, sprint points ---
 
 
-def _row(name: str, status: str, grid: int, position_text: str = "R") -> dict:
+def _row(
+    name: str, status: str, grid: int, position_text: str = "R", laps: int = 10
+) -> dict:
     forename, surname = name.split(" ", 1)
     return {
         "drivers": {"forename": forename, "surname": surname},
         "status": status,
         "grid": grid,
         "position_text": position_text,
+        "laps": laps,
     }
 
 
 def test_a_driver_who_did_not_start_or_was_disqualified_is_no_dnf() -> None:
-    for status in ("Did not start", "Withdrew", "Disqualified", "Excluded"):
-        assert not gk._is_dnf(status), status
-    for status in ("Engine", "Collision", "Retired", "Power Unit"):
-        assert gk._is_dnf(status), status
-    assert not gk._is_dnf("Finished")
-    assert not gk._is_dnf("+1 Lap")
+    for row in (
+        _row("A B", "Did not start", 5, "W", laps=0),
+        _row("A B", "Withdrew", 0, "W", laps=0),
+        # A mechanical status with no lap and Jolpica's W is a non-start too
+        _row("A B", "Power Unit", 12, "W", laps=0),
+        _row("A B", "Disqualified", 6, "D"),
+        _row("A B", "Excluded", 6, "E"),
+        _row("A B", "Finished", 1, "1"),
+        _row("A B", "+1 Lap", 14, "14"),
+    ):
+        assert not gk._is_dnf(row), row["status"]
+    for row in (
+        _row("A B", "Engine", 3),
+        _row("A B", "Collision", 8, laps=0),  # out on the first lap: started
+        # Jolpica marks some mid-race retirements "Withdrew" (Mexico 2019)
+        _row("A B", "Withdrew", 4, "W", laps=47),
+        _row("A B", "Withdrew", 9, "17", laps=60),
+    ):
+        assert gk._is_dnf(row), row["status"]
 
 
 def test_position_codes_read_as_words_not_as_places() -> None:
     assert gk._finish_text("3", 3) == "P3"
     assert gk._finish_text("R", 17) == "retired"
-    assert gk._finish_text("W", 20) == "did not start"
+    assert gk._finish_text("W", 20) == "withdrew"
     assert gk._finish_text("D", 8) == "disqualified"
     assert gk._finish_text(None, 5) == "P5"
 
@@ -118,11 +134,15 @@ def test_grid_zero_is_a_pit_lane_start() -> None:
 
 def test_a_recent_result_never_says_a_non_starter_started() -> None:
     race = {"round": 20, "name": "Brazilian Grand Prix"}
-    dns = {**_row("Valtteri Bottas", "Did not start", 17, "W"), "races": race}
+    dns = {**_row("Valtteri Bottas", "Did not start", 17, "W", laps=0), "races": race}
+    quit_ = {**_row("Lando Norris", "Withdrew", 4, "W", laps=47), "races": race}
     out = {**_row("Fernando Alonso", "Gearbox", 0, "R"), "races": race}
     fin = {**_row("Lando Norris", "Finished", 1, "1"), "races": race}
 
     assert gk._recent_line(dns) == "- Round 20 Brazilian Grand Prix: did not start"
+    assert gk._recent_line(quit_) == (
+        "- Round 20 Brazilian Grand Prix: withdrew (started P4)"
+    )
     assert gk._recent_line(out) == (
         "- Round 20 Brazilian Grand Prix: retired (started from the pit lane)"
     )
@@ -134,8 +154,9 @@ def test_race_docs_list_retirements_non_starters_and_disqualifications_apart() -
         [
             _row("Lando Norris", "Finished", 1, "1"),
             _row("Brendon Hartley", "Power Unit", 0),
-            _row("Carlos Sainz", "Did not start", 12, "W"),
-            _row("Lance Stroll", "Withdrew", 0, "W"),
+            _row("Carlos Sainz", "Did not start", 12, "W", laps=0),
+            _row("Lance Stroll", "Withdrew", 0, "W", laps=0),
+            _row("Kevin Magnussen", "Withdrew", 15, "W", laps=12),
             _row("Esteban Ocon", "Disqualified", 6, "D"),
         ]
     )
@@ -144,7 +165,8 @@ def test_race_docs_list_retirements_non_starters_and_disqualifications_apart() -
         "## Retirements/DNFs\n\n"
         "- Brendon Hartley: Power Unit (started from the pit lane)" in md
     )
-    assert "## Did not start\n\n- Carlos Sainz\n- Lance Stroll" in md
+    assert "- Kevin Magnussen: Withdrew (started P15)" in md.split("## Did not")[0]
+    assert "## Did not start\n\n- Carlos Sainz\n- Lance Stroll\n" in md
     assert "## Disqualified\n\n- Esteban Ocon: Disqualified (started P6)" in md
     assert "Norris" not in md
     assert "P0" not in md

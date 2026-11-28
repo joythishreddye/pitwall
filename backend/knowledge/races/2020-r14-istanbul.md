@@ -54,10 +54,7 @@ tags:
 
 ## Retirements/DNFs
 
+- Kevin Magnussen: Withdrew (started P13)
 - Romain Grosjean: Collision damage (started P17)
 - Nicholas Latifi: Collision damage (started from the pit lane)
 - Antonio Giovinazzi: Gearbox (started P10)
-
-## Did not start
-
-- Kevin Magnussen

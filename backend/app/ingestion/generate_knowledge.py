@@ -65,7 +65,8 @@ def _unique_in_order(refs: Iterable[str]) -> list[str]:
 
 
 # A driver who never took the start, or was thrown out after it, didn't
-# retire: neither counts as a DNF (#39)
+# retire: neither counts as a DNF (#39). "Withdrew" alone isn't proof of a
+# non-start: Jolpica gives it to some mid-race retirements too.
 _DID_NOT_START = frozenset(
     {"Did not start", "Withdrew", "Did not qualify", "Did not prequalify"}
 )
@@ -75,17 +76,27 @@ _POSITION_CODES = {
     "R": "retired",
     "D": "disqualified",
     "E": "excluded",
-    "W": "did not start",
+    "W": "withdrew",
     "F": "did not qualify",
     "N": "not classified",
 }
 
 
-def _is_dnf(status: str) -> bool:
-    """Return True if the status indicates a retirement/DNF."""
+def _did_not_start(row: dict) -> bool:
+    """No lap done, and Jolpica marks a non-start: its W place or a non-start
+    status. A driver with laps started, whatever his status says."""
+    if row.get("laps"):
+        return False
+    return row.get("position_text") == "W" or row["status"] in _DID_NOT_START
+
+
+def _is_dnf(row: dict) -> bool:
+    """Return True if the result is a retirement: not a finish, a non-start
+    or a disqualification."""
+    status = row["status"]
     if status in _FINISHED_STATUSES:
         return False
-    if status in _DID_NOT_START or status in _DISQUALIFIED:
+    if status in _DISQUALIFIED or _did_not_start(row):
         return False
     if status.startswith("+") and "Lap" in status:
         return False
@@ -109,10 +120,6 @@ def _start_text(grid: int | None) -> str:
     if grid == 0:
         return "started from the pit lane"
     return f"started P{grid}" if grid else "start position unknown"
-
-
-def _did_not_start(row: dict) -> bool:
-    return row["status"] in _DID_NOT_START or row.get("position_text") == "W"
 
 
 def _driver_name(row: dict) -> str:
@@ -141,7 +148,7 @@ def _non_finisher_sections(results: Iterable[dict]) -> str:
             disqualified.append(
                 f"- {_driver_name(r)}: {r['status']} ({_start_text(r['grid'])})"
             )
-        elif _is_dnf(r["status"]):
+        elif _is_dnf(r):
             retired.append(
                 f"- {_driver_name(r)}: {r['status']} ({_start_text(r['grid'])})"
             )
@@ -354,7 +361,7 @@ def generate_driver_profiles(supabase: Client) -> int:
             (r["position"] for r in results if r["position"]),
             default=None,
         )
-        dnfs = sum(1 for r in results if _is_dnf(r["status"]))
+        dnfs = sum(1 for r in results if _is_dnf(r))
 
         # Recent results (last 5)
         recent = results[-5:]
@@ -453,8 +460,8 @@ def generate_team_profiles(supabase: Client) -> int:
     season_results = (
         supabase.table("race_results")
         .select(
-            "constructor_id, driver_id, position, points, status,"
-            " drivers!inner(ref, forename, surname, code)"
+            "constructor_id, driver_id, position, position_text, points,"
+            " status, laps, drivers!inner(ref, forename, surname, code)"
         )
         .in_("race_id", season_race_ids)
         .in_("constructor_id", constructor_ids)
@@ -532,7 +539,7 @@ def generate_team_profiles(supabase: Client) -> int:
 
         # Season breakdown
         season_podiums = sum(1 for r in results if r["position"] and r["position"] <= 3)
-        season_dnfs = sum(1 for r in results if _is_dnf(r["status"]))
+        season_dnfs = sum(1 for r in results if _is_dnf(r))
 
         # Per-driver breakdown
         driver_breakdown: dict[str, dict] = {}
