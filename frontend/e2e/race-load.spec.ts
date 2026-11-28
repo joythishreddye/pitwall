@@ -66,7 +66,7 @@ async function failFirst(page: Page, url: string, fail: Fail, body: unknown, del
 async function pitStopsShow(page: Page) {
   await page.getByRole("tab", { name: "Pit Stops" }).click();
   await expect(page.locator(".pit-row")).toHaveCount(1);
-  await expect(page.getByText("No pit stop telemetry")).toHaveCount(0);
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
 }
 
 async function failsThenLoads(page: Page, fail: Fail) {
@@ -101,14 +101,14 @@ test("pit stops that fail to load say so, and Retry loads them", async ({ page }
   await page.goto("/races/193");
   await expect(page.locator("a.result-row")).toHaveCount(22);
   await page.getByRole("tab", { name: "Pit Stops" }).click();
-  // not "No pit stop telemetry", which would say the race has none
+  // not "No pit stop ...", which would say the race has none
   await expect(page.getByText("Couldn't load the pit stops.")).toBeVisible();
-  await expect(page.getByText("No pit stop telemetry")).toHaveCount(0);
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
 
   await page.getByRole("button", { name: "Retry" }).click();
   // while they reload, the tab says so, and never that the race has no pit stops
   await expect(page.getByRole("status", { name: "Loading pit stops" })).toBeVisible();
-  await expect(page.getByText("No pit stop telemetry")).toHaveCount(0);
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
   await expect(page.locator(".pit-row")).toHaveCount(1);
   expect(stops.calls.n).toBe(2);
 });

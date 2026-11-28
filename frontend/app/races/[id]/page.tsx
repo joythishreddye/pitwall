@@ -317,7 +317,7 @@ export default function RaceDetailPage({
             <RaceResultsTable results={race.results} winnerMs={winnerMs} />
           )
         ) : strategy ? (
-          <PitStopsTable strategy={strategy} />
+          <PitStopsTable strategy={strategy} season={race.season} finished={race.results.length > 0} />
         ) : strategyFailed ? (
           <ErrorState message="Couldn't load the pit stops." onRetry={() => void refetchStrategy()} />
         ) : (
