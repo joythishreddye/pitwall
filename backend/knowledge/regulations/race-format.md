@@ -71,7 +71,7 @@ Cars line up on the grid in qualifying order. Five red lights illuminate one by 
 The minimum race distance is 305km (except Monaco at 260km). The number of laps varies by circuit length. If the race has not been completed after 2 hours (or 3 hours in rare circumstances with stoppages), the chequered flag comes at the end of the lap after the one in which the two hours ran out.
 
 **Minimum Tyre Requirement**
-Drivers must use at least two different dry tyre compounds unless they use intermediate or wet tyres at any point in the race. Breaking the rule means disqualification.
+Drivers must use at least two different dry tyre compounds in the race, at least one of them a compound the FIA names as mandatory for that race (it names up to two, two weeks before), unless they use intermediate or wet tyres at any point. Breaking the rule means disqualification, unless the race is suspended and can't be restarted: then 30 seconds are added to that driver's time.
 
 ---
 

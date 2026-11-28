@@ -40,7 +40,7 @@ The modern Spa-Francorchamps layout was established through successive modificat
 **La Source (Turn 1)**
 The first corner after the start/finish straight — a tight, downhill hairpin. Heavy braking from high speed. La Source is one of the most important overtaking spots at Spa, particularly on the opening lap when cars are bunched together. The downhill approach makes braking particularly tricky.
 
-**Eau Rouge / Raidillon (Turns 3-4)**
+**Eau Rouge / Raidillon**
 The most famous corner sequence in all of motorsport. Cars plunge downhill from La Source into the valley, hitting the fast left of Eau Rouge at the bottom, then immediately hurling up the right-left Raidillon on a steep uphill gradient. In modern F1 cars, this is taken flat-out — a genuinely terrifying piece of driving requiring complete commitment at over 300 km/h under severe G-forces.
 
 Historically, Eau Rouge was one of the most respected and feared corners in F1. In the era before aerodynamics provided sufficient downforce, drivers had to lift. As cars became more aerodynamically sophisticated, more and more committed to flat. Jacques Villeneuve's huge crash at Raidillon in 1999 qualifying was one of several reminders that Eau Rouge demands respect.

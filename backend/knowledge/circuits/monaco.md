@@ -44,7 +44,7 @@ The climb up through Massenet into the famous Casino Square, a left-right sequen
 A slow right-hander leading into an even tighter left. One of the lowest-speed points of the lap. The narrow road here means any mistake sends the car directly into the wall.
 
 **Fairmont Hairpin (Turn 6)**
-The slowest corner in all of Formula 1 — drivers slow to approximately 50 km/h. The tight hairpin at the Fairmont hotel (formerly the Loews and then the Grand Hotel Hairpin) requires precise throttle control on exit, as the road heads downhill again toward Mirabeau.
+The slowest corner in all of Formula 1 — drivers slow to approximately 50 km/h. The tight hairpin at the Fairmont hotel (formerly the Loews and then the Grand Hotel Hairpin) requires precise throttle control on exit, as the road heads downhill again toward Mirabeau Bas and Portier.
 
 **The Tunnel**
 A unique feature of Monaco — drivers enter the tunnel from bright Mediterranean sunshine into relative darkness, dramatically changing visibility. The fastest section of the lap, with cars reaching over 290 km/h. The exit from the tunnel emerges onto the harbourside and into the chicane.
@@ -55,10 +55,10 @@ The chicane at the harbour entrance, scene of famous moments including Alberto A
 **Swimming Pool Complex (Turns 13-16)**
 A fast section running alongside the Monaco public pool. A flowing sequence of corners where rhythm is essential. Cars are close to the barriers throughout.
 
-**Rascasse (Turn 17)**
+**Rascasse**
 A slow right-hand hairpin before the final section. Famous for Michael Schumacher's deliberate parking in qualifying at the 2006 Monaco Grand Prix to deny rivals the final flying lap — he was stripped of pole.
 
-**Anthony Noghes (Turn 18)**
+**Anthony Noghes**
 The final corner, a right-hander named after the founder of the Automobile Club de Monaco. Exit leads onto the start/finish straight.
 
 ## Why Overtaking Is Nearly Impossible

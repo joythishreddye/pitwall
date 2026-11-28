@@ -90,12 +90,12 @@ Arguments for retaining some form of assistance:
 
 Before the 2026 season, drivers, teams and fans were divided on whether the new approach would improve racing.
 
-## Common DRS Misconceptions
+## Common DRS Misconceptions (2011–2025)
 
-**"DRS always makes the pass."** Not true. DRS brings the car close enough for the driver to then attempt a pass. The driver still needs to brake later or find a better line. Many DRS attempts result in the attacking car pulling alongside but not completing the pass before the corner.
+**"DRS always made the pass."** Not true. DRS brought the car close enough for the driver to then attempt a pass. The driver still needed to brake later or find a better line. Many DRS attempts ended with the attacking car pulling alongside but not completing the pass before the corner.
 
-**"DRS is always available in the DRS zone."** Only in qualifying. In the race, the 1-second rule must be satisfied at the detection point.
+**"DRS was always available in the DRS zone."** Only in practice and qualifying. In the race, the 1-second rule had to be satisfied at the detection point.
 
-**"The gap check happens continuously."** No. It is a single measurement at the detection point only. The gap at any other point on the track is irrelevant for DRS eligibility.
+**"The gap check happened continuously."** No. It was a single measurement at the detection point only. The gap at any other point on the track was irrelevant for DRS eligibility.
 
 **"DRS opens fully immediately."** The flap opens very quickly (a fraction of a second hydraulically) and closes when the driver presses the button again or first touches the brakes.

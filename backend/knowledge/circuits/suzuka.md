@@ -45,8 +45,8 @@ The defining section of Suzuka. A breathtaking sequence of alternating high-spee
 
 This section separates the best drivers and cars from the rest. A lap time set or lost in the Esses defines Suzuka qualifying.
 
-**Dunlop Curve**
-A fast, sweeping right-hander exiting the Esses sequence. Demands commitment.
+**Dunlop Curve (Turn 7)**
+A long, fast left-hander climbing out of the Esses toward Degner. Demands commitment.
 
 **Degner Curves**
 A fast right-hander followed by a tighter right, leading under the crossover bridge. Named after Ernst Degner, who crashed heavily here in 1962. The first Degner is taken at high speed; the second tightens, requiring a precise line to set up the crossover.

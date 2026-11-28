@@ -72,7 +72,7 @@ The image of Hamilton, having crossed the line, slumped over his wheel in an ins
 
 Sebastian Vettel won the last nine Grands Prix of 2013 — Belgium, Italy, Singapore, Korea, Japan, India, Abu Dhabi, the United States and Brazil. The run equalled Alberto Ascari's nine consecutive wins from 1952–1953, a count that leaves out the Indianapolis 500 (part of the championship then, and skipped by most Grand Prix drivers). Max Verstappen's ten in a row in 2023 later beat both.
 
-The 2013 Red Bull RB9 was the dominant car of the second half of the season, but Vettel's execution was flawless. He won 13 of the final 19 races that year, finishing the season with 13 victories total — a record at the time and equaling Schumacher's single-season wins record.
+The 2013 Red Bull RB9 was the dominant car of the second half of the season, but Vettel's execution was flawless. He won 13 of the season's 19 races, equalling Michael Schumacher's record of 13 wins in a season (2004). Verstappen later raised it to 15 in 2022 and 19 in 2023.
 
 ## Rosberg vs Hamilton — 2016: A Rivalry That Consumed Them Both
 
