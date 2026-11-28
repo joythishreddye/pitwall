@@ -95,8 +95,8 @@ def test_the_race_is_on_now_until_its_scheduled_end() -> None:
     assert "Last race: Las Vegas Grand Prix" in note
 
 
-def test_the_weekend_stays_until_race_week_ends_like_the_homepage() -> None:
-    # The race's session ends at 2 h (done), but the homepage's picture says
+def test_the_weekend_stays_until_race_under_way_ends() -> None:
+    # The race's session ends at 2 h (done), but brief 001's race week says
     # RACE UNDER WAY until 2 h 30, and a red-flagged race can run on
     note = calendar_note(_at("2026-11-29T18:10:00Z"), SEASON)
 
@@ -161,7 +161,7 @@ def test_next_seasons_opener_is_named_once() -> None:
     assert "Next season's first race" not in note
 
 
-def test_weekends_go_in_race_order_like_the_homepage() -> None:
+def test_weekends_go_in_race_order_like_the_clock() -> None:
     # A round postponed past the next one keeps its number
     postponed = _weekend(
         2026,
@@ -192,6 +192,26 @@ def test_a_session_with_no_time_shows_its_day() -> None:
     last = "Last race: Miami Grand Prix (2026, round 5 of 1), "
     assert f"{last}Sun 3 May 2026, time not set." in later
     assert later.endswith("No later race is in PitWall's schedule yet.")
+
+
+def test_a_session_with_no_time_gets_no_tag_even_when_next() -> None:
+    # The clock calls the untimed Practice 1 next by its order alone; the note
+    # gives its day and leaves the tag off rather than guess within the day
+    weekend = _weekend(
+        2026,
+        6,
+        "Spanish Grand Prix",
+        [
+            ("practice_1", "2026-05-29"),
+            ("qualifying", "2026-05-30T14:00:00Z"),
+            ("race", "2026-05-31T13:00:00Z"),
+        ],
+    )
+    note = calendar_note(_at("2026-05-28T12:00:00Z"), [weekend])
+
+    assert "- Practice 1: Fri 29 May 2026, time not set\n" in note
+    assert "- Qualifying: Sat 30 May 2026, 14:00 UTC\n" in note
+    assert "(next)" not in note
 
 
 def test_now_in_another_zone_is_read_in_utc() -> None:
