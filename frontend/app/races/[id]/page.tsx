@@ -206,7 +206,7 @@ export default function RaceDetailPage({
                 <div className="-ml-7 flex flex-wrap gap-y-1 text-sm text-f1-muted">
                   <span className="relative pl-7">
                     <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
-                    {race.circuit.name}
+                    <span>{race.circuit.name}</span>
                   </span>
                   <span className="relative pl-7">
                     <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
@@ -214,7 +214,7 @@ export default function RaceDetailPage({
                   </span>
                   <span className="relative pl-7">
                     <span className="absolute left-3 text-f1-grid" aria-hidden="true">|</span>
-                    Round {race.round}
+                    <span>Round {race.round}</span>
                   </span>
                 </div>
               </div>

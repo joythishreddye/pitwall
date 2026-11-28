@@ -21,10 +21,11 @@ test.afterEach(() => {
   expect(errors).toEqual([]);
 });
 
-/** Whether a click at the element's middle would reach it, rather than something drawn over it. */
+/** Whether a click at the middle of the element's first line would reach it, rather than something drawn over it
+ * (the first line: a wrapped inline text's overall box takes in empty space beside its shorter last line). */
 function onTop(el: Locator): Promise<boolean> {
   return el.evaluate((node) => {
-    const r = node.getBoundingClientRect();
+    const r = node.getClientRects()[0] ?? node.getBoundingClientRect();
     const hit = document.elementFromPoint(r.left + Math.min(r.width / 2, 40), r.top + r.height / 2);
     return hit !== null && (hit === node || node.contains(hit));
   });
