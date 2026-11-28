@@ -92,6 +92,51 @@ class TestChunker:
         chunks = chunk_markdown(md)
         assert len(chunks) >= 2  # Should be split into multiple windows
 
+    def test_a_short_section_joins_the_next_one(self, tmp_path: Path) -> None:
+        # A driver doc's title and overview are under 20 words each, and the
+        # 20-word floor used to drop both, current team included
+        stats = " ".join(f"stat{i}" for i in range(30))
+        md = tmp_path / "norris.md"
+        md.write_text(
+            "---\ncategory: driver\n---\n\n# Lando Norris — Driver Profile\n\n"
+            "## Overview\n\n**Full Name:** Lando Norris\n**Current Team:** McLaren\n\n"
+            f"## Statistics\n\n{stats}\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 1
+        text = chunks[0]["content"]
+        assert text.startswith("# Lando Norris — Driver Profile")
+        assert "## Overview" in text and "McLaren" in text
+        assert "## Statistics" in text and "stat29" in text
+
+    def test_a_short_last_section_joins_the_one_before(self, tmp_path: Path) -> None:
+        results = " ".join(f"result{i}" for i in range(30))
+        md = tmp_path / "race.md"
+        md.write_text(
+            f"---\ncategory: race\n---\n\n## Results\n\n{results}\n\n"
+            "## Pit Strategy\n\n15 drivers on 1-stop, 4 on 2-stop\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 1
+        assert chunks[0]["content"].startswith("## Results")
+        assert chunks[0]["content"].endswith(
+            "## Pit Strategy\n\n15 drivers on 1-stop, 4 on 2-stop"
+        )
+
+    def test_sections_long_enough_stay_apart(self, tmp_path: Path) -> None:
+        words = " ".join(f"w{i}" for i in range(25))
+        md = tmp_path / "doc.md"
+        md.write_text(f"## One\n\n{words}\n\n## Two\n\n{words}\n")
+        chunks = chunk_markdown(md)
+        assert [c["content"].split("\n")[0] for c in chunks] == ["## One", "## Two"]
+
+    def test_a_doc_under_20_words_in_all_still_gives_no_chunk(
+        self, tmp_path: Path
+    ) -> None:
+        md = tmp_path / "tiny.md"
+        md.write_text("# Tiny\n\n## Note\n\nToo short to index.\n")
+        assert chunk_markdown(md) == []
+
 
 # ---------------------------------------------------------------------------
 # Prompt builder tests

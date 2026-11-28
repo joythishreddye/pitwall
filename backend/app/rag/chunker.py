@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 MIN_TOKENS = 100
 MAX_TOKENS = 500
 OVERLAP_TOKENS = 50
+# Chunks shorter than this aren't indexed
+MIN_CHUNK_TOKENS = 20
 
 
 def _count_tokens(text: str) -> int:
@@ -52,6 +54,41 @@ def _split_sections(body: str) -> list[tuple[str, str]]:
     return sections
 
 
+def _join(heading: str, text: str, later_heading: str, later_text: str) -> str:
+    """``text`` followed by a later section, its heading kept inside."""
+    later = f"{later_heading}\n\n{later_text}" if later_heading else later_text
+    return f"{text}\n\n{later}"
+
+
+def _fold_short_sections(
+    sections: list[tuple[str, str]],
+) -> list[tuple[str, str]]:
+    """Join each section too short to index to its neighbour.
+
+    A short section joins the next one, under its own heading; a short last
+    section joins the one before. Without this, the chunk floor dropped whole
+    sections: every driver doc's overview (current team included), every race
+    doc's pit strategy.
+    """
+    out: list[tuple[str, str]] = []
+    carry: tuple[str, str] | None = None
+    for heading, text in sections:
+        if carry is not None:
+            heading, text = carry[0], _join(*carry, heading, text)
+            carry = None
+        full = f"{heading}\n\n{text}" if heading else text
+        if _count_tokens(full) < MIN_CHUNK_TOKENS:
+            carry = (heading, text)
+        else:
+            out.append((heading, text))
+    if carry is not None:
+        if out:
+            out[-1] = (out[-1][0], _join(*out[-1], *carry))
+        else:
+            out.append(carry)
+    return out
+
+
 def _window_chunks(text: str, heading: str) -> list[str]:
     """Split text into overlapping windows of MAX_TOKENS tokens."""
     words = text.split()
@@ -85,14 +122,14 @@ def chunk_markdown(filepath: Path) -> list[dict]:
     if not body.strip():
         return []
 
-    sections = _split_sections(body)
+    sections = _fold_short_sections(_split_sections(body))
     source = str(filepath.relative_to(filepath.parents[1]))
 
     chunks = []
     for heading, section_text in sections:
         for chunk_text in _window_chunks(section_text, heading):
             token_count = _count_tokens(chunk_text)
-            if token_count < 20:
+            if token_count < MIN_CHUNK_TOKENS:
                 continue
             chunks.append(
                 {
