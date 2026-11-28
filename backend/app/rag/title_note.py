@@ -56,8 +56,8 @@ def title_note(
     most = points_left("driver", len(left), sprints)
     sprint_text = _count(sprints, "sprint") if sprints else "no sprints"
     span = (
-        f"with {_count(len(left), 'race')} left, worth {most} points at most "
-        f"({sprint_text})"
+        f"with {_count(len(left), 'race')} left, where a driver can score at most "
+        f"{most} more points in total ({sprint_text})"
     )
     if first == runner_up:
         gap = f"{leader} and {second} are level on {_pts(first)}"
