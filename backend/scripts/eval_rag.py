@@ -47,11 +47,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from intent_cache import IntentCache, PatientLLM
+
 from app.config import settings
 from app.db.supabase import get_supabase
 from app.llm.base import LLMError
 from app.llm.factory import create_llm
 from app.rag.entities import EntityLinker
+from app.rag.prompt import INTENT_CLASSIFICATION_PROMPT
 from app.rag.retriever import RaceRef, RetrievedChunk, Retriever
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -161,11 +164,17 @@ async def run_question(
     embedder,
     reranker,
     linker: EntityLinker | None,
+    cache: IntentCache | None = None,
 ) -> QuestionResult:
     question = item["question"]
     race = RaceRef(**item["race"]) if item.get("race") else None
     base = Retriever(db=db, llm=intent_llm, embedder=embedder)
-    intent = await base.classify_intent(question)
+    intent = cache.get(question) if cache else None
+    if intent is None:
+        intent = await base.classify_intent(question)
+        # A failed call's stand-in answer isn't the model's: never record it
+        if cache and not getattr(intent_llm, "failed", False):
+            cache.put(question, intent)
     linked = linker.link(intent, question) if linker else intent
     down = Retriever(
         db=db,
@@ -273,6 +282,12 @@ async def main() -> None:
         "--limit", type=int, default=0, help="Only the first N questions"
     )
     parser.add_argument(
+        "--intent-cache",
+        type=Path,
+        help="Replay the intent model's answers recorded in this JSON file, "
+        "recording new ones (a rate limit is waited out, not failed)",
+    )
+    parser.add_argument(
         "--no-linker",
         action="store_true",
         help="Use the classifier's raw filters (reproduces the first baseline)",
@@ -290,6 +305,12 @@ async def main() -> None:
 
     db = get_supabase()
     intent_llm = create_llm(settings.llm_intent_model)
+    cache = None
+    if args.intent_cache:
+        cache = IntentCache(
+            args.intent_cache, settings.llm_intent_model, INTENT_CLASSIFICATION_PROMPT
+        )
+        intent_llm = PatientLLM(intent_llm)
     if args.embedder == "local":
         embedder = LocalEmbedder()
     else:
@@ -317,9 +338,12 @@ async def main() -> None:
 
     results: list[QuestionResult] = []
     for i, item in enumerate(gold, start=1):
-        if i > 1:
+        replayed = cache is not None and cache.has(item["question"])
+        if i > 1 and not replayed:
             await asyncio.sleep(_SECONDS_BETWEEN_INTENT_CALLS)
-        result = await run_question(item, db, intent_llm, embedder, reranker, linker)
+        result = await run_question(
+            item, db, intent_llm, embedder, reranker, linker, cache
+        )
         results.append(result)
         verdict = "hit" if result.modes["full"].hit else "MISS"
         print(f"[{i:>2}/{len(gold)}] {item['id']:<8} full={verdict}", flush=True)
@@ -339,6 +363,15 @@ async def main() -> None:
                 "reranker": args.reranker,
                 "intent_model": settings.llm_intent_model,
                 "linker": not args.no_linker,
+                "intent_cache": (
+                    {
+                        "file": args.intent_cache.name,
+                        "replayed": cache.hits,
+                        "asked": cache.misses,
+                    }
+                    if cache
+                    else None
+                ),
                 "gold_version": json.loads(GOLD_PATH.read_text())["version"],
                 "summary": summary,
                 "questions": [
