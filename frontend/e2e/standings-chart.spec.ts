@@ -5,7 +5,8 @@ import { expect, test, type Page } from "@playwright/test";
 // The Standings page's championship chart when its data doesn't arrive. Before, a failed load (a server error, or
 // the 5 s timeout in lib/api-client.ts) left "Loading progression data..." on screen for good, with no way to try
 // again but reloading. Now it says the chart couldn't load and offers a retry; a season whose round-by-round
-// standings come back empty says that. 2026 after round 21 from the saved fixtures.
+// standings come back empty says that. When the standings fail too, their one error and Retry stand for the page,
+// and that Retry reloads the chart as well. 2026 after round 21 from the saved fixtures.
 
 const PROGRESSION = "**/api/v1/standings/2026/progression";
 const CHART = 'svg[aria-label="Championship points progression"]';
@@ -13,7 +14,7 @@ const CHART = 'svg[aria-label="Championship points progression"]';
 let errors: string[] = [];
 // the browser logs a failed request as a console error; the tests below fail the chart's call on purpose, and any
 // other failed request (a missing fixture, a blocked host) still counts
-const FAILED_ON_PURPOSE = /\/api\/v1\/standings\/2026\/progression$/;
+const FAILED_ON_PURPOSE = /\/api\/v1\/standings\/2026(\/progression)?(\?.*)?$/;
 test.beforeEach(async ({ context, baseURL, page }) => {
   errors = [];
   page.on("console", (msg) => {
@@ -31,15 +32,15 @@ test.afterEach(() => {
   expect(errors).toEqual([]);
 });
 
-async function savedProgression() {
-  const file = path.join(test.info().project.testDir, "fixtures/api/standings-2026-progression.json");
-  return JSON.parse(await readFile(file, "utf8"));
+async function saved(file: string) {
+  return JSON.parse(await readFile(path.join(test.info().project.testDir, "fixtures/api", file), "utf8"));
 }
+const savedProgression = () => saved("standings-2026-progression.json");
 
-/** Fails the first call with a 503, then serves `body`. Returns a counter of the calls. */
-async function failFirst(page: Page, body: unknown) {
+/** Fails the first call to `url` with a 503, then serves `body`. Returns a counter of the calls. */
+async function failFirst(page: Page, body: unknown, url: string | RegExp = PROGRESSION) {
   const calls = { n: 0 };
-  await page.route(PROGRESSION, async (route) => {
+  await page.route(url, async (route) => {
     calls.n += 1;
     if (calls.n === 1) return route.fulfill({ status: 503, json: { detail: "busy" } });
     return route.fulfill({ json: body });
@@ -75,4 +76,19 @@ test("a season with no round-by-round standings says so", async ({ page }) => {
   await expect(page.getByText("No round-by-round standings for 2026 yet.")).toBeVisible();
   await expect(page.getByText("Loading progression data...")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+});
+
+test("with the standings failed too, one error and one Retry reload both", async ({ page }) => {
+  const standings = await failFirst(page, await saved("standings-2026.json"), /\/api\/v1\/standings\/2026(\?.*)?$/);
+  const chart = await failFirst(page, await savedProgression());
+  await page.goto("/standings");
+  await expect(page.getByText("Failed to load standings data", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(1);
+  await expect(page.getByText("Championship Progression")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+  await expect(page.locator(CHART)).toBeVisible();
+  expect(standings.n).toBe(2);
+  expect(chart.n).toBe(2);
 });
