@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import { ApiError } from "@/lib/api-client";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { raceStart } from "@/lib/hooks/use-countdown";
-import { isRaceId, useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
+import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
+import { isRaceId } from "@/lib/race-id";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
 import { ErrorState } from "@/components/error-state";
@@ -315,11 +316,17 @@ export default function RaceDetailPage({
           ) : (
             <RaceResultsTable results={race.results} winnerMs={winnerMs} />
           )
-        ) : strategyFailed && !strategy ? (
-          // without this the table would say the race has no pit stop data
+        ) : strategy ? (
+          <PitStopsTable strategy={strategy} />
+        ) : strategyFailed ? (
           <ErrorState message="Couldn't load the pit stops." onRetry={() => void refetchStrategy()} />
         ) : (
-          <PitStopsTable strategy={strategy ?? []} />
+          // still loading (or reloading after a Retry): the table would say the race has no pit stop data
+          <div role="status" aria-label="Loading pit stops" className="flex flex-col gap-1">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-11 bg-f1-grid/30 animate-pulse" />
+            ))}
+          </div>
         )}
       </div>
     </div>
