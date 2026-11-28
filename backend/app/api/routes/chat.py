@@ -94,6 +94,10 @@ def _keep_when_built(state: State) -> Callable[[asyncio.Future], None]:
     return done
 
 
+def _build_linker() -> EntityLinker:
+    return EntityLinker.from_db(get_supabase())
+
+
 async def get_linker(request: Request) -> EntityLinker | None:
     """Return the entity linker, rebuilding it if startup couldn't.
 
@@ -118,10 +122,9 @@ async def get_linker(request: Request) -> EntityLinker | None:
         return None
     state.linker_attempted_at = now
     # A task the timeout can't cancel, so it stays not done while its thread
-    # runs and its callback still sees the result
-    build = asyncio.ensure_future(
-        asyncio.to_thread(EntityLinker.from_db, get_supabase())
-    )
+    # runs and its callback still sees the result. The client is made in the
+    # thread too, so its errors reach the fallback below.
+    build = asyncio.ensure_future(asyncio.to_thread(_build_linker))
     build.add_done_callback(_keep_when_built(state))
     state.linker_build = build
     try:

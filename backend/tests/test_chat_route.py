@@ -198,6 +198,21 @@ async def test_an_empty_linker_is_not_kept(monkeypatch) -> None:
     assert await chat_route.get_linker(request) is built
 
 
+async def test_a_client_error_falls_back_to_no_linker(monkeypatch) -> None:
+    # Creating the database client is part of the rebuild: its failure must
+    # leave the chat on raw classifier filters, not fail the request
+    from_db = MagicMock()
+    request = _linker_request(monkeypatch, from_db)
+
+    def no_client() -> MagicMock:
+        raise RuntimeError("bad url")
+
+    monkeypatch.setattr("app.api.routes.chat.get_supabase", no_client)
+
+    assert await chat_route.get_linker(request) is None
+    assert from_db.call_count == 0
+
+
 async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
     monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
     release = threading.Event()
