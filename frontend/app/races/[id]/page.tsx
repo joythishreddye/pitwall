@@ -4,11 +4,13 @@ import { use, useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ApiError } from "@/lib/api-client";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { raceStart } from "@/lib/hooks/use-countdown";
 import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
+import { ErrorState } from "@/components/error-state";
 import { RaceResultsTable } from "@/components/races/RaceResultsTable";
 import { PitStopsTable } from "@/components/races/PitStopsTable";
 
@@ -48,7 +50,7 @@ export default function RaceDetailPage({
   const pageRef = useRef<HTMLDivElement>(null);
   const skipRef = useRef(false);
 
-  const { data: race, isLoading, error } = useRaceDetail(raceId);
+  const { data: race, isLoading, error, refetch } = useRaceDetail(raceId);
   const { data: strategy } = useRaceStrategy(raceId);
 
   // Derive circuit data up here (before hooks) so useGSAP closures can reference it.
@@ -140,7 +142,11 @@ export default function RaceDetailPage({
     );
   }
 
-  if (error || !race) {
+  // No race to show. With no request made (an id that isn't a number) or a 404, the race doesn't exist; anything else
+  // (a server error, a dropped connection, the client's timeout) is a failed load the reader can retry. A background
+  // refetch that fails keeps the race already on screen.
+  if (!race) {
+    const missing = !error || (error instanceof ApiError && error.status === 404);
     return (
       <div className="p-4 md:p-8">
         <button
@@ -150,7 +156,11 @@ export default function RaceDetailPage({
           <ArrowLeft className="h-3.5 w-3.5" />
           Races
         </button>
-        <p className="text-f1-muted">Race not found.</p>
+        {missing ? (
+          <p className="text-f1-muted">Race not found.</p>
+        ) : (
+          <ErrorState message="Couldn't load this race." onRetry={() => void refetch()} />
+        )}
       </div>
     );
   }
