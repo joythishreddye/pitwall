@@ -6,15 +6,15 @@ import { AlertTriangle } from "lucide-react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
-import { formatLapTime, formatGap, formatLapsDown, positionColor } from "@/lib/format";
+import { formatRaceTime, formatGap, formatLapsDown, positionColor } from "@/lib/format";
 import type { RaceResult } from "@/lib/schemas/races";
 
 // One column layout for the header and the rows. Phones get five columns (the team moves under the driver's
-// name, and the fastest lap shows beside it); from 1024 px, the full seven (at 768 the sidebar leaves too little room).
-// The phone Gap column fits the winner's race time ("95:23.504": formatLapTime has no hours) and a status
-// such as "Disqualified".
+// name, and the fastest lap shows after the team); from 1024 px, the full seven (at 768 the sidebar leaves too little
+// room). The phone Gap column fits the winner's race time ("1:35:23.504") and "Disqualified" (about 86 px in the
+// 12 px mono); a status of several words, such as "Did not start", wraps onto a second line.
 const COLUMNS =
-  "grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem_2.25rem_5.25rem] gap-x-2 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
+  "grid grid-cols-[2.25rem_minmax(0,1fr)_2.25rem_2.25rem_5.5rem] gap-x-1.5 px-3 lg:grid-cols-[3rem_2fr_1fr_3.5rem_4rem_6rem_5rem] lg:gap-x-4 lg:px-4";
 
 interface RaceResultsTableProps {
   results: RaceResult[];
@@ -109,24 +109,23 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
                 aria-hidden="true"
               />
               <span className="min-w-0">
-                {/* The surname shortens on a narrow screen; the fastest lap badge never does */}
-                <span className="flex items-center gap-1.5 min-w-0">
-                  <span className="result-name truncate min-w-0">
-                    <span className="hidden lg:inline text-f1-muted">{r.driver.forename} </span>
-                    <span className="font-semibold uppercase">{r.driver.surname}</span>
-                  </span>
+                {/* The name has the cell's whole width (it shortens only on the narrowest phones) */}
+                <span className="result-name block truncate">
+                  <span className="hidden lg:inline text-f1-muted">{r.driver.forename} </span>
+                  <span className="font-semibold uppercase">{r.driver.surname}</span>
+                </span>
+                {/* On phones the team sits under the name, with the fastest lap badge after it: the team shortens,
+                    the badge never does */}
+                <span className="lg:hidden flex items-center gap-1.5 min-w-0 text-xs text-f1-muted">
+                  <span className="truncate">{r.constructor.name}</span>
                   {isFl && (
                     <span
-                      className="lg:hidden shrink-0 rounded-sm bg-f1-purple px-1 font-data text-[11px] font-bold leading-4 text-f1-dark"
+                      className="shrink-0 rounded-sm bg-f1-purple px-1 font-data text-[11px] font-bold leading-4 text-f1-dark"
                       aria-label="Fastest lap"
                     >
                       FL
                     </span>
                   )}
-                </span>
-                {/* On phones the team sits under the name */}
-                <span className="lg:hidden block truncate text-xs text-f1-muted">
-                  {r.constructor.name}
                 </span>
               </span>
             </div>
@@ -155,9 +154,9 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
             </span>
 
             {/* Gap */}
-            <span className="text-right font-data text-xs text-f1-muted">
+            <span className="result-gap text-right font-data text-xs text-f1-muted">
               {r.position === 1
-                ? formatLapTime(r.time_millis)
+                ? formatRaceTime(r.time_millis)
                 : isLapped
                 ? formatLapsDown(r.laps, winnerLaps)
                 : formatGap(r.time_millis, winnerMs, r.status)}

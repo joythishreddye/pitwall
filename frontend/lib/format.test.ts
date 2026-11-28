@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatGap, formatLapTime, formatLapsDown, formatPitDuration, stripMarkdown } from "@/lib/format";
+import { formatGap, formatLapTime, formatLapsDown, formatPitDuration, formatRaceTime, stripMarkdown } from "@/lib/format";
 
 describe("formatLapTime", () => {
   it("shows minutes, seconds and thousandths", () => {
@@ -29,6 +29,31 @@ describe("formatLapTime", () => {
   });
 });
 
+describe("formatRaceTime", () => {
+  it("shows hours, minutes, seconds and thousandths from an hour", () => {
+    expect(formatRaceTime(5723504)).toBe("1:35:23.504");
+    expect(formatRaceTime(3600000)).toBe("1:00:00.000");
+    expect(formatRaceTime(7261123)).toBe("2:01:01.123");
+    expect(formatRaceTime(3665004)).toBe("1:01:05.004");
+  });
+
+  it("shows a time under an hour as a lap time", () => {
+    expect(formatRaceTime(3599999)).toBe("59:59.999");
+    expect(formatRaceTime(83456)).toBe("1:23.456");
+  });
+
+  it("rounds to the thousandth before splitting off hours", () => {
+    expect(formatRaceTime(3599999.6)).toBe("1:00:00.000");
+    expect(formatRaceTime(5723504.4)).toBe("1:35:23.504");
+  });
+
+  it("shows a dash for no time", () => {
+    expect(formatRaceTime(null)).toBe("—");
+    expect(formatRaceTime(undefined)).toBe("—");
+    expect(formatRaceTime(0)).toBe("—");
+  });
+});
+
 describe("formatGap", () => {
   it("shows a finisher's gap to the winner", () => {
     expect(formatGap(5730000, 5723504, "Finished")).toBe("+6.496s");
@@ -38,8 +63,8 @@ describe("formatGap", () => {
     expect(formatGap(null, 5723504, "Retired")).toBe("Retired");
   });
 
-  it("shows the winner's own time", () => {
-    expect(formatGap(5723504, 5723504, "Finished")).toBe("95:23.504");
+  it("shows the winner's own time, with its hours", () => {
+    expect(formatGap(5723504, 5723504, "Finished")).toBe("1:35:23.504");
   });
 });
 

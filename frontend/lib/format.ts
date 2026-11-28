@@ -12,6 +12,19 @@ export function formatLapTime(ms: number | null | undefined): string {
   return seconds.toFixed(3);
 }
 
+/** Format a race time: 1:35:23.504 (with hours from an hour; under one, as a lap time) */
+export function formatRaceTime(ms: number | null | undefined): string {
+  if (ms == null || ms <= 0) return "\u2014";
+  // Round to whole milliseconds first, as formatLapTime does, so 3599999.6 ms reads 1:00:00.000
+  const total = Math.round(ms);
+  const hours = Math.floor(total / 3600000);
+  if (hours === 0) return formatLapTime(total);
+  const rest = total - hours * 3600000;
+  const minutes = Math.floor(rest / 60000);
+  const seconds = (rest - minutes * 60000) / 1000;
+  return `${hours}:${String(minutes).padStart(2, "0")}:${seconds.toFixed(3).padStart(6, "0")}`;
+}
+
 /** Format gap: +1.234s or winner time */
 export function formatGap(
   ms: number | null | undefined,
@@ -23,7 +36,7 @@ export function formatGap(
     return `+${gap.toFixed(3)}s`;
   }
   if (status && status !== "Finished") return status;
-  if (ms != null) return formatLapTime(ms);
+  if (ms != null) return formatRaceTime(ms);
   return "\u2014";
 }
 
