@@ -79,6 +79,15 @@ class RetrievedChunk:
     source: str
 
 
+def _no_intent() -> dict:
+    """The stand-in when the intent model fails or is too slow: no filter."""
+    return {
+        "intent": "unknown",
+        "entities": {"drivers": [], "teams": [], "circuits": [], "seasons": []},
+        "metadata_filter": {},
+    }
+
+
 class Retriever:
     """Three-stage RAG retrieval pipeline."""
 
@@ -90,6 +99,7 @@ class Retriever:
         budget: ApiBudget | None = None,
         linker: EntityLinker | None = None,
         rerank_enabled: bool | None = None,
+        intent_timeout: float | None = None,
     ) -> None:
         self.db = db
         self.llm = llm
@@ -99,6 +109,10 @@ class Retriever:
         self.rerank_enabled = (
             settings.rerank_enabled if rerank_enabled is None else rerank_enabled
         )
+        # Seconds to wait for the intent model; 0 waits as long as it takes
+        if intent_timeout is None:
+            intent_timeout = settings.intent_timeout_seconds
+        self.intent_timeout = intent_timeout
         # How the last retrieve() found its context: "vector+rerank", "vector",
         # "fulltext" or "none". Sent to clients and recorded by evals.
         self.last_mode = "none"
@@ -108,19 +122,23 @@ class Retriever:
         """Stage 1: LLM-based intent classification and entity extraction.
 
         Returns dict with keys: intent, entities, metadata_filter. Falls back to
-        an empty filter when the model fails or returns bad JSON, so retrieval
-        never blocks on this stage.
+        an empty filter when the model fails, returns bad JSON or takes longer
+        than `intent_timeout` seconds, so retrieval never waits long on this
+        stage.
         """
         messages = [
             Message(role="system", content=INTENT_CLASSIFICATION_PROMPT),
             Message(role="user", content=query),
         ]
         try:
-            raw = await self.llm.generate(
-                messages,
-                temperature=0.0,
-                max_tokens=1024,  # reasoning models think before writing the JSON
-                json_mode=True,
+            raw = await asyncio.wait_for(
+                self.llm.generate(
+                    messages,
+                    temperature=0.0,
+                    max_tokens=1024,  # reasoning models think before writing the JSON
+                    json_mode=True,
+                ),
+                timeout=self.intent_timeout or None,
             )
             # Strip markdown code fences if present
             cleaned = raw.strip()
@@ -137,21 +155,18 @@ class Retriever:
                 result.get("metadata_filter"),
             )
             return result
+        except TimeoutError:
+            logger.warning(
+                "Intent classification took over %.0f s, using empty filter",
+                self.intent_timeout,
+            )
+            return _no_intent()
         except (LLMError, ValueError, KeyError, TypeError, IndexError) as exc:
             logger.warning(
                 "Intent classification failed (%s), using empty filter",
                 exc,
             )
-            return {
-                "intent": "unknown",
-                "entities": {
-                    "drivers": [],
-                    "teams": [],
-                    "circuits": [],
-                    "seasons": [],
-                },
-                "metadata_filter": {},
-            }
+            return _no_intent()
 
     async def vector_search(
         self,

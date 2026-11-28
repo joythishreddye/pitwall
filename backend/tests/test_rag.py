@@ -1,7 +1,9 @@
 """Tests for the RAG pipeline: chunker, prompt builder, knowledge level, retriever."""
 
+import asyncio
 import json
 import re
+import time
 from pathlib import Path
 from typing import Self
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -9,6 +11,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from app.api.routes.chat import _detect_knowledge_level
+from app.config import settings
 from app.llm.base import LLMError, Message
 from app.rag.chunker import chunk_markdown
 from app.rag.entities import EntityLinker
@@ -678,6 +681,46 @@ class TestRetrieverResilience:
         result = await retriever.classify_intent("Anything")
         assert result["intent"] == "unknown"
         assert result["metadata_filter"] == {}
+
+    @pytest.mark.asyncio()
+    async def test_a_slow_intent_model_is_given_up_on(self) -> None:
+        # A rate-limited minute: Groq's SDK sleeps before retrying, so the call
+        # hangs. Retrieval goes on without the classifier instead of waiting.
+        async def hangs(*args, **kwargs) -> str:
+            await asyncio.sleep(30)
+            return '{"intent": "factual", "metadata_filter": {"season": 2026}}'
+
+        llm = AsyncMock()
+        llm.generate.side_effect = hangs
+        retriever = Retriever(
+            db=MagicMock(), llm=llm, embedder=MagicMock(), intent_timeout=0.05
+        )
+        start = time.perf_counter()
+        result = await retriever.classify_intent("Who won in Qatar?")
+        assert time.perf_counter() - start < 5
+        assert result["intent"] == "unknown"
+        assert result["metadata_filter"] == {}
+
+    @pytest.mark.asyncio()
+    async def test_no_time_limit_waits_for_the_intent_model(self) -> None:
+        async def slow(*args, **kwargs) -> str:
+            await asyncio.sleep(0.1)
+            return '{"intent": "factual", "metadata_filter": {"season": 2026}}'
+
+        llm = AsyncMock()
+        llm.generate.side_effect = slow
+        retriever = Retriever(
+            db=MagicMock(), llm=llm, embedder=MagicMock(), intent_timeout=0
+        )
+        result = await retriever.classify_intent("Who won in Qatar?")
+        assert result["intent"] == "factual"
+        assert result["metadata_filter"] == {"season": 2026}
+
+    def test_the_intent_time_limit_comes_from_settings(self, monkeypatch) -> None:
+        monkeypatch.setattr(settings, "intent_timeout_seconds", 3.0)
+        retriever = Retriever(db=MagicMock(), llm=AsyncMock(), embedder=MagicMock())
+        assert retriever.intent_timeout == 3.0
+        assert type(settings).model_fields["intent_timeout_seconds"].default == 8.0
 
     @pytest.mark.asyncio()
     async def test_classify_intent_rejects_non_object_json(

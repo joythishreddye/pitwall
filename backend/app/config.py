@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     # separately, so this keeps the answer model's token budget for answers.
     llm_intent_model: ModelId
     llm_reasoning_effort: Literal["low", "medium", "high"] = "low"
+    # Seconds the chat waits for the intent model before going on without it
+    # (the linker's own name scan builds the filter). Groq's SDK retries a 429
+    # twice, sleeping up to 60 s each time it's told to wait, so without a
+    # limit a rate-limited minute could hold an answer for two minutes. 0 waits
+    # as long as the call takes (the eval, which waits out limits on purpose).
+    intent_timeout_seconds: float = Field(default=8.0, ge=0)
     groq_api_key: str | None = None
     anthropic_api_key: str | None = None
 
