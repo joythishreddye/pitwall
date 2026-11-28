@@ -93,4 +93,20 @@ test.describe("the chat", () => {
     expect(seen.errors, "console errors").toEqual([]);
     expect(seen.chatRequests).toEqual([]);
   });
+
+  test("offers presets about 2026's rules, not DRS or the fastest lap point", async ({ page }) => {
+    const seen = watch(page);
+
+    await page.goto("/chat");
+    for (const name of ["OVERTAKE MODE", "2026 RULES"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+    }
+    // 2026 cars have no DRS, and the fastest lap point went in 2025
+    for (const name of ["DRS RULES", "FASTEST LAP"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
+    }
+
+    expect(seen.errors, "console errors").toEqual([]);
+    expect(seen.chatRequests).toEqual([]);
+  });
 });
