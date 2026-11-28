@@ -150,6 +150,11 @@ class EntityLinker:
     # Earliest season with race documents; older questions skip race filters
     first_season: int = 2018
 
+    @property
+    def is_empty(self) -> bool:
+        """No names at all: a build that read empty tables links nothing."""
+        return not (self.drivers.to_ref or self.teams.to_ref or self.circuits.to_ref)
+
     @classmethod
     def from_rows(
         cls,

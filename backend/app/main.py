@@ -50,12 +50,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     except Exception:
         logger.exception("Supabase unreachable at startup; /health/ready reports it")
     try:
-        app.state.linker = await asyncio.wait_for(
+        linker = await asyncio.wait_for(
             asyncio.to_thread(EntityLinker.from_db, supabase), timeout=20
         )
     except Exception:
         logger.exception("Entity linker unavailable; using raw classifier filters")
-        app.state.linker = None
+        linker = None
+    if linker is not None and linker.is_empty:
+        # Kept, it would never be rebuilt; the first chat request retries
+        logger.warning("Entity linker built empty; using raw classifier filters")
+        linker = None
+    app.state.linker = linker
     logger.info("Startup complete (LLM model: %s)", settings.llm_model)
 
     yield

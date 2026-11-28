@@ -5,12 +5,13 @@ import json
 import logging
 import math
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from starlette.datastructures import State
 from supabase import Client
 
 from app.api.rate_limit import SlidingWindowLimiter, client_ip
@@ -74,30 +75,81 @@ Budget = Annotated[ApiBudget | None, Depends(get_budget)]
 
 
 _LINKER_RETRY_SECONDS = 300.0
+# A rebuild holds up the request that triggers it, so it gets less time than
+# the startup build's 20 s
+_LINKER_BUILD_SECONDS = 10.0
 
 
-def get_linker(request: Request) -> EntityLinker | None:
+def _keep_when_built(state: State) -> Callable[[asyncio.Future], None]:
+    """A rebuild's done-callback: log how it ended and keep a non-empty
+    linker, even one that finished after its request stopped waiting."""
+
+    def done(build: asyncio.Future) -> None:
+        if build.cancelled():
+            return
+        error = build.exception()
+        if error is not None:
+            logger.error("Entity linker still unavailable", exc_info=error)
+            return
+        linker = build.result()
+        if linker.is_empty:
+            logger.warning("Entity linker built empty; trying again in 5 minutes")
+        elif getattr(state, "linker", None) is None:
+            state.linker = linker
+
+    return done
+
+
+def _build_linker() -> EntityLinker:
+    return EntityLinker.from_db(get_supabase())
+
+
+async def get_linker(request: Request) -> EntityLinker | None:
     """Return the entity linker, rebuilding it if startup couldn't.
 
     A database blip at boot would otherwise leave raw classifier filters in
-    place until the next restart. Rebuilds are tried at most every 5 minutes.
+    place until the next restart. Rebuilds are tried at most every 5 minutes,
+    each waited on for 10 s, and a linker built from empty tables isn't kept,
+    so the next try can build a real one. A build that outlives its 10 s keeps
+    running in its thread and is kept if it finishes; no new one starts
+    beside it.
     """
     state = request.app.state
     linker = getattr(state, "linker", None)
     if linker is not None:
         return linker
+    building = getattr(state, "linker_build", None)
+    if building is not None and not building.done():
+        return None
     now = time.monotonic()
     if now - getattr(state, "linker_attempted_at", -_LINKER_RETRY_SECONDS) < (
         _LINKER_RETRY_SECONDS
     ):
         return None
     state.linker_attempted_at = now
+    # A task the timeout can't cancel, so it stays not done while its thread
+    # runs and its callback still sees the result. The client is made in the
+    # thread too, so its errors reach the fallback below.
+    build = asyncio.ensure_future(asyncio.to_thread(_build_linker))
+    build.add_done_callback(_keep_when_built(state))
+    state.linker_build = build
     try:
-        state.linker = EntityLinker.from_db(get_supabase())
+        linker = await asyncio.wait_for(
+            asyncio.shield(build), timeout=_LINKER_BUILD_SECONDS
+        )
     except Exception:
-        logger.exception("Entity linker still unavailable")
+        # The build's own errors are logged by its done-callback; a timeout
+        # with the build still going is the wait's
+        if not build.done():
+            logger.warning(
+                "Entity linker rebuild still running after %.0f s; kept if it finishes",
+                _LINKER_BUILD_SECONDS,
+            )
         return None
-    return state.linker
+    if linker.is_empty:
+        return None
+    state.linker = linker
+    return linker
 
 
 Linker = Annotated[EntityLinker | None, Depends(get_linker)]

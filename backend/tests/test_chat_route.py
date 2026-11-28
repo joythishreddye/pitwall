@@ -1,6 +1,9 @@
 """Chat endpoint: SSE contract, failure events and rate limiting."""
 
+import asyncio
 import json
+import threading
+import time
 from collections.abc import Iterator
 from unittest.mock import AsyncMock, MagicMock
 
@@ -11,6 +14,7 @@ from app.api.rate_limit import SlidingWindowLimiter
 from app.api.routes import chat as chat_route
 from app.llm.base import LLMError
 from app.main import app
+from app.rag.entities import EntityLinker
 
 _INTENT = '{"intent": "factual", "entities": {}, "metadata_filter": {}}'
 
@@ -154,26 +158,150 @@ async def test_too_many_questions_get_429(wire, monkeypatch) -> None:
     assert int(second.headers["Retry-After"]) >= 1
 
 
-def test_linker_is_rebuilt_after_a_failed_boot(monkeypatch) -> None:
+def _linker_request(monkeypatch, from_db: MagicMock):
     from starlette.requests import Request
 
-    clock = [1000.0]
-    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
-    built = MagicMock()
-    from_db = MagicMock(side_effect=[RuntimeError("db blip"), built])
     monkeypatch.setattr("app.api.routes.chat.EntityLinker.from_db", from_db)
     monkeypatch.setattr("app.api.routes.chat.get_supabase", lambda: MagicMock())
-
     state = type("State", (), {})()
-    request = Request({"type": "http", "app": type("App", (), {"state": state})()})
+    return Request({"type": "http", "app": type("App", (), {"state": state})()})
 
-    assert chat_route.get_linker(request) is None  # first try fails
-    assert chat_route.get_linker(request) is None  # cooling down, no retry
+
+async def test_linker_is_rebuilt_after_a_failed_boot(monkeypatch) -> None:
+    clock = [1000.0]
+    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
+    built = MagicMock(is_empty=False)
+    from_db = MagicMock(side_effect=[RuntimeError("db blip"), built])
+    request = _linker_request(monkeypatch, from_db)
+
+    assert await chat_route.get_linker(request) is None  # first try fails
+    assert await chat_route.get_linker(request) is None  # cooling down, no retry
     assert from_db.call_count == 1
     clock[0] += 301
-    assert chat_route.get_linker(request) is built
-    assert chat_route.get_linker(request) is built  # cached after that
+    assert await chat_route.get_linker(request) is built
+    assert await chat_route.get_linker(request) is built  # cached after that
     assert from_db.call_count == 2
+
+
+async def test_an_empty_linker_is_not_kept(monkeypatch) -> None:
+    # Empty tables (a refresh mid-way, say) would otherwise leave a linker
+    # that links nothing until the next restart
+    clock = [1000.0]
+    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
+    built = MagicMock(is_empty=False)
+    from_db = MagicMock(side_effect=[EntityLinker(), built])
+    request = _linker_request(monkeypatch, from_db)
+
+    assert await chat_route.get_linker(request) is None
+    assert getattr(request.app.state, "linker", None) is None
+    clock[0] += 301
+    assert await chat_route.get_linker(request) is built
+
+
+async def test_a_client_error_falls_back_to_no_linker(monkeypatch) -> None:
+    # Creating the database client is part of the rebuild: its failure must
+    # leave the chat on raw classifier filters, not fail the request
+    from_db = MagicMock()
+    request = _linker_request(monkeypatch, from_db)
+
+    def no_client() -> MagicMock:
+        raise RuntimeError("bad url")
+
+    monkeypatch.setattr("app.api.routes.chat.get_supabase", no_client)
+
+    assert await chat_route.get_linker(request) is None
+    assert from_db.call_count == 0
+
+
+async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
+
+    def slow(_db: object) -> MagicMock:
+        release.wait(5)
+        return MagicMock(is_empty=False)
+
+    request = _linker_request(monkeypatch, MagicMock(side_effect=slow))
+    started = time.monotonic()
+
+    assert await chat_route.get_linker(request) is None
+    assert time.monotonic() - started < 0.4
+    assert getattr(request.app.state, "linker", None) is None
+    release.set()
+    await request.app.state.linker_build  # no thread left behind
+
+
+async def test_a_slow_rebuild_is_kept_and_none_starts_beside_it(monkeypatch) -> None:
+    # The timeout stops the wait, not the thread: a database stuck for longer
+    # than the 5-minute spacing must not pile up rebuilds, and a build that
+    # finishes late is kept rather than thrown away. (Patching
+    # time.monotonic would also stop asyncio's clock, and the timeout with it.)
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
+
+    def stuck(_db: object) -> MagicMock:
+        release.wait(5)
+        return MagicMock(is_empty=False)
+
+    from_db = MagicMock(side_effect=stuck)
+    request = _linker_request(monkeypatch, from_db)
+
+    state = request.app.state
+    assert await chat_route.get_linker(request) is None  # times out
+    state.linker_attempted_at -= 301  # 5 minutes on
+    assert await chat_route.get_linker(request) is None  # still running
+    assert from_db.call_count == 1
+
+    release.set()
+    await state.linker_build
+    await asyncio.sleep(0)  # let the done-callback run
+    assert await chat_route.get_linker(request) is not None  # the late build
+    assert from_db.call_count == 1
+
+
+@pytest.mark.parametrize(
+    ("outcome", "logged"),
+    [
+        (RuntimeError("db gone"), "Entity linker still unavailable"),
+        (EntityLinker(), "Entity linker built empty"),
+    ],
+)
+async def test_a_late_rebuild_outcome_is_logged_once(
+    monkeypatch, caplog, outcome, logged
+) -> None:
+    # A build that ends after its request stopped waiting must still show in
+    # the logs, and one that ends in time only once
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
+
+    def late(_db: object) -> EntityLinker:
+        release.wait(5)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+    request = _linker_request(monkeypatch, MagicMock(side_effect=late))
+    assert await chat_route.get_linker(request) is None  # times out
+    release.set()
+    await asyncio.gather(request.app.state.linker_build, return_exceptions=True)
+    await asyncio.sleep(0)  # let the done-callback run
+
+    assert sum(logged in r.getMessage() for r in caplog.records) == 1
+    assert getattr(request.app.state, "linker", None) is None
+
+
+async def test_a_build_error_that_is_a_timeout_is_not_called_still_running(
+    monkeypatch, caplog
+) -> None:
+    request = _linker_request(
+        monkeypatch, MagicMock(side_effect=TimeoutError("socket timed out"))
+    )
+
+    assert await chat_route.get_linker(request) is None
+    await asyncio.sleep(0)
+    messages = [r.getMessage() for r in caplog.records]
+    assert not any("still running" in m for m in messages)
+    assert sum("Entity linker still unavailable" in m for m in messages) == 1
 
 
 async def test_a_spent_daily_budget_gets_429_before_any_model_call(wire) -> None:
