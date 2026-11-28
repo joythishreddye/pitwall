@@ -217,24 +217,33 @@ export function ChampionshipChart({
   // Solid lines: DrawSVG left-to-right draw.
   // Dashed lines: opacity fade-in — DrawSVG overwrites strokeDasharray so we
   //   cannot use it on dashed paths.
+  //   Each kind is animated only if the chart has some: the constructors chart has no dashed lines, and GSAP
+  //   logs a warning for a selector that matches nothing.
   const { contextSafe } = useGSAP(
     () => {
-      if (!lines.length || svgW === 0) return;
+      if (!lines.length || svgW === 0 || !svgRef.current) return;
+      const solid = svgRef.current.querySelectorAll(".chart-line");
+      const dashed = svgRef.current.querySelectorAll(".chart-line-dash");
       if (respectsReducedMotion()) {
-        gsap.set(".chart-line, .chart-line-dash", { opacity: 0.85 });
+        if (solid.length) gsap.set(solid, { opacity: 0.85 });
+        if (dashed.length) gsap.set(dashed, { opacity: 0.85 });
         return;
       }
-      gsap.from(".chart-line", {
-        drawSVG: "0%",
-        // Settled within 300ms, so the chart is complete when it's judged (DESIGN.md, Motion)
-        duration: 0.3,
-        ease: "pitwall-accel",
-      });
-      gsap.from(".chart-line-dash", {
-        opacity: 0,
-        duration: 0.3,
-        ease: "pitwall-accel",
-      });
+      if (solid.length) {
+        gsap.from(solid, {
+          drawSVG: "0%",
+          // Settled within 300ms, so the chart is complete when it's judged (DESIGN.md, Motion)
+          duration: 0.3,
+          ease: "pitwall-accel",
+        });
+      }
+      if (dashed.length) {
+        gsap.from(dashed, {
+          opacity: 0,
+          duration: 0.3,
+          ease: "pitwall-accel",
+        });
+      }
     },
     { scope: svgRef, dependencies: [progressions, mode, svgW] }
   );

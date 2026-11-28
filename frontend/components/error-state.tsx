@@ -9,7 +9,7 @@ export function ErrorState({
 }) {
   return (
     <div className="text-center py-8">
-      <p className="text-f1-red text-sm">{message}</p>
+      <p className="text-f1-red-text text-sm">{message}</p>
       <button
         onClick={onRetry}
         className="mt-3 inline-flex items-center gap-1.5 text-xs text-f1-muted hover:text-f1-text transition-colors duration-150"

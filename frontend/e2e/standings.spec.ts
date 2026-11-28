@@ -37,10 +37,17 @@ async function tableFits(page: Page, rowClass: string, count: number) {
     expect(width).toBeGreaterThan(60);
     const spill = await row.evaluate((el) => el.scrollWidth - el.clientWidth);
     expect(spill).toBeLessThanOrEqual(0);
-    // the name itself isn't cut short: neither the name box nor a line in it (the surname, the team under it)
+    // the name itself isn't cut short: neither the name box nor a line in it (the surname, the team under it).
+    // scrollWidth is a whole number, so a text a fraction of a pixel too wide (which still shows "…") also
+    // compares its own width with the box's
     const lines = row.locator(".standings-name, .standings-name .truncate").filter({ visible: true });
     for (const line of await lines.all()) {
-      const cut = await line.evaluate((el) => el.scrollWidth - el.clientWidth);
+      const cut = await line.evaluate((el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const past = range.getBoundingClientRect().width - el.getBoundingClientRect().width - 0.01;
+        return Math.max(el.scrollWidth - el.clientWidth, past);
+      });
       expect(cut, `"${await line.textContent()}" is cut short`).toBeLessThanOrEqual(0);
     }
   }

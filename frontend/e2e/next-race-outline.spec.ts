@@ -57,6 +57,17 @@ function paintedBox(drawing: Locator): Promise<Box> {
   });
 }
 
+/** The width a container query inside the tile compares with: its @container element's content box. */
+function containerWidth(tile: Locator): Promise<number> {
+  return tile.evaluate((node) => {
+    const box = node.querySelector('[class~="@container"]');
+    if (!box) throw new Error("the Next Race tile has no @container element");
+    const s = getComputedStyle(box);
+    const edges = ["borderLeftWidth", "borderRightWidth", "paddingLeft", "paddingRight"] as const;
+    return box.getBoundingClientRect().width - edges.reduce((sum, k) => sum + parseFloat(s[k]), 0);
+  });
+}
+
 const RACES = [
   { when: "2026-11-25T18:00:00Z", name: "Qatar Grand Prix", circuit: /Lusail International Circuit/, date: "2026-11-29" },
   { when: "2026-12-01T12:00:00Z", name: "Abu Dhabi Grand Prix", circuit: /Yas Marina Circuit/, date: "2026-12-06" },
@@ -72,9 +83,11 @@ for (const race of RACES) {
 
     const tileBox = (await tile.boundingBox())!;
     const drawing = tile.getByTestId("next-race-outline");
-    // the track shows from a 320 px tile (390 and 1440 here); the 768 screen's tile is narrower, so it has none
-    await expect(drawing).toBeVisible({ visible: tileBox.width >= 320 });
-    if (tileBox.width < 320) return;
+    // the track shows from a 320 px tile (390 and 1440 here); the 768 screen's tile is narrower, so it has none. The
+    // layout rule measures the tile's content box (inside its border), so that's the width to compare.
+    const roomy = (await containerWidth(tile)) >= 320;
+    await expect(drawing).toBeVisible({ visible: roomy });
+    if (!roomy) return;
 
     const texts: Record<string, Box> = {
       label: await textBox(tile.getByText("Next Race", { exact: true })),
