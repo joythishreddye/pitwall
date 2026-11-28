@@ -10,10 +10,11 @@ import type { DriverStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-// Phones get position, driver (team underneath), wins and points; the team column and the points bar join from
-// 768 px. One column list for the header and the rows, so the headings sit over their columns at every width.
+// Below 1024 px, position, driver (team underneath), wins and points; the team column and the points bar join from
+// 1024 px (at 768 the sidebar leaves the rows about 450 px, too narrow for them and a full surname).
+// One column list for the header and the rows, so the headings sit over their columns at every width.
 const COLS =
-  "grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.5rem] gap-x-3 md:grid-cols-[3rem_2fr_1fr_4rem_5rem_1fr] md:gap-x-4";
+  "grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.5rem] gap-x-3 lg:grid-cols-[3rem_2fr_1fr_4rem_5rem_1fr] lg:gap-x-4";
 
 export function DriversTable({
   drivers,
@@ -52,10 +53,10 @@ export function DriversTable({
       >
         <span>Pos</span>
         <span>Driver</span>
-        <span className="hidden md:block">Team</span>
+        <span className="hidden lg:block">Team</span>
         <span className="text-right">Wins</span>
         <span className="standings-pts-heading text-right">Pts</span>
-        <span className="hidden md:block" />
+        <span className="hidden lg:block" />
       </div>
 
       {drivers.map((d, i) => {
@@ -98,13 +99,13 @@ export function DriversTable({
                   <span className="hidden text-f1-muted lg:inline">{d.forename} </span>
                   <span className="font-semibold uppercase">{d.surname}</span>
                 </span>
-                {/* the team under the name on phones; its own column from 768 px */}
-                <span className="truncate text-xs text-f1-muted md:hidden">{d.constructor_name}</span>
+                {/* the team under the name below 1024 px; its own column from there, beside the points bar */}
+                <span className="truncate text-xs text-f1-muted lg:hidden">{d.constructor_name}</span>
               </div>
             </div>
 
             {/* Team */}
-            <span className="hidden truncate text-xs text-f1-muted md:block">{d.constructor_name}</span>
+            <span className="hidden truncate text-xs text-f1-muted lg:block">{d.constructor_name}</span>
 
             {/* Wins */}
             <span className="text-right font-data tabular-nums text-f1-muted">
@@ -117,7 +118,7 @@ export function DriversTable({
             </span>
 
             {/* Win bar */}
-            <div className="hidden h-1.5 overflow-hidden bg-f1-grid/30 md:block">
+            <div className="hidden h-1.5 overflow-hidden bg-f1-grid/30 lg:block">
               <div
                 className="h-full"
                 style={{
