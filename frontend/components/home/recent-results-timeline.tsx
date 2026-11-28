@@ -24,15 +24,15 @@ export function RecentResultsTimeline({ races }: RecentResultsTimelineProps) {
 
       {/* Horizontal scroll timeline */}
       <div className="flex overflow-x-auto scrollbar-thin divide-x divide-f1-grid">
-        {last3.map((race, i) => (
-          <RecentRaceCard key={race.id} race={race} rank={i} />
+        {last3.map((race) => (
+          <RecentRaceCard key={race.id} race={race} />
         ))}
       </div>
     </div>
   );
 }
 
-function RecentRaceCard({ race, rank }: { race: RaceCalendarItem; rank: number }) {
+function RecentRaceCard({ race }: { race: RaceCalendarItem }) {
   const { data, isLoading } = useRaceDetail(race.id);
   const winner = data?.results[0];
   const teamHex = winner ? getTeamHexColor(winner.constructor.ref) : undefined;

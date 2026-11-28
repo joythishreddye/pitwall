@@ -35,8 +35,9 @@ const jetbrainsMono = localFont({
   variable: "--font-jetbrains",
 });
 
-// Each section's layout names its tab ("Standings · PitWall"); the home page and
-// any page without a title of its own keep the default.
+// Section layouts (and /dashboard's page) name their tab ("Standings · PitWall"),
+// and a page inside a section inherits its title (a race page reads "Races ·
+// PitWall"). Only pages outside a titled section, like home, keep the default.
 export const metadata: Metadata = {
   title: { default: "PitWall — AI Race Engineer", template: "%s · PitWall" },
   description:

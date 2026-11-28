@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { TrendingUp } from "lucide-react";
 import { NumberCounter } from "@/components/ui/number-counter";
-import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
+import { getTeamHexColor } from "@/lib/constants/teams";
 import type { ConstructorStanding } from "@/lib/schemas/standings";
 
 interface ConstructorLeaderTileProps {
@@ -12,7 +12,6 @@ interface ConstructorLeaderTileProps {
 }
 
 export function ConstructorLeaderTile({ leader, revealed = false }: ConstructorLeaderTileProps) {
-  const teamColor = getTeamColor(leader.constructor_ref);
   const teamHex = getTeamHexColor(leader.constructor_ref);
 
   return (

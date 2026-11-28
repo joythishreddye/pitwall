@@ -63,7 +63,6 @@ export function DriversTable({
         const teamColor = getTeamColor(d.constructor_name ?? d.constructor_ref ?? "");
         const hexColor = getTeamHexColor(d.constructor_ref ?? d.constructor_name ?? "");
         const barWidth = maxPoints > 0 ? (d.points / maxPoints) * 100 : 0;
-        const isLeader = d.position === 1;
 
         return (
           <Link

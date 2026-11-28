@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
-import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
+import { getTeamHexColor } from "@/lib/constants/teams";
 import { CURRENT_SEASON } from "@/lib/constants/season";
 import { useDriverProfile, useDriverResults } from "@/lib/hooks/use-drivers";
 import { useDriverPhotos, findHeadshotUrl } from "@/lib/hooks/use-driver-photos";
@@ -52,9 +52,6 @@ export default function DriverProfilePage({
     );
   }
 
-  const teamColor = driver.current_constructor
-    ? getTeamColor(driver.current_constructor.ref)
-    : "var(--color-f1-muted)";
   const teamHex = driver.current_constructor
     ? getTeamHexColor(driver.current_constructor.ref)
     : "var(--color-f1-muted)";
@@ -69,7 +66,6 @@ export default function DriverProfilePage({
       {/* Profile header: photo + SplitReveal name + team color glow */}
       <ProfileHeader
         driver={driver}
-        teamColor={teamColor}
         teamHex={teamHex}
         headshotUrl={headshotUrl}
       />
