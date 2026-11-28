@@ -116,7 +116,11 @@ def make_local_reranker():
     """bge-reranker-base on CPU, matching the hosted reranker's model."""
     from sentence_transformers import CrossEncoder
 
-    model = CrossEncoder("BAAI/bge-reranker-base", cache_folder=str(MODELS_DIR))
+    # On the Mac's GPU (sentence-transformers' default there) the reranker ran
+    # out of memory at question 43 of 63, twice
+    model = CrossEncoder(
+        "BAAI/bge-reranker-base", cache_folder=str(MODELS_DIR), device="cpu"
+    )
 
     async def rerank(query: str, chunks: list[RetrievedChunk]) -> list[float]:
         pairs = [(query, c.content) for c in chunks]
