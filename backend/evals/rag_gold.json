@@ -1,6 +1,6 @@
 {
-  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples. v3 adds rp-01 to rp-05, asked from a race page: each carries the page's race (season and round) in its own field, never in the question text.",
-  "version": 3,
+  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples. v3 adds rp-01 to rp-05, asked from a race page: each carries the page's race (season and round) in its own field, never in the question text. v4 adds circ-06 to circ-08, circuit questions that name a season (#44): the year must not push the circuit's own profile out of the top 5.",
+  "version": 4,
   "questions": [
     {"id": "drv-01", "kind": "driver", "question": "How many wins has Kimi Antonelli taken in the 2026 season?", "expected": ["drivers/antonelli.md"]},
     {"id": "drv-02", "kind": "driver", "question": "How is George Russell's 2026 season going?", "expected": ["drivers/russell.md"]},
@@ -40,6 +40,9 @@
     {"id": "circ-03", "kind": "circuit", "question": "What makes Eau Rouge at Spa special?", "expected": ["circuits/spa.md"]},
     {"id": "circ-04", "kind": "circuit", "question": "Why is Suzuka shaped like a figure eight?", "expected": ["circuits/suzuka.md"]},
     {"id": "circ-05", "kind": "circuit", "question": "What are Maggotts and Becketts at Silverstone?", "expected": ["circuits/silverstone.md"]},
+    {"id": "circ-06", "kind": "circuit", "question": "Why is Suzuka hard on tyres for the 2026 cars?", "expected": ["circuits/suzuka.md"]},
+    {"id": "circ-07", "kind": "circuit", "question": "Why is overtaking still so hard at Monaco in 2025?", "expected": ["circuits/monaco.md"]},
+    {"id": "circ-08", "kind": "circuit", "question": "How do the 2026 cars take Eau Rouge at Spa?", "expected": ["circuits/spa.md"]},
     {"id": "exp-01", "kind": "explainer", "question": "What does the drag reduction system actually do on an F1 car?", "expected": ["explainers/drs-explained.md", "explainers/glossary.md"]},
     {"id": "exp-02", "kind": "explainer", "question": "What is an undercut in F1?", "expected": ["explainers/race-strategy-101.md", "explainers/glossary.md"]},
     {"id": "exp-03", "kind": "explainer", "question": "What is dirty air?", "expected": ["explainers/glossary.md"]},
