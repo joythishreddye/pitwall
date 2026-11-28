@@ -34,15 +34,15 @@ The 1-second gap is measured at the detection point, not continuously. This mean
 
 The 1-second threshold was chosen through a combination of aerodynamic modeling and on-track testing during DRS's introduction in 2011. The intent was to make DRS a tool that assists a faster car in overtaking a slightly slower one, without making it trivially easy for any car to pass regardless of relative pace.
 
-Critics argue the threshold has not always achieved this balance. On circuits with very long DRS zones (Baku's 2.0km zone is the longest), DRS can be so powerful that the following car shoots past regardless of whether it is genuinely faster. On circuits with shorter or less effective DRS zones, the system barely closes the gap.
+Critics argue the threshold has not always achieved this balance. On circuits with very long DRS zones (such as Baku's main straight), DRS can be so powerful that the following car shoots past regardless of whether it is genuinely faster. On circuits with shorter or less effective DRS zones, the system barely closes the gap.
 
 ## Why Some Circuits Have Multiple DRS Zones
 
-Circuits with multiple long straights can accommodate multiple DRS zones. Each zone has its own detection point. For example:
-- **Baku** has two zones plus a third added in some years
-- **Monza** has two zones on the main straight and after Lesmo
-- **Bahrain** has three zones
-- **Monaco** has one zone (start/finish straight) — very limited effect given the short straight
+Circuits with multiple long straights can accommodate multiple DRS zones. Each zone had its own detection point. For example:
+- **Baku** had two zones
+- **Monza** had two zones, on the main straight and after Lesmo
+- **Bahrain** had three zones
+- **Monaco** had one zone (start/finish straight), with very limited effect given the short straight
 
 Multiple zones create compounding overtaking opportunities but can also make racing feel artificial if the following car is simply faster by virtue of DRS rather than genuine pace difference.
 
