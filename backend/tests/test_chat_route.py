@@ -1,6 +1,7 @@
 """Chat endpoint: SSE contract, failure events and rate limiting."""
 
 import json
+import threading
 import time
 from collections.abc import Iterator
 from unittest.mock import AsyncMock, MagicMock
@@ -209,6 +210,32 @@ async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
     assert await chat_route.get_linker(request) is None
     assert time.monotonic() - started < 0.4
     assert getattr(request.app.state, "linker", None) is None
+
+
+async def test_no_rebuild_starts_while_a_slow_one_still_runs(monkeypatch) -> None:
+    # The timeout stops the wait, not the thread: a database stuck for longer
+    # than the 5-minute spacing must not pile up rebuilds. (Patching
+    # time.monotonic would also stop asyncio's clock, and the timeout with it.)
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
+
+    def stuck(_db: object) -> MagicMock:
+        release.wait(5)
+        return MagicMock(is_empty=False)
+
+    from_db = MagicMock(side_effect=stuck)
+    request = _linker_request(monkeypatch, from_db)
+
+    state = request.app.state
+    assert await chat_route.get_linker(request) is None  # times out
+    state.linker_attempted_at -= 301  # 5 minutes on
+    assert await chat_route.get_linker(request) is None  # still running
+    assert from_db.call_count == 1
+
+    release.set()
+    await state.linker_build
+    assert await chat_route.get_linker(request) is not None  # next try builds
+    assert from_db.call_count == 2
 
 
 async def test_a_spent_daily_budget_gets_429_before_any_model_call(wire) -> None:

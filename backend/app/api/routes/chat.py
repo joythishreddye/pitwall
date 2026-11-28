@@ -84,23 +84,33 @@ async def get_linker(request: Request) -> EntityLinker | None:
 
     A database blip at boot would otherwise leave raw classifier filters in
     place until the next restart. Rebuilds are tried at most every 5 minutes,
-    each capped at 10 s, and a linker built from empty tables isn't kept, so
-    the next try can build a real one.
+    each waited on for 10 s, and a linker built from empty tables isn't kept,
+    so the next try can build a real one. A build that outlives its 10 s keeps
+    running in its thread; no new one starts beside it.
     """
     state = request.app.state
     linker = getattr(state, "linker", None)
     if linker is not None:
         return linker
+    building = getattr(state, "linker_build", None)
+    if building is not None and not building.done():
+        return None
     now = time.monotonic()
     if now - getattr(state, "linker_attempted_at", -_LINKER_RETRY_SECONDS) < (
         _LINKER_RETRY_SECONDS
     ):
         return None
     state.linker_attempted_at = now
+    # A task the timeout can't cancel, so it stays not done while its thread
+    # runs; the callback reads a late failure so it isn't logged as unread
+    build = asyncio.ensure_future(
+        asyncio.to_thread(EntityLinker.from_db, get_supabase())
+    )
+    build.add_done_callback(lambda f: f.cancelled() or f.exception())
+    state.linker_build = build
     try:
         linker = await asyncio.wait_for(
-            asyncio.to_thread(EntityLinker.from_db, get_supabase()),
-            timeout=_LINKER_BUILD_SECONDS,
+            asyncio.shield(build), timeout=_LINKER_BUILD_SECONDS
         )
     except Exception:
         logger.exception("Entity linker still unavailable")
