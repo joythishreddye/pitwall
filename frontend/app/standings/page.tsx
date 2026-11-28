@@ -21,8 +21,20 @@ export default function StandingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("drivers");
 
   const { data, isLoading, error, refetch } = useStandings(season);
-  const { data: progressions = [] } = useStandingsProgression(season);
+  const {
+    data: progressions,
+    isLoading: progressionLoading,
+    refetch: refetchProgression,
+  } = useStandingsProgression(season);
   const { data: races = [] } = useRaceCalendar(season);
+
+  // The standings' Retry also reloads the chart when it has nothing to show, and while both have failed the
+  // chart's section stays hidden: one error and one Retry stand for the page.
+  const retryStandings = () => {
+    void refetch();
+    if (!progressions?.length) void refetchProgression();
+  };
+  const showChart = !error || Boolean(progressions?.length);
 
   // Build round → country label map from race calendar
   const roundLabels = Object.fromEntries(
@@ -113,7 +125,7 @@ export default function StandingsPage() {
             <SeasonSelector value={season} onChange={setSeason} />
           </div>
           <p className="text-f1-muted text-sm mt-1 font-data tabular-nums">
-            {data ? `Round ${data.round} · ${season} season` : "Loading..."}
+            {data ? `Round ${data.round} · ${season} season` : error ? `${season} season` : "Loading..."}
           </p>
         </div>
 
@@ -150,7 +162,7 @@ export default function StandingsPage() {
           {isLoading ? (
             <LoadingSkeleton rows={activeTab === "drivers" ? 20 : 10} />
           ) : error ? (
-            <ErrorState message="Failed to load standings data" onRetry={refetch} />
+            <ErrorState message="Failed to load standings data" onRetry={retryStandings} />
           ) : activeTab === "drivers" ? (
             <DriversTable drivers={drivers} maxPoints={maxPoints} />
           ) : (
@@ -160,26 +172,44 @@ export default function StandingsPage() {
       </div>
 
       {/* ---- Championship Progression — true full-width section ---- */}
-      <section className="mt-10 w-full">
-        <div className="flex items-center gap-2 mb-4 px-4 md:px-8">
-          <TrendingUp className="h-4 w-4 text-f1-muted" aria-hidden="true" />
-          <h2 className="text-sm text-f1-muted uppercase tracking-widest">
-            Championship Progression
-          </h2>
-        </div>
-        <div className="w-full bg-f1-dark-2 border-y border-f1-grid py-5 px-6 relative">
-          {!progressions.length && (
-            <div className="absolute inset-x-0 top-0">
-              <ScannerLine />
-            </div>
-          )}
-          <ChampionshipChart
-            progressions={progressions}
-            roundLabels={roundLabels}
-            mode={activeTab === "constructors" ? "constructors" : "drivers"}
-          />
-        </div>
-      </section>
+      {showChart && (
+        <section className="mt-10 w-full">
+          <div className="flex items-center gap-2 mb-4 px-4 md:px-8">
+            <TrendingUp className="h-4 w-4 text-f1-muted" aria-hidden="true" />
+            <h2 className="text-sm text-f1-muted uppercase tracking-widest">
+              Championship Progression
+            </h2>
+          </div>
+          <div className="w-full bg-f1-dark-2 border-y border-f1-grid py-5 px-6 relative">
+            {/* The chart while its data loads (the chart says it's loading) and once it's in. A failed load, or one
+                paused offline, says so and offers a retry: before, "Loading progression data..." stayed for good.
+                A season with no round-by-round standings says that. */}
+            {progressionLoading || progressions?.length ? (
+              <>
+                {progressionLoading && (
+                  <div className="absolute inset-x-0 top-0">
+                    <ScannerLine />
+                  </div>
+                )}
+                <ChampionshipChart
+                  progressions={progressions ?? []}
+                  roundLabels={roundLabels}
+                  mode={activeTab === "constructors" ? "constructors" : "drivers"}
+                />
+              </>
+            ) : progressions ? (
+              <p className="text-f1-muted text-sm py-8 text-center">
+                No round-by-round standings for {season}.
+              </p>
+            ) : (
+              <ErrorState
+                message="Couldn't load the championship chart."
+                onRetry={() => void refetchProgression()}
+              />
+            )}
+          </div>
+        </section>
+      )}
 
       <div className="pb-8" />
     </>

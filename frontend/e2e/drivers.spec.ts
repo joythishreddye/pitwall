@@ -2,8 +2,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
-// The drivers list and a driver's page, which no other test opens. From the saved fixtures: 2026 after round 21
-// (25 drivers, Antonelli leading) and Antonelli's profile and 2026 results (21 rounds).
+// The drivers list and a driver's page with their data (error-state.spec.ts opens the list only with every call
+// failing). From the saved fixtures: 2026 after round 21 (25 drivers, Antonelli leading) and Antonelli's profile
+// and 2026 results (21 rounds).
 // When a driver's data doesn't arrive, his page says why. A driver the API doesn't have (404) is "not found"; a
 // failed load says it couldn't load and offers a retry, and so do his season's results. Before, any failure read
 // "DRIVER NOT FOUND", and failed results read "NO RESULTS FOR 2026 SEASON", with no way to try again but reloading.

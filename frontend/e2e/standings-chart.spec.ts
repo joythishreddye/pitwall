@@ -1,0 +1,118 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { expect, test, type Page } from "@playwright/test";
+
+// The Standings page's championship chart when its data doesn't arrive. Before, a failed load (a server error, or
+// the 5 s timeout in lib/api-client.ts) left "Loading progression data..." on screen for good, with no way to try
+// again but reloading. Now it says the chart couldn't load and offers a retry; a season whose round-by-round
+// standings come back empty says that. When the standings fail too, their one error and Retry stand for the page,
+// and that Retry reloads the chart as well; when only the standings fail, a chart that loaded stays. A failed
+// standings load no longer leaves "Loading..." under the page's title. 2026 after round 21 from the saved fixtures.
+
+const PROGRESSION = "**/api/v1/standings/2026/progression";
+const STANDINGS = /\/api\/v1\/standings\/2026(\?.*)?$/;
+const CHART = 'svg[aria-label="Championship points progression"]';
+
+let errors: string[] = [];
+// the browser logs a failed request as a console error; the tests below fail the chart's call (and in the last two
+// tests the standings' call) on purpose, and any other failed request (a missing fixture, a blocked host) still counts
+const FAILED_ON_PURPOSE = /\/api\/v1\/standings\/2026(\/progression)?(\?.*)?$/;
+test.beforeEach(async ({ context, baseURL, page }) => {
+  errors = [];
+  page.on("console", (msg) => {
+    if (msg.type() !== "error") return;
+    if (msg.text().startsWith("Failed to load resource") && FAILED_ON_PURPOSE.test(msg.location().url)) return;
+    errors.push(msg.text());
+  });
+  const host = new URL(baseURL ?? "http://127.0.0.1").hostname;
+  await context.route(
+    (url) => /^https?:$/.test(url.protocol) && url.hostname !== host,
+    (route) => route.abort("blockedbyclient"),
+  );
+});
+test.afterEach(() => {
+  expect(errors).toEqual([]);
+});
+
+async function saved(file: string) {
+  return JSON.parse(await readFile(path.join(test.info().project.testDir, "fixtures/api", file), "utf8"));
+}
+const savedProgression = () => saved("standings-2026-progression.json");
+
+/** Fails the first call to `url` with a 503, then serves `body`. Returns a counter of the calls and a promise that
+ * settles once the 503 has been sent. With `after`, the 503 waits for that promise first. */
+async function failFirst(page: Page, body: unknown, url: string | RegExp = PROGRESSION, after?: Promise<void>) {
+  let sent = () => {};
+  const failed = new Promise<void>((resolve) => (sent = resolve));
+  const calls = { n: 0, failed };
+  await page.route(url, async (route) => {
+    calls.n += 1;
+    if (calls.n > 1) return route.fulfill({ json: body });
+    if (after) await after;
+    await route.fulfill({ status: 503, json: { detail: "busy" } });
+    sent();
+  });
+  return calls;
+}
+
+test("the chart draws from the saved progression", async ({ page }) => {
+  await page.goto("/standings");
+  await expect(page.locator(CHART)).toBeVisible();
+  await expect(page.getByText("Couldn't load the championship chart.")).toHaveCount(0);
+  await expect(page.getByText("Loading progression data...")).toHaveCount(0);
+});
+
+test("a failed chart load says so and retries, instead of loading for good", async ({ page }) => {
+  const calls = await failFirst(page, await savedProgression());
+  await page.goto("/standings");
+  // the tables still load
+  await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+  await expect(page.getByText("Couldn't load the championship chart.")).toBeVisible();
+  await expect(page.getByText("Loading progression data...")).toHaveCount(0);
+  await expect(page.locator(CHART)).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.locator(CHART)).toBeVisible();
+  await expect(page.getByText("Couldn't load the championship chart.")).toHaveCount(0);
+  expect(calls.n).toBe(2);
+});
+
+test("a season with no round-by-round standings says so", async ({ page }) => {
+  await page.route(PROGRESSION, (route) => route.fulfill({ json: [] }));
+  await page.goto("/standings");
+  await expect(page.getByText("No round-by-round standings for 2026.")).toBeVisible();
+  await expect(page.getByText("Loading progression data...")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+});
+
+test("with the standings failed too, one error and one Retry reload both", async ({ page }) => {
+  const chart = await failFirst(page, await savedProgression());
+  // the standings fail only once the chart's call has failed, so the Retry below starts a new chart call instead of
+  // joining one still under way (which would end in the same 503)
+  const standings = await failFirst(page, await saved("standings-2026.json"), STANDINGS, chart.failed);
+  await page.goto("/standings");
+  await expect(page.getByText("Failed to load standings data", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(1);
+  await expect(page.getByText("Championship Progression")).toHaveCount(0);
+  await expect(page.getByText("2026 season", { exact: true })).toBeVisible();
+  await expect(page.getByText("Loading...", { exact: true })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+  await expect(page.locator(CHART)).toBeVisible();
+  expect(standings.n).toBe(2);
+  expect(chart.n).toBe(2);
+});
+
+test("with only the standings failed, a chart that loaded stays, and Retry reloads the standings", async ({ page }) => {
+  const standings = await failFirst(page, await saved("standings-2026.json"), STANDINGS);
+  await page.goto("/standings");
+  await expect(page.getByText("Failed to load standings data", { exact: true })).toBeVisible();
+  await expect(page.locator(CHART)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(1);
+
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+  await expect(page.locator(CHART)).toBeVisible();
+  expect(standings.n).toBe(2);
+});
