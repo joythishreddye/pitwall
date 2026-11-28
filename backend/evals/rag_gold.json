@@ -1,6 +1,6 @@
 {
-  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples. v3 adds rp-01 to rp-05, asked from a race page: each carries the page's race (season and round) in its own field, never in the question text. v4 adds circ-06 to circ-08, circuit questions that name a season (#44): the year must not push the circuit's own profile out of the top 5.",
-  "version": 4,
+  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples. v3 adds rp-01 to rp-05, asked from a race page: each carries the page's race (season and round) in its own field, never in the question text. v4 adds circ-06 to circ-08, circuit questions that name a season (#44): the year must not push the circuit's own profile out of the top 5. v5 adds rname-01 to rname-03, race names phrased around a country (\"Grand Prix of Monaco\", \"the Bahrain race\", \"at Bahrain\"): with the intent model down, only the linker's scan can find the circuit (#33).",
+  "version": 5,
   "questions": [
     {"id": "drv-01", "kind": "driver", "question": "How many wins has Kimi Antonelli taken in the 2026 season?", "expected": ["drivers/antonelli.md"]},
     {"id": "drv-02", "kind": "driver", "question": "How is George Russell's 2026 season going?", "expected": ["drivers/russell.md"]},
@@ -35,6 +35,9 @@
     {"id": "rold-06", "kind": "race", "question": "Who won the 2024 Miami Grand Prix?", "expected": ["races/2024-r06-miami.md"]},
     {"id": "rold-07", "kind": "race", "question": "What happened at the 2021 Abu Dhabi Grand Prix?", "expected": ["races/2021-r22-yas_marina.md", "history/iconic-races.md"]},
     {"id": "rold-08", "kind": "race", "question": "Who won the 2019 British Grand Prix?", "expected": ["races/2019-r10-silverstone.md"]},
+    {"id": "rname-01", "kind": "race", "question": "Who won the Grand Prix of Monaco in 2023?", "expected": ["races/2023-r06-monaco.md"]},
+    {"id": "rname-02", "kind": "race", "question": "How did the Bahrain race go in 2025?", "expected": ["races/2025-r04-bahrain.md"]},
+    {"id": "rname-03", "kind": "race", "question": "Who finished on the podium at Bahrain in 2024?", "expected": ["races/2024-r01-bahrain.md"]},
     {"id": "circ-01", "kind": "circuit", "question": "Why do drivers struggle to pass each other on the streets of Monte Carlo?", "expected": ["circuits/monaco.md"]},
     {"id": "circ-02", "kind": "circuit", "question": "Why is Monza called the Temple of Speed?", "expected": ["circuits/monza.md"]},
     {"id": "circ-03", "kind": "circuit", "question": "What makes Eau Rouge at Spa special?", "expected": ["circuits/spa.md"]},
