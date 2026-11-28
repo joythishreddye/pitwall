@@ -1,0 +1,6449 @@
+{
+  "run_at": "2026-11-28T0507Z",
+  "embedder": "local",
+  "reranker": "local",
+  "intent_model": "openai/gpt-oss-20b",
+  "linker": true,
+  "gold_version": 3,
+  "summary": {
+    "fulltext": {
+      "hit@5": 0.5666666666666667,
+      "recall@5": 0.5666666666666667,
+      "mrr@5": 0.48944444444444446,
+      "p50_seconds": 0.22874802048318088
+    },
+    "fulltext+intent(raw)": {
+      "hit@5": 0.65,
+      "recall@5": 0.65,
+      "mrr@5": 0.6180555555555556,
+      "p50_seconds": 0.27361497946549207
+    },
+    "fulltext+intent": {
+      "hit@5": 0.8333333333333334,
+      "recall@5": 0.8333333333333334,
+      "mrr@5": 0.7602777777777778,
+      "p50_seconds": 0.28086904203519225
+    },
+    "vector": {
+      "hit@5": 0.6666666666666666,
+      "recall@5": 0.6583333333333333,
+      "mrr@5": 0.6241666666666666,
+      "p50_seconds": 0.6522883333964273
+    },
+    "vector+intent(raw)": {
+      "hit@5": 0.85,
+      "recall@5": 0.8416666666666667,
+      "mrr@5": 0.6686111111111112,
+      "p50_seconds": 0.4541375000262633
+    },
+    "vector+intent": {
+      "hit@5": 1,
+      "recall@5": 0.9916666666666667,
+      "mrr@5": 0.8466666666666667,
+      "p50_seconds": 0.3491282709874213
+    },
+    "full": {
+      "hit@5": 0.9833333333333333,
+      "recall@5": 0.975,
+      "mrr@5": 0.7263888888888889,
+      "p50_seconds": 2.5853596044471487
+    }
+  },
+  "questions": [
+    {
+      "id": "drv-01",
+      "kind": "driver",
+      "question": "How many wins has Kimi Antonelli taken in the 2026 season?",
+      "expected": [
+        "drivers/antonelli.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "antonelli"
+      },
+      "intent_filter": {
+        "driver_ref": "antonelli"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "teams/mercedes.md",
+            "teams/haas.md",
+            "teams/mclaren.md",
+            "teams/rb.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.301
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "races/2026-r03-suzuka.md",
+            "teams/mercedes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.412
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "races/2026-r03-suzuka.md",
+            "teams/mercedes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.645
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r02-shanghai.md",
+            "teams/mercedes.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 1.223
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.705
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "drivers/antonelli.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.628
+        },
+        "full": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/antonelli.md",
+            "drivers/piastri.md",
+            "drivers/norris.md",
+            "drivers/hadjar.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.099
+        }
+      }
+    },
+    {
+      "id": "drv-02",
+      "kind": "driver",
+      "question": "How is George Russell's 2026 season going?",
+      "expected": [
+        "drivers/russell.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "russell"
+      },
+      "intent_filter": {
+        "driver_ref": "russell"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2026-r14-madring.md",
+            "teams/mercedes.md",
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r01-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.194
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r14-madring.md",
+            "teams/mercedes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.303
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r14-madring.md",
+            "teams/mercedes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.322
+        },
+        "vector": {
+          "sources": [
+            "teams/alpine.md",
+            "teams/mclaren.md",
+            "teams/rb.md",
+            "teams/mercedes.md",
+            "teams/ferrari.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.488
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "teams/alpine.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.485
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "drivers/russell.md",
+            "teams/alpine.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.499
+        },
+        "full": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/hadjar.md",
+            "drivers/piastri.md",
+            "drivers/norris.md",
+            "drivers/antonelli.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.109
+        }
+      }
+    },
+    {
+      "id": "drv-03",
+      "kind": "driver",
+      "question": "Which team does Fernando Alonso drive for in 2026?",
+      "expected": [
+        "drivers/alonso.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "alonso"
+      },
+      "intent_filter": {
+        "driver_ref": "alonso"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/aston_martin.md",
+            "races/2021-r20-losail.md",
+            "races/2023-r06-monaco.md",
+            "races/2023-r13-zandvoort.md",
+            "races/2022-r11-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.223
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "teams/aston_martin.md",
+            "races/2021-r20-losail.md",
+            "races/2023-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.326
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "teams/aston_martin.md",
+            "races/2021-r20-losail.md",
+            "races/2023-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.316
+        },
+        "vector": {
+          "sources": [
+            "teams/rb.md",
+            "teams/alpine.md",
+            "teams/aston_martin.md",
+            "regulations/2026-regulation-changes.md",
+            "teams/haas.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.597
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "teams/rb.md",
+            "teams/alpine.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.544
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "drivers/alonso.md",
+            "teams/rb.md",
+            "teams/alpine.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.566
+        },
+        "full": {
+          "sources": [
+            "teams/aston_martin.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "drivers/alonso.md",
+            "teams/audi.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 1.787
+        }
+      }
+    },
+    {
+      "id": "drv-04",
+      "kind": "driver",
+      "question": "How many points has Lewis Hamilton scored this season?",
+      "expected": [
+        "drivers/hamilton.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "hamilton"
+      },
+      "intent_filter": {
+        "driver_ref": "hamilton"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.23
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.369
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.453
+        },
+        "vector": {
+          "sources": [
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "races/2020-r11-nurburgring.md",
+            "races/2020-r04-silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.459
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.448
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.421
+        },
+        "full": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/perez.md",
+            "drivers/alonso.md",
+            "teams/ferrari.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.01
+        }
+      }
+    },
+    {
+      "id": "drv-05",
+      "kind": "driver",
+      "question": "Tell me about Oliver Bearman.",
+      "expected": [
+        "drivers/bearman.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "oliver_bearman"
+      },
+      "intent_filter": {
+        "driver_ref": "bearman"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "teams/haas.md",
+            "races/2025-r11-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.156
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "teams/haas.md",
+            "races/2025-r11-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.263
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "teams/haas.md",
+            "races/2025-r11-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.263
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r08-monaco.md",
+            "teams/haas.md",
+            "races/2025-r04-bahrain.md",
+            "races/2025-r02-shanghai.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.656
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r08-monaco.md",
+            "teams/haas.md",
+            "races/2025-r04-bahrain.md",
+            "races/2025-r02-shanghai.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.474
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/bearman.md",
+            "drivers/bearman.md",
+            "drivers/bearman.md",
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r08-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.433
+        },
+        "full": {
+          "sources": [
+            "teams/haas.md",
+            "teams/haas.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r20-rodriguez.md",
+            "drivers/bearman.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 3.068
+        }
+      }
+    },
+    {
+      "id": "drv-06",
+      "kind": "driver",
+      "question": "What were Max Verstappen's most recent results?",
+      "expected": [
+        "drivers/max_verstappen.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "max_verstappen"
+      },
+      "intent_filter": {
+        "driver_ref": "max_verstappen"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2020-r12-portimao.md",
+            "races/2018-r15-marina_bay.md",
+            "races/2018-r01-albert_park.md",
+            "races/2018-r19-rodriguez.md",
+            "races/2020-r15-bahrain.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.266
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/max_verstappen.md",
+            "races/2020-r12-portimao.md",
+            "races/2018-r15-marina_bay.md",
+            "races/2018-r01-albert_park.md",
+            "races/2018-r19-rodriguez.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.3
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/max_verstappen.md",
+            "races/2020-r12-portimao.md",
+            "races/2018-r15-marina_bay.md",
+            "races/2018-r01-albert_park.md",
+            "races/2018-r19-rodriguez.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.314
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2021-r09-red_bull_ring.md",
+            "races/2024-r01-bahrain.md",
+            "races/2020-r11-nurburgring.md",
+            "races/2021-r08-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.64
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "history/iconic-races.md",
+            "races/2021-r09-red_bull_ring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.605
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "history/iconic-races.md",
+            "races/2021-r09-red_bull_ring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.697
+        },
+        "full": {
+          "sources": [
+            "history/iconic-races.md",
+            "drivers/max_verstappen.md",
+            "teams/red_bull.md",
+            "drivers/max_verstappen.md",
+            "races/2021-r04-catalunya.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 2.561
+        }
+      }
+    },
+    {
+      "id": "drv-07",
+      "kind": "driver",
+      "question": "How many world championships has Lando Norris won?",
+      "expected": [
+        "drivers/norris.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "lando_norris"
+      },
+      "intent_filter": {
+        "driver_ref": "norris"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.175
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.267
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/norris.md",
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.258
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2024-r17-baku.md",
+            "races/2023-r19-rodriguez.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r05-jeddah.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.584
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2024-r17-baku.md",
+            "races/2023-r19-rodriguez.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r05-jeddah.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.437
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/norris.md",
+            "drivers/norris.md",
+            "drivers/norris.md",
+            "history/iconic-races.md",
+            "races/2024-r17-baku.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.392
+        },
+        "full": {
+          "sources": [
+            "drivers/norris.md",
+            "races/2025-r15-zandvoort.md",
+            "races/2021-r18-rodriguez.md",
+            "teams/mclaren.md",
+            "races/2023-r19-rodriguez.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 3.882
+        }
+      }
+    },
+    {
+      "id": "drv-08",
+      "kind": "driver",
+      "question": "Who is Arvid Lindblad?",
+      "expected": [
+        "drivers/arvid_lindblad.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "driver_ref": "arvid_lindblad"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/rb.md",
+            "races/2026-r21-vegas.md",
+            "races/2026-r19-rodriguez.md",
+            "teams/rb.md",
+            "races/2026-r05-villeneuve.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.326
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/rb.md",
+            "races/2026-r21-vegas.md",
+            "races/2026-r19-rodriguez.md",
+            "teams/rb.md",
+            "races/2026-r05-villeneuve.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.155
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/rb.md",
+            "races/2026-r21-vegas.md",
+            "races/2026-r19-rodriguez.md",
+            "teams/rb.md",
+            "races/2026-r05-villeneuve.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.351
+        },
+        "vector": {
+          "sources": [
+            "teams/rb.md",
+            "teams/rb.md",
+            "races/2026-r20-interlagos.md",
+            "races/2026-r16-sepang.md",
+            "races/2026-r15-baku.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.532
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "teams/rb.md",
+            "teams/rb.md",
+            "races/2026-r20-interlagos.md",
+            "races/2026-r16-sepang.md",
+            "races/2026-r15-baku.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.194
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/arvid_lindblad.md",
+            "drivers/arvid_lindblad.md",
+            "drivers/arvid_lindblad.md",
+            "teams/rb.md",
+            "teams/rb.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.458
+        },
+        "full": {
+          "sources": [
+            "teams/rb.md",
+            "races/2026-r20-interlagos.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2026-r15-baku.md",
+            "drivers/arvid_lindblad.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 1.965
+        }
+      }
+    },
+    {
+      "id": "team-01",
+      "kind": "team",
+      "question": "How many points do Mercedes have in the 2026 constructors' championship?",
+      "expected": [
+        "teams/mercedes.md"
+      ],
+      "raw_filter": {
+        "constructor_ref": "mercedes"
+      },
+      "intent_filter": {
+        "constructor_ref": "mercedes"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/mercedes.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "teams/mclaren.md",
+            "teams/red_bull.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.239
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/mercedes.md",
+            "drivers/antonelli.md",
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "drivers/russell.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.139
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/mercedes.md",
+            "drivers/antonelli.md",
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "drivers/russell.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.131
+        },
+        "vector": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "drivers/norris.md",
+            "drivers/leclerc.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.577
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "teams/mercedes.md",
+            "teams/mercedes.md",
+            "drivers/russell.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.301
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "teams/mercedes.md",
+            "teams/mercedes.md",
+            "drivers/russell.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.355
+        },
+        "full": {
+          "sources": [
+            "teams/mercedes.md",
+            "drivers/russell.md",
+            "drivers/antonelli.md",
+            "teams/mercedes.md",
+            "drivers/russell.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.985
+        }
+      }
+    },
+    {
+      "id": "team-02",
+      "kind": "team",
+      "question": "How is Cadillac doing in its first F1 season?",
+      "expected": [
+        "teams/cadillac.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "constructor_ref": "cadillac"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.214
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.185
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/cadillac.md",
+            "drivers/bottas.md",
+            "drivers/perez.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.315
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "teams/mercedes.md",
+            "history/iconic-races.md",
+            "teams/ferrari.md",
+            "teams/audi.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.516
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "teams/mercedes.md",
+            "history/iconic-races.md",
+            "teams/ferrari.md",
+            "teams/audi.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.431
+        },
+        "vector+intent": {
+          "sources": [
+            "teams/cadillac.md",
+            "drivers/bottas.md",
+            "teams/cadillac.md",
+            "drivers/bottas.md",
+            "drivers/perez.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.327
+        },
+        "full": {
+          "sources": [
+            "drivers/perez.md",
+            "drivers/bottas.md",
+            "teams/cadillac.md",
+            "drivers/perez.md",
+            "teams/cadillac.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.625
+        }
+      }
+    },
+    {
+      "id": "team-03",
+      "kind": "team",
+      "question": "Who drives for Audi in 2026?",
+      "expected": [
+        "teams/audi.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "constructor_ref": "audi"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "races/2026-r11-hungaroring.md",
+            "races/2026-r14-madring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.144
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "races/2026-r11-hungaroring.md",
+            "races/2026-r14-madring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.154
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/audi.md",
+            "drivers/bortoleto.md",
+            "drivers/hulkenberg.md",
+            "teams/audi.md",
+            "drivers/bortoleto.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.119
+        },
+        "vector": {
+          "sources": [
+            "teams/rb.md",
+            "teams/alpine.md",
+            "teams/aston_martin.md",
+            "teams/haas.md",
+            "teams/audi.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.471
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "teams/rb.md",
+            "teams/alpine.md",
+            "teams/aston_martin.md",
+            "teams/haas.md",
+            "teams/audi.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.299
+        },
+        "vector+intent": {
+          "sources": [
+            "teams/audi.md",
+            "drivers/bortoleto.md",
+            "drivers/hulkenberg.md",
+            "teams/audi.md",
+            "drivers/bortoleto.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.304
+        },
+        "full": {
+          "sources": [
+            "teams/audi.md",
+            "drivers/hulkenberg.md",
+            "drivers/bortoleto.md",
+            "drivers/bortoleto.md",
+            "drivers/hulkenberg.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.882
+        }
+      }
+    },
+    {
+      "id": "team-04",
+      "kind": "team",
+      "question": "How has Ferrari performed in 2026?",
+      "expected": [
+        "teams/ferrari.md"
+      ],
+      "raw_filter": {
+        "constructor_ref": "ferrari"
+      },
+      "intent_filter": {
+        "constructor_ref": "ferrari"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "teams/mercedes.md",
+            "teams/haas.md",
+            "teams/mclaren.md",
+            "teams/rb.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.184
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/ferrari.md",
+            "drivers/hamilton.md",
+            "drivers/leclerc.md",
+            "teams/ferrari.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.105
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/ferrari.md",
+            "drivers/hamilton.md",
+            "drivers/leclerc.md",
+            "teams/ferrari.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.113
+        },
+        "vector": {
+          "sources": [
+            "teams/alpine.md",
+            "teams/audi.md",
+            "drivers/hamilton.md",
+            "drivers/gasly.md",
+            "teams/aston_martin.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.535
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/hamilton.md",
+            "teams/ferrari.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md",
+            "drivers/leclerc.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.325
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/hamilton.md",
+            "teams/ferrari.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md",
+            "drivers/leclerc.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.29
+        },
+        "full": {
+          "sources": [
+            "drivers/leclerc.md",
+            "teams/ferrari.md",
+            "drivers/hamilton.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.638
+        }
+      }
+    },
+    {
+      "id": "team-05",
+      "kind": "team",
+      "question": "Where is McLaren in the 2026 standings?",
+      "expected": [
+        "teams/mclaren.md"
+      ],
+      "raw_filter": {
+        "constructor_ref": "mclaren"
+      },
+      "intent_filter": {
+        "constructor_ref": "mclaren"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r11-hungaroring.md",
+            "races/2026-r12-zandvoort.md",
+            "races/2026-r20-interlagos.md",
+            "history/iconic-races.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.172
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/mclaren.md",
+            "teams/mclaren.md",
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "drivers/norris.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.131
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/mclaren.md",
+            "teams/mclaren.md",
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "drivers/norris.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.124
+        },
+        "vector": {
+          "sources": [
+            "teams/alpine.md",
+            "drivers/hamilton.md",
+            "teams/rb.md",
+            "teams/mercedes.md",
+            "drivers/russell.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.45
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "teams/mclaren.md",
+            "drivers/piastri.md",
+            "drivers/norris.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.304
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "teams/mclaren.md",
+            "drivers/piastri.md",
+            "drivers/norris.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.335
+        },
+        "full": {
+          "sources": [
+            "drivers/piastri.md",
+            "drivers/norris.md",
+            "teams/mclaren.md",
+            "drivers/piastri.md",
+            "drivers/norris.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.74
+        }
+      }
+    },
+    {
+      "id": "team-06",
+      "kind": "team",
+      "question": "Tell me about the Williams team this season.",
+      "expected": [
+        "teams/williams.md"
+      ],
+      "raw_filter": {
+        "constructor_ref": "williams"
+      },
+      "intent_filter": {
+        "constructor_ref": "williams"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "races/2025-r08-monaco.md",
+            "regulations/points-system.md",
+            "races/2021-r11-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.181
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/williams.md",
+            "teams/williams.md",
+            "drivers/albon.md",
+            "drivers/sainz.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.298
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/williams.md",
+            "teams/williams.md",
+            "drivers/albon.md",
+            "drivers/sainz.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.303
+        },
+        "vector": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "teams/mercedes.md",
+            "teams/red_bull.md",
+            "teams/mclaren.md",
+            "teams/alpine.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.46
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "teams/williams.md",
+            "teams/williams.md",
+            "drivers/albon.md",
+            "drivers/sainz.md",
+            "drivers/sainz.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.323
+        },
+        "vector+intent": {
+          "sources": [
+            "teams/williams.md",
+            "teams/williams.md",
+            "drivers/albon.md",
+            "drivers/sainz.md",
+            "drivers/sainz.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.294
+        },
+        "full": {
+          "sources": [
+            "drivers/sainz.md",
+            "drivers/albon.md",
+            "teams/williams.md",
+            "teams/williams.md",
+            "drivers/sainz.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.619
+        }
+      }
+    },
+    {
+      "id": "team-07",
+      "kind": "team",
+      "question": "How many wins does Red Bull have in 2026?",
+      "expected": [
+        "teams/red_bull.md"
+      ],
+      "raw_filter": {
+        "constructor_ref": "red_bull",
+        "season": 2026
+      },
+      "intent_filter": {
+        "constructor_ref": "red_bull"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r16-sepang.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r21-vegas.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.206
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r16-sepang.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r21-vegas.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.321
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/red_bull.md",
+            "drivers/hadjar.md",
+            "drivers/max_verstappen.md",
+            "teams/red_bull.md",
+            "drivers/hadjar.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.112
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r21-vegas.md",
+            "drivers/russell.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.477
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r21-vegas.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2026-r10-spa.md",
+            "teams/red_bull.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.451
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/hadjar.md",
+            "drivers/max_verstappen.md",
+            "teams/red_bull.md",
+            "teams/red_bull.md",
+            "drivers/hadjar.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.311
+        },
+        "full": {
+          "sources": [
+            "drivers/hadjar.md",
+            "drivers/max_verstappen.md",
+            "teams/red_bull.md",
+            "teams/red_bull.md",
+            "drivers/max_verstappen.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.696
+        }
+      }
+    },
+    {
+      "id": "r26-01",
+      "kind": "race",
+      "question": "Who took victory in Melbourne at the 2026 season opener?",
+      "expected": [
+        "races/2026-r01-albert_park.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "albert_park",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "albert_park",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "teams/mclaren.md",
+            "teams/mercedes.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.159
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "explainers/drs-explained.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.27
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "explainers/drs-explained.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.27
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "teams/alpine.md",
+            "teams/rb.md",
+            "teams/mercedes.md",
+            "teams/aston_martin.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.642
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.329
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.344
+        },
+        "full": {
+          "sources": [
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2026-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.254
+        }
+      }
+    },
+    {
+      "id": "r26-02",
+      "kind": "race",
+      "question": "Who won the 2026 Japanese Grand Prix?",
+      "expected": [
+        "races/2026-r03-suzuka.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "suzuka",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "suzuka",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.18
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.297
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.289
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2025-r03-suzuka.md",
+            "races/2024-r04-suzuka.md",
+            "races/2026-r02-shanghai.md",
+            "races/2023-r16-suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.56
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r02-shanghai.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.471
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2026-r02-shanghai.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.46
+        },
+        "full": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2026-r03-suzuka.md",
+            "races/2019-r17-suzuka.md",
+            "races/2026-r18-americas.md",
+            "races/2026-r03-suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.61
+        }
+      }
+    },
+    {
+      "id": "r26-03",
+      "kind": "race",
+      "question": "What happened at the 2026 Monaco Grand Prix?",
+      "expected": [
+        "races/2026-r06-monaco.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monaco",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "monaco",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.176
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.274
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md",
+            "drivers/ocon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.282
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2023-r06-monaco.md",
+            "races/2018-r06-monaco.md",
+            "races/2019-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.505
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.567
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.331
+        },
+        "full": {
+          "sources": [
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2024-r08-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.84
+        }
+      }
+    },
+    {
+      "id": "r26-04",
+      "kind": "race",
+      "question": "Who was on the podium at Silverstone in 2026?",
+      "expected": [
+        "races/2026-r09-silverstone.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "silverstone",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "silverstone",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/mercedes.md",
+            "teams/rb.md",
+            "teams/haas.md",
+            "teams/mclaren.md",
+            "teams/red_bull.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.161
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "teams/mercedes.md",
+            "teams/rb.md",
+            "teams/haas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.281
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "teams/mercedes.md",
+            "teams/rb.md",
+            "teams/haas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.315
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2020-r04-silverstone.md",
+            "races/2025-r12-silverstone.md",
+            "teams/alpine.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.485
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.306
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.316
+        },
+        "full": {
+          "sources": [
+            "races/2026-r09-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2025-r12-silverstone.md",
+            "races/2026-r09-silverstone.md",
+            "races/2020-r04-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.613
+        }
+      }
+    },
+    {
+      "id": "r26-05",
+      "kind": "race",
+      "question": "Who won the 2026 Italian Grand Prix at Monza?",
+      "expected": [
+        "races/2026-r13-monza.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monza",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "monza",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2019-r14-monza.md",
+            "races/2018-r14-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.199
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2019-r14-monza.md",
+            "races/2018-r14-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.29
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2019-r14-monza.md",
+            "races/2018-r14-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.287
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2021-r14-monza.md",
+            "races/2020-r08-monza.md",
+            "races/2026-r03-suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.457
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.34
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2026-r13-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.3
+        },
+        "full": {
+          "sources": [
+            "races/2026-r13-monza.md",
+            "races/2019-r14-monza.md",
+            "races/2026-r13-monza.md",
+            "races/2020-r08-monza.md",
+            "races/2026-r13-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.07
+        }
+      }
+    },
+    {
+      "id": "r26-06",
+      "kind": "race",
+      "question": "Who won the first Grand Prix at Madring in Madrid?",
+      "expected": [
+        "races/2026-r14-madring.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "circuit_ref": "madring"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.169
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.181
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r14-madring.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.306
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r14-madring.md",
+            "circuits/silverstone.md",
+            "races/2019-r05-catalunya.md",
+            "races/2018-r05-catalunya.md",
+            "races/2024-r10-catalunya.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.514
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r14-madring.md",
+            "circuits/silverstone.md",
+            "races/2019-r05-catalunya.md",
+            "races/2018-r05-catalunya.md",
+            "races/2024-r10-catalunya.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.159
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r14-madring.md",
+            "races/2026-r14-madring.md",
+            "races/2026-r14-madring.md",
+            "races/2026-r14-madring.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.468
+        },
+        "full": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r19-americas.md",
+            "races/2026-r14-madring.md",
+            "races/2026-r08-red_bull_ring.md",
+            "races/2026-r14-madring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 1.875
+        }
+      }
+    },
+    {
+      "id": "r26-07",
+      "kind": "race",
+      "question": "Who won the Bahrain Grand Prix that was held in Malaysia in 2026?",
+      "expected": [
+        "races/2026-r16-sepang.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "circuit_ref": "bahrain",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "drivers/ocon.md",
+            "races/2026-r16-sepang.md",
+            "history/iconic-races.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.188
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/ocon.md",
+            "races/2026-r16-sepang.md",
+            "history/iconic-races.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.172
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/ocon.md",
+            "races/2026-r16-sepang.md",
+            "history/iconic-races.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.284
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r16-sepang.md",
+            "races/2020-r15-bahrain.md",
+            "races/2021-r01-bahrain.md",
+            "races/2024-r01-bahrain.md",
+            "races/2019-r02-bahrain.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.55
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r16-sepang.md",
+            "races/2020-r15-bahrain.md",
+            "races/2021-r01-bahrain.md",
+            "races/2024-r01-bahrain.md",
+            "races/2019-r02-bahrain.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.168
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r16-sepang.md",
+            "races/2026-r02-shanghai.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r07-catalunya.md",
+            "races/2020-r15-bahrain.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.74
+        },
+        "full": {
+          "sources": [
+            "races/2026-r16-sepang.md",
+            "races/2021-r01-bahrain.md",
+            "races/2019-r02-bahrain.md",
+            "races/2020-r15-bahrain.md",
+            "races/2026-r18-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.58
+        }
+      }
+    },
+    {
+      "id": "r26-08",
+      "kind": "race",
+      "question": "Who won the 2026 United States Grand Prix in Austin?",
+      "expected": [
+        "races/2026-r18-americas.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "austin",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "americas",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "drivers/ocon.md",
+            "drivers/arvid_lindblad.md",
+            "drivers/alonso.md",
+            "drivers/albon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.173
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "drivers/ocon.md",
+            "drivers/arvid_lindblad.md",
+            "drivers/alonso.md",
+            "drivers/albon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.305
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "drivers/ocon.md",
+            "drivers/arvid_lindblad.md",
+            "drivers/alonso.md",
+            "drivers/albon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.276
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2025-r19-americas.md",
+            "races/2022-r19-americas.md",
+            "races/2023-r18-americas.md",
+            "races/2021-r17-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.477
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2026-r21-vegas.md",
+            "races/2026-r01-albert_park.md",
+            "races/2026-r05-villeneuve.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.464
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2026-r18-americas.md",
+            "races/2026-r18-americas.md",
+            "races/2026-r18-americas.md",
+            "races/2026-r18-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.298
+        },
+        "full": {
+          "sources": [
+            "races/2026-r18-americas.md",
+            "races/2026-r18-americas.md",
+            "races/2021-r17-americas.md",
+            "races/2025-r19-americas.md",
+            "races/2022-r19-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.709
+        }
+      }
+    },
+    {
+      "id": "r26-09",
+      "kind": "race",
+      "question": "Who retired from the 2026 Singapore Grand Prix?",
+      "expected": [
+        "races/2026-r17-marina_bay.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "circuit_ref": "marina_bay",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "drivers/ocon.md",
+            "drivers/albon.md",
+            "drivers/alonso.md",
+            "drivers/antonelli.md",
+            "drivers/arvid_lindblad.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.171
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/ocon.md",
+            "drivers/albon.md",
+            "drivers/alonso.md",
+            "drivers/antonelli.md",
+            "drivers/arvid_lindblad.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.167
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md",
+            "drivers/ocon.md",
+            "drivers/albon.md",
+            "drivers/alonso.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.276
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r17-marina_bay.md",
+            "races/2023-r15-marina_bay.md",
+            "races/2025-r18-marina_bay.md",
+            "races/2024-r18-marina_bay.md",
+            "races/2019-r15-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.518
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r17-marina_bay.md",
+            "races/2023-r15-marina_bay.md",
+            "races/2025-r18-marina_bay.md",
+            "races/2024-r18-marina_bay.md",
+            "races/2019-r15-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.158
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.3
+        },
+        "full": {
+          "sources": [
+            "races/2026-r17-marina_bay.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2025-r18-marina_bay.md",
+            "races/2019-r15-marina_bay.md",
+            "races/2026-r17-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.885
+        }
+      }
+    },
+    {
+      "id": "r26-10",
+      "kind": "race",
+      "question": "Who gained the most places at the 2026 Azerbaijan Grand Prix?",
+      "expected": [
+        "races/2026-r15-baku.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "baku",
+        "season": 2026
+      },
+      "intent_filter": {
+        "circuit_ref": "baku",
+        "season": 2026
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "drivers/ocon.md",
+            "races/2026-r15-baku.md",
+            "drivers/rafael_camara.md",
+            "drivers/tsunoda.md",
+            "races/2026-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.213
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "drivers/ocon.md",
+            "drivers/rafael_camara.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.343
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "drivers/ocon.md",
+            "drivers/rafael_camara.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.331
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2025-r17-baku.md",
+            "races/2021-r06-baku.md",
+            "races/2024-r17-baku.md",
+            "races/2018-r04-baku.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.759
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.315
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.308
+        },
+        "full": {
+          "sources": [
+            "races/2018-r04-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md",
+            "races/2026-r15-baku.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.482
+        }
+      }
+    },
+    {
+      "id": "rold-01",
+      "kind": "race",
+      "question": "Who won the 2025 Monaco Grand Prix?",
+      "expected": [
+        "races/2025-r08-monaco.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monaco",
+        "season": 2025
+      },
+      "intent_filter": {
+        "circuit_ref": "monaco",
+        "season": 2025
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.341
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.335
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.316
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2019-r06-monaco.md",
+            "races/2021-r05-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.665
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r19-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.508
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r19-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.49
+        },
+        "full": {
+          "sources": [
+            "races/2025-r08-monaco.md",
+            "races/2021-r05-monaco.md",
+            "races/2025-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2019-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.454
+        }
+      }
+    },
+    {
+      "id": "rold-02",
+      "kind": "race",
+      "question": "Who won the 2025 Abu Dhabi Grand Prix?",
+      "expected": [
+        "races/2025-r24-yas_marina.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "yas_marina",
+        "season": 2025
+      },
+      "intent_filter": {
+        "circuit_ref": "yas_marina",
+        "season": 2025
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "history/iconic-races.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.228
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "history/iconic-races.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.344
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "history/iconic-races.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.294
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "races/2020-r17-yas_marina.md",
+            "races/2024-r24-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2019-r21-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.513
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r18-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.46
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2025-r18-marina_bay.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.487
+        },
+        "full": {
+          "sources": [
+            "races/2018-r21-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2020-r17-yas_marina.md",
+            "races/2025-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.712
+        }
+      }
+    },
+    {
+      "id": "rold-03",
+      "kind": "race",
+      "question": "Who won the 2025 Italian Grand Prix?",
+      "expected": [
+        "races/2025-r16-monza.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monza",
+        "season": 2025
+      },
+      "intent_filter": {
+        "circuit_ref": "monza",
+        "season": 2025
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.572
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.536
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "history/iconic-races.md",
+            "drivers/tsunoda.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r14-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.39
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "races/2025-r07-imola.md",
+            "races/2026-r13-monza.md",
+            "races/2025-r03-suzuka.md",
+            "races/2025-r02-shanghai.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.654
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r07-imola.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.793
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r07-imola.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.561
+        },
+        "full": {
+          "sources": [
+            "races/2020-r08-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2021-r14-monza.md",
+            "races/2025-r16-monza.md",
+            "races/2025-r16-monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.812
+        }
+      }
+    },
+    {
+      "id": "rold-04",
+      "kind": "race",
+      "question": "Who won the 2025 Australian Grand Prix?",
+      "expected": [
+        "races/2025-r01-albert_park.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "albert_park",
+        "season": 2025
+      },
+      "intent_filter": {
+        "circuit_ref": "albert_park",
+        "season": 2025
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2019-r01-albert_park.md",
+            "races/2022-r03-albert_park.md",
+            "races/2018-r01-albert_park.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.198
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2019-r01-albert_park.md",
+            "races/2022-r03-albert_park.md",
+            "races/2018-r01-albert_park.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.301
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2019-r01-albert_park.md",
+            "races/2022-r03-albert_park.md",
+            "races/2018-r01-albert_park.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.299
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2024-r03-albert_park.md",
+            "races/2025-r19-americas.md",
+            "races/2026-r01-albert_park.md",
+            "races/2022-r03-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.469
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.298
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.313
+        },
+        "full": {
+          "sources": [
+            "races/2025-r01-albert_park.md",
+            "races/2025-r01-albert_park.md",
+            "races/2024-r03-albert_park.md",
+            "races/2026-r01-albert_park.md",
+            "races/2025-r01-albert_park.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.766
+        }
+      }
+    },
+    {
+      "id": "rold-05",
+      "kind": "race",
+      "question": "What was the result of the 2024 Monaco Grand Prix?",
+      "expected": [
+        "races/2024-r08-monaco.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monaco",
+        "season": 2024
+      },
+      "intent_filter": {
+        "circuit_ref": "monaco",
+        "season": 2024
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "drivers/rafael_camara.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.207
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.334
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.319
+        },
+        "vector": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2026-r06-monaco.md",
+            "races/2023-r06-monaco.md",
+            "races/2018-r06-monaco.md",
+            "races/2021-r05-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.536
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r02-jeddah.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.457
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r02-jeddah.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.455
+        },
+        "full": {
+          "sources": [
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r08-monaco.md",
+            "races/2024-r19-americas.md",
+            "races/2024-r12-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.552
+        }
+      }
+    },
+    {
+      "id": "rold-06",
+      "kind": "race",
+      "question": "Who won the 2024 Miami Grand Prix?",
+      "expected": [
+        "races/2024-r06-miami.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "miami",
+        "season": 2024
+      },
+      "intent_filter": {
+        "circuit_ref": "miami",
+        "season": 2024
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r03-albert_park.md",
+            "races/2024-r13-hungaroring.md",
+            "races/2024-r12-silverstone.md",
+            "races/2025-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.163
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r03-albert_park.md",
+            "races/2024-r13-hungaroring.md",
+            "races/2024-r12-silverstone.md",
+            "races/2025-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.265
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r03-albert_park.md",
+            "races/2024-r13-hungaroring.md",
+            "races/2024-r12-silverstone.md",
+            "races/2025-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.286
+        },
+        "vector": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2025-r06-miami.md",
+            "races/2022-r05-miami.md",
+            "races/2023-r05-miami.md",
+            "races/2026-r04-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.718
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r19-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.493
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r19-americas.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.452
+        },
+        "full": {
+          "sources": [
+            "races/2024-r06-miami.md",
+            "races/2024-r06-miami.md",
+            "races/2024-r19-americas.md",
+            "races/2024-r22-vegas.md",
+            "races/2025-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.99
+        }
+      }
+    },
+    {
+      "id": "rold-07",
+      "kind": "race",
+      "question": "What happened at the 2021 Abu Dhabi Grand Prix?",
+      "expected": [
+        "races/2021-r22-yas_marina.md",
+        "history/iconic-races.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "abu_dhabi",
+        "season": 2021
+      },
+      "intent_filter": {
+        "circuit_ref": "yas_marina",
+        "season": 2021
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.166
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.273
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2021-r22-yas_marina.md",
+            "history/iconic-races.md",
+            "races/2019-r21-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2024-r24-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.28
+        },
+        "vector": {
+          "sources": [
+            "races/2020-r17-yas_marina.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2022-r22-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 0.5,
+          "rr": 0.5,
+          "seconds": 0.462
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2021-r22-yas_marina.md",
+            "races/2021-r03-portimao.md",
+            "races/2021-r16-istanbul.md",
+            "races/2021-r21-jeddah.md",
+            "races/2021-r20-losail.md"
+          ],
+          "hit": true,
+          "recall": 0.5,
+          "rr": 1.0,
+          "seconds": 0.452
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2021-r22-yas_marina.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2021-r22-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 0.5,
+          "rr": 1.0,
+          "seconds": 0.292
+        },
+        "full": {
+          "sources": [
+            "races/2021-r22-yas_marina.md",
+            "races/2018-r21-yas_marina.md",
+            "races/2021-r22-yas_marina.md",
+            "races/2025-r24-yas_marina.md",
+            "races/2021-r22-yas_marina.md"
+          ],
+          "hit": true,
+          "recall": 0.5,
+          "rr": 1.0,
+          "seconds": 1.078
+        }
+      }
+    },
+    {
+      "id": "rold-08",
+      "kind": "race",
+      "question": "Who won the 2019 British Grand Prix?",
+      "expected": [
+        "races/2019-r10-silverstone.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "silverstone",
+        "season": 2019
+      },
+      "intent_filter": {
+        "circuit_ref": "silverstone",
+        "season": 2019
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md",
+            "races/2019-r01-albert_park.md",
+            "races/2019-r12-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.172
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md",
+            "races/2019-r01-albert_park.md",
+            "races/2019-r12-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.278
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md",
+            "races/2019-r01-albert_park.md",
+            "races/2019-r12-hungaroring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.279
+        },
+        "vector": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "races/2018-r10-silverstone.md",
+            "races/2020-r04-silverstone.md",
+            "races/2024-r12-silverstone.md",
+            "races/2021-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.497
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.304
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.297
+        },
+        "full": {
+          "sources": [
+            "races/2018-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2019-r10-silverstone.md",
+            "races/2024-r12-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.943
+        }
+      }
+    },
+    {
+      "id": "circ-01",
+      "kind": "circuit",
+      "question": "Why do drivers struggle to pass each other on the streets of Monte Carlo?",
+      "expected": [
+        "circuits/monaco.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monaco"
+      },
+      "intent_filter": {
+        "circuit_ref": "monaco"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.196
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.117
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.144
+        },
+        "vector": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "explainers/drs-explained.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.411
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.333
+        },
+        "vector+intent": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.321
+        },
+        "full": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "races/2018-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 9.672
+        }
+      }
+    },
+    {
+      "id": "circ-02",
+      "kind": "circuit",
+      "question": "Why is Monza called the Temple of Speed?",
+      "expected": [
+        "circuits/monza.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "monza"
+      },
+      "intent_filter": {
+        "circuit_ref": "monza"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/monza.md",
+            "history/iconic-races.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.224
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.125
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.115
+        },
+        "vector": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "history/iconic-races.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.743
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.321
+        },
+        "vector+intent": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.279
+        },
+        "full": {
+          "sources": [
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 9.669
+        }
+      }
+    },
+    {
+      "id": "circ-03",
+      "kind": "circuit",
+      "question": "What makes Eau Rouge at Spa special?",
+      "expected": [
+        "circuits/spa.md"
+      ],
+      "raw_filter": {
+        "category": "explainers",
+        "circuit_ref": "spa"
+      },
+      "intent_filter": {
+        "circuit_ref": "spa"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.346
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.456
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "races/2021-r12-spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.253
+        },
+        "vector": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.738
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.025
+        },
+        "vector+intent": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.337
+        },
+        "full": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "circuits/spa.md",
+            "races/2018-r13-spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 19.278
+        }
+      }
+    },
+    {
+      "id": "circ-04",
+      "kind": "circuit",
+      "question": "Why is Suzuka shaped like a figure eight?",
+      "expected": [
+        "circuits/suzuka.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {
+        "circuit_ref": "suzuka"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.225
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.14
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.12
+        },
+        "vector": {
+          "sources": [
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.651
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.339
+        },
+        "vector+intent": {
+          "sources": [
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.34
+        },
+        "full": {
+          "sources": [
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 11.755
+        }
+      }
+    },
+    {
+      "id": "circ-05",
+      "kind": "circuit",
+      "question": "What are Maggotts and Becketts at Silverstone?",
+      "expected": [
+        "circuits/silverstone.md"
+      ],
+      "raw_filter": {
+        "circuit_ref": "silverstone"
+      },
+      "intent_filter": {
+        "circuit_ref": "silverstone"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "races/2018-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.215
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "races/2018-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.151
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "races/2018-r10-silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.146
+        },
+        "vector": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.816
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.322
+        },
+        "vector+intent": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.31
+        },
+        "full": {
+          "sources": [
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 13.533
+        }
+      }
+    },
+    {
+      "id": "exp-01",
+      "kind": "explainer",
+      "question": "What does the drag reduction system actually do on an F1 car?",
+      "expected": [
+        "explainers/drs-explained.md",
+        "explainers/glossary.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.308
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.162
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.188
+        },
+        "vector": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.576
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.158
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.154
+        },
+        "full": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 30.408
+        }
+      }
+    },
+    {
+      "id": "exp-02",
+      "kind": "explainer",
+      "question": "What is an undercut in F1?",
+      "expected": [
+        "explainers/race-strategy-101.md",
+        "explainers/glossary.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "races/2024-r21-interlagos.md",
+            "explainers/glossary.md",
+            "teams/rb.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.479
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.432
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "races/2024-r21-interlagos.md",
+            "explainers/glossary.md",
+            "teams/rb.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.212
+        },
+        "vector": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.796
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.647
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.182
+        },
+        "full": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "regulations/flags-and-penalties.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 33.922
+        }
+      }
+    },
+    {
+      "id": "exp-03",
+      "kind": "explainer",
+      "question": "What is dirty air?",
+      "expected": [
+        "explainers/glossary.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.627
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.197
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.18
+        },
+        "vector": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.862
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.28
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.339
+        },
+        "full": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 20.714
+        }
+      }
+    },
+    {
+      "id": "exp-04",
+      "kind": "explainer",
+      "question": "How does a virtual safety car work?",
+      "expected": [
+        "explainers/race-strategy-101.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "history/iconic-races.md",
+            "regulations/flags-and-penalties.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.498
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.17
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "history/iconic-races.md",
+            "regulations/flags-and-penalties.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.169
+        },
+        "vector": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.186
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.181
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.192
+        },
+        "full": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/race-strategy-101.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 10.77
+        }
+      }
+    },
+    {
+      "id": "exp-05",
+      "kind": "explainer",
+      "question": "Why would a team choose a one-stop over a two-stop strategy?",
+      "expected": [
+        "explainers/race-strategy-101.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/suzuka.md",
+            "explainers/race-strategy-101.md",
+            "circuits/silverstone.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.701
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.426
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/spa.md",
+            "circuits/suzuka.md",
+            "explainers/race-strategy-101.md",
+            "circuits/silverstone.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 0.513
+        },
+        "vector": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "circuits/monaco.md",
+            "explainers/race-strategy-101.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.205
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.707
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "circuits/monaco.md",
+            "explainers/race-strategy-101.md",
+            "circuits/monza.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.653
+        },
+        "full": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "circuits/spa.md",
+            "circuits/suzuka.md",
+            "circuits/silverstone.md",
+            "explainers/race-strategy-101.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 25.254
+        }
+      }
+    },
+    {
+      "id": "exp-06",
+      "kind": "explainer",
+      "question": "What is ground effect?",
+      "expected": [
+        "explainers/glossary.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.521
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.408
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.145
+        },
+        "vector": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.833
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.531
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.282
+        },
+        "full": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 15.704
+        }
+      }
+    },
+    {
+      "id": "reg-01",
+      "kind": "regulation",
+      "question": "How many points does a Grand Prix winner get?",
+      "expected": [
+        "regulations/points-system.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2020-r16-bahrain.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "races/2019-r01-albert_park.md",
+            "races/2018-r01-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.595
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.448
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2020-r16-bahrain.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "races/2019-r01-albert_park.md",
+            "races/2018-r01-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.308
+        },
+        "vector": {
+          "sources": [
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "races/2020-r11-nurburgring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.383
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/race-strategy-101.md",
+            "explainers/race-strategy-101.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/race-strategy-101.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.47
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "regulations/points-system.md",
+            "races/2020-r11-nurburgring.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.405
+        },
+        "full": {
+          "sources": [
+            "races/2019-r18-rodriguez.md",
+            "races/2019-r07-villeneuve.md",
+            "races/2020-r12-portimao.md",
+            "races/2018-r19-rodriguez.md",
+            "races/2019-r15-marina_bay.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 25.717
+        }
+      }
+    },
+    {
+      "id": "reg-02",
+      "kind": "regulation",
+      "question": "What changed in the 2026 F1 regulations?",
+      "expected": [
+        "regulations/2026-regulation-changes.md"
+      ],
+      "raw_filter": {
+        "category": "regulations"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.46
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/points-system.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.272
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.353
+        },
+        "vector": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "drivers/hadjar.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.634
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.487
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "drivers/hadjar.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.217
+        },
+        "full": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "regulations/2026-regulation-changes.md",
+            "drivers/albon.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 31.432
+        }
+      }
+    },
+    {
+      "id": "reg-03",
+      "kind": "regulation",
+      "question": "What is active aerodynamics on the 2026 cars?",
+      "expected": [
+        "regulations/2026-regulation-changes.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "circuits/silverstone.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.431
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.199
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "circuits/silverstone.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.259
+        },
+        "vector": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.9
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.295
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/2026-regulation-changes.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.233
+        },
+        "full": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md",
+            "circuits/silverstone.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 25.532
+        }
+      }
+    },
+    {
+      "id": "reg-04",
+      "kind": "regulation",
+      "question": "How does a sprint weekend work?",
+      "expected": [
+        "regulations/race-format.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.282
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.148
+        },
+        "fulltext+intent": {
+          "sources": [
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.166
+        },
+        "vector": {
+          "sources": [
+            "regulations/race-format.md",
+            "regulations/points-system.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.947
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/race-strategy-101.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.601
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/race-format.md",
+            "regulations/points-system.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.237
+        },
+        "full": {
+          "sources": [
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 33.701
+        }
+      }
+    },
+    {
+      "id": "reg-05",
+      "kind": "regulation",
+      "question": "What does a black and white flag mean?",
+      "expected": [
+        "regulations/flags-and-penalties.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "regulations/flags-and-penalties.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.396
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.234
+        },
+        "fulltext+intent": {
+          "sources": [
+            "regulations/flags-and-penalties.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.165
+        },
+        "vector": {
+          "sources": [
+            "regulations/flags-and-penalties.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.933
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.241
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/flags-and-penalties.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.177
+        },
+        "full": {
+          "sources": [
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "regulations/flags-and-penalties.md",
+            "explainers/glossary.md",
+            "regulations/flags-and-penalties.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 27.582
+        }
+      }
+    },
+    {
+      "id": "reg-06",
+      "kind": "regulation",
+      "question": "What are parc ferm\u00e9 rules?",
+      "expected": [
+        "regulations/race-format.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "regulations/race-format.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.303
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.247
+        },
+        "fulltext+intent": {
+          "sources": [
+            "regulations/race-format.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "regulations/2026-regulation-changes.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.464
+        },
+        "vector": {
+          "sources": [
+            "regulations/race-format.md",
+            "explainers/glossary.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "circuits/spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.911
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/race-strategy-101.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.364
+        },
+        "vector+intent": {
+          "sources": [
+            "regulations/race-format.md",
+            "explainers/glossary.md",
+            "regulations/race-format.md",
+            "regulations/race-format.md",
+            "circuits/spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.387
+        },
+        "full": {
+          "sources": [
+            "regulations/race-format.md",
+            "explainers/glossary.md",
+            "circuits/monza.md",
+            "regulations/race-format.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 26.888
+        }
+      }
+    },
+    {
+      "id": "hist-01",
+      "kind": "history",
+      "question": "What happened between Senna and Prost at Suzuka in 1989?",
+      "expected": [
+        "history/iconic-races.md"
+      ],
+      "raw_filter": {
+        "category": "history"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/suzuka.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.916
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.519
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/suzuka.md",
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 0.306
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 5.809
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "circuits/suzuka.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 1.535
+        },
+        "vector+intent": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.824
+        },
+        "full": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/suzuka.md",
+            "circuits/monaco.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 53.125
+        }
+      }
+    },
+    {
+      "id": "hist-02",
+      "kind": "history",
+      "question": "How did Lewis Hamilton win his first title in 2008?",
+      "expected": [
+        "history/iconic-races.md"
+      ],
+      "raw_filter": {
+        "driver_ref": "hamilton"
+      },
+      "intent_filter": {
+        "driver_ref": "hamilton"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 1.077
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.583
+        },
+        "fulltext+intent": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "circuits/silverstone.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.559
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "regulations/points-system.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 2.538
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 1.396
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "drivers/hamilton.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.543
+        },
+        "full": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/silverstone.md",
+            "regulations/points-system.md",
+            "races/2018-r15-marina_bay.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 17.103
+        }
+      }
+    },
+    {
+      "id": "cmp-01",
+      "kind": "comparison",
+      "question": "Compare Lando Norris and Oscar Piastri in 2026.",
+      "expected": [
+        "drivers/norris.md",
+        "drivers/piastri.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r09-catalunya.md",
+            "races/2025-r03-suzuka.md",
+            "races/2025-r12-silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.496
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r09-catalunya.md",
+            "races/2025-r03-suzuka.md",
+            "races/2025-r12-silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.277
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r09-catalunya.md",
+            "races/2025-r03-suzuka.md",
+            "races/2025-r12-silverstone.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.319
+        },
+        "vector": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r08-monaco.md",
+            "races/2025-r02-shanghai.md",
+            "races/2025-r11-red_bull_ring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 1.511
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r08-monaco.md",
+            "drivers/norris.md",
+            "drivers/piastri.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 1.166
+        },
+        "vector+intent": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2025-r01-albert_park.md",
+            "races/2025-r08-monaco.md",
+            "drivers/norris.md",
+            "drivers/piastri.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.534
+        },
+        "full": {
+          "sources": [
+            "teams/mclaren.md",
+            "races/2023-r17-losail.md",
+            "drivers/norris.md",
+            "drivers/piastri.md",
+            "races/2025-r02-shanghai.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.3333333333333333,
+          "seconds": 11.522
+        }
+      }
+    },
+    {
+      "id": "cmp-02",
+      "kind": "comparison",
+      "question": "Who is doing better in 2026, Leclerc or Hamilton?",
+      "expected": [
+        "drivers/leclerc.md",
+        "drivers/hamilton.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2026-r07-catalunya.md",
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r21-interlagos.md",
+            "races/2026-r11-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.323
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2026-r07-catalunya.md",
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r21-interlagos.md",
+            "races/2026-r11-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.227
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2026-r07-catalunya.md",
+            "races/2025-r15-zandvoort.md",
+            "races/2025-r21-interlagos.md",
+            "races/2026-r11-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.268
+        },
+        "vector": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2024-r24-yas_marina.md",
+            "races/2026-r07-catalunya.md",
+            "history/iconic-races.md",
+            "races/2026-r18-americas.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 1.054
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2024-r24-yas_marina.md",
+            "races/2026-r07-catalunya.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.591
+        },
+        "vector+intent": {
+          "sources": [
+            "teams/ferrari.md",
+            "races/2024-r24-yas_marina.md",
+            "races/2026-r07-catalunya.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.505
+        },
+        "full": {
+          "sources": [
+            "teams/ferrari.md",
+            "history/iconic-races.md",
+            "races/2024-r24-yas_marina.md",
+            "drivers/leclerc.md",
+            "drivers/hamilton.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 19.227
+        }
+      }
+    },
+    {
+      "id": "cmp-03",
+      "kind": "comparison",
+      "question": "Compare Mercedes and McLaren this season.",
+      "expected": [
+        "teams/mercedes.md",
+        "teams/mclaren.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2025-r04-bahrain.md",
+            "races/2025-r14-hungaroring.md",
+            "races/2025-r02-shanghai.md",
+            "races/2025-r06-miami.md",
+            "races/2024-r13-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.377
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2025-r04-bahrain.md",
+            "races/2025-r14-hungaroring.md",
+            "races/2025-r02-shanghai.md",
+            "races/2025-r06-miami.md",
+            "races/2024-r13-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.423
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2025-r04-bahrain.md",
+            "races/2025-r14-hungaroring.md",
+            "races/2025-r02-shanghai.md",
+            "races/2025-r06-miami.md",
+            "races/2024-r13-hungaroring.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.231
+        },
+        "vector": {
+          "sources": [
+            "races/2026-r10-spa.md",
+            "races/2026-r14-madring.md",
+            "races/2025-r21-interlagos.md",
+            "races/2026-r03-suzuka.md",
+            "races/2025-r02-shanghai.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 6.747
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2026-r10-spa.md",
+            "races/2026-r14-madring.md",
+            "races/2025-r21-interlagos.md",
+            "teams/mercedes.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.539
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2026-r10-spa.md",
+            "races/2026-r14-madring.md",
+            "races/2025-r21-interlagos.md",
+            "teams/mercedes.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 0.484
+        },
+        "full": {
+          "sources": [
+            "races/2021-r03-portimao.md",
+            "races/2024-r12-silverstone.md",
+            "races/2020-r02-red_bull_ring.md",
+            "teams/mercedes.md",
+            "teams/mclaren.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 22.653
+        }
+      }
+    },
+    {
+      "id": "rp-01",
+      "kind": "race-page",
+      "question": "Who won this one?",
+      "expected": [
+        "races/2026-r20-interlagos.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monza.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.468
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monza.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.309
+        },
+        "fulltext+intent": {
+          "sources": [
+            "circuits/monaco.md",
+            "circuits/monza.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "regulations/points-system.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.3
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 1.15
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "races/2026-r20-interlagos.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.793
+        },
+        "vector+intent": {
+          "sources": [
+            "history/iconic-races.md",
+            "circuits/monaco.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "races/2026-r20-interlagos.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.51
+        },
+        "full": {
+          "sources": [
+            "races/2018-r21-yas_marina.md",
+            "races/2018-r11-hockenheimring.md",
+            "history/iconic-races.md",
+            "history/iconic-races.md",
+            "races/2026-r20-interlagos.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 28.602
+        }
+      }
+    },
+    {
+      "id": "rp-02",
+      "kind": "race-page",
+      "question": "How many places did Verstappen make up?",
+      "expected": [
+        "races/2026-r20-interlagos.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {
+        "driver_ref": "max_verstappen"
+      },
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2019-r07-villeneuve.md",
+            "races/2022-r02-jeddah.md",
+            "races/2019-r14-monza.md",
+            "races/2023-r05-miami.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.674
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2019-r07-villeneuve.md",
+            "races/2022-r02-jeddah.md",
+            "races/2019-r14-monza.md",
+            "races/2023-r05-miami.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.407
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2026-r03-suzuka.md",
+            "races/2019-r07-villeneuve.md",
+            "races/2022-r02-jeddah.md",
+            "races/2019-r14-monza.md",
+            "races/2023-r05-miami.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.537
+        },
+        "vector": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2023-r05-miami.md",
+            "races/2023-r02-jeddah.md",
+            "races/2026-r20-interlagos.md",
+            "races/2024-r14-spa.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 3.257
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "history/iconic-races.md",
+            "races/2023-r05-miami.md",
+            "races/2023-r02-jeddah.md",
+            "races/2026-r20-interlagos.md",
+            "drivers/max_verstappen.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.25,
+          "seconds": 1.399
+        },
+        "vector+intent": {
+          "sources": [
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "drivers/max_verstappen.md",
+            "history/iconic-races.md",
+            "races/2026-r20-interlagos.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 1.183
+        },
+        "full": {
+          "sources": [
+            "races/2023-r05-miami.md",
+            "races/2026-r20-interlagos.md",
+            "races/2021-r15-sochi.md",
+            "races/2018-r06-monaco.md",
+            "drivers/max_verstappen.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.5,
+          "seconds": 25.713
+        }
+      }
+    },
+    {
+      "id": "rp-03",
+      "kind": "race-page",
+      "question": "Who retired?",
+      "expected": [
+        "races/2025-r08-monaco.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "races/2023-r21-vegas.md",
+            "races/2023-r01-bahrain.md",
+            "races/2023-r11-hungaroring.md",
+            "races/2023-r10-silverstone.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.241
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "races/2023-r21-vegas.md",
+            "races/2023-r01-bahrain.md",
+            "races/2023-r11-hungaroring.md",
+            "races/2023-r10-silverstone.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.176
+        },
+        "fulltext+intent": {
+          "sources": [
+            "races/2023-r21-vegas.md",
+            "races/2023-r01-bahrain.md",
+            "races/2023-r11-hungaroring.md",
+            "races/2023-r10-silverstone.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.208
+        },
+        "vector": {
+          "sources": [
+            "races/2025-r10-villeneuve.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "races/2024-r03-albert_park.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 2.842
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2025-r10-villeneuve.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "races/2025-r08-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.612
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2025-r10-villeneuve.md",
+            "races/2026-r17-marina_bay.md",
+            "races/2025-r06-miami.md",
+            "races/2025-r23-losail.md",
+            "races/2025-r08-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.534
+        },
+        "full": {
+          "sources": [
+            "races/2026-r14-madring.md",
+            "races/2026-r10-spa.md",
+            "races/2024-r03-albert_park.md",
+            "races/2026-r19-rodriguez.md",
+            "races/2025-r08-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 44.521
+        }
+      }
+    },
+    {
+      "id": "rp-04",
+      "kind": "race-page",
+      "question": "Who was on the podium?",
+      "expected": [
+        "races/2024-r06-miami.md"
+      ],
+      "raw_filter": {},
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "teams/rb.md",
+            "teams/mclaren.md",
+            "teams/haas.md",
+            "teams/mercedes.md",
+            "teams/red_bull.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.472
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "teams/rb.md",
+            "teams/mclaren.md",
+            "teams/haas.md",
+            "teams/mercedes.md",
+            "teams/red_bull.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.257
+        },
+        "fulltext+intent": {
+          "sources": [
+            "teams/rb.md",
+            "teams/mclaren.md",
+            "teams/haas.md",
+            "teams/mercedes.md",
+            "teams/red_bull.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 0.18
+        },
+        "vector": {
+          "sources": [
+            "races/2022-r06-catalunya.md",
+            "races/2022-r12-ricard.md",
+            "races/2022-r13-hungaroring.md",
+            "races/2023-r05-miami.md",
+            "races/2024-r17-baku.md"
+          ],
+          "hit": false,
+          "recall": 0.0,
+          "rr": 0.0,
+          "seconds": 3.802
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "races/2022-r06-catalunya.md",
+            "races/2022-r12-ricard.md",
+            "races/2022-r13-hungaroring.md",
+            "races/2023-r05-miami.md",
+            "races/2024-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.574
+        },
+        "vector+intent": {
+          "sources": [
+            "races/2022-r06-catalunya.md",
+            "races/2022-r12-ricard.md",
+            "races/2022-r13-hungaroring.md",
+            "races/2023-r05-miami.md",
+            "races/2024-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 0.728
+        },
+        "full": {
+          "sources": [
+            "races/2019-r12-hungaroring.md",
+            "races/2021-r20-losail.md",
+            "races/2021-r15-sochi.md",
+            "races/2022-r13-hungaroring.md",
+            "races/2024-r06-miami.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 0.2,
+          "seconds": 49.843
+        }
+      }
+    },
+    {
+      "id": "rp-05",
+      "kind": "race-page",
+      "question": "What does DRS do?",
+      "expected": [
+        "explainers/drs-explained.md",
+        "explainers/glossary.md"
+      ],
+      "raw_filter": {
+        "category": "explainers"
+      },
+      "intent_filter": {},
+      "modes": {
+        "fulltext": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.838
+        },
+        "fulltext+intent(raw)": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.244
+        },
+        "fulltext+intent": {
+          "sources": [
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "circuits/silverstone.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.194
+        },
+        "vector": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 3.85
+        },
+        "vector+intent(raw)": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.542
+        },
+        "vector+intent": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 0.446
+        },
+        "full": {
+          "sources": [
+            "explainers/drs-explained.md",
+            "explainers/glossary.md",
+            "explainers/drs-explained.md",
+            "explainers/drs-explained.md",
+            "races/2026-r06-monaco.md"
+          ],
+          "hit": true,
+          "recall": 1.0,
+          "rr": 1.0,
+          "seconds": 48.611
+        }
+      }
+    }
+  ]
+}
