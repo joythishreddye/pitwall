@@ -7,7 +7,7 @@ about ("Has Antonelli won the title?"), from brief 001's title maths
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Sequence, Set
 
 from app.briefing.title import Standing, points_left, title_decided
 from app.schedule import RoundSchedule
@@ -26,7 +26,7 @@ def title_note(
     rnd: int,
     standings: Sequence[tuple[str, float]],
     schedule: Sequence[RoundSchedule],
-    raced: bool,
+    done: Set[int],
 ) -> str | None:
     """Whether the season's drivers' title is decided after round ``rnd``.
 
@@ -34,11 +34,12 @@ def title_note(
         season:    The standings' season.
         rnd:       The round the standings are after.
         standings: (name, points) in championship order.
-        schedule:  The season's rounds (load_schedule). Races left are the rounds
-                   after ``rnd``, and ``rnd`` itself unless ``raced``.
-        raced:     Whether round ``rnd``'s Grand Prix result is stored. Standings
+        schedule:  The season's rounds (load_schedule). Races left are the ones
+                   not in ``done``.
+        done:      The rounds whose Grand Prix the standings include. Standings
                    stored after a round's sprint, before its Grand Prix, carry
-                   that round's number.
+                   that round's number; a round without a result (postponed, or
+                   not stored yet) counts as left.
 
     Returns:
         One line, or None without two drivers or a schedule that lists ``rnd``.
@@ -46,11 +47,12 @@ def title_note(
     if len(standings) < 2 or not any(r.round == rnd for r in schedule):
         return None
     (leader, first), (second, runner_up) = standings[0], standings[1]
-    left = [r for r in schedule if r.round > rnd or (r.round == rnd and not raced)]
+    left = [r for r in schedule if r.round not in done]
     if not left:
         return f"The {season} season is over: {leader} is the {season} World Champion."
-    # A round whose standings are in has run its sprint
-    sprints = sum(1 for r in left if r.sprint and r.round > rnd)
+    # Round rnd's standings are in, so its sprint has run; any other round left
+    # still has its sprint to run
+    sprints = sum(1 for r in left if r.sprint and r.round != rnd)
     most = points_left("driver", len(left), sprints)
     sprint_text = _count(sprints, "sprint") if sprints else "no sprints"
     span = (

@@ -277,28 +277,50 @@ def _race_note(race: RaceRef, name: str | None) -> str:
     )
 
 
-def _round_raced(db: Client, season: int, rnd: int) -> bool:
-    """Whether the round's Grand Prix result is stored (race_results holds
-    Grand Prix results only: standings stored after a round's sprint carry its
-    number before its Grand Prix has run)."""
-    race = (
-        db.table("races")
-        .select("id")
-        .eq("season", season)
-        .eq("round", rnd)
-        .limit(1)
-        .execute()
-    ).data
-    if not race:
-        return False
-    result = (
+def _season_rounds_run(db: Client, season: int) -> tuple[set[int], set[int]]:
+    """The season's rounds in the races table, and those whose Grand Prix result
+    is stored, read from its winner's row (race_results holds Grand Prix results
+    only). A season has at most about 24 of each, well under PostgREST's cap."""
+    races = db.table("races").select("id, round").eq("season", season).execute().data
+    round_of = {row["id"]: row["round"] for row in races}
+    if not round_of:
+        return set(), set()
+    winners = (
         db.table("race_results")
-        .select("id")
-        .eq("race_id", race[0]["id"])
-        .limit(1)
+        .select("race_id")
+        .in_("race_id", list(round_of))
+        .eq("position", 1)
         .execute()
     ).data
-    return bool(result)
+    return set(round_of.values()), {round_of[row["race_id"]] for row in winners}
+
+
+def _title_line(
+    db: Client,
+    season: int,
+    rnd: int,
+    ranked: list[tuple[str, float]],
+    wins: int,
+) -> str | None:
+    """The title note for the standings after round ``rnd``, or None. A failure
+    here skips only the note, never the standings."""
+    try:
+        schedule = season_rounds(season)
+        if not schedule:
+            return None
+        rounds, with_results = _season_rounds_run(db, season)
+        if rounds - {r.round for r in schedule}:
+            return None  # the races table lists a round the file doesn't: stale
+        done = {r for r in with_results if r <= rnd}
+        # Standings stored after round rnd's sprint carry its number, and stay
+        # one win short of the Grands Prix stored if its result came in first
+        # (the ingest's _has_its_grand_prix check)
+        if rnd in done and wins < len(done):
+            done.discard(rnd)
+        return title_note(season, rnd, ranked, schedule, done)
+    except Exception:
+        logger.warning("Title note skipped for %s round %s", season, rnd, exc_info=True)
+        return None
 
 
 def _fetch_current_standings_sync(db: Client) -> str | None:
@@ -352,13 +374,10 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
                 f"P{row['position']}. {name} — {row['points']} pts ({row['wins']} wins)"
             )
             ranked.append((name, float(row["points"] or 0)))
-        schedule = season_rounds(season)
-        if schedule:
-            note = title_note(
-                season, rnd, ranked, schedule, _round_raced(db, season, rnd)
-            )
-            if note:
-                lines.append(note)
+        wins = sum(int(row.get("wins") or 0) for row in standings.data)
+        note = _title_line(db, season, rnd, ranked, wins)
+        if note:
+            lines.append(note)
         return "\n".join(lines)
     except Exception:
         logger.exception("Failed to fetch standings for chat context")
