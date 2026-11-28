@@ -70,9 +70,10 @@ export function stripMarkdown(text: string): string {
       // Bold: **text** or __text__
       .replace(/\*{2}([^]*?)\*{2}/g, "$1")
       .replace(/_{2}([^]*?)_{2}/g, "$1")
-      // Italic: *text* or _text_ (not inside words)
-      .replace(/(^|[\s(])\*([^*\n]+)\*($|[\s)])/gm, "$1$2$3")
-      .replace(/(^|[\s(])_([^_\n]+)_($|[\s)])/gm, "$1$2$3")
+      // Italic: *text* or _text_, not inside words, hugging its text, and ending before a space, a closing bracket
+      // or punctuation. The end is a lookahead, so the next italic can start from the same space.
+      .replace(/(^|[\s(])\*([^*\s](?:[^*\n]*[^*\s])?)\*(?=$|[\s).,;:!?])/gm, "$1$2")
+      .replace(/(^|[\s(])_([^_\s](?:[^_\n]*[^_\s])?)_(?=$|[\s).,;:!?])/gm, "$1$2")
       // Inline code: `code`
       .replace(/`([^`]+)`/g, "$1")
       // Horizontal rules

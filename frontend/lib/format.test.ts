@@ -96,5 +96,19 @@ describe("stripMarkdown", () => {
 
   it("leaves a star inside a word alone", () => {
     expect(stripMarkdown("2*3*4 laps")).toBe("2*3*4 laps");
+    expect(stripMarkdown("driver_ref_x and race_id")).toBe("driver_ref_x and race_id");
+    // stars with spaces inside them aren't italics
+    expect(stripMarkdown("2 * 3 * 4 = 24")).toBe("2 * 3 * 4 = 24");
+  });
+
+  it("removes italics that end before punctuation", () => {
+    expect(stripMarkdown("It was *close*. Then *very* close, and _tense_!")).toBe(
+      "It was close. Then very close, and tense!",
+    );
+    expect(stripMarkdown("Was it *fast*? (*Very*.)")).toBe("Was it fast? (Very.)");
+  });
+
+  it("removes italics that follow each other", () => {
+    expect(stripMarkdown("*soft* *medium* *hard*")).toBe("soft medium hard");
   });
 });
