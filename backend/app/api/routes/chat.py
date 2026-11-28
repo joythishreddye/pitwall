@@ -5,12 +5,13 @@ import json
 import logging
 import math
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from starlette.datastructures import State
 from supabase import Client
 
 from app.api.rate_limit import SlidingWindowLimiter, client_ip
@@ -79,6 +80,20 @@ _LINKER_RETRY_SECONDS = 300.0
 _LINKER_BUILD_SECONDS = 10.0
 
 
+def _keep_when_built(state: State) -> Callable[[asyncio.Future], None]:
+    """A rebuild's done-callback: keep a non-empty linker, even one that
+    finished after its request stopped waiting."""
+
+    def done(build: asyncio.Future) -> None:
+        if build.cancelled() or build.exception() is not None:
+            return
+        linker = build.result()
+        if not linker.is_empty and getattr(state, "linker", None) is None:
+            state.linker = linker
+
+    return done
+
+
 async def get_linker(request: Request) -> EntityLinker | None:
     """Return the entity linker, rebuilding it if startup couldn't.
 
@@ -86,7 +101,8 @@ async def get_linker(request: Request) -> EntityLinker | None:
     place until the next restart. Rebuilds are tried at most every 5 minutes,
     each waited on for 10 s, and a linker built from empty tables isn't kept,
     so the next try can build a real one. A build that outlives its 10 s keeps
-    running in its thread; no new one starts beside it.
+    running in its thread and is kept if it finishes; no new one starts
+    beside it.
     """
     state = request.app.state
     linker = getattr(state, "linker", None)
@@ -102,16 +118,22 @@ async def get_linker(request: Request) -> EntityLinker | None:
         return None
     state.linker_attempted_at = now
     # A task the timeout can't cancel, so it stays not done while its thread
-    # runs; the callback reads a late failure so it isn't logged as unread
+    # runs and its callback still sees the result
     build = asyncio.ensure_future(
         asyncio.to_thread(EntityLinker.from_db, get_supabase())
     )
-    build.add_done_callback(lambda f: f.cancelled() or f.exception())
+    build.add_done_callback(_keep_when_built(state))
     state.linker_build = build
     try:
         linker = await asyncio.wait_for(
             asyncio.shield(build), timeout=_LINKER_BUILD_SECONDS
         )
+    except TimeoutError:
+        logger.warning(
+            "Entity linker rebuild still running after %.0f s; kept if it finishes",
+            _LINKER_BUILD_SECONDS,
+        )
+        return None
     except Exception:
         logger.exception("Entity linker still unavailable")
         return None

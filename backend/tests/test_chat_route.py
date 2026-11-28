@@ -1,5 +1,6 @@
 """Chat endpoint: SSE contract, failure events and rate limiting."""
 
+import asyncio
 import json
 import threading
 import time
@@ -199,9 +200,10 @@ async def test_an_empty_linker_is_not_kept(monkeypatch) -> None:
 
 async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
     monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
 
     def slow(_db: object) -> MagicMock:
-        time.sleep(0.5)
+        release.wait(5)
         return MagicMock(is_empty=False)
 
     request = _linker_request(monkeypatch, MagicMock(side_effect=slow))
@@ -210,11 +212,14 @@ async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
     assert await chat_route.get_linker(request) is None
     assert time.monotonic() - started < 0.4
     assert getattr(request.app.state, "linker", None) is None
+    release.set()
+    await request.app.state.linker_build  # no thread left behind
 
 
-async def test_no_rebuild_starts_while_a_slow_one_still_runs(monkeypatch) -> None:
+async def test_a_slow_rebuild_is_kept_and_none_starts_beside_it(monkeypatch) -> None:
     # The timeout stops the wait, not the thread: a database stuck for longer
-    # than the 5-minute spacing must not pile up rebuilds. (Patching
+    # than the 5-minute spacing must not pile up rebuilds, and a build that
+    # finishes late is kept rather than thrown away. (Patching
     # time.monotonic would also stop asyncio's clock, and the timeout with it.)
     monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
     release = threading.Event()
@@ -234,8 +239,9 @@ async def test_no_rebuild_starts_while_a_slow_one_still_runs(monkeypatch) -> Non
 
     release.set()
     await state.linker_build
-    assert await chat_route.get_linker(request) is not None  # next try builds
-    assert from_db.call_count == 2
+    await asyncio.sleep(0)  # let the done-callback run
+    assert await chat_route.get_linker(request) is not None  # the late build
+    assert from_db.call_count == 1
 
 
 async def test_a_spent_daily_budget_gets_429_before_any_model_call(wire) -> None:
