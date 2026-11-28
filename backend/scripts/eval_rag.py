@@ -14,6 +14,10 @@ Each question runs through five retrieval modes (top 5 chunks each):
     vector+intent     intent filter + entity searches, no rerank
     full              vector+intent, then cross-encoder rerank (production)
 
+A question with a "race" (asked from a race page: season and round) passes it
+to the modes that run the whole pipeline (vector+intent and full, raw or not),
+as the chat does. The other modes search the question alone.
+
 Metrics:
     hit@5     any expected doc appears in the top 5
     recall@5  share of expected docs that appear (matters for comparisons)
@@ -43,7 +47,7 @@ from app.config import settings
 from app.db.supabase import get_supabase
 from app.llm.factory import create_llm
 from app.rag.entities import EntityLinker
-from app.rag.retriever import RetrievedChunk, Retriever
+from app.rag.retriever import RaceRef, RetrievedChunk, Retriever
 
 ROOT = Path(__file__).resolve().parents[1]
 GOLD_PATH = ROOT / "evals" / "rag_gold.json"
@@ -131,6 +135,7 @@ async def run_question(
     linker: EntityLinker | None,
 ) -> QuestionResult:
     question = item["question"]
+    race = RaceRef(**item["race"]) if item.get("race") else None
     base = Retriever(db=db, llm=intent_llm, embedder=embedder)
     intent = await base.classify_intent(question)
     linked = linker.link(intent, question) if linker else intent
@@ -179,10 +184,10 @@ async def run_question(
         "fulltext+intent": base.fulltext_search(question, TOP_K, intent_filter),
         "vector": base.vector_search(question, {}, top_k=TOP_K),
         "vector+intent(raw)": pipeline(rerank=False, use_linker=False).retrieve(
-            question
+            question, race=race
         ),
-        "vector+intent": pipeline(rerank=False).retrieve(question),
-        "full": pipeline(rerank=True).retrieve(question),
+        "vector+intent": pipeline(rerank=False).retrieve(question, race=race),
+        "full": pipeline(rerank=True).retrieve(question, race=race),
     }
     for mode, coro in runs.items():
         chunks, seconds = await timed(coro)

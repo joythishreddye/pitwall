@@ -1,6 +1,6 @@
 {
-  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples.",
-  "version": 2,
+  "description": "Hand-written retrieval gold set. Each question lists the knowledge docs that contain its answer. A retrieval hits when any expected doc appears in the top 5 chunks. v2 paraphrased exp-01, r26-01 and circ-01, which duplicated the intent prompt's few-shot examples. v3 adds rp-01 to rp-05, asked from a race page: each carries the page's race (season and round) in its own field, never in the question text.",
+  "version": 3,
   "questions": [
     {"id": "drv-01", "kind": "driver", "question": "How many wins has Kimi Antonelli taken in the 2026 season?", "expected": ["drivers/antonelli.md"]},
     {"id": "drv-02", "kind": "driver", "question": "How is George Russell's 2026 season going?", "expected": ["drivers/russell.md"]},
@@ -56,6 +56,11 @@
     {"id": "hist-02", "kind": "history", "question": "How did Lewis Hamilton win his first title in 2008?", "expected": ["history/iconic-races.md"]},
     {"id": "cmp-01", "kind": "comparison", "question": "Compare Lando Norris and Oscar Piastri in 2026.", "expected": ["drivers/norris.md", "drivers/piastri.md"]},
     {"id": "cmp-02", "kind": "comparison", "question": "Who is doing better in 2026, Leclerc or Hamilton?", "expected": ["drivers/leclerc.md", "drivers/hamilton.md"]},
-    {"id": "cmp-03", "kind": "comparison", "question": "Compare Mercedes and McLaren this season.", "expected": ["teams/mercedes.md", "teams/mclaren.md"]}
+    {"id": "cmp-03", "kind": "comparison", "question": "Compare Mercedes and McLaren this season.", "expected": ["teams/mercedes.md", "teams/mclaren.md"]},
+    {"id": "rp-01", "kind": "race-page", "question": "Who won this one?", "race": {"season": 2026, "round": 20}, "expected": ["races/2026-r20-interlagos.md"]},
+    {"id": "rp-02", "kind": "race-page", "question": "How many places did Verstappen make up?", "race": {"season": 2026, "round": 20}, "expected": ["races/2026-r20-interlagos.md"]},
+    {"id": "rp-03", "kind": "race-page", "question": "Who retired?", "race": {"season": 2025, "round": 8}, "expected": ["races/2025-r08-monaco.md"]},
+    {"id": "rp-04", "kind": "race-page", "question": "Who was on the podium?", "race": {"season": 2024, "round": 6}, "expected": ["races/2024-r06-miami.md"]},
+    {"id": "rp-05", "kind": "race-page", "question": "What does DRS do?", "race": {"season": 2026, "round": 6}, "expected": ["explainers/drs-explained.md", "explainers/glossary.md"]}
   ]
 }
