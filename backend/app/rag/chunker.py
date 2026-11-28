@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 MIN_TOKENS = 100
 MAX_TOKENS = 500
 OVERLAP_TOKENS = 50
+# Chunks shorter than this aren't indexed
+MIN_CHUNK_TOKENS = 20
 
 
 def _count_tokens(text: str) -> int:
@@ -52,6 +54,45 @@ def _split_sections(body: str) -> list[tuple[str, str]]:
     return sections
 
 
+def _with_heading(heading: str, text: str) -> str:
+    """A section as it reads in a chunk: its heading line, then its text."""
+    return f"{heading}\n\n{text}" if heading else text
+
+
+def _fold_short_sections(
+    sections: list[tuple[str, str]],
+) -> list[tuple[str, str]]:
+    """Join each section too short to index to its neighbour.
+
+    A short section joins the next one, under its own heading, unless the
+    two together are long enough to split into windows: then the next one's
+    heading leads, so every window keeps it. A short last section joins the
+    one before. Without this, the chunk floor dropped whole sections: every
+    driver doc's overview (current team included), every race doc's pit
+    strategy.
+    """
+    out: list[tuple[str, str]] = []
+    carry: tuple[str, str] | None = None
+    for heading, text in sections:
+        if carry is not None:
+            joined = f"{carry[1]}\n\n{_with_heading(heading, text)}"
+            if _count_tokens(joined) > MAX_TOKENS:
+                text = f"{_with_heading(*carry)}\n\n{text}"
+            else:
+                heading, text = carry[0], joined
+            carry = None
+        if _count_tokens(_with_heading(heading, text)) < MIN_CHUNK_TOKENS:
+            carry = (heading, text)
+        else:
+            out.append((heading, text))
+    if carry is not None:
+        if out:
+            out[-1] = (out[-1][0], f"{out[-1][1]}\n\n{_with_heading(*carry)}")
+        else:
+            out.append(carry)
+    return out
+
+
 def _window_chunks(text: str, heading: str) -> list[str]:
     """Split text into overlapping windows of MAX_TOKENS tokens."""
     words = text.split()
@@ -63,13 +104,17 @@ def _window_chunks(text: str, heading: str) -> list[str]:
     start = 0
     while start < len(words):
         end = min(start + MAX_TOKENS, len(words))
+        if end - OVERLAP_TOKENS + MIN_TOKENS > len(words):
+            # The next window would be too short: this one takes the rest, so
+            # the section's last words are never dropped
+            end = len(words)
         chunk_words = words[start:end]
         chunk_text = " ".join(chunk_words)
         full = f"{heading}\n\n{chunk_text}" if heading else chunk_text
         chunks.append(full.strip())
-        start = end - OVERLAP_TOKENS
-        if start + MIN_TOKENS > len(words):
+        if end == len(words):
             break
+        start = end - OVERLAP_TOKENS
 
     return chunks
 
@@ -85,14 +130,14 @@ def chunk_markdown(filepath: Path) -> list[dict]:
     if not body.strip():
         return []
 
-    sections = _split_sections(body)
+    sections = _fold_short_sections(_split_sections(body))
     source = str(filepath.relative_to(filepath.parents[1]))
 
     chunks = []
     for heading, section_text in sections:
         for chunk_text in _window_chunks(section_text, heading):
             token_count = _count_tokens(chunk_text)
-            if token_count < 20:
+            if token_count < MIN_CHUNK_TOKENS:
                 continue
             chunks.append(
                 {

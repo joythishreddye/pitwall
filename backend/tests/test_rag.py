@@ -92,6 +92,90 @@ class TestChunker:
         chunks = chunk_markdown(md)
         assert len(chunks) >= 2  # Should be split into multiple windows
 
+    def test_a_short_section_joins_the_next_one(self, tmp_path: Path) -> None:
+        # A driver doc's title and overview are under 20 words each, and the
+        # 20-word floor used to drop both, current team included
+        stats = " ".join(f"stat{i}" for i in range(30))
+        md = tmp_path / "norris.md"
+        md.write_text(
+            "---\ncategory: driver\n---\n\n# Lando Norris — Driver Profile\n\n"
+            "## Overview\n\n**Full Name:** Lando Norris\n**Current Team:** McLaren\n\n"
+            f"## Statistics\n\n{stats}\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 1
+        text = chunks[0]["content"]
+        assert text.startswith("# Lando Norris — Driver Profile")
+        assert "## Overview" in text and "McLaren" in text
+        assert "## Statistics" in text and "stat29" in text
+
+    def test_a_short_last_section_joins_the_one_before(self, tmp_path: Path) -> None:
+        results = " ".join(f"result{i}" for i in range(30))
+        md = tmp_path / "race.md"
+        md.write_text(
+            f"---\ncategory: race\n---\n\n## Results\n\n{results}\n\n"
+            "## Pit Strategy\n\n15 drivers on 1-stop, 4 on 2-stop\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 1
+        assert chunks[0]["content"].startswith("## Results")
+        assert chunks[0]["content"].endswith(
+            "## Pit Strategy\n\n15 drivers on 1-stop, 4 on 2-stop"
+        )
+
+    def test_sections_long_enough_stay_apart(self, tmp_path: Path) -> None:
+        words = " ".join(f"w{i}" for i in range(25))
+        md = tmp_path / "doc.md"
+        md.write_text(f"## One\n\n{words}\n\n## Two\n\n{words}\n")
+        chunks = chunk_markdown(md)
+        assert [c["content"].split("\n")[0] for c in chunks] == ["## One", "## Two"]
+
+    def test_a_long_sections_last_words_are_never_dropped(self, tmp_path: Path) -> None:
+        # A window ending under 50 words before the section's end used to drop
+        # those words; folding a short section in can make a section that long
+        for body_words in (501, 520, 549, 550, 600, 1049):
+            words = " ".join(f"w{i}" for i in range(body_words))
+            md = tmp_path / f"long{body_words}.md"
+            md.write_text(f"## Long\n\n{words}\n")
+            text = " ".join(c["content"] for c in chunk_markdown(md))
+            assert f"w{body_words - 1}" in text.split(), body_words
+
+    def test_a_folded_section_keeps_the_last_words_of_the_next(
+        self, tmp_path: Path
+    ) -> None:
+        stats = " ".join(f"s{i}" for i in range(490))
+        md = tmp_path / "doc.md"
+        md.write_text(
+            "## Overview\n\nten words of overview text for this driver here\n\n"
+            f"## Statistics\n\n{stats}\n"
+        )
+        text = " ".join(c["content"] for c in chunk_markdown(md))
+        assert "s489" in text.split()
+        assert "overview" in text.split()
+
+    def test_a_short_section_before_a_long_one_keeps_its_windows_headed(
+        self, tmp_path: Path
+    ) -> None:
+        # flags-and-penalties: a title-only preamble before a 600-word section
+        flags = " ".join(f"f{i}" for i in range(620))
+        md = tmp_path / "flags.md"
+        md.write_text(
+            "# Flags and Penalties — How F1 Polices the Track\n\n"
+            f"## Flag Signals\n\n{flags}\n"
+        )
+        chunks = chunk_markdown(md)
+        assert len(chunks) == 2
+        assert all(c["content"].startswith("## Flag Signals") for c in chunks)
+        assert "# Flags and Penalties" in chunks[0]["content"]
+        assert "f619" in chunks[-1]["content"].split()
+
+    def test_a_doc_under_20_words_in_all_still_gives_no_chunk(
+        self, tmp_path: Path
+    ) -> None:
+        md = tmp_path / "tiny.md"
+        md.write_text("# Tiny\n\n## Note\n\nToo short to index.\n")
+        assert chunk_markdown(md) == []
+
 
 # ---------------------------------------------------------------------------
 # Prompt builder tests
