@@ -39,7 +39,8 @@ def test_a_lead_bigger_than_the_points_left_is_decided() -> None:
 
     assert note == (
         "The 2026 drivers' title is decided: Kimi Antonelli leads Max Verstappen "
-        "by 98 points with 2 races left, worth 50 points at most (no sprints), "
+        "by 98 points with 2 races left, where a driver can score at most 50 "
+        "more points in total (no sprints), "
         "so Kimi Antonelli is the 2026 World Champion."
     )
 
@@ -51,7 +52,8 @@ def test_a_lead_the_points_left_can_close_is_still_open() -> None:
 
     assert note == (
         "The 2026 drivers' title is still open: Kimi Antonelli leads Max Verstappen "
-        "by 50 points with 3 races left, worth 75 points at most (no sprints)."
+        "by 50 points with 3 races left, where a driver can score at most 75 "
+        "more points in total (no sprints)."
     )
 
 
@@ -71,7 +73,10 @@ def test_sprints_left_add_their_points() -> None:
 
     assert note is not None
     assert note.startswith("The 2026 drivers' title is still open: A leads B by 56")
-    assert "with 2 races left, worth 58 points at most (1 sprint)" in note
+    assert (
+        "with 2 races left, where a driver can score at most 58 "
+        "more points in total (1 sprint)" in note
+    )
 
 
 def test_after_the_last_race_the_leader_is_champion() -> None:
@@ -96,7 +101,8 @@ def test_the_last_rounds_sprint_alone_is_not_the_end() -> None:
 
     assert note == (
         "The 2026 drivers' title is still open: A leads B by 1 point "
-        "with 1 race left, worth 25 points at most (no sprints)."
+        "with 1 race left, where a driver can score at most 25 "
+        "more points in total (no sprints)."
     )
 
 
@@ -105,7 +111,8 @@ def test_level_on_points_is_said_so() -> None:
 
     assert note == (
         "The 2026 drivers' title is still open: A and B are level on 300 points "
-        "with 3 races left, worth 75 points at most (no sprints)."
+        "with 3 races left, where a driver can score at most 75 "
+        "more points in total (no sprints)."
     )
 
 
@@ -117,7 +124,10 @@ def test_standings_stored_after_a_sprint_keep_its_grand_prix_left() -> None:
     note = title_note(2026, 22, [("A", 400), ("B", 340)], season, _upto(22, {22}))
 
     assert note is not None
-    assert "with 2 races left, worth 50 points at most (no sprints)" in note
+    assert (
+        "with 2 races left, where a driver can score at most 50 "
+        "more points in total (no sprints)" in note
+    )
     # Once its Grand Prix result is in, only round 23 is left
     after = title_note(2026, 22, [("A", 400), ("B", 340)], season, _upto(22))
     assert after is not None
@@ -145,7 +155,10 @@ def test_a_round_without_a_result_counts_as_left() -> None:
 
     assert note is not None
     assert "season is over" not in note
-    assert "with 1 race left, worth 25 points at most (no sprints)" in note
+    assert (
+        "with 1 race left, where a driver can score at most 25 "
+        "more points in total (no sprints)" in note
+    )
 
 
 def test_a_postponed_sprint_weekend_keeps_its_sprint() -> None:
@@ -154,7 +167,10 @@ def test_a_postponed_sprint_weekend_keeps_its_sprint() -> None:
     note = title_note(2026, 23, [("A", 440), ("B", 340)], season, _upto(23, {22}))
 
     assert note is not None
-    assert "with 1 race left, worth 33 points at most (1 sprint)" in note
+    assert (
+        "with 1 race left, where a driver can score at most 33 "
+        "more points in total (1 sprint)" in note
+    )
 
 
 class _Table:
@@ -257,7 +273,8 @@ def test_the_chat_sees_every_driver_and_the_title_note() -> None:
     # The shipped 2026 schedule: Qatar and Abu Dhabi left, neither a sprint
     assert lines[-1] == (
         "The 2026 drivers' title is decided: Driver 1 leads Driver 2 by 98 points "
-        "with 2 races left, worth 50 points at most (no sprints), "
+        "with 2 races left, where a driver can score at most 50 "
+        "more points in total (no sprints), "
         "so Driver 1 is the 2026 World Champion."
     )
 
@@ -267,7 +284,10 @@ def test_standings_without_their_grand_prix_count_it_as_left() -> None:
         _chat_db(results=_upto(20), wins=20)
     )
 
-    assert "by 98 points with 3 races left, worth 75 points at most" in context
+    assert (
+        "by 98 points with 3 races left, where a driver can score at most 75 "
+        "more points in total" in context
+    )
 
 
 def test_a_stored_result_the_standings_lack_still_counts_as_left() -> None:
@@ -275,7 +295,10 @@ def test_a_stored_result_the_standings_lack_still_counts_as_left() -> None:
     # its sprint: one win short of the 21 Grands Prix stored
     context = chat_route._fetch_current_standings_sync(_chat_db(wins=20))
 
-    assert "by 98 points with 3 races left, worth 75 points at most" in context
+    assert (
+        "by 98 points with 3 races left, where a driver can score at most 75 "
+        "more points in total" in context
+    )
 
 
 def test_an_earlier_round_without_a_result_counts_as_left() -> None:
@@ -284,7 +307,10 @@ def test_an_earlier_round_without_a_result_counts_as_left() -> None:
         _chat_db(results=_upto(21, {5}), wins=21)
     )
 
-    assert "with 3 races left, worth 83 points at most (1 sprint)" in context
+    assert (
+        "with 3 races left, where a driver can score at most 83 "
+        "more points in total (1 sprint)" in context
+    )
 
 
 def test_no_note_when_the_races_table_lists_a_round_the_schedule_does_not() -> None:
