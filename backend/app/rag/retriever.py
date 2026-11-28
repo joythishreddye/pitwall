@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 import httpx
+from pydantic import BaseModel, ConfigDict, Field
 from supabase import Client
 
 from app.config import settings
@@ -35,6 +36,31 @@ _ENTITY_SEARCHES: tuple[tuple[str, str, dict], ...] = (
     ("teams", "constructor_ref", {"category": "team"}),
     ("circuits", "circuit_ref", {}),
 )
+
+
+class RaceRef(BaseModel):
+    """The race a question was asked from (its race page): season and round.
+
+    It never joins the question's text, so classification and the main search
+    run on the question as typed; the race only gets its page a slot.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    season: int = Field(strict=True, ge=1950, le=2100)
+    round: int = Field(strict=True, ge=1, le=30)
+
+
+# The coverage key for a race page's own race: race docs carry season and round
+_RACE_KEY = "race"
+
+
+def _race_filter(race: RaceRef) -> dict:
+    return {"category": "race", "season": race.season, "round": race.round}
+
+
+def _race_ref(race: RaceRef) -> str:
+    return f"{race.season}-r{race.round}"
 
 
 class SupportsEmbedQuery(Protocol):
@@ -297,11 +323,16 @@ class Retriever:
             for row in result.data or []
         ]
 
-    async def retrieve(self, query: str) -> list[RetrievedChunk]:
+    async def retrieve(
+        self, query: str, race: RaceRef | None = None
+    ) -> list[RetrievedChunk]:
         """Full 3-stage pipeline: classify → search → rerank.
 
         Sets ``last_mode`` to how the context was found. Without embeddings
-        the pipeline drops to full-text search instead of failing.
+        the pipeline drops to full-text search instead of failing. A ``race``
+        (the race page the question came from) gets its own page one
+        guaranteed slot, as a named entity does; without one, every search
+        is as before.
         """
         self.last_mode = "none"
         self.reranked = False
@@ -333,6 +364,13 @@ class Retriever:
                 top_k=5,
                 metadata_filter=metadata_filter,
             )
+            if race is not None:
+                # Full text only finds the race's page through a word of the
+                # question, so here the slot holds when one matches
+                race_hits = await self._fulltext_rpc(query, 5, _race_filter(race))
+                chunks = self._ensure_entity_coverage(
+                    chunks, {(_RACE_KEY, _race_ref(race)): race_hits}, top_k=5
+                )
             self.last_mode = "fulltext" if chunks else "none"
             return chunks
 
@@ -372,6 +410,10 @@ class Retriever:
         # Stage 2c: A targeted search per named entity. Its hits rank after
         # the main results; coverage below gives each entity a slot.
         entity_hits = await self._entity_searches(query, entities)
+        if race is not None:
+            # The race page's race claims its slot first
+            race_hits = await self._safe_search(query, _race_filter(race), top_k=5)
+            entity_hits = {(_RACE_KEY, _race_ref(race)): race_hits, **entity_hits}
         for chunks in entity_hits.values():
             add(chunks)
 
@@ -440,6 +482,11 @@ class Retriever:
         for the team.
         """
         meta = chunk.metadata
+        if key == _RACE_KEY:
+            return (
+                meta.get("category") == "race"
+                and f"{meta.get('season')}-r{meta.get('round')}" == ref
+            )
         if meta.get(key) != ref:
             return False
         return key != "constructor_ref" or not meta.get("driver_ref")

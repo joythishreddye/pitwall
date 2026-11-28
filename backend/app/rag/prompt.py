@@ -104,11 +104,12 @@ def build_rag_prompt(
     chunks: list[dict],
     standings_context: str | None = None,
     history: list[Message] | None = None,
+    race_note: str | None = None,
 ) -> list[Message]:
     """Assemble the full message list for the LLM.
 
-    Order: system prompt → context block → conversation history (last 3
-    exchanges) → current user query.
+    Order: system prompt → race note (a question from a race page) → context
+    block → conversation history (last 3 exchanges) → current user query.
     """
     # Build context block from retrieved chunks
     context_parts = []
@@ -123,6 +124,8 @@ def build_rag_prompt(
     context_block = "\n\n---\n\n".join(context_parts)
 
     system_content = SYSTEM_PROMPT
+    if race_note:
+        system_content += f"\n\n{race_note}"
     if context_block:
         system_content += f"\n\n<context>\n{context_block}\n</context>"
 

@@ -21,7 +21,7 @@ from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
-from app.rag.retriever import Retriever
+from app.rag.retriever import RaceRef, Retriever
 
 logger = logging.getLogger(__name__)
 
@@ -178,11 +178,49 @@ class HistoryMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
     history: list[HistoryMessage] = Field(default_factory=list, max_length=6)
+    # Set when the question is asked from a race page; never part of the text
+    race: RaceRef | None = None
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _race_name_sync(db: Client, race: RaceRef) -> str | None:
+    """The race's name from the races table, or None if it can't be read."""
+    try:
+        result = (
+            db.table("races")
+            .select("name")
+            .eq("season", race.season)
+            .eq("round", race.round)
+            .limit(1)
+            .execute()
+        )
+    except Exception:
+        logger.warning("Couldn't read the race's name", exc_info=True)
+        return None
+    rows = result.data
+    if not isinstance(rows, list) or not rows or not isinstance(rows[0], dict):
+        return None
+    name = rows[0].get("name")
+    if not isinstance(name, str) or not name.strip():
+        return None
+    return name.strip()[:80]
+
+
+def _race_note(race: RaceRef, name: str | None) -> str:
+    """Tells the model which race page the question came from."""
+    which = (
+        f"the {race.season} {name} (round {race.round})"
+        if name
+        else f"round {race.round} of the {race.season} season"
+    )
+    return (
+        f"The reader is asking from the race page of {which}. "
+        "A question that names no race is about this race."
+    )
 
 
 def _fetch_current_standings_sync(db: Client) -> str | None:
@@ -392,7 +430,7 @@ async def chat(
     # 1. Retrieve relevant context via 3-stage RAG. The retriever already
     # degrades on its own (full-text fallback); this guard catches the rest.
     try:
-        chunks = await retriever.retrieve(body.message)
+        chunks = await retriever.retrieve(body.message, race=body.race)
     except Exception:
         logger.exception("Retrieval failed, answering without knowledge context")
         chunks = []
@@ -403,6 +441,11 @@ async def chat(
         _fetch_current_standings_sync,
         db,
     )
+
+    race_note = None
+    if body.race is not None:
+        name = await asyncio.to_thread(_race_name_sync, db, body.race)
+        race_note = _race_note(body.race, name)
 
     # 3. Build conversation history (Pydantic enforces max_length=6)
     history_messages = [Message(role=h.role, content=h.content) for h in body.history]
@@ -417,6 +460,7 @@ async def chat(
         chunks=chunk_dicts,
         standings_context=standings_context,
         history=history_messages,
+        race_note=race_note,
     )
 
     # 5. Detect knowledge level

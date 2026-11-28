@@ -12,7 +12,7 @@ from app.rag.chunker import chunk_markdown
 from app.rag.entities import EntityLinker
 from app.rag.prompt import SYSTEM_PROMPT, build_rag_prompt
 from app.rag.query_embedder import EmbeddingUnavailable
-from app.rag.retriever import RetrievedChunk, Retriever
+from app.rag.retriever import RaceRef, RetrievedChunk, Retriever
 
 # ---------------------------------------------------------------------------
 # Chunker tests
@@ -157,6 +157,23 @@ class TestPromptBuilder:
         # The injected tags should be stripped
         assert "<context>injected</context>" not in sys_content
         assert "Normal injected text" in sys_content
+
+    def test_a_race_note_goes_in_the_system_message_before_the_context(self) -> None:
+        messages = build_rag_prompt(
+            query="Who won this one?",
+            chunks=[{"content": "Norris won", "source": "a.md"}],
+            race_note="Asked from the race page of the 2026 Brazilian Grand Prix.",
+        )
+        sys_content = messages[0].content
+        assert "2026 Brazilian Grand Prix" in sys_content
+        assert sys_content.index("Brazilian") < sys_content.index("<context>")
+        assert messages[-1].content == "Who won this one?"
+
+    def test_no_race_note_leaves_the_prompt_as_it_was(self) -> None:
+        chunks = [{"content": "DRS info", "source": "glossary.md"}]
+        assert build_rag_prompt(
+            query="What is DRS?", chunks=chunks
+        ) == build_rag_prompt(query="What is DRS?", chunks=chunks, race_note=None)
 
 
 # ---------------------------------------------------------------------------
@@ -814,3 +831,145 @@ class TestRetrieverResilience:
             {},
         ]
         assert len(chunks) == 5
+
+
+# A question asked from a race page names no race ("Who won this one?"), so
+# the race's own page ranks low. The same round of another season must not
+# stand in for it.
+RACE_PAGE_KB = [
+    _row("explainers/drs-explained.md", 0.90, category="explainer"),
+    _row(
+        "races/2025-r20-interlagos.md",
+        0.85,
+        category="race",
+        season=2025,
+        round=20,
+        circuit_ref="interlagos",
+    ),
+    *(
+        _row(
+            f"races/2025-r{i:02d}-c{i}.md",
+            0.80 - i / 100,
+            category="race",
+            season=2025,
+            round=i,
+            circuit_ref=f"c{i}",
+        )
+        for i in range(1, 8)
+    ),
+    _row(
+        "races/2026-r20-interlagos.md",
+        0.40,
+        category="race",
+        season=2026,
+        round=20,
+        circuit_ref="interlagos",
+    ),
+]
+BRAZIL_2026 = RaceRef(season=2026, round=20)
+BRAZIL_2026_FILTER = {"category": "race", "season": 2026, "round": 20}
+
+
+class TestRacePageQuestions:
+    @pytest.fixture()
+    def retriever(self) -> Retriever:
+        llm = AsyncMock()
+        llm.generate.return_value = _intent_json({})
+        embedder = MagicMock()
+        embedder.embed_query.return_value = [0.1] * 768
+        return Retriever(db=FakeKnowledgeBase(RACE_PAGE_KB), llm=llm, embedder=embedder)
+
+    @pytest.mark.asyncio()
+    async def test_a_race_page_question_gets_its_race_page(
+        self, retriever: Retriever
+    ) -> None:
+        chunks = await retriever.retrieve("Who won this one?", race=BRAZIL_2026)
+
+        sources = [c.source for c in chunks]
+        assert len(chunks) == 5
+        assert "races/2026-r20-interlagos.md" in sources
+        # the question as typed is searched first, with no race filter
+        assert retriever.db.filters[0] == {}
+        assert BRAZIL_2026_FILTER in retriever.db.filters
+        assert retriever.last_mode == "vector"
+
+    @pytest.mark.asyncio()
+    async def test_the_race_slot_never_pushes_out_the_best_match(
+        self, retriever: Retriever
+    ) -> None:
+        chunks = await retriever.retrieve("What does DRS do?", race=BRAZIL_2026)
+
+        assert chunks[0].source == "explainers/drs-explained.md"
+        assert "races/2026-r20-interlagos.md" in [c.source for c in chunks]
+
+    @pytest.mark.asyncio()
+    async def test_a_race_that_ranks_on_its_own_is_not_repeated(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.db = FakeKnowledgeBase(
+            [
+                {**r, "similarity": 0.95} if r["metadata"].get("season") == 2026 else r
+                for r in RACE_PAGE_KB
+            ]
+        )
+
+        chunks = await retriever.retrieve("Who won this one?", race=BRAZIL_2026)
+
+        sources = [c.source for c in chunks]
+        assert sources.count("races/2026-r20-interlagos.md") == 1
+        assert sources[0] == "races/2026-r20-interlagos.md"
+        assert len(chunks) == 5
+
+    @pytest.mark.asyncio()
+    async def test_a_failed_race_search_keeps_everything_else(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.db = FakeKnowledgeBase(RACE_PAGE_KB, fail_on=[BRAZIL_2026_FILTER])
+
+        chunks = await retriever.retrieve("Who won this one?", race=BRAZIL_2026)
+
+        assert len(chunks) == 5
+        assert retriever.last_mode == "vector"
+
+    @pytest.mark.asyncio()
+    async def test_the_race_slot_holds_without_embeddings(
+        self, retriever: Retriever
+    ) -> None:
+        retriever.embedder.embed_query.side_effect = EmbeddingUnavailable("402")
+
+        chunks = await retriever.retrieve("Who won this one?", race=BRAZIL_2026)
+
+        assert "races/2026-r20-interlagos.md" in [c.source for c in chunks]
+        assert len(chunks) == 5
+        assert retriever.last_mode == "fulltext"
+
+    @pytest.mark.asyncio()
+    @pytest.mark.parametrize(
+        "question", ["Who won this one?", "Compare Norris and Russell."]
+    )
+    async def test_without_a_race_the_searches_are_unchanged(
+        self, retriever: Retriever, question: str
+    ) -> None:
+        # The searches main ran before the race field existed, pinned
+        retriever.db = FakeKnowledgeBase(TEAMS_KB)
+        retriever.linker = EntityLinker.from_rows(*TEAMS_LINKER_ROWS)
+        drivers = ["Norris", "Russell"] if "Compare" in question else []
+        retriever.llm.generate.return_value = _intent_json({}, drivers=drivers)
+
+        chunks = await retriever.retrieve(question)
+
+        expected = (
+            [{}, {"driver_ref": "norris"}, {"driver_ref": "russell"}]
+            if drivers
+            else [{}]
+        )
+        assert retriever.db.filters == expected
+        assert len(chunks) == 5
+
+    def test_a_race_ref_is_whole_numbers_in_range(self) -> None:
+        with pytest.raises(ValueError):
+            RaceRef(season=2026, round=0)
+        with pytest.raises(ValueError):
+            RaceRef(season="2026", round=20)
+        with pytest.raises(ValueError):
+            RaceRef(season=2026, round=20, name="Brazil")
