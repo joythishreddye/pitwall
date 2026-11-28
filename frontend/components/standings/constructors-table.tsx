@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { positionColor } from "@/lib/format";
+import { formatPoints, positionColor } from "@/lib/format";
 import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
 import type { ConstructorStanding } from "@/lib/schemas/standings";
 
@@ -97,7 +97,7 @@ export function ConstructorsTable({
 
             {/* Points */}
             <span className="standings-pts text-right font-data tabular-nums font-semibold">
-              {Math.floor(c.points)}
+              {formatPoints(c.points)}
             </span>
 
             {/* Win bar */}

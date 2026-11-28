@@ -123,6 +123,22 @@ test("failed results say so and retry, instead of reading no results", async ({ 
   expect(calls.n).toBe(2);
 });
 
+test("a half point keeps its half, in his career tile and his results", async ({ page }) => {
+  // a shortened race pays half points (Spa 2021's winner scored 12.5), and rounding down used to show 12
+  const profile = await saved("drivers-antonelli.json");
+  profile.career_stats.points = 506.5;
+  const results = await saved("drivers-antonelli-results-2026.json");
+  results.results[0].points = 12.5;
+  await page.route("**/api/v1/drivers/antonelli", (route) => route.fulfill({ json: profile }));
+  await page.route("**/api/v1/drivers/antonelli/results**", (route) => route.fulfill({ json: results }));
+  await page.goto("/drivers/antonelli");
+  await showsAntonelli(page);
+  await expect(page.getByText("Career Points", { exact: true }).locator("..")).toHaveText(
+    /^Career Points\s*506\.5$/,
+  );
+  await expect(page.locator("a.result-row").first()).toContainText("12.5");
+});
+
 /** His page fits the screen: no sideways scroll, every race's name has room, nothing in a row runs past its edge,
  * and each row's date shows once (under the name below 1024 px, in its own column from 1024 px). */
 async function resultsFit(page: Page) {

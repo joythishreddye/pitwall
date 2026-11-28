@@ -6,6 +6,9 @@ import { expect, test, type Page } from "@playwright/test";
 // The races and drivers lists load the saved 2026 fixtures; Academy, Predictions, Live and the dashboard load no data.
 
 const PAGES = ["/races", "/drivers", "/academy", "/predictions", "/live", "/dashboard"];
+// A fixed clock (shell.spec.ts's), so what a page works out from today's date, like the races list's countdown card,
+// measures the same on every run.
+const NOW = new Date("2026-11-25T18:00:00Z");
 
 // Every call the page makes has a saved answer, so the browser logs no errors (a missing fixture is a 404 and an
 // error), and nothing reaches the network beyond this machine (as in shell.spec.ts).
@@ -26,6 +29,7 @@ test.afterEach(() => {
 });
 
 async function pagesFit(page: Page) {
+  await page.clock.setFixedTime(NOW);
   for (const url of PAGES) {
     await page.goto(url);
     await page.waitForLoadState("networkidle");

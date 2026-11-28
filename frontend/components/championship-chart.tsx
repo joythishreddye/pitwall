@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { gsap, useGSAP, DrawSVGPlugin, respectsReducedMotion } from "@/lib/gsap";
 import { getTeamHexColor } from "@/lib/constants/teams";
 import { cn } from "@/lib/utils";
+import { formatPoints } from "@/lib/format";
 import type { DriverProgression } from "@/lib/schemas/standings";
 
 void DrawSVGPlugin;
@@ -521,7 +522,7 @@ export function ChampionshipChart({
                         {row.label}
                       </span>
                       <span className="font-data tabular-nums text-[11px] text-f1-text shrink-0">
-                        {row.pts}
+                        {row.pts != null ? formatPoints(row.pts) : null}
                       </span>
                       {row.scored != null && (
                         <span
@@ -530,7 +531,7 @@ export function ChampionshipChart({
                             row.scored > 0 ? "text-f1-green" : "text-f1-muted"
                           )}
                         >
-                          +{row.scored}
+                          +{formatPoints(row.scored)}
                         </span>
                       )}
                     </div>

@@ -6,7 +6,7 @@ import { AlertTriangle } from "lucide-react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { getTeamColor } from "@/lib/constants/teams";
-import { formatRaceTime, formatGap, formatLapsDown, positionColor } from "@/lib/format";
+import { formatRaceTime, formatGap, formatLapsDown, formatPoints, positionColor } from "@/lib/format";
 import type { RaceResult } from "@/lib/schemas/races";
 
 // One column layout for the header and the rows. Phones get five columns (the team moves under the driver's
@@ -150,7 +150,7 @@ export function RaceResultsTable({ results, winnerMs }: RaceResultsTableProps) {
 
             {/* Points */}
             <span className="text-right font-data font-semibold">
-              {(r.points ?? 0) > 0 ? Math.floor(r.points!) : "—"}
+              {(r.points ?? 0) > 0 ? formatPoints(r.points!) : "—"}
             </span>
 
             {/* Gap */}

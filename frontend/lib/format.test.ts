@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { formatGap, formatLapTime, formatLapsDown, formatPitDuration, formatRaceTime, stripMarkdown } from "@/lib/format";
+import {
+  formatGap,
+  formatLapTime,
+  formatLapsDown,
+  formatPitDuration,
+  formatPoints,
+  formatRaceTime,
+  pointsDecimals,
+  stripMarkdown,
+} from "@/lib/format";
 
 describe("formatLapTime", () => {
   it("shows minutes, seconds and thousandths", () => {
@@ -84,6 +93,37 @@ describe("formatPitDuration", () => {
   it("shows tenths of a second", () => {
     expect(formatPitDuration(22449)).toBe("22.4s");
     expect(formatPitDuration(null)).toBe("—");
+  });
+});
+
+describe("formatPoints", () => {
+  it("shows whole points as they are", () => {
+    expect(formatPoints(25)).toBe("25");
+    expect(formatPoints(0)).toBe("0");
+    expect(formatPoints(506)).toBe("506");
+  });
+
+  it("keeps a half point instead of rounding it away", () => {
+    expect(formatPoints(12.5)).toBe("12.5");
+    expect(formatPoints(4639.5)).toBe("4639.5");
+  });
+
+  it("shows a shared point to the hundredth", () => {
+    expect(formatPoints(1 / 7)).toBe("0.14");
+    expect(formatPoints(8 / 3)).toBe("2.67");
+  });
+
+  it("hides float noise from a sum", () => {
+    expect(formatPoints(0.1 + 0.2)).toBe("0.3");
+    expect(formatPoints(25.000000001)).toBe("25");
+  });
+});
+
+describe("pointsDecimals", () => {
+  it("gives the counter the same places as formatPoints", () => {
+    expect(pointsDecimals(371)).toBe(0);
+    expect(pointsDecimals(12.5)).toBe(1);
+    expect(pointsDecimals(1 / 7)).toBe(2);
   });
 });
 

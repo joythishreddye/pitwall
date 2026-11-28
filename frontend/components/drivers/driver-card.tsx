@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
 import { cn } from "@/lib/utils";
+import { formatPoints } from "@/lib/format";
 import type { DriverStanding } from "@/lib/schemas/standings";
 
 interface DriverCardProps {
@@ -95,7 +96,7 @@ export function DriverCard({ driver }: DriverCardProps) {
         <div>
           <p className="text-[9px] text-f1-muted uppercase tracking-widest mb-0.5">PTS</p>
           <p className="font-mono text-sm font-semibold tabular-nums">
-            {Math.floor(driver.points)}
+            {formatPoints(driver.points)}
           </p>
         </div>
         <div>

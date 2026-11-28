@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { positionColor } from "@/lib/format";
+import { formatPoints, positionColor } from "@/lib/format";
 import { getTeamColor, getTeamHexColor } from "@/lib/constants/teams";
 import type { DriverStanding } from "@/lib/schemas/standings";
 
@@ -113,7 +113,7 @@ export function DriversTable({
 
             {/* Points */}
             <span className="standings-pts text-right font-data tabular-nums font-semibold">
-              {Math.floor(d.points)}
+              {formatPoints(d.points)}
             </span>
 
             {/* Win bar */}

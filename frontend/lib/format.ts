@@ -55,6 +55,22 @@ export function formatPitDuration(ms: number | null | undefined): string {
 }
 
 /**
+ * Decimal places for championship points: none for whole points, one for a half point (a shortened race, like Spa
+ * 2021), two for the 1950s' shared drives and fastest laps (a seventh of a point is 0.14). Rounded to hundredths
+ * first, so a float sum like 25.000000001 still reads 25.
+ */
+export function pointsDecimals(points: number): number {
+  const hundredths = Math.round(points * 100);
+  if (hundredths % 100 === 0) return 0;
+  return hundredths % 10 === 0 ? 1 : 2;
+}
+
+/** Format championship points: 25, 12.5 or 0.14. Rounding down hid the half (Spa 2021's 12.5 read 12) */
+export function formatPoints(points: number): string {
+  return points.toFixed(pointsDecimals(points));
+}
+
+/**
  * Strip common LLM markdown syntax so AI responses render as clean prose.
  * Handles bold, italic, headers, inline code, and horizontal rules.
  * Preserves newlines and list numbering — just removes the decoration.

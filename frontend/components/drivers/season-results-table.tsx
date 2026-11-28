@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { gsap, useGSAP, ScrollTrigger, respectsReducedMotion } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { positionColor } from "@/lib/format";
+import { formatPoints, positionColor } from "@/lib/format";
 import type { DriverResult } from "@/lib/schemas/drivers";
 
 void ScrollTrigger;
@@ -122,7 +122,7 @@ export function SeasonResultsTable({ results, season }: SeasonResultsTableProps)
               )}
             </div>
             <span className="text-right font-mono font-semibold tabular-nums">
-              {(r.points ?? 0) > 0 ? Math.floor(r.points!) : "\u2014"}
+              {(r.points ?? 0) > 0 ? formatPoints(r.points!) : "\u2014"}
             </span>
           </Link>
         );

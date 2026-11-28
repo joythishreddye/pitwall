@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Each section names its browser tab, and a page inside a section inherits that title. The served HTML
-// carries the title, so no page is rendered and nothing calls the API.
+// carries the title, so the test reads that HTML with no browser: no script runs and nothing calls the API.
 const TITLES: [string, string][] = [
   ["/", "PitWall — AI Race Engineer"],
   ["/standings", "Standings · PitWall"],

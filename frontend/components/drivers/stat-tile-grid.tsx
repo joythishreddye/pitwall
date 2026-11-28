@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { NumberCounter } from "@/components/ui/number-counter";
 import { cn } from "@/lib/utils";
+import { formatPoints, pointsDecimals } from "@/lib/format";
 import {
   AreaChart,
   Area,
@@ -41,6 +42,8 @@ interface TileProps {
   rate?: number | null;
   /** Extra className passed to the NumberCounter (e.g. "text-f1-gold") */
   valueClassName?: string;
+  /** Decimal places the number shows (career points keep a half point) */
+  decimals?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -66,7 +69,7 @@ function CareerTooltip({
     >
       <p className="font-mono text-xs font-bold text-f1-text mb-0.5">{d.season}</p>
       <p className="font-mono text-[11px] text-f1-muted tabular-nums">
-        {d.points} PTS &middot; {d.wins} WIN{d.wins !== 1 ? "S" : ""}
+        {formatPoints(d.points)} PTS &middot; {d.wins} WIN{d.wins !== 1 ? "S" : ""}
       </p>
     </div>
   );
@@ -86,6 +89,7 @@ function StatTile({
   accentColor,
   rate = null,
   valueClassName,
+  decimals = 0,
 }: TileProps) {
   return (
     <div
@@ -104,6 +108,7 @@ function StatTile({
       <div>
         <NumberCounter
           value={value}
+          decimals={decimals}
           paused={paused}
           className={cn(large ? "text-3xl font-black" : "text-xl font-semibold", valueClassName)}
         />
@@ -258,6 +263,7 @@ export function StatTileGrid({
       <StatTile
         label="Career Points"
         value={points}
+        decimals={pointsDecimals(points)}
         paused={paused}
         gridArea="pts"
         accentColor={teamHex}

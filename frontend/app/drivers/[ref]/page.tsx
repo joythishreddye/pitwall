@@ -95,7 +95,7 @@ export default function DriverProfilePage({
         podiums={driver.career_stats.podiums}
         poles={driver.career_stats.poles}
         races={driver.career_stats.races}
-        points={Math.floor(driver.career_stats.points)}
+        points={driver.career_stats.points}
         teamHex={teamHex}
         careerSeasons={driver.career_seasons}
       />
