@@ -168,7 +168,9 @@ async def run_question(
 ) -> QuestionResult:
     question = item["question"]
     race = RaceRef(**item["race"]) if item.get("race") else None
-    base = Retriever(db=db, llm=intent_llm, embedder=embedder)
+    # No time limit: the eval waits out Groq's rate limits (PatientLLM), where
+    # production would go on without the intent model
+    base = Retriever(db=db, llm=intent_llm, embedder=embedder, intent_timeout=0)
     intent = cache.get(question) if cache else None
     if intent is None:
         intent = await base.classify_intent(question)
