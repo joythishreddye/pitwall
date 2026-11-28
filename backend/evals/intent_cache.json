@@ -1,0 +1,953 @@
+{
+ "openai/gpt-oss-20b|d40e88282607|Compare Lando Norris and Oscar Piastri in 2026.": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "norris",
+    "piastri"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "comparison",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Compare Mercedes and McLaren this season.": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": [
+    "mercedes",
+    "mclaren"
+   ]
+  },
+  "intent": "comparison",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|How did Lewis Hamilton win his first title in 2008?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "hamilton"
+   ],
+   "seasons": [
+    2008
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "hamilton"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How did the Bahrain race go in 2025?": {
+  "entities": {
+   "circuits": [
+    "bahrain"
+   ],
+   "drivers": [],
+   "seasons": [
+    2025
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "bahrain",
+   "season": 2025
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How do the 2026 cars take Eau Rouge at Spa?": {
+  "entities": {
+   "circuits": [
+    "spa"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How does a sprint weekend work?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How does a virtual safety car work?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How has Ferrari performed in 2026?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "ferrari"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "constructor_ref": "ferrari"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How is Cadillac doing in its first F1 season?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|How is George Russell's 2026 season going?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "russell"
+   ],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "russell"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many places did Verstappen make up?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "max_verstappen"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many points do Mercedes have in the 2026 constructors' championship?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "mercedes"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "constructor_ref": "mercedes"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many points does a Grand Prix winner get?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many points has Lewis Hamilton scored this season?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "hamilton"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "hamilton"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many wins does Red Bull have in 2026?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "red_bull"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "constructor_ref": "red_bull",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many wins has Kimi Antonelli taken in the 2026 season?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "antonelli"
+   ],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "antonelli"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|How many world championships has Lando Norris won?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "lando_norris"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "lando_norris"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Tell me about Oliver Bearman.": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "oliver_bearman"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "oliver_bearman"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Tell me about the Williams team this season.": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "williams"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "constructor_ref": "williams"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What are Maggotts and Becketts at Silverstone?": {
+  "entities": {
+   "circuits": [
+    "silverstone"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "silverstone"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What are parc fermé rules?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What changed in the 2026 F1 regulations?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "category": "regulations"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What does DRS do?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What does a black and white flag mean?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What does the drag reduction system actually do on an F1 car?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What happened at the 2021 Abu Dhabi Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "abu_dhabi"
+   ],
+   "drivers": [],
+   "seasons": [
+    2021
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "abu_dhabi",
+   "season": 2021
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What happened at the 2026 Monaco Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monaco",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What happened between Senna and Prost at Suzuka in 1989?": {
+  "entities": {
+   "circuits": [
+    "suzuka"
+   ],
+   "drivers": [
+    "senna",
+    "prost"
+   ],
+   "seasons": [
+    1989
+   ],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "history"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What is active aerodynamics on the 2026 cars?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What is an undercut in F1?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What is dirty air?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What is ground effect?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What makes Eau Rouge at Spa special?": {
+  "entities": {
+   "circuits": [
+    "spa"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers",
+   "circuit_ref": "spa"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What was the result of the 2024 Monaco Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [
+    2024
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monaco",
+   "season": 2024
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|What were Max Verstappen's most recent results?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "max_verstappen"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "max_verstappen"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Where is McLaren in the 2026 standings?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "mclaren"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "constructor_ref": "mclaren"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Which team does Fernando Alonso drive for in 2026?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "alonso"
+   ],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "driver_ref": "alonso"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who drives for Audi in 2026?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": [
+    "audi"
+   ]
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who finished on the podium at Bahrain in 2024?": {
+  "entities": {
+   "circuits": [
+    "bahrain"
+   ],
+   "drivers": [],
+   "seasons": [
+    2024
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "bahrain",
+   "season": 2024
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who gained the most places at the 2026 Azerbaijan Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "baku"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "baku",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who is Arvid Lindblad?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who is doing better in 2026, Leclerc or Hamilton?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [
+    "leclerc",
+    "hamilton"
+   ],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "comparison",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who retired from the 2026 Singapore Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "singapore"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "singapore",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who retired?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who took victory in Melbourne at the 2026 season opener?": {
+  "entities": {
+   "circuits": [
+    "albert_park"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "albert_park",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who was on the podium at Silverstone in 2026?": {
+  "entities": {
+   "circuits": [
+    "silverstone"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "silverstone",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who was on the podium?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2019 British Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "silverstone"
+   ],
+   "drivers": [],
+   "seasons": [
+    2019
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "silverstone",
+   "season": 2019
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2024 Miami Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "miami"
+   ],
+   "drivers": [],
+   "seasons": [
+    2024
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "miami",
+   "season": 2024
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2025 Abu Dhabi Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "yas_marina"
+   ],
+   "drivers": [],
+   "seasons": [
+    2025
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "yas_marina",
+   "season": 2025
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2025 Australian Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "albert_park"
+   ],
+   "drivers": [],
+   "seasons": [
+    2025
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "albert_park",
+   "season": 2025
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2025 Italian Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "monza"
+   ],
+   "drivers": [],
+   "seasons": [
+    2025
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monza",
+   "season": 2025
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2025 Monaco Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [
+    2025
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monaco",
+   "season": 2025
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2026 Italian Grand Prix at Monza?": {
+  "entities": {
+   "circuits": [
+    "monza"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monza",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2026 Japanese Grand Prix?": {
+  "entities": {
+   "circuits": [
+    "suzuka"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "suzuka",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the 2026 United States Grand Prix in Austin?": {
+  "entities": {
+   "circuits": [
+    "austin"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "austin",
+   "season": 2026
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the Bahrain Grand Prix that was held in Malaysia in 2026?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the Grand Prix of Monaco in 2023?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [
+    2023
+   ],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {
+   "circuit_ref": "monaco",
+   "season": 2023
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won the first Grand Prix at Madring in Madrid?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who won this one?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "factual",
+  "metadata_filter": {}
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why do drivers struggle to pass each other on the streets of Monte Carlo?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "monaco"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why is Monza called the Temple of Speed?": {
+  "entities": {
+   "circuits": [
+    "monza"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "monza"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why is Suzuka hard on tyres for the 2026 cars?": {
+  "entities": {
+   "circuits": [
+    "suzuka"
+   ],
+   "drivers": [],
+   "seasons": [
+    2026
+   ],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "suzuka"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why is Suzuka shaped like a figure eight?": {
+  "entities": {
+   "circuits": [
+    "suzuka"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why is overtaking still so hard at Monaco in 2025?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "monaco"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why would a team choose a one-stop over a two-stop strategy?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
+  }
+ }
+}
