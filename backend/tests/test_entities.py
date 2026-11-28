@@ -494,11 +494,11 @@ def _corner_linker(kb_circuits: tuple[str, ...] = ("monza", "spa", "monaco")):
 
 
 def test_a_famous_corner_names_its_circuit() -> None:
-    # Held-out ho-23: the classifier answered circuit_ref "parabolica", which
-    # nothing mapped, and vector search returned five glossary chunks
+    # Before the corner names, a question naming only a corner got no circuit
+    # filter, and vector search returned glossary chunks instead of the track
     linker = _corner_linker()
     cases = {
-        "What is the Parabolica?": "monza",
+        "How fast is the Parabolica?": "monza",
         "Why is Eau Rouge so hard to take flat out?": "spa",
         "How slow is the Sainte Dévote corner?": "monaco",
         "Is 130R still flat out?": "suzuka",

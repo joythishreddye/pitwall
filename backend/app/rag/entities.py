@@ -21,7 +21,8 @@ It also enforces the filter rules the eval baseline supports:
   the history docs);
 * comparisons use no filter, and entity searches cover each side;
 * a scan of the question trusts only unambiguous names: full names, team and
-  circuit names, circuit cities, and refs that aren't also everyday words.
+  circuit names, circuit cities, famous corner names (``_CORNER_ALIASES``),
+  and refs that aren't also everyday words.
   Weak aliases still repair names the classifier gave, but a scan skips
   them, so a stray word can't filter the answer out. Weak aliases are:
   - country names, including the refs "bahrain" and "monaco";
