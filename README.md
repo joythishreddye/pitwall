@@ -13,7 +13,7 @@ In F1, the pit wall is where race engineers read the data and call the strategy.
 ## What works today
 
 ### Race Engineer chat
-Answers come from a retrieval pipeline over 243 knowledge documents (1,150 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
+Answers come from a retrieval pipeline over 243 knowledge documents (1,250 chunks): driver, team and race reports for 2018–2026, the 2026 regulations, and explainers.
 
 1. **Intent:** `gpt-oss-20b` pulls out the drivers, teams, circuits and seasons a question is about, in JSON mode.
 2. **Entity linking:** a deterministic linker maps those names to the refs the knowledge base uses ("Lando Norris" becomes `norris`, "Singapore" becomes `marina_bay`). It also catches names the model missed and builds the metadata filter.
@@ -23,23 +23,26 @@ Answers come from a retrieval pipeline over 243 knowledge documents (1,150 chunk
 The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
 
 ### Retrieval quality, measured
-`python scripts/eval_rag.py` scores retrieval against a 55-question gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run (`backend/evals/results/2026-11-25T1805Z-local-local-linked.json`) and is scored on the same classifier outputs.
+`python scripts/eval_rag.py` scores retrieval against a 66-question gold set (`backend/evals/rag_gold.json`, version 5) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run (`backend/evals/results/2026-11-28T1335Z-local-local-linked.json`) and is scored on the same classifier outputs, recorded once and replayed (`backend/evals/intent_cache.json`), so two runs differ only in what changed.
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
-| Vector search alone | 69.1% | 0.66 |
-| + the classifier's filters, used as-is | 83.6% | 0.68 |
-| + entity linking (production) | **100%** | **0.89** |
-| + cross-encoder reranking | 98.2% | 0.75 |
-| Full-text fallback (no embeddings), linked filters | 89.1% | 0.81 |
+| Vector search alone | 92.4% | 0.85 |
+| + the classifier's filters, used as-is | 92.4% | 0.79 |
+| + entity linking (production) | **100%** | **0.86** |
+| + cross-encoder reranking | 98.5% | 0.80 |
+| Full-text fallback (no embeddings), linked filters | 89.4% | 0.76 |
+| Classifier down: the linker's own name scan | 100% | 0.87 |
 
-Entity linking adds 16 points of hit@5 over the classifier's own filters. Reranking lost one question and ranked the rest worse, and added 1 to 3 seconds per question on a laptop CPU (median, in two runs on Nov 25), so it ships switched off (`RERANK_ENABLED`).
+The classifier's own filters add nothing here: they file five rules questions under the explainers category, which hides the regulations pages, and they rank worse overall (MRR@5 0.79 against 0.85). Entity linking never filters on a category alone, and it takes hit@5 to 100%. With the classifier down, the linker's scan of the question for names still finds every answer. Reranking lost one question and ranked the rest worse, and took the median question from 0.29 to 2.86 seconds on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+
+The biggest jump in plain vector search came from the chunker, not the search. It used to drop any section under 20 words, which was every driver's overview and every race's pit-stop line; joining those to a neighbouring section (Nov 28) took vector search alone from 68% to 92% hit@5.
 
 Caveats:
 - The gold set is small and hand-written, and the linker was built against its failures.
 - Three questions that matched the classifier's own prompt examples were paraphrased.
 - False-positive cases (a word like "stroll" or "China" turning into a filter) are covered by unit tests, not by the eval.
-- Vector search is exact. An approximate (HNSW) index had degraded after bulk re-ingests and was dropped. Exact search raised plain vector search from 58% to 69% hit@5; production results didn't change.
+- Vector search is exact. An approximate (HNSW) index had degraded after bulk re-ingests and was dropped. Exact search raised plain vector search from 58% to 69% hit@5 on the earlier 55-question gold set; production results didn't change.
 
 A held-out question set is next.
 
@@ -58,7 +61,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
   - Chat has per-client and global rate limits.
   - The API meters the bandwidth it serves and stops at a daily budget, so normal traffic can't push hosting past the plan. Refused requests still use some bandwidth, so a sustained flood could. The twice-daily health check emails the owner when one starts, usually days before it would cost anything.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** 191 backend tests (pytest). Every push runs ruff, pytest, ESLint, TypeScript and a production build.
+- **Tests and CI:** over 540 backend tests (pytest) and 29 frontend unit tests (vitest). Every pull request and every merge to main runs ruff, pytest, ESLint, vitest, TypeScript and a production build; Playwright screenshot tests at three widths run locally before each UI change.
 
 ## Roadmap
 
