@@ -137,9 +137,14 @@ def _recent_line(row: dict) -> str:
     return f"{head}: {finish} ({_start_text(row['grid'])})"
 
 
-def _non_finisher_sections(results: Iterable[dict]) -> str:
+def _non_finisher_sections(results: Iterable[dict], race_title: str) -> str:
     """A race doc's retirements, non-starters and disqualifications, each
-    under its own heading, so none reads as another (#39)."""
+    under its own heading, so none reads as another (#39).
+
+    The lists share one ## section, with a line naming the race: the chunker
+    splits on ## and drops a chunk under 20 words, which a section holding
+    one short name would be.
+    """
     retired, absent, disqualified = [], [], []
     for r in results:
         if _did_not_start(r):
@@ -152,15 +157,34 @@ def _non_finisher_sections(results: Iterable[dict]) -> str:
             retired.append(
                 f"- {_driver_name(r)}: {r['status']} ({_start_text(r['grid'])})"
             )
-    md = ""
-    for heading, lines in (
-        ("Retirements/DNFs", retired),
-        ("Did not start", absent),
-        ("Disqualified", disqualified),
-    ):
-        if lines:
-            md += f"\n## {heading}\n\n{chr(10).join(lines)}\n"
-    return md
+    lists = [
+        f"### {heading}\n\n{chr(10).join(lines)}"
+        for heading, lines in (
+            ("Retirements/DNFs", retired),
+            ("Did not start", absent),
+            ("Disqualified", disqualified),
+        )
+        if lines
+    ]
+    if not lists:
+        return ""
+    return (
+        "\n## Non-finishers\n\n"
+        f"Drivers who retired, didn't start or were disqualified at the {race_title}:"
+        f"\n\n{(chr(10) * 2).join(lists)}\n"
+    )
+
+
+def _breakdown_note(
+    driver_id: int, driver_teams: dict[int, set], driver_points: dict[int, float]
+) -> str:
+    """Why a team doc's driver line counts Grand Prix points only, or "" when
+    it shows the driver's standings points, sprints included (#39)."""
+    if len(driver_teams.get(driver_id, set())) > 1:
+        return " (Grand Prix points only: also drove for another team)"
+    if driver_id not in driver_points:
+        return " (Grand Prix points only: not in the standings yet)"
+    return ""
 
 
 def _final_points(rows: Iterable[dict]) -> dict[int, float]:
@@ -560,10 +584,8 @@ def generate_team_profiles(supabase: Client) -> int:
 
         for stats in driver_breakdown.values():
             did = stats["driver_id"]
-            stats["races_only"] = (
-                len(driver_teams.get(did, set())) > 1 or did not in driver_points
-            )
-            if not stats["races_only"]:
+            stats["note"] = _breakdown_note(did, driver_teams, driver_points)
+            if not stats["note"]:
                 stats["points"] = driver_points[did]
 
         driver_lines = []
@@ -572,13 +594,8 @@ def generate_team_profiles(supabase: Client) -> int:
             key=lambda x: -x[1]["points"],
         ):
             best = stats["best"] if stats["best"] < 99 else "N/A"
-            note = (
-                " (Grand Prix points only: also drove for another team)"
-                if stats["races_only"]
-                else ""
-            )
             driver_lines.append(
-                f"- **{name}:** {stats['points']:.0f} pts{note},"
+                f"- **{name}:** {stats['points']:.0f} pts{stats['note']},"
                 f" best P{best} in {stats['races']} races"
             )
 
@@ -830,7 +847,7 @@ tags:
         if movers:
             md += f"\n## Biggest Movers\n\n{chr(10).join(movers[:5])}\n"
 
-        md += _non_finisher_sections(results)
+        md += _non_finisher_sections(results, f"{race['name']} {race['season']}")
 
         if pit_summary:
             md += f"\n## Pit Strategy\n\n{pit_summary}\n"

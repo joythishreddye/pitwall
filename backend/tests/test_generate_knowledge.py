@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 
 from app.ingestion import generate_knowledge as gk
 from app.ingestion.generate_knowledge import _count_titles, _fetch_all
+from app.rag.chunker import chunk_markdown
 
 
 def _builder(pages: list[list[dict]]) -> tuple[MagicMock, list[tuple[int, int]]]:
@@ -158,24 +159,64 @@ def test_race_docs_list_retirements_non_starters_and_disqualifications_apart() -
             _row("Lance Stroll", "Withdrew", 0, "W", laps=0),
             _row("Kevin Magnussen", "Withdrew", 15, "W", laps=12),
             _row("Esteban Ocon", "Disqualified", 6, "D"),
-        ]
+        ],
+        "Turkish Grand Prix 2020",
     )
 
+    # One ## section, so the chunker keeps the lists together (#39)
+    assert md.count("\n## ") == 1
     assert (
-        "## Retirements/DNFs\n\n"
+        "### Retirements/DNFs\n\n"
         "- Brendon Hartley: Power Unit (started from the pit lane)" in md
     )
-    assert "- Kevin Magnussen: Withdrew (started P15)" in md.split("## Did not")[0]
-    assert "## Did not start\n\n- Carlos Sainz\n- Lance Stroll\n" in md
-    assert "## Disqualified\n\n- Esteban Ocon: Disqualified (started P6)" in md
+    assert "- Kevin Magnussen: Withdrew (started P15)" in md.split("### Did not")[0]
+    assert "### Did not start\n\n- Carlos Sainz\n- Lance Stroll\n" in md
+    assert "### Disqualified\n\n- Esteban Ocon: Disqualified (started P6)" in md
+    assert "Turkish Grand Prix 2020" in md
     assert "Norris" not in md
     assert "P0" not in md
     assert "Sainz: Did not start" not in md
 
 
 def test_race_docs_leave_out_empty_sections() -> None:
-    md = gk._non_finisher_sections([_row("Lando Norris", "Finished", 1, "1")])
+    md = gk._non_finisher_sections(
+        [_row("Lando Norris", "Finished", 1, "1")], "Italian Grand Prix 2021"
+    )
     assert md == ""
+
+
+def test_a_lone_non_finisher_still_reaches_the_chat_index(tmp_path) -> None:
+    # The chunker splits on ## and drops a chunk under 20 words, so a section
+    # holding one short name used to vanish from the index
+    races = tmp_path / "races"
+    races.mkdir()
+    for row in (
+        _row("Yuki Tsunoda", "Did not start", 11, "W", laps=0),
+        _row("Fernando Alonso", "Retired", 13),
+        _row("Lewis Hamilton", "Disqualified", 5, "D"),
+    ):
+        doc = races / "2021-r14-monza.md"
+        doc.write_text(
+            "---\ncategory: race\n---\n\n# Italian Grand Prix 2021\n"
+            + gk._non_finisher_sections([row], "Italian Grand Prix 2021"),
+            encoding="utf-8",
+        )
+        surname = row["drivers"]["surname"]
+        chunks = chunk_markdown(doc)
+        assert any(surname in c["content"] for c in chunks), row["status"]
+
+
+def test_a_team_breakdown_says_why_its_points_skip_sprints() -> None:
+    teams = {1: {10}, 2: {10, 11}}
+    points = {1: 267.0, 2: 40.0}
+    assert gk._breakdown_note(1, teams, points) == ""
+    assert gk._breakdown_note(2, teams, points) == (
+        " (Grand Prix points only: also drove for another team)"
+    )
+    # A driver whose results are in but whose standings aren't yet
+    assert gk._breakdown_note(3, {3: {10}}, points) == (
+        " (Grand Prix points only: not in the standings yet)"
+    )
 
 
 def test_season_totals_come_from_each_seasons_last_standings_round() -> None:
