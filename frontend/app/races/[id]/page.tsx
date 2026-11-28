@@ -65,14 +65,16 @@ export default function RaceDetailPage({
     { scope: pageRef }
   );
 
-  // Reduced motion: collapse hero immediately and show content.
+  // Reduced motion: collapse hero immediately and show content. It runs again once the race has loaded: on mount
+  // the page is still loading, so there's no hero yet, and the drawing never reports it's done when motion is
+  // reduced, so without this the hero would cover the race name and the top of the results for good.
   useGSAP(
     () => {
       if (!circuitPath || !respectsReducedMotion()) return;
       if (heroRef.current) gsap.set(heroRef.current, { height: 0 });
       if (contentRef.current) gsap.set(contentRef.current, { opacity: 1, y: 0 });
     },
-    { scope: pageRef }
+    { scope: pageRef, dependencies: [circuitPath] }
   );
 
   // After draw: 500ms pause → hero collapses to 0 → content fades up.
