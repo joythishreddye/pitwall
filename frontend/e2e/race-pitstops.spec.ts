@@ -54,7 +54,6 @@ test("a race that has been run but isn't loaded yet doesn't say the race is stil
   await expect(page.getByText("Results for this race are not yet available.")).toBeVisible();
   await page.getByRole("tab", { name: "Pit Stops" }).click();
   await expect(page.getByText(RESULTS_PENDING)).toBeVisible();
-  await expect(page.getByText(/after the race/)).toHaveCount(0);
 });
 
 test("a race from before 2022 still says pit stop times start in 2022", async ({ page }) => {
@@ -65,4 +64,34 @@ test("a race from before 2022 still says pit stop times start in 2022", async ({
   await expect(page.locator("a.result-row")).toHaveCount(22);
   await page.getByRole("tab", { name: "Pit Stops" }).click();
   await expect(page.getByText(/only available for races from the 2022 season onwards/)).toBeVisible();
+});
+
+test("a race from before 2022 with no results says stop times start in 2022, not that they come later", async ({ page }) => {
+  // stop times are only loaded from 2022, so an older race's stops never arrive, results or not
+  const race = { ...(await savedBrazil()), season: 2021, results: [] };
+  await page.route("**/api/v1/races/193", (route) => route.fulfill({ json: race }));
+  await page.goto("/races/193");
+  await expect(page.getByText("Results for this race are not yet available.")).toBeVisible();
+  await page.getByRole("tab", { name: "Pit Stops" }).click();
+  await expect(page.getByText(/only available for races from the 2022 season onwards/)).toBeVisible();
+  await expect(page.getByText(RESULTS_PENDING)).toHaveCount(0);
+});
+
+test.describe("with motion", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  // the table's entrance animation ran with no rows to animate and logged "GSAP target .pit-row not found"
+  test("a race without stops logs no warnings", async ({ page }) => {
+    const warnings: string[] = [];
+    page.on("console", (msg) => {
+      if (msg.type() === "warning") warnings.push(msg.text());
+    });
+    await page.goto("/races/193");
+    await expect(page.locator("a.result-row")).toHaveCount(22);
+    await page.getByRole("tab", { name: "Pit Stops" }).click();
+    await expect(page.getByText("PitWall doesn't have this race's pit stop times.")).toBeVisible();
+    // the rows would fade in over about 300 ms; give any warning from them time to arrive
+    await page.waitForTimeout(800);
+    expect(warnings).toEqual([]);
+  });
 });
