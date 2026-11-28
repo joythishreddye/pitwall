@@ -23,7 +23,7 @@ Answers come from a retrieval pipeline over 243 knowledge documents (1,250 chunk
 The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
 
 ### Retrieval quality, measured
-`python scripts/eval_rag.py` scores retrieval against a 66-question gold set (`backend/evals/rag_gold.json`, version 5) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run (`backend/evals/results/2026-11-28T1335Z-local-local-linked.json`) and is scored on the same classifier outputs, recorded once and replayed (`backend/evals/intent_cache.json`), so two runs differ only in what changed.
+`python scripts/eval_rag.py` scores retrieval against a hand-written gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run on its 66-question version 5 (`backend/evals/results/2026-11-28T1335Z-local-local-linked.json`; version 6 adds four questions that name a corner without its circuit) and is scored on the same classifier outputs, recorded once and replayed (`backend/evals/intent_cache.json`), so two runs differ only in what changed.
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
