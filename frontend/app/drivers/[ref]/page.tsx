@@ -31,7 +31,7 @@ export default function DriverProfilePage({
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <div className="h-5 w-28 bg-f1-grid/30 rounded-sm animate-pulse mb-6" />
         <div className="h-32 bg-f1-grid/20 rounded-sm animate-pulse mb-4" />
         <div className="grid grid-cols-4 gap-2 h-40 mb-6">
@@ -54,7 +54,7 @@ export default function DriverProfilePage({
       if (!resultsData) void refetchResults();
     };
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <Link
           href="/drivers"
           className="inline-flex items-center gap-1.5 text-f1-muted text-sm hover:text-f1-text transition-colors duration-150 mb-6"
@@ -80,7 +80,7 @@ export default function DriverProfilePage({
   });
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Profile header: photo + SplitReveal name + team color glow */}
       <ProfileHeader
         driver={driver}

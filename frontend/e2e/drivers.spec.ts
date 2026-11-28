@@ -8,6 +8,8 @@ import { expect, test, type Page } from "@playwright/test";
 // When a driver's data doesn't arrive, his page says why. A driver the API doesn't have (404) is "not found"; a
 // failed load says it couldn't load and offers a retry, and so do his season's results. Before, any failure read
 // "DRIVER NOT FOUND", and failed results read "NO RESULTS FOR 2026 SEASON", with no way to try again but reloading.
+// His results fit the screen at every width (the three projects, plus 360 and 375 px phones): before, on a phone the
+// race names shrank to nothing and the points ran off the screen.
 
 let errors: string[] = [];
 // the browser logs a failed request as a console error; the tests below fail a driver's calls on purpose, and any
@@ -120,3 +122,55 @@ test("failed results say so and retry, instead of reading no results", async ({ 
   await expect(page.getByText("Couldn't load the results.")).toHaveCount(0);
   expect(calls.n).toBe(2);
 });
+
+/** His page fits the screen: no sideways scroll, every race's name has room, nothing in a row runs past its edge,
+ * and each row's date shows once (under the name below 1024 px, in its own column from 1024 px). */
+async function resultsFit(page: Page) {
+  await page.goto("/drivers/antonelli");
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
+  const rows = page.locator("a.result-row");
+  await expect(rows).toHaveCount(21);
+
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+
+  // the name's own box (which clipping can shrink), not its text: room for "Las Vegas Gra..." at least
+  for (const row of await rows.all()) {
+    const width = await row.locator(".result-race").evaluate((el) => el.clientWidth);
+    expect(width).toBeGreaterThan(100);
+    const spill = await row.evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(spill).toBeLessThanOrEqual(0);
+  }
+
+  // Las Vegas, the newest row, ran on 22 Nov
+  const first = rows.first();
+  const date = first.getByText("22 Nov", { exact: true });
+  await expect(date).toHaveCount(2); // one for each layout, one of them hidden
+  await expect(date.filter({ visible: true })).toHaveCount(1);
+  const name = (await first.locator(".result-race").boundingBox())!;
+  const shown = (await date.filter({ visible: true }).boundingBox())!;
+  if ((page.viewportSize()?.width ?? 0) < 1024) {
+    expect(shown.y).toBeGreaterThanOrEqual(name.y + name.height - 1);
+  } else {
+    expect(shown.x).toBeGreaterThanOrEqual(name.x + name.width);
+  }
+  await expect(page.getByText("DATE", { exact: true }).filter({ visible: true })).toHaveCount(
+    (page.viewportSize()?.width ?? 0) < 1024 ? 0 : 1,
+  );
+}
+
+test("his results fit the screen, every race's name has room, and each date shows once", async ({ page }) => {
+  await resultsFit(page);
+});
+
+// Most Android phones are 360 px wide, the iPhone SE and mini 375
+for (const width of [360, 375]) {
+  test.describe(`on a ${width} px phone`, () => {
+    test.use({ viewport: { width, height: 800 } });
+    test("his results fit the screen, every race's name has room, and each date shows once", async ({ page }) => {
+      await resultsFit(page);
+    });
+  });
+}
