@@ -5,12 +5,15 @@ import { expect, test } from "@playwright/test";
 // on Standings, Races and Drivers used the brand red at 14 px.
 
 let errors: string[] = [];
-// the browser logs a failed request as a console error; these tests fail requests on purpose
-const FAILED_REQUEST = /^Failed to load resource/;
+// the browser logs a failed request as a console error; these tests fail the API's calls on purpose, and any other
+// failed request (a missing asset, a blocked host) still counts
+const FAILED_ON_PURPOSE = /\/api\/v1\//;
 test.beforeEach(async ({ context, baseURL, page }) => {
   errors = [];
   page.on("console", (msg) => {
-    if (msg.type() === "error") errors.push(msg.text());
+    if (msg.type() !== "error") return;
+    if (msg.text().startsWith("Failed to load resource") && FAILED_ON_PURPOSE.test(msg.location().url)) return;
+    errors.push(msg.text());
   });
   const host = new URL(baseURL ?? "http://127.0.0.1").hostname;
   await context.route(
@@ -19,7 +22,7 @@ test.beforeEach(async ({ context, baseURL, page }) => {
   );
 });
 test.afterEach(() => {
-  expect(errors.filter((e) => !FAILED_REQUEST.test(e))).toEqual([]);
+  expect(errors).toEqual([]);
 });
 
 const PAGES = [

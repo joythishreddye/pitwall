@@ -44,21 +44,29 @@ const STOPS = [
 
 type Fail = "server error" | "timeout";
 
-/** Serves `body` from the second call on; the first call fails as asked. Returns a counter of the calls. */
-async function failFirst(page: Page, url: string, fail: Fail, body: unknown) {
+/** Serves `body` from the second call on, after `delayMs`; the first call fails as asked. Returns a counter of the
+ * calls and a promise that settles once the first (failed) answer has been sent. */
+async function failFirst(page: Page, url: string, fail: Fail, body: unknown, delayMs = 0) {
   const calls = { n: 0 };
-  await page.route(url, (route) => {
+  let failed!: () => void;
+  const firstFailed = new Promise<void>((resolve) => (failed = resolve));
+  await page.route(url, async (route) => {
     calls.n += 1;
-    if (calls.n > 1) return route.fulfill({ json: body });
-    return fail === "timeout" ? route.abort("timedout") : route.fulfill({ status: 503, json: { detail: "busy" } });
+    if (calls.n > 1) {
+      if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
+      return route.fulfill({ json: body });
+    }
+    if (fail === "timeout") await route.abort("timedout");
+    else await route.fulfill({ status: 503, json: { detail: "busy" } });
+    failed();
   });
-  return calls;
+  return { calls, firstFailed };
 }
 
 async function pitStopsShow(page: Page) {
   await page.getByRole("tab", { name: "Pit Stops" }).click();
   await expect(page.locator(".pit-row")).toHaveCount(1);
-  await expect(page.getByText("No pit stop telemetry")).toHaveCount(0);
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
 }
 
 async function failsThenLoads(page: Page, fail: Fail) {
@@ -68,13 +76,15 @@ async function failsThenLoads(page: Page, fail: Fail) {
   await page.goto("/races/193");
   await expect(page.getByText("Couldn't load this race.")).toBeVisible();
   await expect(page.getByText("Race not found.")).toHaveCount(0);
+  // both failures have been sent, so each call is made once more after Retry
+  await Promise.all([race.firstFailed, stops.firstFailed]);
 
   await page.getByRole("button", { name: "Retry" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Brazilian Grand Prix" })).toBeVisible();
   await expect(page.locator("a.result-row")).toHaveCount(22);
   await pitStopsShow(page);
-  expect(race.n).toBe(2);
-  expect(stops.n).toBe(2);
+  expect(race.calls.n).toBe(2);
+  expect(stops.calls.n).toBe(2);
 }
 
 test("a server error says the race couldn't load, and Retry loads it", async ({ page }) => {
@@ -86,30 +96,38 @@ test("a request that times out says the race couldn't load, and Retry loads it",
 });
 
 test("pit stops that fail to load say so, and Retry loads them", async ({ page }) => {
-  const stops = await failFirst(page, "**/api/v1/races/193/strategy", "server error", STOPS);
+  // the second answer takes a second, so the tab is seen while the stops reload
+  const stops = await failFirst(page, "**/api/v1/races/193/strategy", "server error", STOPS, 1_000);
   await page.goto("/races/193");
   await expect(page.locator("a.result-row")).toHaveCount(22);
   await page.getByRole("tab", { name: "Pit Stops" }).click();
-  // not "No pit stop telemetry", which would say the race has none
+  // not "No pit stop ...", which would say the race has none
   await expect(page.getByText("Couldn't load the pit stops.")).toBeVisible();
-  await expect(page.getByText("No pit stop telemetry")).toHaveCount(0);
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
 
   await page.getByRole("button", { name: "Retry" }).click();
+  // while they reload, the tab says so, and never that the race has no pit stops
+  await expect(page.getByRole("status", { name: "Loading pit stops" })).toBeVisible();
+  await expect(page.getByText(/No pit stop/)).toHaveCount(0);
   await expect(page.locator(".pit-row")).toHaveCount(1);
-  expect(stops.n).toBe(2);
+  expect(stops.calls.n).toBe(2);
 });
 
-test("an id that can't name a race is not found, with no request and nothing to retry", async ({ page }) => {
-  let calls = 0;
-  await page.route("**/api/v1/races/**", (route) => {
-    calls += 1;
-    return route.fulfill({ status: 422, json: { detail: "not an integer" } });
+// 193.5 gets a 422 from the API, and 3000000000 (past races.id's 32-bit range) a 500 (both checked on production,
+// 2026-11-27), so asking would only offer a Retry that can never work
+for (const id of ["193.5", "3000000000"]) {
+  test(`an id that can't name a race (${id}) is not found, with no request and nothing to retry`, async ({ page }) => {
+    let calls = 0;
+    await page.route("**/api/v1/races/**", (route) => {
+      calls += 1;
+      return route.fulfill({ status: 500, json: { detail: "not a race id" } });
+    });
+    await page.goto(`/races/${id}`);
+    await expect(page.getByText("Race not found.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
+    expect(calls).toBe(0);
   });
-  await page.goto("/races/193.5");
-  await expect(page.getByText("Race not found.")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Retry" })).toHaveCount(0);
-  expect(calls).toBe(0);
-});
+}
 
 test("a race the API doesn't have is not found, with nothing to retry", async ({ page }) => {
   await page.route("**/api/v1/races/193", (route) =>

@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import { ApiError } from "@/lib/api-client";
 import { gsap, useGSAP, respectsReducedMotion } from "@/lib/gsap";
 import { raceStart } from "@/lib/hooks/use-countdown";
-import { isRaceId, useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
+import { useRaceDetail, useRaceStrategy } from "@/lib/hooks/use-races";
+import { isRaceId } from "@/lib/race-id";
 import { getCircuitMeta, circuitPaths } from "@/lib/constants/circuits";
 import { DrawPath } from "@/components/ui/draw-path";
 import { ErrorState } from "@/components/error-state";
@@ -144,13 +145,13 @@ export default function RaceDetailPage({
 
   // No race to show. An id that can't name a race (no request is made) or a 404 means the race doesn't exist; anything
   // else (a server error, a dropped connection, the client's timeout, a request paused while offline) is a failed
-  // load the reader can retry. Retry also reloads the pit stops when they failed too, since nothing else would. A
-  // background refetch that fails keeps the race already on screen.
+  // load the reader can retry. Retry also reloads the pit stops whenever there are none yet (failed, or failing but not
+  // rendered so yet), since nothing else would. A background refetch that fails keeps the race already on screen.
   if (!race) {
     const missing = !isRaceId(raceId) || (error instanceof ApiError && error.status === 404);
     const retry = () => {
       void refetch();
-      if (strategyFailed) void refetchStrategy();
+      if (!strategy) void refetchStrategy();
     };
     return (
       <div className="p-4 md:p-8">
@@ -315,11 +316,17 @@ export default function RaceDetailPage({
           ) : (
             <RaceResultsTable results={race.results} winnerMs={winnerMs} />
           )
-        ) : strategyFailed && !strategy ? (
-          // without this the table would say the race has no pit stop data
+        ) : strategy ? (
+          <PitStopsTable strategy={strategy} season={race.season} finished={race.results.length > 0} />
+        ) : strategyFailed ? (
           <ErrorState message="Couldn't load the pit stops." onRetry={() => void refetchStrategy()} />
         ) : (
-          <PitStopsTable strategy={strategy ?? []} />
+          // still loading (or reloading after a Retry): the table would say the race has no pit stop data
+          <div role="status" aria-label="Loading pit stops" className="flex flex-col gap-1">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="h-11 bg-f1-grid/30 animate-pulse" />
+            ))}
+          </div>
         )}
       </div>
     </div>

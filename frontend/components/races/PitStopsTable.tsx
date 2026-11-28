@@ -9,9 +9,26 @@ import type { DriverStrategy } from "@/lib/schemas/races";
 
 interface PitStopsTableProps {
   strategy: DriverStrategy[];
+  /** The race's season: stop times start in 2022 */
+  season: number;
+  /** Whether the race has been run (it has results) */
+  finished: boolean;
 }
 
-export function PitStopsTable({ strategy }: PitStopsTableProps) {
+/** Why a race has no stops to show: no results yet (not run, or not loaded), from before stop times start (2022),
+ * or not in PitWall's data. */
+function emptyMessage(season: number, finished: boolean): { title: string; text: string } {
+  if (!finished) return { title: "No pit stops yet", text: "Pit stops show here once the race's results are in." };
+  if (season < 2022) {
+    return {
+      title: "No pit stop telemetry",
+      text: "Detailed undercut data is only available for races from the 2022 season onwards.",
+    };
+  }
+  return { title: "No pit stop times", text: "PitWall doesn't have this race's pit stop times." };
+}
+
+export function PitStopsTable({ strategy, season, finished }: PitStopsTableProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const allStops = strategy
@@ -61,14 +78,11 @@ export function PitStopsTable({ strategy }: PitStopsTableProps) {
   );
 
   if (strategy.length === 0) {
+    const { title, text } = emptyMessage(season, finished);
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 text-center select-none">
-        <p className="font-data text-[11px] tracking-[0.2em] text-f1-muted uppercase">
-          No pit stop telemetry
-        </p>
-        <p className="text-f1-muted text-sm max-w-xs">
-          Detailed undercut data is only available for races from the 2022 season onwards.
-        </p>
+        <p className="font-data text-[11px] tracking-[0.2em] text-f1-muted uppercase">{title}</p>
+        <p className="text-f1-muted text-sm max-w-xs">{text}</p>
       </div>
     );
   }
