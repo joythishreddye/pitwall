@@ -22,8 +22,9 @@ from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
-from app.rag.race_calendar import race_calendar_note
+from app.rag.race_calendar import race_calendar_note, season_rounds
 from app.rag.retriever import RaceRef, Retriever
+from app.rag.title_note import title_note
 
 logger = logging.getLogger(__name__)
 
@@ -276,8 +277,33 @@ def _race_note(race: RaceRef, name: str | None) -> str:
     )
 
 
+def _round_raced(db: Client, season: int, rnd: int) -> bool:
+    """Whether the round's Grand Prix result is stored (race_results holds
+    Grand Prix results only: standings stored after a round's sprint carry its
+    number before its Grand Prix has run)."""
+    race = (
+        db.table("races")
+        .select("id")
+        .eq("season", season)
+        .eq("round", rnd)
+        .limit(1)
+        .execute()
+    ).data
+    if not race:
+        return False
+    result = (
+        db.table("race_results")
+        .select("id")
+        .eq("race_id", race[0]["id"])
+        .limit(1)
+        .execute()
+    ).data
+    return bool(result)
+
+
 def _fetch_current_standings_sync(db: Client) -> str | None:
-    """Fetch latest driver standings for context injection (sync)."""
+    """Fetch latest driver standings for context injection (sync): every
+    driver with standings, then whether the title is decided."""
     try:
         result = (
             db.table("standings")
@@ -302,7 +328,6 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
             .eq("season", season)
             .eq("round", rnd)
             .order("position")
-            .limit(20)
             .execute()
         )
         if not standings.data:
@@ -319,12 +344,21 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
         driver_map = {d["id"]: d for d in drivers.data}
 
         lines = [f"Season {season}, Round {rnd}:"]
+        ranked: list[tuple[str, float]] = []
         for row in standings.data:
             d = driver_map.get(row["entity_id"], {})
             name = f"{d.get('forename', '?')} {d.get('surname', '?')}"
             lines.append(
                 f"P{row['position']}. {name} — {row['points']} pts ({row['wins']} wins)"
             )
+            ranked.append((name, float(row["points"] or 0)))
+        schedule = season_rounds(season)
+        if schedule:
+            note = title_note(
+                season, rnd, ranked, schedule, _round_raced(db, season, rnd)
+            )
+            if note:
+                lines.append(note)
         return "\n".join(lines)
     except Exception:
         logger.exception("Failed to fetch standings for chat context")

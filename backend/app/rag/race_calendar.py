@@ -153,6 +153,12 @@ def _season(season: int, data_dir: Path) -> tuple[RoundSchedule, ...]:
         return ()
 
 
+def season_rounds(season: int, data_dir: Path = DATA_DIR) -> tuple[RoundSchedule, ...]:
+    """One season's rounds from its schedule file, read once per process; ()
+    when there's no file or it can't be read."""
+    return _season(season, data_dir)
+
+
 def race_calendar_note(
     now: datetime | None = None, data_dir: Path = DATA_DIR
 ) -> str | None:
