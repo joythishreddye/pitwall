@@ -47,7 +47,11 @@ tags:
 
 - Carlos Sainz: P12 → P8 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Lance Stroll: Collision (started P16)
 - Lando Norris: Collision (started P10)

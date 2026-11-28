@@ -50,7 +50,11 @@ tags:
 - Nico Hülkenberg: P18 → P14 (+4 places)
 - Logan Sargeant: P20 → P17 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Alexander Albon: Retired (started P13)
 - Logan Sargeant: Retired (started P20)

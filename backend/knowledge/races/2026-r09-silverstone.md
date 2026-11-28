@@ -51,7 +51,11 @@ tags:
 - Liam Lawson: P10 → P6 (+4 places)
 - Esteban Ocon: P17 → P13 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Max Verstappen: Retired (started P7)
 - Alexander Albon: Retired (started P16)

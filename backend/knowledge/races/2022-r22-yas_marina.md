@@ -51,7 +51,11 @@ tags:
 - Guanyu Zhou: P15 → P12 (+3 places)
 - Pierre Gasly: P17 → P14 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Abu Dhabi Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Lewis Hamilton: Hydraulics (started P5)
 - Nicholas Latifi: Collision damage (started P20)

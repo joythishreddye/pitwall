@@ -48,7 +48,11 @@ tags:
 - Lewis Hamilton: P18 → P9 (+9 places)
 - Logan Sargeant: P20 → P17 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Chinese Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Daniel Ricciardo: Retired (started P12)
 - Yuki Tsunoda: Retired (started P19)

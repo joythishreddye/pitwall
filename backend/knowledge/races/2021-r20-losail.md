@@ -52,7 +52,11 @@ tags:
 - Charles Leclerc: P13 → P8 (+5 places)
 - Esteban Ocon: P9 → P5 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Qatar Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Nicholas Latifi: Puncture (started P17)
 - Valtteri Bottas: Damage (started P6)

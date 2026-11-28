@@ -52,7 +52,11 @@ tags:
 - George Russell: P17 → P8 (+9 places)
 - Mick Schumacher: P20 → P12 (+8 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Nikita Mazepin: Collision (started P19)
 - Lando Norris: Collision (started P6)
@@ -60,4 +64,7 @@ tags:
 - Sergio Pérez: Collision (started P4)
 - Charles Leclerc: Collision (started P7)
 - Lance Stroll: Collision (started P12)
+
+### Disqualified
+
 - Sebastian Vettel: Disqualified (started P10)

@@ -51,6 +51,10 @@ tags:
 - Kimi Räikkönen: P17 → P13 (+4 places)
 - Sergio Pérez: P10 → P7 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Abu Dhabi Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Lance Stroll: Brakes (started P12)

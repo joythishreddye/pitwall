@@ -50,7 +50,11 @@ tags:
 - Esteban Ocon: P17 → P14 (+3 places)
 - Mick Schumacher: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Styrian Grand Prix 2021:
+
+### Retirements/DNFs
 
 - George Russell: Engine (started P10)
 - Pierre Gasly: Collision (started P6)

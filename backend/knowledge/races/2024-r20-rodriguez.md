@@ -50,7 +50,11 @@ tags:
 - Guanyu Zhou: P19 → P15 (+4 places)
 - Lance Stroll: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P13)
 - Alexander Albon: Retired (started P9)

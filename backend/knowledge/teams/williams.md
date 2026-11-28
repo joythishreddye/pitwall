@@ -22,9 +22,9 @@ tags:
 - **Points:** 16
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 11
+- **DNFs:** 9
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
 - **Carlos Sainz:** 11 pts, best P8 in 21 races
 - **Alexander Albon:** 5 pts, best P8 in 21 races
@@ -34,4 +34,4 @@ tags:
 - **Race Entries:** 387
 - **Wins:** 0
 - **Podiums:** 3
-- **Total Points:** 222.0
+- **Total Points (including sprints):** 237.0

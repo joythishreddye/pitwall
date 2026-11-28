@@ -49,7 +49,11 @@ tags:
 - Max Verstappen: P9 → P5 (+4 places)
 - Sergio Pérez: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Alexander Albon: Collision damage (started P13)
 - Lando Norris: Suspension (started P8)

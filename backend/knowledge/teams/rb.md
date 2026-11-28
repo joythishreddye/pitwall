@@ -22,12 +22,12 @@ tags:
 - **Points:** 114
 - **Wins:** 0
 - **Podiums:** 0
-- **DNFs:** 4
+- **DNFs:** 3
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
-- **Liam Lawson:** 68 pts, best P5 in 18 races
-- **Arvid Lindblad:** 37 pts, best P6 in 21 races
+- **Liam Lawson:** 68 pts (Grand Prix points only: also drove for another team), best P5 in 18 races
+- **Arvid Lindblad:** 38 pts, best P6 in 21 races
 - **Yuki Tsunoda:** 1 pts, best P10 in 3 races
 
 ## Statistics since 2018 (not full team history)
@@ -35,4 +35,4 @@ tags:
 - **Race Entries:** 138
 - **Wins:** 0
 - **Podiums:** 1
-- **Total Points:** 234.0
+- **Total Points (including sprints):** 252.0

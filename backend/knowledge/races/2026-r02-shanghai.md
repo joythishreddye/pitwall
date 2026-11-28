@@ -51,15 +51,22 @@ tags:
 - Sergio Pérez: P21 → P15 (+6 places)
 - Oliver Bearman: P10 → P5 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Chinese Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Max Verstappen: Retired (started P8)
 - Fernando Alonso: Retired (started P18)
 - Lance Stroll: Retired (started P20)
-- Oscar Piastri: Did not start (started P5)
-- Lando Norris: Did not start (started P6)
-- Gabriel Bortoleto: Did not start (started P16)
-- Alexander Albon: Did not start (started P22)
+
+### Did not start
+
+- Oscar Piastri
+- Lando Norris
+- Gabriel Bortoleto
+- Alexander Albon
 
 ## Pit Strategy
 

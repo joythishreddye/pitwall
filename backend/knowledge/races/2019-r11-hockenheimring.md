@@ -52,7 +52,11 @@ tags:
 - Alexander Albon: P16 → P6 (+10 places)
 - Robert Kubica: P18 → P10 (+8 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the German Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Collision (started P4)
 - Valtteri Bottas: Accident (started P3)

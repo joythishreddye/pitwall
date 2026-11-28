@@ -51,6 +51,10 @@ tags:
 - Charles Leclerc: P8 → P4 (+4 places)
 - Alexander Albon: P9 → P5 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the 70th Anniversary Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Kevin Magnussen: Retired (started P17)

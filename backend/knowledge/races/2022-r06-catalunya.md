@@ -51,7 +51,11 @@ tags:
 - Sergio Pérez: P5 → P2 (+3 places)
 - Lando Norris: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Guanyu Zhou: Power loss (started P15)
 - Charles Leclerc: Turbo (started P1)

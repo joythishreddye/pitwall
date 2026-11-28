@@ -51,7 +51,11 @@ tags:
 - Stoffel Vandoorne: P19 → P13 (+6 places)
 - Marcus Ericsson: P13 → P9 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the German Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P11)
 - Lance Stroll: Engine (started P18)

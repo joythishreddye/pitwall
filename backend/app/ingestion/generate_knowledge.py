@@ -64,13 +64,143 @@ def _unique_in_order(refs: Iterable[str]) -> list[str]:
     return list(dict.fromkeys(refs))
 
 
-def _is_dnf(status: str) -> bool:
-    """Return True if the status indicates a retirement/DNF."""
+# A driver who never took the start, or was thrown out after it, didn't
+# retire: neither counts as a DNF (#39). "Withdrew" alone isn't proof of a
+# non-start: Jolpica gives it to some mid-race retirements too.
+_DID_NOT_START = frozenset(
+    {"Did not start", "Withdrew", "Did not qualify", "Did not prequalify"}
+)
+_DISQUALIFIED = frozenset({"Disqualified", "Excluded"})
+# Jolpica's positionText when a driver has no finishing place
+_POSITION_CODES = {
+    "R": "retired",
+    "D": "disqualified",
+    "E": "excluded",
+    "W": "withdrew",
+    "F": "did not qualify",
+    "N": "not classified",
+}
+
+
+def _did_not_start(row: dict) -> bool:
+    """No lap done, and Jolpica marks a non-start: its W place or a non-start
+    status. A driver with laps started, whatever his status says."""
+    if row.get("laps"):
+        return False
+    return row.get("position_text") == "W" or row["status"] in _DID_NOT_START
+
+
+def _is_dnf(row: dict) -> bool:
+    """Return True if the result is a retirement: not a finish, a non-start
+    or a disqualification."""
+    status = row["status"]
     if status in _FINISHED_STATUSES:
+        return False
+    if status in _DISQUALIFIED or _did_not_start(row):
         return False
     if status.startswith("+") and "Lap" in status:
         return False
     return True
+
+
+def _finish_text(position_text: str | None, position: int | None) -> str:
+    """ "P3", or what Jolpica's code stands for ("retired", not "PR")."""
+    text = (position_text or "").strip()
+    if text.isdigit():
+        return f"P{text}"
+    if text in _POSITION_CODES:
+        return _POSITION_CODES[text]
+    if text:
+        return text
+    return f"P{position}" if position else "no classified finish"
+
+
+def _start_text(grid: int | None) -> str:
+    """Jolpica's grid 0 is a pit lane start, not P0."""
+    if grid == 0:
+        return "started from the pit lane"
+    return f"started P{grid}" if grid else "start position unknown"
+
+
+def _driver_name(row: dict) -> str:
+    d = row["drivers"]
+    return f"{d['forename']} {d['surname']}"
+
+
+def _recent_line(row: dict) -> str:
+    """One race in a driver's Recent Results; a non-starter has no start."""
+    race = row["races"]
+    head = f"- Round {race['round']} {race['name']}"
+    if _did_not_start(row):
+        return f"{head}: did not start"
+    finish = _finish_text(row.get("position_text"), row.get("position"))
+    return f"{head}: {finish} ({_start_text(row['grid'])})"
+
+
+def _non_finisher_sections(results: Iterable[dict], race_title: str) -> str:
+    """A race doc's retirements, non-starters and disqualifications, each
+    under its own heading, so none reads as another (#39).
+
+    The lists share one ## section, with a line naming the race: the chunker
+    splits on ## and drops a chunk under 20 words, which a section holding
+    one short name would be.
+    """
+    retired, absent, disqualified = [], [], []
+    for r in results:
+        if _did_not_start(r):
+            absent.append(f"- {_driver_name(r)}")
+        elif r["status"] in _DISQUALIFIED:
+            disqualified.append(
+                f"- {_driver_name(r)}: {r['status']} ({_start_text(r['grid'])})"
+            )
+        elif _is_dnf(r):
+            retired.append(
+                f"- {_driver_name(r)}: {r['status']} ({_start_text(r['grid'])})"
+            )
+    lists = [
+        f"### {heading}\n\n{chr(10).join(lines)}"
+        for heading, lines in (
+            ("Retirements/DNFs", retired),
+            ("Did not start", absent),
+            ("Disqualified", disqualified),
+        )
+        if lines
+    ]
+    if not lists:
+        return ""
+    return (
+        "\n## Non-finishers\n\n"
+        f"Drivers who retired, didn't start or were disqualified at the {race_title}:"
+        f"\n\n{(chr(10) * 2).join(lists)}\n"
+    )
+
+
+def _breakdown_note(
+    driver_id: int, driver_teams: dict[int, set], driver_points: dict[int, float]
+) -> str:
+    """Why a team doc's driver line counts Grand Prix points only, or "" when
+    it shows the driver's standings points, sprints included (#39)."""
+    if len(driver_teams.get(driver_id, set())) > 1:
+        return " (Grand Prix points only: also drove for another team)"
+    if driver_id not in driver_points:
+        return " (Grand Prix points only: not in the standings yet)"
+    return ""
+
+
+def _final_points(rows: Iterable[dict]) -> dict[int, float]:
+    """Sum each entity's points from its last stored round of every season.
+
+    Standings include sprint points, which race results don't (#39).
+    """
+    last: dict[tuple[int, int], tuple[int, float]] = {}
+    for row in rows:
+        key = (row["entity_id"], row["season"])
+        if key not in last or row["round"] > last[key][0]:
+            last[key] = (row["round"], row["points"] or 0.0)
+    totals: dict[int, float] = {}
+    for (entity_id, _season), (_round, points) in last.items():
+        totals[entity_id] = totals.get(entity_id, 0.0) + points
+    return totals
 
 
 def _format_time(ms: int | None) -> str:
@@ -181,6 +311,17 @@ def generate_driver_profiles(supabase: Client) -> int:
         if pos and pos <= 3:
             career[did]["podiums"] += 1
 
+    # Points since 2018 from each season's final standings, sprints included
+    career_points = _final_points(
+        _fetch_all(
+            lambda: supabase.table("standings")
+            .select("id, entity_id, season, round, points")
+            .eq("type", "driver")
+            .in_("entity_id", driver_ids)
+            .order("id")
+        )
+    )
+
     # Fetch qualifying poles
     quali_poles = _fetch_all(
         lambda: supabase.table("qualifying_results")
@@ -244,17 +385,11 @@ def generate_driver_profiles(supabase: Client) -> int:
             (r["position"] for r in results if r["position"]),
             default=None,
         )
-        dnfs = sum(1 for r in results if _is_dnf(r["status"]))
+        dnfs = sum(1 for r in results if _is_dnf(r))
 
         # Recent results (last 5)
         recent = results[-5:]
-        recent_lines = []
-        for r in recent:
-            race = r["races"]
-            pos = r["position_text"] if "position_text" in r else str(r["position"])
-            recent_lines.append(
-                f"- Round {race['round']} {race['name']}: P{pos} (started P{r['grid']})"
-            )
+        recent_lines = [_recent_line(r) for r in recent]
 
         md = f"""---
 category: driver
@@ -282,7 +417,7 @@ tags:
 - **Wins:** {stats["wins"]}
 - **Podiums:** {stats["podiums"]}
 - **Pole Positions:** {poles.get(did, 0)}
-- **Points:** {stats["points"]:.1f}
+- **Points (including sprints):** {career_points.get(did, stats["points"]):.1f}
 - **World Championships since {FIRST_SEASON_IN_DB}:** {championships.get(did, 0)}
 
 ## {CURRENT_SEASON} Season Performance
@@ -292,7 +427,7 @@ tags:
 - **Podiums:** {season_podiums}
 - **Best Finish:** P{best_finish if best_finish else "N/A"}
 - **DNFs:** {dnfs}
-- **Races Completed:** {len(results)}
+- **Races Entered:** {len(results)}
 
 ## Recent Results ({CURRENT_SEASON})
 
@@ -349,13 +484,39 @@ def generate_team_profiles(supabase: Client) -> int:
     season_results = (
         supabase.table("race_results")
         .select(
-            "constructor_id, driver_id, position, points, status,"
-            " drivers!inner(ref, forename, surname, code)"
+            "constructor_id, driver_id, position, position_text, points,"
+            " status, laps, drivers!inner(ref, forename, surname, code)"
         )
         .in_("race_id", season_race_ids)
         .in_("constructor_id", constructor_ids)
         .execute()
     )
+
+    # Points from the standings, which include sprints (#39): each season's
+    # final round for the totals since 2018, and this season's latest round
+    # for each driver
+    team_points = _final_points(
+        _fetch_all(
+            lambda: supabase.table("standings")
+            .select("id, entity_id, season, round, points")
+            .eq("type", "constructor")
+            .in_("entity_id", constructor_ids)
+            .order("id")
+        )
+    )
+    driver_points = _final_points(
+        _fetch_all(
+            lambda: supabase.table("standings")
+            .select("id, entity_id, season, round, points")
+            .eq("type", "driver")
+            .eq("season", CURRENT_SEASON)
+            .order("id")
+        )
+    )
+    # A driver's standings points cover every team he drove for this season
+    driver_teams: dict[int, set[int]] = {}
+    for row in season_results.data:
+        driver_teams.setdefault(row["driver_id"], set()).add(row["constructor_id"])
 
     # Group results by constructor
     team_results: dict[int, list] = {cid: [] for cid in constructor_ids}
@@ -402,7 +563,7 @@ def generate_team_profiles(supabase: Client) -> int:
 
         # Season breakdown
         season_podiums = sum(1 for r in results if r["position"] and r["position"] <= 3)
-        season_dnfs = sum(1 for r in results if _is_dnf(r["status"]))
+        season_dnfs = sum(1 for r in results if _is_dnf(r))
 
         # Per-driver breakdown
         driver_breakdown: dict[str, dict] = {}
@@ -411,6 +572,7 @@ def generate_team_profiles(supabase: Client) -> int:
             name = f"{d['forename']} {d['surname']}"
             if name not in driver_breakdown:
                 driver_breakdown[name] = {
+                    "driver_id": r["driver_id"],
                     "points": 0,
                     "best": 99,
                     "races": 0,
@@ -420,6 +582,12 @@ def generate_team_profiles(supabase: Client) -> int:
             if r["position"] and r["position"] < driver_breakdown[name]["best"]:
                 driver_breakdown[name]["best"] = r["position"]
 
+        for stats in driver_breakdown.values():
+            did = stats["driver_id"]
+            stats["note"] = _breakdown_note(did, driver_teams, driver_points)
+            if not stats["note"]:
+                stats["points"] = driver_points[did]
+
         driver_lines = []
         for name, stats in sorted(
             driver_breakdown.items(),
@@ -427,7 +595,7 @@ def generate_team_profiles(supabase: Client) -> int:
         ):
             best = stats["best"] if stats["best"] < 99 else "N/A"
             driver_lines.append(
-                f"- **{name}:** {stats['points']:.0f} pts,"
+                f"- **{name}:** {stats['points']:.0f} pts{stats['note']},"
                 f" best P{best} in {stats['races']} races"
             )
 
@@ -457,7 +625,7 @@ tags:
 - **Podiums:** {season_podiums}
 - **DNFs:** {season_dnfs}
 
-## {CURRENT_SEASON} Driver Breakdown
+## {CURRENT_SEASON} Driver Breakdown (points include sprints)
 
 {chr(10).join(driver_lines)}
 
@@ -466,7 +634,7 @@ tags:
 - **Race Entries:** {cs.get("races", 0)}
 - **Wins:** {cs.get("wins", 0)}
 - **Podiums:** {cs.get("podiums", 0)}
-- **Total Points:** {cs.get("points", 0):.1f}
+- **Total Points (including sprints):** {team_points.get(cid, cs.get("points", 0)):.1f}
 """
         filepath = out_dir / f"{c['ref']}.md"
         filepath.write_text(md.strip() + "\n", encoding="utf-8")
@@ -552,8 +720,6 @@ def generate_race_summaries(supabase: Client) -> int:
         # Sort by position
         finished = [r for r in results if r["position"] is not None]
         finished.sort(key=lambda r: r["position"])
-        dnfs = [r for r in results if _is_dnf(r["status"])]
-
         if not finished:
             continue
 
@@ -569,16 +735,18 @@ def generate_race_summaries(supabase: Client) -> int:
             gap = _format_gap(r["time_millis"], winner_time)
             grid_delta = (r["grid"] or 0) - (r["position"] or 0)
             delta_str = (
-                f"(+{grid_delta} places)"
+                ""
+                if not r["grid"]
+                else f" (+{grid_delta} places)"
                 if grid_delta > 0
-                else f"({grid_delta} places)"
+                else f" ({grid_delta} places)"
                 if grid_delta < 0
-                else "(same as grid)"
+                else " (same as grid)"
             )
             podium_lines.append(
                 f"- **P{r['position']}:** {d['forename']} {d['surname']}"
-                f" ({c['name']}) — started P{r['grid']}"
-                f" {delta_str} {gap}"
+                f" ({c['name']}) — {_start_text(r['grid'])}"
+                f"{delta_str} {gap}"
             )
 
         # Biggest movers (gained most positions)
@@ -596,15 +764,6 @@ def generate_race_summaries(supabase: Client) -> int:
         movers.sort(
             key=lambda x: -int(x.split("+")[1].split(" ")[0]),
         )
-
-        # DNF lines
-        dnf_lines = []
-        for r in dnfs:
-            d = r["drivers"]
-            dnf_lines.append(
-                f"- {d['forename']} {d['surname']}:"
-                f" {r['status']} (started P{r['grid']})"
-            )
 
         # Fastest lap
         fl_holder = None
@@ -688,8 +847,7 @@ tags:
         if movers:
             md += f"\n## Biggest Movers\n\n{chr(10).join(movers[:5])}\n"
 
-        if dnf_lines:
-            md += f"\n## Retirements/DNFs\n\n{chr(10).join(dnf_lines)}\n"
+        md += _non_finisher_sections(results, f"{race['name']} {race['season']}")
 
         if pit_summary:
             md += f"\n## Pit Strategy\n\n{pit_summary}\n"

@@ -52,7 +52,11 @@ tags:
 - Lance Stroll: P19 → P14 (+5 places)
 - Franco Colapinto: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P12)
 - Fernando Alonso: Retired (started P14)

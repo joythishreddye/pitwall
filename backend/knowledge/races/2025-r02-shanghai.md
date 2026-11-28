@@ -51,9 +51,16 @@ tags:
 - Lance Stroll: P14 → P9 (+5 places)
 - Carlos Sainz: P15 → P10 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Chinese Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P13)
+
+### Disqualified
+
 - Charles Leclerc: Disqualified (started P6)
 - Lewis Hamilton: Disqualified (started P5)
 - Pierre Gasly: Disqualified (started P16)

@@ -49,7 +49,11 @@ tags:
 - Lewis Hamilton: P5 → P2 (+3 places)
 - Daniel Ricciardo: P9 → P6 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Suspension (started P10)
 - Kevin Magnussen: Brakes (started P12)

@@ -51,7 +51,11 @@ tags:
 - Guanyu Zhou: P15 → P10 (+5 places)
 - Esteban Ocon: P11 → P7 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Sergio Pérez: Fuel pressure (started P4)
 - Max Verstappen: Fuel pressure (started P2)

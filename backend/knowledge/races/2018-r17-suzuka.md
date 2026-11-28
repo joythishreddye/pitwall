@@ -51,7 +51,11 @@ tags:
 - Stoffel Vandoorne: P19 → P15 (+4 places)
 - Carlos Sainz: P13 → P10 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Charles Leclerc: Mechanical (started P10)
 - Nico Hülkenberg: Engine (started P16)

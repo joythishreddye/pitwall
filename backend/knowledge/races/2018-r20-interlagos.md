@@ -52,7 +52,11 @@ tags:
 - Max Verstappen: P5 → P2 (+3 places)
 - Carlos Sainz: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Brazilian Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Nico Hülkenberg: Overheating (started P13)
 - Marcus Ericsson: Collision (started P6)

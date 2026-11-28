@@ -50,7 +50,11 @@ tags:
 - Lance Stroll: P19 → P15 (+4 places)
 - George Russell: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Monaco Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P6)
 - Pierre Gasly: Retired (started P17)

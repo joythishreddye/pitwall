@@ -24,15 +24,15 @@ tags:
 - **Podiums:** 16
 - **DNFs:** 6
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
-- **Max Verstappen:** 284 pts, best P1 in 21 races
+- **Max Verstappen:** 304 pts, best P1 in 21 races
 - **Isack Hadjar:** 122 pts, best P3 in 18 races
-- **Liam Lawson:** 14 pts, best P6 in 3 races
+- **Liam Lawson:** 14 pts (Grand Prix points only: also drove for another team), best P6 in 3 races
 
 ## Statistics since 2018 (not full team history)
 
 - **Race Entries:** 388
 - **Wins:** 79
 - **Podiums:** 165
-- **Total Points:** 4614.5
+- **Total Points (including sprints):** 4839.5

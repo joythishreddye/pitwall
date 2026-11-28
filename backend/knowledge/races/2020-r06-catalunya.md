@@ -48,6 +48,10 @@ tags:
 - Sebastian Vettel: P11 → P7 (+4 places)
 - Antonio Giovinazzi: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Charles Leclerc: Electronics (started P9)

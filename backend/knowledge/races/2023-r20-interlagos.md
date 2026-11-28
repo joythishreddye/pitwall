@@ -52,14 +52,21 @@ tags:
 - Sergio Pérez: P9 → P4 (+5 places)
 - Lando Norris: P6 → P2 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the São Paulo Grand Prix 2023:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P8)
 - Valtteri Bottas: Retired (started P18)
 - Guanyu Zhou: Retired (started P20)
 - Kevin Magnussen: Retired (started P12)
 - Alexander Albon: Retired (started P13)
-- Charles Leclerc: Did not start (started P2)
+
+### Did not start
+
+- Charles Leclerc
 
 ## Pit Strategy
 

@@ -52,7 +52,11 @@ tags:
 - Guanyu Zhou: P18 → P12 (+6 places)
 - Sergio Pérez: P9 → P4 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Lance Stroll: Collision (started P5)
 - Valtteri Bottas: Spun off (started P7)

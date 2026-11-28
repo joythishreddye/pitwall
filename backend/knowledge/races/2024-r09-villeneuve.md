@@ -52,7 +52,11 @@ tags:
 - Valtteri Bottas: P19 → P13 (+6 places)
 - Guanyu Zhou: P20 → P15 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P12)
 - Alexander Albon: Retired (started P10)

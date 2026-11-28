@@ -52,8 +52,15 @@ tags:
 - Alexander Albon: P12 → P8 (+4 places)
 - Esteban Ocon: P9 → P6 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Daniil Kvyat: Accident (started P19)
 - Kevin Magnussen: Collision (started P14)
-- Nico Hülkenberg: Power Unit (started P13)
+
+### Did not start
+
+- Nico Hülkenberg

@@ -52,10 +52,14 @@ tags:
 - Esteban Ocon: P15 → P10 (+5 places)
 - Lewis Hamilton: P6 → P2 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Logan Sargeant: Retired (started P19)
-- Lance Stroll: Collision damage (started P0)
+- Lance Stroll: Collision damage (started from the pit lane)
 - Fernando Alonso: Withdrew (started P13)
 - Kevin Magnussen: Accident (started P16)
 - Sergio Pérez: Collision damage (started P5)

@@ -51,7 +51,11 @@ tags:
 - Liam Lawson: P11 → P8 (+3 places)
 - Gabriel Bortoleto: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Oscar Piastri: Retired (started P3)
 - Sergio Pérez: Retired (started P22)

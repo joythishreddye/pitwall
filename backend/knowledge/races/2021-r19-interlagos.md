@@ -49,7 +49,11 @@ tags:
 - George Russell: P17 → P13 (+4 places)
 - Fernando Alonso: P12 → P9 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the São Paulo Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Daniel Ricciardo: Power loss (started P11)
 - Lance Stroll: Collision damage (started P14)

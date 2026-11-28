@@ -51,7 +51,11 @@ tags:
 - Esteban Ocon: P11 → P6 (+5 places)
 - Fernando Alonso: P13 → P8 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Stoffel Vandoorne: Collision damage (started P15)
 - Lewis Hamilton: Fuel pressure (started P2)

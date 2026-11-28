@@ -51,7 +51,11 @@ tags:
 - Daniel Ricciardo: P8 → P4 (+4 places)
 - Kimi Räikkönen: P13 → P9 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Tuscan Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Lance Stroll: Puncture (started P6)
 - Esteban Ocon: Brakes (started P10)

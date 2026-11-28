@@ -49,7 +49,11 @@ tags:
 - Lance Stroll: P15 → P10 (+5 places)
 - George Russell: P6 → P3 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the French Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Nicholas Latifi: Collision damage (started P18)
 - Kevin Magnussen: Collision damage (started P20)

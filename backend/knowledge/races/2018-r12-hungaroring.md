@@ -51,7 +51,11 @@ tags:
 - Sergey Sirotkin: P20 → P16 (+4 places)
 - Fernando Alonso: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Stoffel Vandoorne: Gearbox (started P16)
 - Max Verstappen: Power loss (started P7)

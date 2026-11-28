@@ -49,7 +49,11 @@ tags:
 - Max Verstappen: P19 → P3 (+16 places)
 - Esteban Ocon: P20 → P12 (+8 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the São Paulo Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Lewis Hamilton: Retired (started P13)
 - Charles Leclerc: Retired (started P3)

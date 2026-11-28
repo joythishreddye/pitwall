@@ -51,7 +51,11 @@ tags:
 - Antonio Giovinazzi: P19 → P14 (+5 places)
 - Lando Norris: P9 → P5 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Styrian Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Esteban Ocon: Overheating (started P5)
 - Charles Leclerc: Collision damage (started P14)

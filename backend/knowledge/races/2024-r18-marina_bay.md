@@ -51,7 +51,11 @@ tags:
 - Sergio Pérez: P13 → P10 (+3 places)
 - Lance Stroll: P17 → P14 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Kevin Magnussen: Retired (started P14)
 - Alexander Albon: Retired (started P11)

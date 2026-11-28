@@ -50,6 +50,10 @@ tags:
 - Daniil Kvyat: P19 → P14 (+5 places)
 - Lance Stroll: P17 → P13 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the French Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Romain Grosjean: Retired (started P16)

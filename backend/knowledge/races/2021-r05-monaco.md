@@ -52,7 +52,14 @@ tags:
 - Sebastian Vettel: P8 → P5 (+3 places)
 - Kimi Räikkönen: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Monaco Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Valtteri Bottas: Wheel nut (started P3)
-- Charles Leclerc: Driveshaft (started P1)
+
+### Did not start
+
+- Charles Leclerc

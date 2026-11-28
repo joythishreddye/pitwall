@@ -49,6 +49,10 @@ tags:
 - Sergio Pérez: P8 → P5 (+3 places)
 - Nicholas Latifi: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Yuki Tsunoda: Electrical (started P16)

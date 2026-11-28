@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P17 → P12 (+5 places)
 - Kimi Räikkönen: P6 → P3 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexican Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Daniel Ricciardo: Engine (started P1)
 - Sergio Pérez: Brakes (started P13)

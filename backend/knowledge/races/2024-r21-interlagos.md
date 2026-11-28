@@ -51,12 +51,22 @@ tags:
 - Guanyu Zhou: P19 → P15 (+4 places)
 - Carlos Sainz: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the São Paulo Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P20)
 - Franco Colapinto: Retired (started P16)
-- Alexander Albon: Did not start (started P7)
-- Lance Stroll: Did not start (started P10)
+
+### Did not start
+
+- Alexander Albon
+- Lance Stroll
+
+### Disqualified
+
 - Nico Hülkenberg: Disqualified (started P18)
 
 ## Pit Strategy

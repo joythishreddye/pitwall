@@ -51,7 +51,11 @@ tags:
 - Valtteri Bottas: P6 → P3 (+3 places)
 - George Russell: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexican Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Kimi Räikkönen: Overheating (started P14)
 - Lando Norris: Withdrew (started P8)

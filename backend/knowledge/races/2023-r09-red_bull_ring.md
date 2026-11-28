@@ -51,7 +51,11 @@ tags:
 - George Russell: P11 → P7 (+4 places)
 - Nyck de Vries: P20 → P17 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Nico Hülkenberg: Retired (started P8)
 

@@ -52,7 +52,11 @@ tags:
 - Esteban Ocon: P17 → P13 (+4 places)
 - Franco Colapinto: P13 → P10 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Barcelona Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Charles Leclerc: Retired (started P10)
 - Andrea Kimi Antonelli: Retired (started P3)

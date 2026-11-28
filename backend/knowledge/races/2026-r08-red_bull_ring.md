@@ -50,7 +50,11 @@ tags:
 - Fernando Alonso: P21 → P18 (+3 places)
 - Lance Stroll: P22 → P19 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Lance Stroll: Retired (started P22)
 - Carlos Sainz: Retired (started P17)

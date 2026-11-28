@@ -51,7 +51,11 @@ tags:
 - Charles Leclerc: P5 → P2 (+3 places)
 - Liam Lawson: P17 → P14 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Qatar Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Nico Hülkenberg: Retired (started P18)
 - Sergio Pérez: Retired (started P9)

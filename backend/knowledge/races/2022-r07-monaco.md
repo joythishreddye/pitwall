@@ -51,7 +51,11 @@ tags:
 - Guanyu Zhou: P20 → P16 (+4 places)
 - Valtteri Bottas: P12 → P9 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Monaco Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Alexander Albon: Mechanical (started P16)
 - Mick Schumacher: Accident (started P15)

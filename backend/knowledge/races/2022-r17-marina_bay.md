@@ -50,7 +50,11 @@ tags:
 - Sebastian Vettel: P13 → P8 (+5 places)
 - Valtteri Bottas: P15 → P11 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Yuki Tsunoda: Accident (started P10)
 - Esteban Ocon: Engine (started P17)

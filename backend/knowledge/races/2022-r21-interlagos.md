@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P15 → P10 (+5 places)
 - Carlos Sainz: P7 → P3 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the São Paulo Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Lando Norris: Gearbox (started P6)
 - Kevin Magnussen: Collision (started P8)

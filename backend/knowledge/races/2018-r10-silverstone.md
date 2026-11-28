@@ -51,11 +51,15 @@ tags:
 - Fernando Alonso: P13 → P8 (+5 places)
 - Sergey Sirotkin: P18 → P14 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Max Verstappen: Brakes (started P5)
 - Romain Grosjean: Collision (started P8)
 - Carlos Sainz: Collision (started P16)
 - Marcus Ericsson: Accident (started P15)
 - Charles Leclerc: Tyre (started P9)
-- Brendon Hartley: Power Unit (started P0)
+- Brendon Hartley: Power Unit (started from the pit lane)

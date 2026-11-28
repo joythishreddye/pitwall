@@ -50,7 +50,11 @@ tags:
 - Lando Norris: P11 → P7 (+4 places)
 - Max Verstappen: P4 → P1 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Saudi Arabian Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Alexander Albon: Collision damage (started P16)
 - Valtteri Bottas: Cooling system (started P8)
@@ -58,7 +62,10 @@ tags:
 - Daniel Ricciardo: Gearbox (started P14)
 - Nicholas Latifi: Accident (started P18)
 - Yuki Tsunoda: Power Unit (started P19)
-- Mick Schumacher: Withdrew (started P0)
+
+### Did not start
+
+- Mick Schumacher
 
 ## Pit Strategy
 

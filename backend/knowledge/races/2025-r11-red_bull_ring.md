@@ -50,12 +50,19 @@ tags:
 - Fernando Alonso: P11 → P7 (+4 places)
 - Oliver Bearman: P15 → P11 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Alexander Albon: Retired (started P12)
 - Max Verstappen: Retired (started P7)
 - Andrea Kimi Antonelli: Retired (started P9)
-- Carlos Sainz: Did not start (started P19)
+
+### Did not start
+
+- Carlos Sainz
 
 ## Pit Strategy
 

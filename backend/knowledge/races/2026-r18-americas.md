@@ -50,7 +50,11 @@ tags:
 - Lance Stroll: P22 → P15 (+7 places)
 - Lando Norris: P8 → P5 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Valtteri Bottas: Retired (started P19)
 - Franco Colapinto: Retired (started P20)

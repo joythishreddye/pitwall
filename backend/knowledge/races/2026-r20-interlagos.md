@@ -51,7 +51,14 @@ tags:
 - Charles Leclerc: P14 → P8 (+6 places)
 - Oscar Piastri: P10 → P6 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Brazilian Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Lance Stroll: Retired (started P16)
-- Valtteri Bottas: Did not start (started P17)
+
+### Did not start
+
+- Valtteri Bottas

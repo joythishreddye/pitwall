@@ -52,9 +52,13 @@ tags:
 - Lando Norris: P14 → P8 (+6 places)
 - Pierre Gasly: P19 → P13 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Turkish Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Kevin Magnussen: Withdrew (started P13)
 - Romain Grosjean: Collision damage (started P17)
-- Nicholas Latifi: Collision damage (started P0)
+- Nicholas Latifi: Collision damage (started from the pit lane)
 - Antonio Giovinazzi: Gearbox (started P10)

@@ -50,13 +50,20 @@ tags:
 - Oliver Bearman: P18 → P11 (+7 places)
 - Alexander Albon: P13 → P8 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Andrea Kimi Antonelli: Retired (started P10)
 - Isack Hadjar: Retired (started P12)
 - Gabriel Bortoleto: Retired (started P16)
 - Liam Lawson: Retired (started P15)
-- Franco Colapinto: Did not start (started P20)
+
+### Did not start
+
+- Franco Colapinto
 
 ## Pit Strategy
 

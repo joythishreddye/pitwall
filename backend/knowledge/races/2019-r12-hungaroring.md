@@ -51,6 +51,10 @@ tags:
 - Carlos Sainz: P8 → P5 (+3 places)
 - Kimi Räikkönen: P10 → P7 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Romain Grosjean: Water pressure (started P9)

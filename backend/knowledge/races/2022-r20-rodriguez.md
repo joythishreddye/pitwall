@@ -50,7 +50,11 @@ tags:
 - Daniel Ricciardo: P11 → P7 (+4 places)
 - Pierre Gasly: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Engine (started P9)
 - Yuki Tsunoda: Collision damage (started P13)

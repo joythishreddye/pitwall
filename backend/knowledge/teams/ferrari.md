@@ -24,14 +24,14 @@ tags:
 - **Podiums:** 13
 - **DNFs:** 4
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
-- **Lewis Hamilton:** 240 pts, best P1 in 21 races
-- **Charles Leclerc:** 216 pts, best P1 in 21 races
+- **Lewis Hamilton:** 267 pts, best P1 in 21 races
+- **Charles Leclerc:** 250 pts, best P1 in 21 races
 
 ## Statistics since 2018 (not full team history)
 
 - **Race Entries:** 388
 - **Wins:** 21
 - **Podiums:** 122
-- **Total Points:** 3821.5
+- **Total Points (including sprints):** 4056.5

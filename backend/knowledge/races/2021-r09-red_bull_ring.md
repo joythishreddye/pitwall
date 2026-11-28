@@ -52,7 +52,11 @@ tags:
 - Fernando Alonso: P14 → P10 (+4 places)
 - Valtteri Bottas: P5 → P2 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Sebastian Vettel: Collision (started P11)
 - Esteban Ocon: Collision (started P17)

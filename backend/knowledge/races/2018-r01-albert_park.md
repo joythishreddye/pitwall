@@ -50,7 +50,11 @@ tags:
 - Charles Leclerc: P18 → P13 (+5 places)
 - Daniel Ricciardo: P8 → P4 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Romain Grosjean: Wheel (started P6)
 - Kevin Magnussen: Wheel (started P5)

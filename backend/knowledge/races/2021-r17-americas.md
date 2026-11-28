@@ -49,7 +49,11 @@ tags:
 - George Russell: P20 → P14 (+6 places)
 - Valtteri Bottas: P9 → P6 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Rear wing (started P19)
 - Esteban Ocon: Mechanical (started P11)

@@ -49,6 +49,10 @@ tags:
 - Fernando Alonso: P13 → P8 (+5 places)
 - Lance Stroll: P17 → P14 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Portuguese Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Kimi Räikkönen: Collision damage (started P15)
