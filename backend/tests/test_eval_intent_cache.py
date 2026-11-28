@@ -82,3 +82,51 @@ def test_a_limit_that_outlasts_the_wait_fails_and_is_flagged() -> None:
     with pytest.raises(LLMError):
         asyncio.run(llm.generate([]))
     assert llm.failed is True
+
+
+_STAND_IN = {
+    "intent": "unknown",
+    "entities": {"drivers": [], "teams": [], "circuits": [], "seasons": []},
+    "metadata_filter": {},
+}
+
+
+def test_only_the_models_own_answer_is_recorded(tmp_path) -> None:
+    path = tmp_path / "cache.json"
+    cache = ic.IntentCache(path, "m", "p")
+    # A failed call, and a 200 whose reply wasn't usable JSON: both stand-ins
+    assert cache.record("Who won?", {"intent": "factual"}, failed=True) is False
+    assert cache.record("Who won?", dict(_STAND_IN), failed=False) is False
+    assert not path.exists()
+    assert cache.failed == 2
+
+    assert cache.record("Who won?", {"intent": "factual"}, failed=False) is True
+    assert ic.IntentCache(path, "m", "p").get("Who won?") == {"intent": "factual"}
+    assert cache.failed == 2
+    assert not path.with_name(path.name + ".tmp").exists()
+
+
+def test_once_a_limit_outlasts_the_wait_later_calls_fail_without_waiting() -> None:
+    waits: list[float] = []
+
+    async def sleep(seconds: float) -> None:
+        waits.append(seconds)
+
+    errors = [LLMError("429", status_code=429, retry_after=120) for _ in range(9)]
+    llm = ic.PatientLLM(_FlakyLLM(errors), sleep=sleep, max_wait=300)
+    with pytest.raises(LLMError):
+        asyncio.run(llm.generate([]))
+    assert llm.closed is True
+    waited = len(waits)
+
+    with pytest.raises(LLMError):
+        asyncio.run(llm.generate([]))
+    assert len(waits) == waited
+    assert llm.failed is True
+
+
+def test_a_closed_run_still_takes_an_answer_that_comes_through() -> None:
+    llm = ic.PatientLLM(_FlakyLLM([]))
+    llm.closed = True
+    assert asyncio.run(llm.generate([])) == '{"intent": "race"}'
+    assert llm.failed is False

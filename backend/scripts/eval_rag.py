@@ -172,9 +172,8 @@ async def run_question(
     intent = cache.get(question) if cache else None
     if intent is None:
         intent = await base.classify_intent(question)
-        # A failed call's stand-in answer isn't the model's: never record it
-        if cache and not getattr(intent_llm, "failed", False):
-            cache.put(question, intent)
+        if cache:
+            cache.record(question, intent, getattr(intent_llm, "failed", False))
     linked = linker.link(intent, question) if linker else intent
     down = Retriever(
         db=db,
@@ -368,6 +367,9 @@ async def main() -> None:
                         "file": args.intent_cache.name,
                         "replayed": cache.hits,
                         "asked": cache.misses,
+                        # Asked but not recorded: production mode scored the
+                        # stand-in for these
+                        "failed": cache.failed,
                     }
                     if cache
                     else None
