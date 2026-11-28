@@ -259,6 +259,51 @@ async def test_a_slow_rebuild_is_kept_and_none_starts_beside_it(monkeypatch) -> 
     assert from_db.call_count == 1
 
 
+@pytest.mark.parametrize(
+    ("outcome", "logged"),
+    [
+        (RuntimeError("db gone"), "Entity linker still unavailable"),
+        (EntityLinker(), "Entity linker built empty"),
+    ],
+)
+async def test_a_late_rebuild_outcome_is_logged_once(
+    monkeypatch, caplog, outcome, logged
+) -> None:
+    # A build that ends after its request stopped waiting must still show in
+    # the logs, and one that ends in time only once
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+    release = threading.Event()
+
+    def late(_db: object) -> EntityLinker:
+        release.wait(5)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+    request = _linker_request(monkeypatch, MagicMock(side_effect=late))
+    assert await chat_route.get_linker(request) is None  # times out
+    release.set()
+    await asyncio.gather(request.app.state.linker_build, return_exceptions=True)
+    await asyncio.sleep(0)  # let the done-callback run
+
+    assert sum(logged in r.getMessage() for r in caplog.records) == 1
+    assert getattr(request.app.state, "linker", None) is None
+
+
+async def test_a_build_error_that_is_a_timeout_is_not_called_still_running(
+    monkeypatch, caplog
+) -> None:
+    request = _linker_request(
+        monkeypatch, MagicMock(side_effect=TimeoutError("socket timed out"))
+    )
+
+    assert await chat_route.get_linker(request) is None
+    await asyncio.sleep(0)
+    messages = [r.getMessage() for r in caplog.records]
+    assert not any("still running" in m for m in messages)
+    assert sum("Entity linker still unavailable" in m for m in messages) == 1
+
+
 async def test_a_spent_daily_budget_gets_429_before_any_model_call(wire) -> None:
     llm = _llm(tokens=["never"])
     wire(llm)

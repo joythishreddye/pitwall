@@ -81,14 +81,20 @@ _LINKER_BUILD_SECONDS = 10.0
 
 
 def _keep_when_built(state: State) -> Callable[[asyncio.Future], None]:
-    """A rebuild's done-callback: keep a non-empty linker, even one that
-    finished after its request stopped waiting."""
+    """A rebuild's done-callback: log how it ended and keep a non-empty
+    linker, even one that finished after its request stopped waiting."""
 
     def done(build: asyncio.Future) -> None:
-        if build.cancelled() or build.exception() is not None:
+        if build.cancelled():
+            return
+        error = build.exception()
+        if error is not None:
+            logger.error("Entity linker still unavailable", exc_info=error)
             return
         linker = build.result()
-        if not linker.is_empty and getattr(state, "linker", None) is None:
+        if linker.is_empty:
+            logger.warning("Entity linker built empty; trying again in 5 minutes")
+        elif getattr(state, "linker", None) is None:
             state.linker = linker
 
     return done
@@ -131,17 +137,16 @@ async def get_linker(request: Request) -> EntityLinker | None:
         linker = await asyncio.wait_for(
             asyncio.shield(build), timeout=_LINKER_BUILD_SECONDS
         )
-    except TimeoutError:
-        logger.warning(
-            "Entity linker rebuild still running after %.0f s; kept if it finishes",
-            _LINKER_BUILD_SECONDS,
-        )
-        return None
     except Exception:
-        logger.exception("Entity linker still unavailable")
+        # The build's own errors are logged by its done-callback; a timeout
+        # with the build still going is the wait's
+        if not build.done():
+            logger.warning(
+                "Entity linker rebuild still running after %.0f s; kept if it finishes",
+                _LINKER_BUILD_SECONDS,
+            )
         return None
     if linker.is_empty:
-        logger.warning("Entity linker built empty; trying again in 5 minutes")
         return None
     state.linker = linker
     return linker
