@@ -13,6 +13,7 @@ tags:
 ## Overview
 
 **Full Name:** RB F1 Team
+**Also called:** Racing Bulls
 **Nationality:** Italian
 **2026 Drivers:** Arvid Lindblad (LIN), Liam Lawson (LAW), Yuki Tsunoda (TSU)
 

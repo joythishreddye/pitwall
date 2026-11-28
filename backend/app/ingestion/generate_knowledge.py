@@ -175,6 +175,17 @@ def _non_finisher_sections(results: Iterable[dict], race_title: str) -> str:
     )
 
 
+# The name readers use for a team whose data name differs (Jolpica says
+# "RB F1 Team" and "Red Bull"); the linker maps both names already
+_TEAM_OTHER_NAMES = {"rb": "Racing Bulls", "red_bull": "Red Bull Racing"}
+
+
+def _other_name_line(constructor_ref: str) -> str:
+    """A team doc's "Also called" line, or nothing."""
+    name = _TEAM_OTHER_NAMES.get(constructor_ref)
+    return f"**Also called:** {name}\n" if name else ""
+
+
 def _breakdown_note(
     driver_id: int, driver_teams: dict[int, set], driver_points: dict[int, float]
 ) -> str:
@@ -614,7 +625,7 @@ tags:
 ## Overview
 
 **Full Name:** {c["name"]}
-**Nationality:** {c["nationality"]}
+{_other_name_line(c["ref"])}**Nationality:** {c["nationality"]}
 **{CURRENT_SEASON} Drivers:** {", ".join(drivers_list)}
 
 ## {CURRENT_SEASON} Season Performance

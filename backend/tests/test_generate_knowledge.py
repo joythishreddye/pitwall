@@ -228,3 +228,11 @@ def test_season_totals_come_from_each_seasons_last_standings_round() -> None:
         {"entity_id": 2, "season": 2025, "round": 24, "points": None},
     ]
     assert gk._final_points(rows) == {1: 700.5, 2: 0.0}
+
+
+def test_a_team_doc_gives_the_name_people_use_when_the_data_uses_another() -> None:
+    # Jolpica calls them "RB F1 Team" and "Red Bull"; the chat's readers say
+    # "Racing Bulls" and "Red Bull Racing" (the linker maps both already)
+    assert gk._other_name_line("rb") == "**Also called:** Racing Bulls\n"
+    assert gk._other_name_line("red_bull") == "**Also called:** Red Bull Racing\n"
+    assert gk._other_name_line("ferrari") == ""

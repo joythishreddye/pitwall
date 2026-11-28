@@ -13,6 +13,7 @@ tags:
 ## Overview
 
 **Full Name:** Red Bull
+**Also called:** Red Bull Racing
 **Nationality:** Austrian
 **2026 Drivers:** Isack Hadjar (HAD), Liam Lawson (LAW), Max Verstappen (VER)
 
