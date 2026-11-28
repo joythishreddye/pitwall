@@ -15,16 +15,16 @@ interface PitStopsTableProps {
   finished: boolean;
 }
 
-/** Why a race has no stops to show: no results yet (not run, or not loaded), from before stop times start (2022),
- * or not in PitWall's data. */
+/** Why a race has no stops to show: from before stop times start (2022; they never arrive, results or not), no
+ * results yet (not run, or not loaded), or not in PitWall's data. */
 function emptyMessage(season: number, finished: boolean): { title: string; text: string } {
-  if (!finished) return { title: "No pit stops yet", text: "Pit stops show here once the race's results are in." };
   if (season < 2022) {
     return {
       title: "No pit stop telemetry",
       text: "Detailed undercut data is only available for races from the 2022 season onwards.",
     };
   }
+  if (!finished) return { title: "No pit stops yet", text: "Pit stops show here once the race's results are in." };
   return { title: "No pit stop times", text: "PitWall doesn't have this race's pit stop times." };
 }
 
@@ -45,7 +45,8 @@ export function PitStopsTable({ strategy, season, finished }: PitStopsTableProps
 
   useGSAP(
     () => {
-      if (respectsReducedMotion()) return;
+      // a race without stops shows only its message: no rows or bars to animate
+      if (respectsReducedMotion() || strategy.length === 0) return;
 
       gsap.from(".pit-row", {
         opacity: 0,
@@ -80,7 +81,7 @@ export function PitStopsTable({ strategy, season, finished }: PitStopsTableProps
   if (strategy.length === 0) {
     const { title, text } = emptyMessage(season, finished);
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-3 text-center select-none">
+      <div ref={containerRef} className="flex flex-col items-center justify-center py-16 gap-3 text-center select-none">
         <p className="font-data text-[11px] tracking-[0.2em] text-f1-muted uppercase">{title}</p>
         <p className="text-f1-muted text-sm max-w-xs">{text}</p>
       </div>
