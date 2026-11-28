@@ -349,6 +349,8 @@ async def main() -> None:
 
     summary = summarize(results)
     print_table(summary, results)
+    if cache:
+        print("\n" + "\n".join(cache.summary_lines()))
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")

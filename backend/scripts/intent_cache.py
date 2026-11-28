@@ -91,6 +91,22 @@ class IntentCache:
         self.put(question, intent)
         return True
 
+    def summary_lines(self) -> list[str]:
+        """The counts for the end of a run, and a warning when a call failed."""
+        lines = [
+            f"Intent answers: {self.hits} replayed, {self.misses} asked, "
+            f"{self.failed} failed"
+        ]
+        if self.failed:
+            calls = "call" if self.failed == 1 else "calls"
+            lines.append(
+                f"WARNING: {self.failed} intent {calls} failed, so production "
+                "mode scored the retriever's stand-in for those questions and "
+                "this run doesn't compare with a full one. Run it again once "
+                "Groq's limit resets: the recorded answers are replayed."
+            )
+        return lines
+
 
 class PatientLLM:
     """The intent model, waiting out rate limits instead of failing.
