@@ -5,14 +5,16 @@ race?" and "When does {next season} start?", and nothing else gives the chat a
 date: the knowledge base has race reports only for races already run.
 
 The note names the last race, the current or next weekend with each of its
-sessions (a weekend stays current until 2 h 30 after its race starts, when the
-homepage's RACE UNDER WAY ends), the race after it, and next season's first
-race when the data has it. Weekends go in race order, as the homepage's do.
+sessions (a weekend stays current until 2 h 30 after its race starts, when
+brief 001's race week leaves RACE UNDER WAY), the race after it, and next
+season's first race when the data has it. Weekends go in race order, as brief
+001's clock orders them.
 
 The session times come from the schedule files the code ships with
-(app/schedule.py), and each session is tagged by the homepage's own rules
-(app/briefing/clock.py, session_states), so the chat and the page agree on
-what's done and what's next. No database read: the note costs no wait and
+(app/schedule.py), and each session is tagged by brief 001's clock rules
+(app/briefing/clock.py, session_states), written for brief 001's homepage.
+A session with no time gets no tag: the clock places it only by its order in
+the weekend, not by its day. No database read: the note costs no wait and
 can't fail with the database.
 """
 
@@ -64,8 +66,8 @@ def _race_start(weekend: RoundSchedule) -> datetime:
 
 
 def _race_over(weekend: RoundSchedule, now: datetime) -> bool:
-    """True once race week's RACE UNDER WAY ends on the homepage, 2 h 30 after
-    the start (a race with no time: once its day has passed in UTC)."""
+    """True once brief 001's race week leaves RACE UNDER WAY, 2 h 30 after the
+    start (a race with no time: once its day has passed in UTC)."""
     race = weekend.race
     if race.start is None:
         return race.date < now.date()
@@ -78,7 +80,7 @@ def calendar_note(now: datetime, rounds: Sequence[RoundSchedule]) -> str | None:
     if now.tzinfo is None or now.utcoffset() is None:
         raise ValueError("now must be timezone-aware")
     now = now.astimezone(UTC)
-    # By race start, as the homepage's clock orders races (a round postponed
+    # By race start, as brief 001's clock orders races (a round postponed
     # past the next one keeps its number)
     ordered = sorted(rounds, key=lambda r: (_race_start(r), r.season, r.round))
     if not ordered:
