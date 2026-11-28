@@ -1,6 +1,7 @@
 """Chat endpoint: SSE contract, failure events and rate limiting."""
 
 import json
+import time
 from collections.abc import Iterator
 from unittest.mock import AsyncMock, MagicMock
 
@@ -11,6 +12,7 @@ from app.api.rate_limit import SlidingWindowLimiter
 from app.api.routes import chat as chat_route
 from app.llm.base import LLMError
 from app.main import app
+from app.rag.entities import EntityLinker
 
 _INTENT = '{"intent": "factual", "entities": {}, "metadata_filter": {}}'
 
@@ -154,26 +156,59 @@ async def test_too_many_questions_get_429(wire, monkeypatch) -> None:
     assert int(second.headers["Retry-After"]) >= 1
 
 
-def test_linker_is_rebuilt_after_a_failed_boot(monkeypatch) -> None:
+def _linker_request(monkeypatch, from_db: MagicMock):
     from starlette.requests import Request
 
-    clock = [1000.0]
-    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
-    built = MagicMock()
-    from_db = MagicMock(side_effect=[RuntimeError("db blip"), built])
     monkeypatch.setattr("app.api.routes.chat.EntityLinker.from_db", from_db)
     monkeypatch.setattr("app.api.routes.chat.get_supabase", lambda: MagicMock())
-
     state = type("State", (), {})()
-    request = Request({"type": "http", "app": type("App", (), {"state": state})()})
+    return Request({"type": "http", "app": type("App", (), {"state": state})()})
 
-    assert chat_route.get_linker(request) is None  # first try fails
-    assert chat_route.get_linker(request) is None  # cooling down, no retry
+
+async def test_linker_is_rebuilt_after_a_failed_boot(monkeypatch) -> None:
+    clock = [1000.0]
+    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
+    built = MagicMock(is_empty=False)
+    from_db = MagicMock(side_effect=[RuntimeError("db blip"), built])
+    request = _linker_request(monkeypatch, from_db)
+
+    assert await chat_route.get_linker(request) is None  # first try fails
+    assert await chat_route.get_linker(request) is None  # cooling down, no retry
     assert from_db.call_count == 1
     clock[0] += 301
-    assert chat_route.get_linker(request) is built
-    assert chat_route.get_linker(request) is built  # cached after that
+    assert await chat_route.get_linker(request) is built
+    assert await chat_route.get_linker(request) is built  # cached after that
     assert from_db.call_count == 2
+
+
+async def test_an_empty_linker_is_not_kept(monkeypatch) -> None:
+    # Empty tables (a refresh mid-way, say) would otherwise leave a linker
+    # that links nothing until the next restart
+    clock = [1000.0]
+    monkeypatch.setattr("app.api.routes.chat.time.monotonic", lambda: clock[0])
+    built = MagicMock(is_empty=False)
+    from_db = MagicMock(side_effect=[EntityLinker(), built])
+    request = _linker_request(monkeypatch, from_db)
+
+    assert await chat_route.get_linker(request) is None
+    assert getattr(request.app.state, "linker", None) is None
+    clock[0] += 301
+    assert await chat_route.get_linker(request) is built
+
+
+async def test_a_slow_linker_rebuild_gives_up(monkeypatch) -> None:
+    monkeypatch.setattr("app.api.routes.chat._LINKER_BUILD_SECONDS", 0.05)
+
+    def slow(_db: object) -> MagicMock:
+        time.sleep(0.5)
+        return MagicMock(is_empty=False)
+
+    request = _linker_request(monkeypatch, MagicMock(side_effect=slow))
+    started = time.monotonic()
+
+    assert await chat_route.get_linker(request) is None
+    assert time.monotonic() - started < 0.4
+    assert getattr(request.app.state, "linker", None) is None
 
 
 async def test_a_spent_daily_budget_gets_429_before_any_model_call(wire) -> None:

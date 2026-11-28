@@ -74,13 +74,18 @@ Budget = Annotated[ApiBudget | None, Depends(get_budget)]
 
 
 _LINKER_RETRY_SECONDS = 300.0
+# A rebuild holds up the request that triggers it, so it gets less time than
+# the startup build's 20 s
+_LINKER_BUILD_SECONDS = 10.0
 
 
-def get_linker(request: Request) -> EntityLinker | None:
+async def get_linker(request: Request) -> EntityLinker | None:
     """Return the entity linker, rebuilding it if startup couldn't.
 
     A database blip at boot would otherwise leave raw classifier filters in
-    place until the next restart. Rebuilds are tried at most every 5 minutes.
+    place until the next restart. Rebuilds are tried at most every 5 minutes,
+    each capped at 10 s, and a linker built from empty tables isn't kept, so
+    the next try can build a real one.
     """
     state = request.app.state
     linker = getattr(state, "linker", None)
@@ -93,11 +98,18 @@ def get_linker(request: Request) -> EntityLinker | None:
         return None
     state.linker_attempted_at = now
     try:
-        state.linker = EntityLinker.from_db(get_supabase())
+        linker = await asyncio.wait_for(
+            asyncio.to_thread(EntityLinker.from_db, get_supabase()),
+            timeout=_LINKER_BUILD_SECONDS,
+        )
     except Exception:
         logger.exception("Entity linker still unavailable")
         return None
-    return state.linker
+    if linker.is_empty:
+        logger.warning("Entity linker built empty; trying again in 5 minutes")
+        return None
+    state.linker = linker
+    return linker
 
 
 Linker = Annotated[EntityLinker | None, Depends(get_linker)]

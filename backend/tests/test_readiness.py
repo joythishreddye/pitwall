@@ -10,6 +10,7 @@ from httpx import ASGITransport, AsyncClient
 
 from app.llm.base import LLMError
 from app.main import _ready_cache, app, lifespan
+from app.rag.entities import EntityLinker
 
 
 @pytest.fixture(autouse=True)
@@ -155,3 +156,18 @@ async def test_startup_survives_dependency_outages() -> None:
             assert app.state.linker is None
 
     embedder_cls.return_value.close.assert_called_once()
+
+
+async def test_startup_drops_a_linker_built_empty() -> None:
+    # Kept, an empty linker would never be rebuilt; None lets the first chat
+    # request try again
+    with (
+        patch("app.main.get_supabase", return_value=MagicMock()),
+        patch("app.main.ping_supabase"),
+        patch("app.main.get_redis", return_value=None),
+        patch("app.main.create_llm", return_value=MagicMock()),
+        patch("app.main.EntityLinker.from_db", return_value=EntityLinker()),
+        patch("app.main.QueryEmbedder"),
+    ):
+        async with lifespan(app):
+            assert app.state.linker is None
