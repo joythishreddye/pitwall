@@ -377,6 +377,23 @@ async def test_a_race_without_a_name_still_gives_season_and_round(wire) -> None:
     assert "round 20 of the 2026 season" in asked[0][0].content
 
 
+async def test_a_failed_race_name_read_still_answers_with_season_and_round(
+    wire,
+) -> None:
+    llm, asked = _recording_llm()
+    wire(llm)
+    db = _db_with_race("Brazilian Grand Prix")
+    db.table.side_effect = RuntimeError("canceling statement due to statement timeout")
+    app.dependency_overrides[chat_route.get_db] = lambda: db
+
+    response = await _post(
+        {"message": "Who won this one?", "race": {"season": 2026, "round": 20}}
+    )
+
+    assert response.status_code == 200
+    assert "round 20 of the 2026 season" in asked[0][0].content
+
+
 async def test_a_question_without_a_race_has_no_race_note(wire) -> None:
     llm, asked = _recording_llm()
     wire(llm)
