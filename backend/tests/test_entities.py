@@ -427,3 +427,32 @@ def test_a_classifier_season_beats_the_year_in_the_question() -> None:
 def test_a_year_in_the_question_is_not_added_to_profile_filters() -> None:
     out = _linker().link(_intent(), "How many wins has Lando Norris taken in 2026?")
     assert out["metadata_filter"] == {"driver_ref": "norris"}
+
+
+# The circuit's profile (#44): a season read from the question narrows the
+# filter to that year's race, so the profile is named for a slot of its own
+
+
+def test_a_season_read_from_the_question_names_the_circuit_profile() -> None:
+    out = _linker().link(
+        _intent({"circuit_ref": "suzuka"}),
+        "Why is Suzuka hard on tyres for the 2026 cars?",
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "suzuka", "season": 2026}
+    assert out["circuit_profile"] == "suzuka"
+
+
+def test_a_classifier_season_names_no_circuit_profile() -> None:
+    out = _linker().link(
+        _intent({"circuit_ref": "suzuka", "season": 2026}),
+        "Who won at Suzuka in 2026?",
+    )
+    assert out["circuit_profile"] is None
+
+
+def test_no_season_or_no_circuit_names_no_circuit_profile() -> None:
+    linker = _linker()
+    two_years = linker.link(_intent(), "Who won at Suzuka in 2025 and in 2026?")
+    no_circuit = linker.link(_intent(), "How many wins has Lando Norris taken in 2026?")
+    assert two_years["circuit_profile"] is None
+    assert no_circuit["circuit_profile"] is None

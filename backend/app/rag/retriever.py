@@ -53,6 +53,8 @@ class RaceRef(BaseModel):
 
 # The coverage key for a race page's own race: race docs carry season and round
 _RACE_KEY = "race"
+# The coverage key for a circuit's own profile, which carries no season
+_PROFILE_KEY = "circuit_profile"
 
 
 def _race_filter(race: RaceRef) -> dict:
@@ -381,6 +383,10 @@ class Retriever:
         entities = intent_result.get("entities")
         if not isinstance(entities, dict):
             entities = {}
+        # Set only by the linker, never read from the model's own JSON
+        profile = (
+            intent_result.get("circuit_profile") if self.linker is not None else None
+        )
 
         # Stage 2: Primary vector search
         try:
@@ -444,6 +450,14 @@ class Retriever:
         # Stage 2c: A targeted search per named entity. Its hits rank after
         # the main results; coverage below gives each entity a slot.
         entity_hits = await self._entity_searches(query, entities)
+        if isinstance(profile, str) and profile:
+            # A year read from the question narrowed the filter to that
+            # season's race, which also covers the circuit; the circuit's
+            # profile keeps a slot of its own (#44)
+            profile_hits = await self._safe_search(
+                query, {"circuit_ref": profile, "category": "circuits"}, top_k=5
+            )
+            entity_hits = {(_PROFILE_KEY, profile): profile_hits, **entity_hits}
         if race is not None:
             # The race page's race claims its slot first
             race_hits = await self._safe_search(query, _race_filter(race), top_k=5)
@@ -516,6 +530,8 @@ class Retriever:
         for the team.
         """
         meta = chunk.metadata
+        if key == _PROFILE_KEY:
+            return meta.get("category") == "circuits" and meta.get("circuit_ref") == ref
         if key == _RACE_KEY:
             return (
                 meta.get("category") == "race"

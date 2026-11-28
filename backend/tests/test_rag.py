@@ -477,6 +477,46 @@ BAHRAIN_CIRCUITS = [
     },
 ]
 
+# A circuit question that names a season (#44): that season's race has fewer
+# than 5 chunks, so the season-only search fills the list with other races
+SUZUKA_KB = [
+    *(
+        {
+            "content": f"2026 Japanese Grand Prix, part {i}",
+            "metadata": {"category": "race", "season": 2026, "circuit_ref": "suzuka"},
+            "similarity": 0.80 - i / 100,
+            "source": "races/2026-r03-suzuka.md",
+        }
+        for i in range(4)
+    ),
+    *(
+        _row(
+            f"races/2026-r{i:02d}-c{i}.md",
+            0.70 - i / 100,
+            category="race",
+            season=2026,
+            circuit_ref=f"c{i}",
+        )
+        for i in (1, 2, 4, 5, 6)
+    ),
+    _row(
+        "races/2025-r03-suzuka.md",
+        0.82,
+        category="race",
+        season=2025,
+        circuit_ref="suzuka",
+    ),
+    _row("circuits/suzuka.md", 0.60, category="circuits", circuit_ref="suzuka"),
+]
+SUZUKA_CIRCUITS = [
+    {
+        "ref": "suzuka",
+        "name": "Suzuka International Racing Course",
+        "location": "Suzuka",
+        "country": "Japan",
+    },
+]
+
 # Driver docs carry their team's constructor_ref, so a team search can
 # surface a driver profile ahead of the team's own doc.
 TEAMS_KB = [
@@ -853,6 +893,45 @@ class TestRetrieverResilience:
 
         assert kb.filters[0] == {"circuit_ref": "bahrain", "season": 2026}
         assert chunks[0].source == "races/2026-r16-sepang.md"
+
+    def _suzuka(self, retriever: Retriever, filter_: dict) -> FakeKnowledgeBase:
+        kb = FakeKnowledgeBase(SUZUKA_KB)
+        retriever.db = kb
+        retriever.linker = EntityLinker.from_rows(
+            [r["metadata"] for r in SUZUKA_KB], [], [], SUZUKA_CIRCUITS
+        )
+        retriever.llm.generate.return_value = _intent_json(filter_, circuits=["suzuka"])
+        return kb
+
+    @pytest.mark.asyncio()
+    async def test_a_season_from_the_question_keeps_the_circuit_profile(
+        self, retriever: Retriever
+    ) -> None:
+        # The classifier gave only the circuit; the linker read 2026 from the
+        # question, so the race's chunks and other 2026 races filled the list
+        kb = self._suzuka(retriever, {"circuit_ref": "suzuka"})
+
+        chunks = await retriever.retrieve(
+            "Why is Suzuka hard on tyres for the 2026 cars?"
+        )
+
+        assert kb.filters[0] == {"circuit_ref": "suzuka", "season": 2026}
+        assert {"circuit_ref": "suzuka", "category": "circuits"} in kb.filters
+        assert [c.source for c in chunks] == [
+            *["races/2026-r03-suzuka.md"] * 4,
+            "circuits/suzuka.md",
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_a_classifier_season_gets_no_profile_slot(
+        self, retriever: Retriever
+    ) -> None:
+        kb = self._suzuka(retriever, {"circuit_ref": "suzuka", "season": 2026})
+
+        chunks = await retriever.retrieve("Who won at Suzuka in 2026?")
+
+        assert {"circuit_ref": "suzuka", "category": "circuits"} not in kb.filters
+        assert "circuits/suzuka.md" not in [c.source for c in chunks]
 
     @pytest.mark.asyncio()
     async def test_each_team_in_a_comparison_gets_its_own_doc(

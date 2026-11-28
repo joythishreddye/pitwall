@@ -12,7 +12,10 @@ It also enforces the filter rules the eval baseline supports:
 * never filter on ``category`` alone (it hid the regulations docs);
 * keep ``season`` only alongside a circuit (profiles carry no season), and
   take it from the question when the classifier leaves it out and the
-  question names exactly one year;
+  question names exactly one year. A season taken that way also names the
+  circuit's profile (``circuit_profile``) for a guaranteed slot: "Why is
+  Suzuka hard on tyres for the 2026 cars?" asks about the track, and the
+  profile carries no season (#44);
 * no race or circuit filter for years before the first season the knowledge
   base covers (its race docs start in 2018, so "Suzuka in 1989" lives in
   the history docs);
@@ -246,6 +249,9 @@ class EntityLinker:
         and from unambiguous names in the question (the classifier doesn't
         know the 2026 newcomers). One entity of a kind becomes the filter;
         several mean a comparison, which entity searches cover instead.
+        ``circuit_profile`` names the circuit whose profile needs a slot,
+        when the filter's season came from the question rather than the
+        classifier; else it is None.
         """
         raw_filter = intent.get("metadata_filter")
         raw_filter = raw_filter if isinstance(raw_filter, dict) else {}
@@ -283,9 +289,11 @@ class EntityLinker:
         if any(y < self.first_season for y in years):
             # No race docs that old: let unfiltered search find the history
             circuit_ref = None
+        season_from_question = False
         if not isinstance(season, int) and len(question_years) == 1:
             # The classifier sometimes drops a season the question states
             season = next(iter(question_years))
+            season_from_question = True
 
         metadata_filter: dict = {}
         if circuit_ref:
@@ -301,6 +309,9 @@ class EntityLinker:
         return {
             **intent,
             "metadata_filter": metadata_filter,
+            "circuit_profile": circuit_ref
+            if season_from_question and "season" in metadata_filter
+            else None,
             "entities": {
                 "drivers": drivers,
                 "teams": teams,
