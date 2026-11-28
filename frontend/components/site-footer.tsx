@@ -15,7 +15,7 @@ export function SiteFooter() {
       </p>
       <p className="mt-1">
         Race data from Jolpica, OpenF1 and FastF1, used non-commercially under CC
-        BY-NC-SA 4.0. Circuit maps by julesr0y (CC BY 4.0). Driver photos © Formula 1.
+        BY-NC-SA 4.0. Circuit maps by julesr0y (CC BY 4.0) and bacinger (MIT). Driver photos © Formula 1.
       </p>
       <nav aria-label="Data sources" className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
         {CREDITS.map(({ label, href }) => (

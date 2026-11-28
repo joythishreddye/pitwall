@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
+import { circuitPaths } from "../lib/constants/circuits";
 
 // Circuit drawings and facts are matched on the API's circuit name (lib/constants/circuits.ts). Qatar's circuit
 // comes back as "Lusail International Circuit", while its entry is keyed `losail` (Jolpica's circuit id).
@@ -27,6 +28,20 @@ test("the Next Race tile draws Qatar's circuit", async ({ page }) => {
   const outline = tile.getByTestId("next-race-outline");
   await expect(outline).toHaveAttribute("aria-hidden", "true");
   await expect(outline.locator("svg")).toHaveCount(1);
+});
+
+test("every 2026 race card draws its circuit, Sepang's (round 16) included", async ({ page }) => {
+  await page.goto("/races");
+  await expect(page.getByRole("combobox", { name: "Select season" })).toContainText("2026 (23 races)");
+  const cards = page.locator('a.race-card[href^="/races/"]');
+  await expect(cards).toHaveCount(23);
+  const sepang = cards.filter({ hasText: "R16" });
+  await expect(sepang).toContainText("Sepang");
+  // Sepang's own drawing, not just any path (cards past the sixth draw on scroll, so their stroke can be empty)
+  await expect(sepang.locator("svg path").first()).toHaveAttribute("d", circuitPaths.sepang.d);
+  for (const card of await cards.all()) {
+    await expect(card.locator("svg path").first()).toBeAttached();
+  }
 });
 
 test.describe("a race's circuit facts", () => {
