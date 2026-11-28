@@ -90,6 +90,27 @@ test("below 1024 px the team shows under the driver's name; from 1024 px in its 
   }
 });
 
+test.describe("with motion", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  // the constructors chart has no dashed lines; animating them anyway logged "GSAP target .chart-line-dash not found"
+  test("switching the chart between drivers and constructors logs no warnings", async ({ page }) => {
+    const warnings: string[] = [];
+    page.on("console", (msg) => {
+      if (msg.type() === "warning") warnings.push(msg.text());
+    });
+    await page.goto("/standings");
+    await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+    await page.getByRole("tab", { name: "constructors" }).click();
+    await expect(page.locator(".standings-row-constructor")).toHaveCount(11);
+    await page.getByRole("tab", { name: "drivers" }).click();
+    await expect(page.locator("a.standings-row-driver")).toHaveCount(25);
+    // the chart's lines draw in 300 ms; give any warning from them time to arrive
+    await page.waitForTimeout(800);
+    expect(warnings).toEqual([]);
+  });
+});
+
 for (const width of [360, 375, 1024]) {
   test.describe(`at ${width} px`, () => {
     test.use({ viewport: { width, height: 800 } });

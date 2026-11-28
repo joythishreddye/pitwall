@@ -86,6 +86,8 @@ for (const race of RACES) {
     // the track shows from a 320 px tile (390 and 1440 here); the 768 screen's tile is narrower, so it has none. The
     // layout rule measures the tile's content box (inside its border), so that's the width to compare.
     const roomy = (await containerWidth(tile)) >= 320;
+    // so a layout change can't skip the checks below at every width without failing
+    expect(roomy, "which widths give the track room").toBe(page.viewportSize()?.width !== 768);
     await expect(drawing).toBeVisible({ visible: roomy });
     if (!roomy) return;
 
