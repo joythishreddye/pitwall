@@ -9,12 +9,11 @@ import type { DriverProfile } from "@/lib/schemas/drivers";
 
 interface ProfileHeaderProps {
   driver: DriverProfile;
-  teamColor: string;
   teamHex: string;
   headshotUrl: string | null;
 }
 
-export function ProfileHeader({ driver, teamColor, teamHex, headshotUrl }: ProfileHeaderProps) {
+export function ProfileHeader({ driver, teamHex, headshotUrl }: ProfileHeaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);

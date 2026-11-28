@@ -59,7 +59,6 @@ export function ConstructorsTable({
         const teamColor = getTeamColor(c.constructor_ref);
         const hexColor = getTeamHexColor(c.constructor_ref);
         const barWidth = maxPoints > 0 ? (c.points / maxPoints) * 100 : 0;
-        const isLeader = c.position === 1;
 
         return (
           <div
