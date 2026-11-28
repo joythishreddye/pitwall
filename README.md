@@ -42,7 +42,7 @@ Caveats:
 - The gold set is small and hand-written, and the linker was built against its failures.
 - Three questions that matched the classifier's own prompt examples were paraphrased.
 - False-positive cases (a word like "stroll" or "China" turning into a filter) are covered by unit tests, not by the eval.
-- Vector search is exact. An approximate (HNSW) index had degraded after bulk re-ingests and was dropped. Exact search raised plain vector search from 58% to 69% hit@5; production results didn't change.
+- Vector search is exact. An approximate (HNSW) index had degraded after bulk re-ingests and was dropped. Exact search raised plain vector search from 58% to 69% hit@5 on the earlier 55-question gold set; production results didn't change.
 
 A held-out question set is next.
 
@@ -61,7 +61,7 @@ Next.js 16 and GSAP: circuit outlines that draw themselves, chat shown as radio 
   - Chat has per-client and global rate limits.
   - The API meters the bandwidth it serves and stops at a daily budget, so normal traffic can't push hosting past the plan. Refused requests still use some bandwidth, so a sustained flood could. The twice-daily health check emails the owner when one starts, usually days before it would cost anything.
 - **Evals gate retrieval changes:** every retrieval change is scored against the gold set above. That's how the linker went in and the reranker came out.
-- **Tests and CI:** over 540 backend tests (pytest) and 29 frontend unit tests (vitest). Every push runs ruff, pytest, ESLint, vitest, TypeScript and a production build; Playwright screenshot tests at three widths run locally before each UI change.
+- **Tests and CI:** over 540 backend tests (pytest) and 29 frontend unit tests (vitest). Every pull request and every merge to main runs ruff, pytest, ESLint, vitest, TypeScript and a production build; Playwright screenshot tests at three widths run locally before each UI change.
 
 ## Roadmap
 
