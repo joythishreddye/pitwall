@@ -34,7 +34,7 @@ tags:
 - **Podiums:** 3
 - **Best Finish:** P2
 - **DNFs:** 1
-- **Races Completed:** 21
+- **Races Entered:** 21
 
 ## Recent Results (2026)
 

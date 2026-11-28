@@ -396,7 +396,7 @@ tags:
 - **Podiums:** {season_podiums}
 - **Best Finish:** P{best_finish if best_finish else "N/A"}
 - **DNFs:** {dnfs}
-- **Races Completed:** {len(results)}
+- **Races Entered:** {len(results)}
 
 ## Recent Results ({CURRENT_SEASON})
 
