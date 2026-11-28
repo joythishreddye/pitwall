@@ -68,7 +68,7 @@ Shown to a backmarker being lapped by a leading car. The backmarker must let the
 Disqualification. The driver must immediately return to the pit lane and retire. The most severe in-session penalty.
 
 ## Penalty — 5 Second
-A time penalty added to the driver's race time at the end of the race, or served in the pit lane (adding 5 seconds to the stop time). Common for minor infractions like track limit violations or minor collisions.
+A time penalty served at the driver's next pit stop (the car sits for 5 seconds before the crew may touch it), or added to their race time if they don't stop again. Common for minor infractions like track limit violations or minor collisions.
 
 ## Penalty — 10 Second
 Same mechanism as the 5-second penalty but doubles the time loss. Issued for more serious infractions.

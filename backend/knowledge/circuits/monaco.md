@@ -37,10 +37,10 @@ The circuit runs through the narrow streets, tunnels, and harbourside roads of M
 **Sainte Dévote (Turn 1)**
 The first corner of the lap, a tight right-hander at the bottom of a descent from the grid. One of the most crucial corners — overtaking attempts here often result in contact with the barrier. Getting through cleanly on the opening lap is essential.
 
-**Massenet and Casino Square (Turns 4-5)**
+**Massenet and Casino Square (Turns 3-4)**
 The climb up through Massenet into the famous Casino Square, a left-right sequence past the legendary Casino de Monte Carlo. Medium-speed corners where car balance is critical.
 
-**Mirabeau (Turn 6)**
+**Mirabeau (Turn 5)**
 A slow right-hander leading into an even tighter left. One of the lowest-speed points of the lap. The narrow road here means any mistake sends the car directly into the wall.
 
 **Fairmont Hairpin (Turn 6)**
@@ -85,7 +85,7 @@ The bumpy surface puts particular demands on the suspension and driver confidenc
 
 ## Weather
 
-Monaco's Mediterranean climate makes rain relatively rare during the Grand Prix (late May until 2025, early June from 2026), but rain transforms the race entirely. Wet Monaco is even more treacherous given the barriers' proximity. The 1984 race in the rain — Senna closing on Prost at an extraordinary rate in a much slower car before a red flag ended the race at the end of lap 32 — is one of F1's most celebrated chapters.
+Monaco's Mediterranean climate makes rain relatively rare during the Grand Prix (late May until 2025, early June from 2026), but rain transforms the race entirely. Wet Monaco is even more treacherous given the barriers' proximity. The 1984 race in the rain — Senna closing on Prost at an extraordinary rate in a much slower car before a red flag stopped the race on lap 32, with the result taken after 31 laps — is one of F1's most celebrated chapters.
 
 ## Notable Records and Moments
 

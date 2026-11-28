@@ -90,7 +90,7 @@ The VSC provides a smaller "free stop" opportunity because speeds are reduced le
 
 ## Fuel Load Considerations
 
-Cars begin the race carrying enough fuel to complete the distance plus a small buffer. Fuel represents dead weight — approximately 0.03 seconds per lap per extra kilogram. Through 2025 a car could start with up to 100kg of fuel, roughly 3 seconds per lap slower than at the end of the race on fuel load alone. The 2026 rules limit fuel by energy instead, and cars carry about 70kg.
+Cars begin the race carrying enough fuel to complete the distance plus a small buffer. Fuel represents dead weight — approximately 0.03 seconds per lap per extra kilogram. From 2019 through 2025 a car could start with up to 110kg of fuel; a full load made it roughly 3 seconds per lap slower than at the end of the race on fuel load alone. The 2026 rules limit fuel by energy instead, and cars carry about 70kg.
 
 Teams aim to carry the minimum fuel necessary. If a safety car period reduces racing time, fuel consumption drops, giving a small performance benefit from reduced weight. If the race is more aggressive than planned (more overtaking, more defensive driving), fuel consumption may exceed expectations, requiring lift-and-coast fuel saving.
 

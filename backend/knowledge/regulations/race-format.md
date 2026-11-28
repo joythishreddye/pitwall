@@ -13,12 +13,12 @@ tags:
 
 ## Overview
 
-A Formula 1 Grand Prix weekend spans Thursday to Sunday: media day on Thursday, then track running from Friday to Sunday. The schedule includes official sessions, media obligations, press conferences, and fan activities, but the on-track program follows a defined structure set by the FIA and Formula 1 Management.
+A Formula 1 Grand Prix weekend usually spans Thursday to Sunday: media day on Thursday, then track running from Friday to Sunday. Las Vegas runs a day earlier, with track running from Thursday to its Saturday-night race. The schedule includes official sessions, media obligations, press conferences, and fan activities, but the on-track program follows a defined structure set by the FIA and Formula 1 Management.
 
 ## Standard (Non-Sprint) Weekend Format
 
 ### Thursday / Friday: Media Day and FP1
-Thursday, the day before track running, is the official media day — mandatory press conferences for selected drivers and team principals. No on-track activity.
+The day before track running (usually Thursday) is the official media day — mandatory press conferences for selected drivers and team principals. No on-track activity.
 
 **Free Practice 1 (FP1)**
 - Duration: 60 minutes

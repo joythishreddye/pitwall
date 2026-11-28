@@ -43,10 +43,10 @@ A fast, sweeping right-hander taken flat-out or close to it in modern F1 cars. T
 **Variante della Roggia (Turn 4-5)**
 A second chicane in the first sector. Cars bounce over the sausage kerbs that limit cutting. Another heavy braking zone, but shorter approach than Turn 1.
 
-**Lesmo 1 and Lesmo 2 (Turns 7-8)**
+**Lesmo 1 and Lesmo 2 (Turns 6-7)**
 Two flowing medium-to-fast right-hand corners through the park section of the circuit. Lesmo 1 opens up into Lesmo 2; getting the Lesmo 2 exit right is critical for speed onto the back straight. The banking and camber changes make these corners particularly demanding.
 
-**Variante Ascari (Turns 10-11-12)**
+**Variante Ascari (Turns 8-9-10)**
 A high-speed chicane named after Alberto Ascari, the two-time world champion who died here testing a Ferrari in 1955. Entered at approximately 290 km/h, requiring one of the most precise braking points of the lap. The chicane configuration has been modified several times over the decades.
 
 **Curva Parabolica / Curva Alboreto (Turn 11)**

@@ -118,7 +118,7 @@ Assessed by stewards based on whether one driver is predominantly responsible fo
 If a backmarker fails to allow the leading car past within three flag presentations at three consecutive marshaling posts, the stewards investigate. Repeated blue flag violations carry a 5-second time penalty and potentially a reprimand on the Super Licence.
 
 ### Jumping the Start
-Detected by sensors in the grid boxes measuring movement before the five lights go out. Modern detection systems are precise to the millisecond. The stewards choose the penalty for a clear false start, from 5 seconds to a stop-and-go; recent ones got 5 seconds (Piastri at Baku in 2025). Minor movements within the tolerance window are not penalized.
+Detected by sensors in the grid boxes measuring movement before the five lights go out. Modern detection systems are precise to the millisecond. The stewards choose the penalty for a clear false start, from a 5-second penalty to a stop-and-go. Minor movements within the tolerance window are not penalized.
 
 ### Pit Lane Speeding
 GPS and timing sensors monitor car speed in the pit lane. Exceeding the pit lane speed limit (80 km/h for the whole event at most circuits, lowered to 60 km/h at a few tight ones such as Monaco) triggers automatic notification. Penalties are typically 5-second time additions for minor breaches and drive-through penalties for more significant violations.
