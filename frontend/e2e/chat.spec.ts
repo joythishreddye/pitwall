@@ -105,6 +105,18 @@ test.describe("the chat", () => {
     for (const name of ["DRS RULES", "FASTEST LAP"]) {
       await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
     }
+    // The UI gate photographs only the homepage: the longer labels must
+    // still wrap inside the screen at every width
+    const width = page.viewportSize()?.width ?? 0;
+    for (const box of await page.locator(".freq-preset").evaluateAll((els) =>
+      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect)
+    )) {
+      expect(box.left).toBeGreaterThanOrEqual(0);
+      expect(box.right).toBeLessThanOrEqual(width);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width
+    );
 
     expect(seen.errors, "console errors").toEqual([]);
     expect(seen.chatRequests).toEqual([]);
