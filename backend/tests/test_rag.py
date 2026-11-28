@@ -130,6 +130,29 @@ class TestChunker:
         chunks = chunk_markdown(md)
         assert [c["content"].split("\n")[0] for c in chunks] == ["## One", "## Two"]
 
+    def test_a_long_sections_last_words_are_never_dropped(self, tmp_path: Path) -> None:
+        # A window ending under 50 words before the section's end used to drop
+        # those words; folding a short section in can make a section that long
+        for body_words in (501, 520, 549, 550, 600, 1049):
+            words = " ".join(f"w{i}" for i in range(body_words))
+            md = tmp_path / f"long{body_words}.md"
+            md.write_text(f"## Long\n\n{words}\n")
+            text = " ".join(c["content"] for c in chunk_markdown(md))
+            assert f"w{body_words - 1}" in text.split(), body_words
+
+    def test_a_folded_section_keeps_the_last_words_of_the_next(
+        self, tmp_path: Path
+    ) -> None:
+        stats = " ".join(f"s{i}" for i in range(490))
+        md = tmp_path / "doc.md"
+        md.write_text(
+            "## Overview\n\nten words of overview text for this driver here\n\n"
+            f"## Statistics\n\n{stats}\n"
+        )
+        text = " ".join(c["content"] for c in chunk_markdown(md))
+        assert "s489" in text.split()
+        assert "overview" in text.split()
+
     def test_a_doc_under_20_words_in_all_still_gives_no_chunk(
         self, tmp_path: Path
     ) -> None:

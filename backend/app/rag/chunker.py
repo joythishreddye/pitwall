@@ -100,13 +100,17 @@ def _window_chunks(text: str, heading: str) -> list[str]:
     start = 0
     while start < len(words):
         end = min(start + MAX_TOKENS, len(words))
+        if end - OVERLAP_TOKENS + MIN_TOKENS > len(words):
+            # The next window would be too short: this one takes the rest, so
+            # the section's last words are never dropped
+            end = len(words)
         chunk_words = words[start:end]
         chunk_text = " ".join(chunk_words)
         full = f"{heading}\n\n{chunk_text}" if heading else chunk_text
         chunks.append(full.strip())
-        start = end - OVERLAP_TOKENS
-        if start + MIN_TOKENS > len(words):
+        if end == len(words):
             break
+        start = end - OVERLAP_TOKENS
 
     return chunks
 
