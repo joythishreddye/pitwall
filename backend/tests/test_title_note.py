@@ -90,7 +90,7 @@ def test_the_last_rounds_sprint_alone_is_not_the_end() -> None:
     note = title_note(2026, 23, [("A", 400), ("B", 399)], season, False)
 
     assert note == (
-        "The 2026 drivers' title is still open: A leads B by 1 points "
+        "The 2026 drivers' title is still open: A leads B by 1 point "
         "with 1 race left, worth 25 points at most (no sprints)."
     )
 

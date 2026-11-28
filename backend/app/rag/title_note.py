@@ -14,7 +14,7 @@ from app.schedule import RoundSchedule
 
 
 def _pts(points: float) -> str:
-    return f"{points:g}"
+    return "1 point" if points == 1 else f"{points:g} points"
 
 
 def _count(n: int, word: str) -> str:
@@ -58,9 +58,9 @@ def title_note(
         f"({sprint_text})"
     )
     if first == runner_up:
-        gap = f"{leader} and {second} are level on {_pts(first)} points"
+        gap = f"{leader} and {second} are level on {_pts(first)}"
     else:
-        gap = f"{leader} leads {second} by {_pts(first - runner_up)} points"
+        gap = f"{leader} leads {second} by {_pts(first - runner_up)}"
     if title_decided([Standing(leader, first), Standing(second, runner_up)], most):
         return (
             f"The {season} drivers' title is decided: {gap} {span}, "
