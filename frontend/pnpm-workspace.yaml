@@ -2,3 +2,17 @@ ignoredBuiltDependencies:
   - esbuild
   - sharp
   - unrs-resolver
+
+# Patched versions of packages nested in the lint, test and CSS build tools (security alerts, Nov 27).
+# Each stays on its own major.
+overrides:
+  "@babel/core@<7.29.6": ^7.29.6
+  "@humanfs/node@<0.16.8": ^0.16.8
+  baseline-browser-mapping@<2.11.0: ^2.11.0
+  brace-expansion@<1.1.21: ^1.1.21
+  brace-expansion@>=4.0.0 <5.0.12: ^5.0.12
+  browserslist@<4.28.7: ^4.28.7
+  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
+  nanoid@<3.3.18: ^3.3.18
+  postcss@<8.5.23: ^8.5.23
+  source-map-js@<1.2.2: ^1.2.2
