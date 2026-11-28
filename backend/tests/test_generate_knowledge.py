@@ -236,3 +236,44 @@ def test_a_team_doc_gives_the_name_people_use_when_the_data_uses_another() -> No
     assert gk._other_name_line("rb") == "**Also called:** Racing Bulls\n"
     assert gk._other_name_line("red_bull") == "**Also called:** Red Bull Racing\n"
     assert gk._other_name_line("ferrari") == ""
+
+
+class _CappedTable:
+    """A table query that, like PostgREST, answers at most 1,000 rows unless
+    a range asks for a later page."""
+
+    def __init__(self, rows: list[dict]) -> None:
+        self.rows = rows
+        self.window: tuple[int, int] | None = None
+
+    def __getattr__(self, name: str):  # select, eq, order...
+        return lambda *args, **kwargs: self
+
+    def range(self, start: int, end: int) -> "_CappedTable":
+        self.window = (start, end)
+        return self
+
+    def execute(self) -> MagicMock:
+        start, end = self.window or (0, 999)
+        return MagicMock(data=self.rows[start : min(end + 1, start + 1000)])
+
+
+def _capped_client(rows: list[dict]) -> MagicMock:
+    return MagicMock(table=lambda name: _CappedTable(rows))
+
+
+def _round(i: int) -> dict:
+    return {"season": 1950 + i // 20, "round": i % 20 + 1}
+
+
+def test_title_leaders_read_past_the_row_cap() -> None:
+    # 1950 to 2026 has well over 1,000 rounds once f1db's backfill (#18) lands
+    rows = [{"entity_id": 1, **_round(i)} for i in range(1500)]
+
+    assert gk._title_leaders(_capped_client(rows)) == rows
+
+
+def test_all_races_read_past_the_row_cap() -> None:
+    rows = [{"id": i, **_round(i)} for i in range(1150)]
+
+    assert gk._all_races(_capped_client(rows)) == rows
