@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The standings tables at every width: every row's name has room to show, nothing runs past its row or the
-// screen, and the Pts heading sits over the points. The three projects run 1440, 768 and 390; the small-phone
-// block adds 360 and 375. Before, at 390 the drivers' names shrank to one letter (found live on 2026-11-27).
+// The standings tables at every width: every row's name shows in full, nothing runs past its row or the
+// screen, and the Pts heading sits over the points. The three projects run 1440, 768 and 390; the extra block
+// adds 360, 375 and 1024. Before, at 390 the drivers' names shrank to one letter (found live on 2026-11-27), and
+// at 768 long surnames still ended in "…" (VERSTAPPEN in a 74 px box: the team column and points bar took the room).
 // 2026 after round 21 from the saved fixture: 25 drivers, 11 constructors.
 
 let errors: string[] = [];
@@ -36,6 +37,12 @@ async function tableFits(page: Page, rowClass: string, count: number) {
     expect(width).toBeGreaterThan(60);
     const spill = await row.evaluate((el) => el.scrollWidth - el.clientWidth);
     expect(spill).toBeLessThanOrEqual(0);
+    // the name itself isn't cut short: neither the name box nor a line in it (the surname, the team under it)
+    const lines = row.locator(".standings-name, .standings-name .truncate").filter({ visible: true });
+    for (const line of await lines.all()) {
+      const cut = await line.evaluate((el) => el.scrollWidth - el.clientWidth);
+      expect(cut, `"${await line.textContent()}" is cut short`).toBeLessThanOrEqual(0);
+    }
   }
 
   // the Pts heading's right edge lines up with the first row's points
@@ -57,7 +64,7 @@ test("both standings tables fit the screen and every name has room", async ({ pa
   await bothTablesFit(page);
 });
 
-test("on phones the team shows under the driver's name; from 768 px in its own column", async ({ page }) => {
+test("below 1024 px the team shows under the driver's name; from 1024 px in its own column", async ({ page }) => {
   await page.goto("/standings");
   const first = page.locator("a.standings-row-driver").first();
   const team = first.getByText("Mercedes", { exact: true });
@@ -67,15 +74,17 @@ test("on phones the team shows under the driver's name; from 768 px in its own c
   const name = (await first.locator(".standings-name").boundingBox())!;
   const surname = (await first.getByText("Antonelli", { exact: true }).boundingBox())!;
   const shown = (await team.filter({ visible: true }).boundingBox())!;
-  if ((page.viewportSize()?.width ?? 0) < 768) {
-    expect(shown.y).toBeGreaterThan(surname.y);
+  if ((page.viewportSize()?.width ?? 0) < 1024) {
+    // on the line below the surname, inside the name's box (not a column of its own that sits a pixel lower)
+    expect(shown.y).toBeGreaterThanOrEqual(surname.y + surname.height - 1);
+    expect(shown.x).toBeLessThan(name.x + name.width);
   } else {
     expect(shown.x).toBeGreaterThanOrEqual(name.x + name.width);
   }
 });
 
-for (const width of [360, 375]) {
-  test.describe(`on a ${width} px phone`, () => {
+for (const width of [360, 375, 1024]) {
+  test.describe(`at ${width} px`, () => {
     test.use({ viewport: { width, height: 800 } });
 
     test("both standings tables fit and every name has room", async ({ page }) => {

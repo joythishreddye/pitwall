@@ -9,9 +9,9 @@ import type { ConstructorStanding } from "@/lib/schemas/standings";
 
 void ScrollTrigger;
 
-// Phones get position, constructor, wins and points; the points bar joins from 768 px
+// Below 1024 px, position, constructor, wins and points; the points bar joins from 1024 px, as in the drivers' table
 const COLS =
-  "grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.5rem] gap-x-3 md:grid-cols-[3rem_2fr_4rem_5rem_1fr] md:gap-x-4";
+  "grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.5rem] gap-x-3 lg:grid-cols-[3rem_2fr_4rem_5rem_1fr] lg:gap-x-4";
 
 export function ConstructorsTable({
   constructors,
@@ -52,7 +52,7 @@ export function ConstructorsTable({
         <span>Constructor</span>
         <span className="text-right">Wins</span>
         <span className="standings-pts-heading text-right">Pts</span>
-        <span className="hidden md:block" />
+        <span className="hidden lg:block" />
       </div>
 
       {constructors.map((c, i) => {
@@ -102,7 +102,7 @@ export function ConstructorsTable({
             </span>
 
             {/* Win bar */}
-            <div className="hidden h-1.5 overflow-hidden bg-f1-grid/30 md:block">
+            <div className="hidden h-1.5 overflow-hidden bg-f1-grid/30 lg:block">
               <div
                 className="h-full"
                 style={{
