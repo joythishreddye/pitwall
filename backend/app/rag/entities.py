@@ -21,10 +21,12 @@ It also enforces the filter rules the eval baseline supports:
   the history docs);
 * comparisons use no filter, and entity searches cover each side;
 * a corner the question names beats a different circuit the classifier
-  filtered on, unless the question also names the classifier's circuit (weak
-  aliases count for that): "Is Blanchimont taken flat out?" filters to Spa
-  even when the classifier says Monaco. A full circuit name doesn't: "the
-  Japanese GP" names Suzuka with no alias to show it;
+  filtered on, when it is the only circuit the scan finds and the question
+  names neither the classifier's circuit (weak aliases count for that) nor
+  a race ("GP", "Grand Prix"): "Is Blanchimont taken flat out?" filters to
+  Spa even when the classifier says Monaco. A full circuit name or a race
+  name never overrides: "the Japanese GP" names Suzuka with no alias to
+  show it;
 * a scan of the question trusts only unambiguous names: full names, team and
   circuit names, circuit cities, famous corner names (``_CORNER_ALIASES``),
   and refs that aren't also everyday words.
@@ -332,12 +334,15 @@ class EntityLinker:
             and found_circuits[0] != circuit_ref
             and found_circuits[0] in _corner_circuits(question_text)
             and not self.circuits.mentions(question_text, circuit_ref)
+            and not _names_a_race(question_text)
         ):
             # The question names one circuit, by a corner the classifier
             # doesn't know, and never the classifier's circuit ("Is Blanchimont
             # taken flat out?" filed under Monaco): the corner wins. Only a
-            # corner: "the Japanese GP" names Suzuka with no alias to show it.
-            # Both circuits keep their entity searches.
+            # corner, and never beside a race name: "the Japanese GP" names
+            # Suzuka with no alias to show it, so "Was the Japanese GP faster
+            # than the Parabolica?" is a comparison. Both circuits keep their
+            # entity searches.
             circuit_ref = found_circuits[0]
         circuit_ref = circuit_ref or (circuits[0] if len(circuits) == 1 else None)
         driver_ref = self.drivers.resolve(raw_filter.get("driver_ref")) or (
@@ -383,6 +388,14 @@ class EntityLinker:
                 "seasons": seasons if isinstance(seasons, list) else [],
             },
         }
+
+
+_RACE_WORDS = (" gp ", " grand prix ")
+
+
+def _names_a_race(padded: str) -> bool:
+    """Whether the padded, normalised text names a race ("the Japanese GP")."""
+    return any(word in padded for word in _RACE_WORDS)
 
 
 def _corner_circuits(padded: str) -> set[str]:

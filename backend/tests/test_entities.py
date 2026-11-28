@@ -573,3 +573,15 @@ def test_a_full_circuit_name_does_not_beat_the_classifiers_circuit() -> None:
         _intent({"circuit_ref": "suzuka"}), "Was the Japanese GP faster than Monza?"
     )
     assert out["metadata_filter"] == {"circuit_ref": "suzuka"}
+
+
+def test_a_corner_beside_a_race_name_does_not_beat_the_classifiers_circuit() -> None:
+    # "the Japanese GP" names Suzuka with no alias to show it, so a corner
+    # beside a race name is a comparison, not a misfiled corner
+    linker = _corner_linker()
+    for question in (
+        "Was the Japanese GP faster than the Parabolica?",
+        "Is the Parabolica harder than anything at the Japanese Grand Prix?",
+    ):
+        out = linker.link(_intent({"circuit_ref": "suzuka"}), question)
+        assert out["metadata_filter"] == {"circuit_ref": "suzuka"}, question
