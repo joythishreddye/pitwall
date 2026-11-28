@@ -48,7 +48,11 @@ tags:
 
 - Oliver Bearman: P22 → P16 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P20)
 - Sergio Pérez: Retired (started P18)

@@ -51,7 +51,11 @@ tags:
 - George Russell: P19 → P14 (+5 places)
 - Robert Kubica: P20 → P15 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Antonio Giovinazzi: Spun off (started P11)
 - Romain Grosjean: Collision (started P14)

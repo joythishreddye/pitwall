@@ -51,13 +51,17 @@ tags:
 - Lance Stroll: P22 → P17 (+5 places)
 - Pierre Gasly: P14 → P10 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P17)
 - Valtteri Bottas: Retired (started P19)
 - Isack Hadjar: Retired (started P3)
 
-## Did not start
+### Did not start
 
 - Oscar Piastri
 - Nico Hülkenberg

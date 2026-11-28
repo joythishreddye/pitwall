@@ -51,12 +51,16 @@ tags:
 - Lance Stroll: P16 → P11 (+5 places)
 - Oscar Piastri: P6 → P2 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Qatar Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Logan Sargeant: Retired (started P15)
 - Lewis Hamilton: Retired (started P3)
 
-## Did not start
+### Did not start
 
 - Carlos Sainz
 

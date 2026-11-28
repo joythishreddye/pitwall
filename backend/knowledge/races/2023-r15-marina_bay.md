@@ -52,14 +52,18 @@ tags:
 - Pierre Gasly: P12 → P6 (+6 places)
 - Sergio Pérez: P13 → P8 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2023:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P2)
 - Valtteri Bottas: Retired (started P16)
 - Esteban Ocon: Retired (started P8)
 - Yuki Tsunoda: Retired (started P15)
 
-## Did not start
+### Did not start
 
 - Lance Stroll
 

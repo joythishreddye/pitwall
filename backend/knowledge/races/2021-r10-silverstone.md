@@ -50,7 +50,11 @@ tags:
 - Carlos Sainz: P10 → P6 (+4 places)
 - Nicholas Latifi: P17 → P14 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Sebastian Vettel: Retired (started P8)
 - Max Verstappen: Collision (started P1)

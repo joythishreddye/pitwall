@@ -51,7 +51,11 @@ tags:
 - Sergey Sirotkin: P19 → P14 (+5 places)
 - Charles Leclerc: P14 → P10 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Stoffel Vandoorne: Gearbox (started P11)
 - Esteban Ocon: Oil leak (started P13)

@@ -51,7 +51,11 @@ tags:
 - Isack Hadjar: P14 → P10 (+4 places)
 - Nico Hülkenberg: P18 → P15 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Saudi Arabian Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Yuki Tsunoda: Retired (started P8)
 - Pierre Gasly: Retired (started P9)

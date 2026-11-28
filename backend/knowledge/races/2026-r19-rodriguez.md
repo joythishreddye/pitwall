@@ -52,7 +52,11 @@ tags:
 - Alexander Albon: P16 → P11 (+5 places)
 - Max Verstappen: P5 → P1 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Arvid Lindblad: Retired (started P8)
 - Oliver Bearman: Retired (started P14)

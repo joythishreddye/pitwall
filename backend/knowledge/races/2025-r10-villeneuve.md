@@ -51,7 +51,11 @@ tags:
 - Pierre Gasly: P20 → P15 (+5 places)
 - Charles Leclerc: P8 → P5 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Lando Norris: Retired (started P7)
 - Liam Lawson: Retired (started P19)

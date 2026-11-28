@@ -50,7 +50,11 @@ tags:
 - Kevin Magnussen: P18 → P14 (+4 places)
 - Sebastian Vettel: P9 → P6 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Accident (started P3)
 - Alexander Albon: Hydraulics (started P16)

@@ -50,11 +50,15 @@ tags:
 - Kevin Magnussen: P19 → P15 (+4 places)
 - Lance Stroll: P12 → P9 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Max Verstappen: Brakes (started P5)
 
-## Disqualified
+### Disqualified
 
 - Daniel Ricciardo: Disqualified (started P16)
 - Nico Hülkenberg: Disqualified (started P15)

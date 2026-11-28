@@ -48,6 +48,10 @@ tags:
 - Daniel Ricciardo: P11 → P7 (+4 places)
 - Kimi Räikkönen: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Abu Dhabi Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Sergio Pérez: Transmission (started P19)

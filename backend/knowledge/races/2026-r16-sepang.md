@@ -52,7 +52,11 @@ tags:
 - Fernando Alonso: P12 → P8 (+4 places)
 - Nico Hülkenberg: P15 → P11 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix in Malaysia 2026:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P7)
 - Alexander Albon: Retired (started P18)

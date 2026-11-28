@@ -52,14 +52,18 @@ tags:
 - Marcus Ericsson: P16 → P10 (+6 places)
 - Stoffel Vandoorne: P17 → P11 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Charles Leclerc: Collision damage (started P9)
 - Daniel Ricciardo: Battery (started P4)
 - Romain Grosjean: Collision damage (started P8)
 - Fernando Alonso: Collision (started P13)
 
-## Disqualified
+### Disqualified
 
 - Esteban Ocon: Disqualified (started P6)
 - Kevin Magnussen: Disqualified (started P12)

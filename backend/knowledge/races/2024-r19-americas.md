@@ -51,7 +51,11 @@ tags:
 - Charles Leclerc: P4 → P1 (+3 places)
 - Nico Hülkenberg: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Lewis Hamilton: Retired (started P17)
 

@@ -52,7 +52,11 @@ tags:
 - Daniil Kvyat: P16 → P10 (+6 places)
 - George Russell: P18 → P12 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Brazilian Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Sebastian Vettel: Collision (started P2)
 - Charles Leclerc: Collision (started P14)

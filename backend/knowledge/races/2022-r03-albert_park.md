@@ -52,7 +52,11 @@ tags:
 - George Russell: P6 → P3 (+3 places)
 - Guanyu Zhou: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Max Verstappen: Fuel leak (started P2)
 - Sebastian Vettel: Accident (started P17)

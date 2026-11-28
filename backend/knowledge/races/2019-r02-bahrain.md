@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P18 → P14 (+4 places)
 - George Russell: P19 → P15 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Nico Hülkenberg: Engine (started P17)
 - Daniel Ricciardo: Out of fuel (started P10)

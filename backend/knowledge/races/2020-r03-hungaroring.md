@@ -51,6 +51,10 @@ tags:
 - Kimi Räikkönen: P20 → P15 (+5 places)
 - Daniel Ricciardo: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Engine (started P10)

@@ -52,7 +52,11 @@ tags:
 - Charles Leclerc: P7 → P2 (+5 places)
 - Pierre Gasly: P12 → P7 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Daniil Kvyat: Suspension (started P13)
 - Alexander Albon: Electronics (started P4)

@@ -52,7 +52,11 @@ tags:
 - Esteban Ocon: P12 → P9 (+3 places)
 - Alexander Albon: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Dutch Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Valtteri Bottas: Engine (started P16)
 - Yuki Tsunoda: Differential (started P9)

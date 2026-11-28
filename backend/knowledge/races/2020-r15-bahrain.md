@@ -49,7 +49,11 @@ tags:
 - Nicholas Latifi: P20 → P14 (+6 places)
 - Lando Norris: P9 → P4 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Sergio Pérez: Engine (started P5)
 - Lance Stroll: Collision (started P13)

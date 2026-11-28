@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P16 → P13 (+3 places)
 - Robert Kubica: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Kimi Räikkönen: Collision (started P12)
 - Sergio Pérez: Engine (started P15)

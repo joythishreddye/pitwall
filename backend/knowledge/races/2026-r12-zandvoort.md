@@ -50,7 +50,11 @@ tags:
 - Nico Hülkenberg: P13 → P8 (+5 places)
 - Valtteri Bottas: P21 → P18 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Dutch Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Alexander Albon: Retired (started P16)
 - Valtteri Bottas: Retired (started P21)

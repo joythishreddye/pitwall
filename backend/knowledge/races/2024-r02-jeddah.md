@@ -50,7 +50,11 @@ tags:
 - Oliver Bearman: P11 → P7 (+4 places)
 - Esteban Ocon: P17 → P13 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Saudi Arabian Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Lance Stroll: Retired (started P10)
 - Pierre Gasly: Retired (started P18)

@@ -49,7 +49,11 @@ tags:
 - Lewis Hamilton: P16 → P4 (+12 places)
 - Alexander Albon: P18 → P11 (+7 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Abu Dhabi Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Liam Lawson: Retired (started P12)
 - Valtteri Bottas: Retired (started P9)

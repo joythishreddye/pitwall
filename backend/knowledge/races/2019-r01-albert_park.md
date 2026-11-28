@@ -51,7 +51,11 @@ tags:
 - Nico Hülkenberg: P11 → P7 (+4 places)
 - George Russell: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Romain Grosjean: Wheel (started P6)
 - Daniel Ricciardo: Damage (started P12)

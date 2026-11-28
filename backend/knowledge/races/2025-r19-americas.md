@@ -52,7 +52,11 @@ tags:
 - Isack Hadjar: P20 → P16 (+4 places)
 - Nico Hülkenberg: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P9)
 

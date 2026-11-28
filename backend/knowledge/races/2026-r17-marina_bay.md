@@ -50,7 +50,11 @@ tags:
 - George Russell: P19 → P9 (+10 places)
 - Fernando Alonso: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Alexander Albon: Retired (started P16)
 - Lance Stroll: Retired (started P21)

@@ -51,11 +51,15 @@ tags:
 - Lando Norris: P6 → P3 (+3 places)
 - Alexander Albon: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Retired (started P8)
 
-## Disqualified
+### Disqualified
 
 - Nico Hülkenberg: Disqualified (started P16)
 

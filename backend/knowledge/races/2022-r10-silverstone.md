@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P20 → P11 (+9 places)
 - Kevin Magnussen: P17 → P10 (+7 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Esteban Ocon: Fuel pump (started P15)
 - Pierre Gasly: Collision damage (started P11)

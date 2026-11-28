@@ -52,7 +52,11 @@ tags:
 - Pierre Gasly: P12 → P6 (+6 places)
 - Sergio Pérez: P9 → P4 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Eifel Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Lando Norris: Power Unit (started P8)
 - Alexander Albon: Radiator (started P5)

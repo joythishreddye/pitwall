@@ -51,7 +51,11 @@ tags:
 - Alexander Albon: P12 → P6 (+6 places)
 - Sergio Pérez: P5 → P1 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Sakhir Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Nicholas Latifi: Engine (started P16)
 - Max Verstappen: Accident (started P3)

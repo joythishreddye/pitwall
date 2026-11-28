@@ -51,7 +51,11 @@ tags:
 - Esteban Ocon: P9 → P4 (+5 places)
 - Nicholas Latifi: P16 → P12 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Saudi Arabian Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Sebastian Vettel: Collision damage (started P17)
 - Sergio Pérez: Collision (started P5)

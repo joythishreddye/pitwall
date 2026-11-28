@@ -48,7 +48,11 @@ tags:
 - Valtteri Bottas: P17 → P13 (+4 places)
 - Fernando Alonso: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Monaco Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Esteban Ocon: Retired (started P11)
 - Sergio Pérez: Retired (started P16)

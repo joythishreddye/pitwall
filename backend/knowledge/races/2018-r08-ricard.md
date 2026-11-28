@@ -52,7 +52,11 @@ tags:
 - Kevin Magnussen: P9 → P6 (+3 places)
 - Nico Hülkenberg: P12 → P9 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the French Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Wheel (started P16)
 - Lance Stroll: Puncture (started P19)

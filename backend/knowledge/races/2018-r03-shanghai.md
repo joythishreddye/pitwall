@@ -51,6 +51,10 @@ tags:
 - Lance Stroll: P18 → P14 (+4 places)
 - Marcus Ericsson: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Chinese Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Brendon Hartley: Collision damage (started P15)

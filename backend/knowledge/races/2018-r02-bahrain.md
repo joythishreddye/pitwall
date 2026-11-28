@@ -51,7 +51,11 @@ tags:
 - Fernando Alonso: P13 → P7 (+6 places)
 - Stoffel Vandoorne: P14 → P8 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Kimi Räikkönen: Wheel (started P2)
 - Max Verstappen: Puncture (started P15)

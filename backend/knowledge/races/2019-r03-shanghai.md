@@ -50,7 +50,11 @@ tags:
 - Lance Stroll: P16 → P12 (+4 places)
 - Antonio Giovinazzi: P19 → P15 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Chinese Grand Prix 2019:
+
+### Retirements/DNFs
 
 - Lando Norris: Collision (started P15)
 - Daniil Kvyat: Collision (started P11)

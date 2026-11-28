@@ -52,7 +52,11 @@ tags:
 - Sergio Pérez: P12 → P6 (+6 places)
 - Yuki Tsunoda: P19 → P14 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2023:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P4)
 - Logan Sargeant: Retired (started P18)

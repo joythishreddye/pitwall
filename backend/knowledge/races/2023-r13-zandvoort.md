@@ -52,7 +52,11 @@ tags:
 - Liam Lawson: P19 → P13 (+6 places)
 - Valtteri Bottas: P18 → P14 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Dutch Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Guanyu Zhou: Accident (started P15)
 - Charles Leclerc: Undertray (started P9)

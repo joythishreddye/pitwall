@@ -51,7 +51,11 @@ tags:
 - Carlos Sainz: P17 → P14 (+3 places)
 - Franco Colapinto: P18 → P15 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Spanish Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Andrea Kimi Antonelli: Retired (started P6)
 - Alexander Albon: Retired (started P11)

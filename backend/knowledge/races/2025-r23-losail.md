@@ -52,7 +52,11 @@ tags:
 - Lewis Hamilton: P17 → P12 (+5 places)
 - Carlos Sainz: P7 → P3 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Qatar Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Lance Stroll: Retired (started P18)
 - Isack Hadjar: Retired (started P6)

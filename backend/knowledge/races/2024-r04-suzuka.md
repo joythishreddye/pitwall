@@ -49,7 +49,11 @@ tags:
 - Charles Leclerc: P8 → P4 (+4 places)
 - Lance Stroll: P16 → P12 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Guanyu Zhou: Retired (started P20)
 - Daniel Ricciardo: Retired (started P11)

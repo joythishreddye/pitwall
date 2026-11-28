@@ -51,7 +51,11 @@ tags:
 - Pierre Gasly: P17 → P13 (+4 places)
 - Guanyu Zhou: P19 → P15 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2024:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P7)
 - Lewis Hamilton: Retired (started P11)

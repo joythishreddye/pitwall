@@ -52,7 +52,11 @@ tags:
 - Valtteri Bottas: P11 → P7 (+4 places)
 - Sebastian Vettel: P16 → P12 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Yuki Tsunoda: Accident (started P20)
 - Mick Schumacher: Engine (started P6)

@@ -51,7 +51,11 @@ tags:
 - Kimi Räikkönen: P14 → P11 (+3 places)
 - Esteban Ocon: P16 → P13 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Retired (started P5)
 - Nicholas Latifi: Retired (started P17)

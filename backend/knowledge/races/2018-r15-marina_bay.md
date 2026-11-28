@@ -52,6 +52,10 @@ tags:
 - Carlos Sainz: P12 → P8 (+4 places)
 - Charles Leclerc: P13 → P9 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Singapore Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Esteban Ocon: Collision (started P9)

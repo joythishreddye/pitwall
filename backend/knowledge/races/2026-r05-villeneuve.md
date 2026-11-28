@@ -52,7 +52,11 @@ tags:
 - Oliver Bearman: P16 → P10 (+6 places)
 - Liam Lawson: P12 → P7 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Sergio Pérez: Retired (started P20)
 - Lando Norris: Retired (started P3)
@@ -60,6 +64,6 @@ tags:
 - Fernando Alonso: Retired (started P19)
 - Alexander Albon: Retired (started P18)
 
-## Did not start
+### Did not start
 
 - Arvid Lindblad

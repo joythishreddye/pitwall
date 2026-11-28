@@ -52,7 +52,11 @@ tags:
 - Esteban Ocon: P19 → P13 (+6 places)
 - Oliver Bearman: P20 → P14 (+6 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Liam Lawson: Retired (started P18)
 - Gabriel Bortoleto: Retired (started P15)

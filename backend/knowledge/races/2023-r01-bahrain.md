@@ -51,7 +51,11 @@ tags:
 - Valtteri Bottas: P12 → P8 (+4 places)
 - Logan Sargeant: P16 → P12 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Bahrain Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Esteban Ocon: Retired (started P9)
 - Charles Leclerc: Retired (started P3)

@@ -48,7 +48,11 @@ tags:
 - Sergio Pérez: P16 → P7 (+9 places)
 - George Russell: P17 → P8 (+9 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2024:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Retired (started P20)
 

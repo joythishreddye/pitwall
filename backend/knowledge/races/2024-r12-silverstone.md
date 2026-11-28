@@ -50,11 +50,15 @@ tags:
 - Yuki Tsunoda: P13 → P10 (+3 places)
 - Sergio Pérez: P20 → P17 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2024:
+
+### Retirements/DNFs
 
 - George Russell: Retired (started P1)
 
-## Did not start
+### Did not start
 
 - Pierre Gasly
 

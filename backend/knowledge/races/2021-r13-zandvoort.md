@@ -48,7 +48,11 @@ tags:
 - Fernando Alonso: P9 → P6 (+3 places)
 - Lando Norris: P13 → P10 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Dutch Grand Prix 2021:
+
+### Retirements/DNFs
 
 - George Russell: Gearbox (started P11)
 - Yuki Tsunoda: Power Unit (started P14)

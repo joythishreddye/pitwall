@@ -51,7 +51,11 @@ tags:
 - Lance Stroll: P14 → P10 (+4 places)
 - Carlos Sainz: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Logan Sargeant: Retired (started P20)
 - Esteban Ocon: Retired (started P12)

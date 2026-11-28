@@ -52,7 +52,11 @@ tags:
 - Sebastian Vettel: P15 → P11 (+4 places)
 - Fernando Alonso: P11 → P8 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Abu Dhabi Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Sergio Pérez: Engine (started P4)
 - Nicholas Latifi: Accident (started P16)
@@ -60,6 +64,6 @@ tags:
 - George Russell: Gearbox (started P17)
 - Kimi Räikkönen: Brakes (started P18)
 
-## Did not start
+### Did not start
 
 - Nikita Mazepin

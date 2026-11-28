@@ -50,7 +50,11 @@ tags:
 - Alexander Albon: P19 → P15 (+4 places)
 - Yuki Tsunoda: P20 → P17 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Oliver Bearman: Retired (started P11)
 

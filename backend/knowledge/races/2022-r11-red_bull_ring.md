@@ -52,7 +52,11 @@ tags:
 - Lando Norris: P10 → P7 (+3 places)
 - Alexander Albon: P15 → P12 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Austrian Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Carlos Sainz: Power Unit (started P3)
 - Nicholas Latifi: Undertray (started P17)

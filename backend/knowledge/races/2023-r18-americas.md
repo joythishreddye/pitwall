@@ -52,13 +52,17 @@ tags:
 - Logan Sargeant: P16 → P10 (+6 places)
 - Max Verstappen: P6 → P1 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the United States Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Retired (started P19)
 - Oscar Piastri: Retired (started P10)
 - Esteban Ocon: Retired (started P8)
 
-## Disqualified
+### Disqualified
 
 - Lewis Hamilton: Disqualified (started P3)
 - Charles Leclerc: Disqualified (started P1)

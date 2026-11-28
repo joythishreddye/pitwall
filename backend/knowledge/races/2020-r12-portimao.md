@@ -51,6 +51,10 @@ tags:
 - Esteban Ocon: P11 → P8 (+3 places)
 - Kevin Magnussen: P19 → P16 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Portuguese Grand Prix 2020:
+
+### Retirements/DNFs
 
 - Lance Stroll: Collision damage (started P12)

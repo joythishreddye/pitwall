@@ -52,7 +52,11 @@ tags:
 - Valtteri Bottas: P19 → P11 (+8 places)
 - Lando Norris: P13 → P6 (+7 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Australian Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Retired (started P9)
 - Esteban Ocon: Retired (started P11)

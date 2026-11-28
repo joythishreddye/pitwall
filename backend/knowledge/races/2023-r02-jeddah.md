@@ -51,7 +51,11 @@ tags:
 - Nyck de Vries: P18 → P14 (+4 places)
 - Logan Sargeant: P20 → P16 (+4 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Saudi Arabian Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Alexander Albon: Retired (started P17)
 - Lance Stroll: Retired (started P5)

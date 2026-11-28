@@ -51,7 +51,11 @@ tags:
 - Charles Leclerc: P8 → P5 (+3 places)
 - Fernando Alonso: P12 → P9 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Mexico City Grand Prix 2021:
+
+### Retirements/DNFs
 
 - Mick Schumacher: Collision (started P14)
 - Yuki Tsunoda: Collision (started P17)

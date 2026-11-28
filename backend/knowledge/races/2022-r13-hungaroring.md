@@ -51,7 +51,11 @@ tags:
 - Lewis Hamilton: P7 → P2 (+5 places)
 - Lance Stroll: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Hungarian Grand Prix 2022:
+
+### Retirements/DNFs
 
 - Valtteri Bottas: Power Unit (started P8)
 

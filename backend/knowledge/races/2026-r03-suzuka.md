@@ -50,7 +50,11 @@ tags:
 - Max Verstappen: P11 → P8 (+3 places)
 - Fernando Alonso: P21 → P18 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Japanese Grand Prix 2026:
+
+### Retirements/DNFs
 
 - Lance Stroll: Retired (started P22)
 - Oliver Bearman: Retired (started P18)

@@ -51,7 +51,11 @@ tags:
 - Marcus Ericsson: P19 → P15 (+4 places)
 - Charles Leclerc: P13 → P10 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Canadian Grand Prix 2018:
+
+### Retirements/DNFs
 
 - Fernando Alonso: Exhaust (started P14)
 - Brendon Hartley: Collision (started P12)

@@ -51,7 +51,11 @@ tags:
 - Lewis Hamilton: P7 → P3 (+4 places)
 - Logan Sargeant: P14 → P11 (+3 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the British Grand Prix 2023:
+
+### Retirements/DNFs
 
 - Pierre Gasly: Retired (started P10)
 - Kevin Magnussen: Retired (started P19)

@@ -52,7 +52,11 @@ tags:
 - Esteban Ocon: P18 → P10 (+8 places)
 - Franco Colapinto: P16 → P11 (+5 places)
 
-## Retirements/DNFs
+## Non-finishers
+
+Drivers who retired, didn't start or were disqualified at the Dutch Grand Prix 2025:
+
+### Retirements/DNFs
 
 - Lando Norris: Retired (started P2)
 - Charles Leclerc: Retired (started P6)
