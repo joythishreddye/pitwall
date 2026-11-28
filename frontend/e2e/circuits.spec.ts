@@ -29,6 +29,19 @@ test("the Next Race tile draws Qatar's circuit", async ({ page }) => {
   await expect(outline.locator("svg")).toHaveCount(1);
 });
 
+test("every 2026 race card draws its circuit, Sepang's (round 16) included", async ({ page }) => {
+  await page.goto("/races");
+  await expect(page.getByRole("combobox", { name: "Select season" })).toContainText("2026 (23 races)");
+  const cards = page.locator('a.race-card[href^="/races/"]');
+  await expect(cards).toHaveCount(23);
+  const sepang = cards.filter({ hasText: "R16" });
+  await expect(sepang).toContainText("Sepang");
+  await expect(sepang.locator("svg path").first()).toBeAttached();
+  for (const card of await cards.all()) {
+    await expect(card.locator("svg path").first()).toBeAttached();
+  }
+});
+
 test.describe("a race's circuit facts", () => {
   test("a 2026 race shows no DRS zones: the 2026 cars have no DRS", async ({ page }) => {
     await page.goto("/races/195");
