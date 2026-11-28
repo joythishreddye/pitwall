@@ -93,4 +93,43 @@ test.describe("the chat", () => {
     expect(seen.errors, "console errors").toEqual([]);
     expect(seen.chatRequests).toEqual([]);
   });
+
+  test("offers presets about 2026's rules, not DRS or the fastest lap point", async ({ page }) => {
+    const seen = watch(page);
+
+    await page.goto("/chat");
+    for (const name of ["OVERTAKE MODE", "2026 RULES"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
+    }
+    // 2026 cars have no DRS, and the fastest lap point went in 2025
+    for (const name of ["DRS RULES", "FASTEST LAP"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
+    }
+    // The UI gate photographs only the homepage: the longer labels must
+    // still wrap inside their row, and the pane that scrolls the empty
+    // state must not scroll sideways, at every width
+    const fit = await page.locator(".freq-preset").evaluateAll((els) => {
+      const pane = (el: Element): Element => {
+        let node = el.parentElement;
+        while (node && getComputedStyle(node).overflowX === "visible") node = node.parentElement;
+        return node ?? document.documentElement;
+      };
+      const scroller = pane(els[0]);
+      return {
+        count: els.length,
+        spill: els.filter((el) => {
+          const box = el.getBoundingClientRect();
+          const row = el.parentElement!.getBoundingClientRect();
+          return box.left < row.left - 0.5 || box.right > row.right + 0.5;
+        }).length,
+        sideways: scroller.scrollWidth - scroller.clientWidth,
+      };
+    });
+    expect(fit.count).toBe(6);
+    expect(fit.spill, "presets spilling out of their row").toBe(0);
+    expect(fit.sideways, "sideways scroll in the chat pane").toBeLessThanOrEqual(0);
+
+    expect(seen.errors, "console errors").toEqual([]);
+    expect(seen.chatRequests).toEqual([]);
+  });
 });

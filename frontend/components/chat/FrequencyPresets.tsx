@@ -8,13 +8,15 @@ const PRESETS = [
     label: "RACE STRATEGY",
     prompt: "Explain undercut and overcut strategy in F1.",
   },
+  // 2026 cars have no DRS, and the fastest lap point went in 2025: these two
+  // ask about what replaced them
   {
-    label: "DRS RULES",
-    prompt: "How does DRS work and when can drivers use it?",
+    label: "OVERTAKE MODE",
+    prompt: "What replaced DRS in 2026, and how does Overtake Mode work?",
   },
   {
-    label: "FASTEST LAP",
-    prompt: "How is the fastest lap bonus point awarded?",
+    label: "2026 RULES",
+    prompt: "What are the biggest rule changes for 2026?",
   },
   {
     label: "PITSTOP WINDOWS",
