@@ -34,7 +34,7 @@ tags:
 
 The 1989 Japanese Grand Prix decided the World Championship in the most bitter fashion imaginable. Ayrton Senna and Alain Prost were McLaren teammates who had grown to despise each other, fighting for the title with the intensity of a genuine personal conflict.
 
-On lap 47 of 53, Senna attempted to pass Prost at the chicane. The two cars touched; Prost climbed out of his stalled Ferrari, believing the race — and his championship — was over. Senna was restarted by marshals, pitted for a new nose, rejoined in 6th, drove to what appeared to be a race victory, and set the fastest lap in the process.
+On lap 47 of 53, Senna attempted to pass Prost at the chicane. The two cars touched; Prost climbed out of his stalled McLaren, believing the race — and his championship — was over. Senna was restarted by marshals, pitted for a new front wing, rejoined behind the new leader, Alessandro Nannini, passed him and crossed the line first.
 
 The stewards disqualified Senna for missing the chicane during the incident and for receiving outside assistance during the restart. Prost was champion. Senna was furious, publicly accusing Prost and FIA President Jean-Marie Balestre of conspiring against him. The FIA fined Senna $100,000 and gave him a suspended race ban.
 
@@ -44,15 +44,15 @@ The aftermath poisoned relations between Senna, Prost, and the FIA for years. Wh
 
 Ayrton Senna won the Monaco Grand Prix six times: 1987, 1989, 1990, 1991, 1992, and 1993. No driver has matched this tally. The Monaco wins were not simply statistical accumulations — several rank among the most extraordinary drives in the circuit's history.
 
-**Monaco 1992** stands as the most celebrated. Nigel Mansill's Williams-Renault was dominant all season, and Mansill led comfortably until a late pit stop dropped him behind Senna's McLaren. In the final laps, Mansill on fresh, fast tyres hunted Senna with everything he had. Senna, on worn rubber, defended brilliantly — not by blocking (he never had to), but by driving the absolute limit of every corner. Mansill got within tenths but could not pass through Monaco's barriers. Senna won by 0.2 seconds.
+**Monaco 1992** stands as the most celebrated. Nigel Mansell's Williams-Renault was dominant all season, and Mansell led comfortably until a late pit stop dropped him behind Senna's McLaren. In the final laps, Mansell on fresh, fast tyres hunted Senna with everything he had. Senna, on worn rubber, defended brilliantly — not by blocking (he never had to), but by driving the absolute limit of every corner. Mansell got within tenths but could not pass through Monaco's barriers. Senna won by 0.2 seconds.
 
 Senna's connection to Monaco was mystical in its consistency. He explained it as a meditative state of complete focus where he transcended normal consciousness. Whether one credits the metaphysics or simply acknowledges supreme skill in the narrowest streets in F1, the record stands.
 
 ## Schumacher's Seventh Title — Spa 2004
 
-Michael Schumacher clinched his record seventh World Championship at the Belgian Grand Prix, 2004, with six races to spare. The 2004 season was a demonstration of total Ferrari-Schumacher dominance unmatched in modern F1 — 13 wins in the first 13 races at one point, Schumacher crossing the finish line accompanied by Rubens Barrichello in a series of 1-2 finishes.
+Michael Schumacher clinched his record seventh World Championship at the Belgian Grand Prix, 2004, with four races to spare. The 2004 season was a demonstration of total Ferrari-Schumacher dominance unmatched in modern F1 — 12 wins in the first 13 races (Jarno Trulli won Monaco), Schumacher crossing the finish line accompanied by Rubens Barrichello in a series of 1-2 finishes.
 
-The seventh title surpassed Juan Manuel Fangio's record of five championships, a record that had stood for 45 years and many considered unbreakable. Schumacher's record of seven would itself stand until 2020, when Lewis Hamilton matched and then surpassed it.
+His sixth title, in 2003, had already passed Juan Manuel Fangio's record of five championships, which had stood since 1957 and many considered unbreakable. Schumacher's record of seven stood alone until 2020, when Lewis Hamilton matched it; the two share it.
 
 ## Alonso vs Schumacher — Imola 2005: The Battle the Younger Man Won
 
@@ -70,21 +70,21 @@ The image of Hamilton, having crossed the line, slumped over his wheel in an ins
 
 ## Vettel's Nine Consecutive Wins — 2013
 
-Sebastian Vettel entered the 2013 Singapore Grand Prix having won three races. He then won nine consecutive Grands Prix — Singapore, Korea, Japan, India, Abu Dhabi, USA, Brazil, and continuing into early 2014. The run of nine consecutive wins in a single season broke the previous record of seven set by Alberto Ascari in 1952 and equaled by Schumacher in 2004.
+Sebastian Vettel won the last nine Grands Prix of 2013 — Belgium, Italy, Singapore, Korea, Japan, India, Abu Dhabi, the United States and Brazil. The run equalled Alberto Ascari's nine consecutive wins from 1952–1953, a count that leaves out the Indianapolis 500 (part of the championship then, and skipped by most Grand Prix drivers). Max Verstappen's ten in a row in 2023 later beat both.
 
-The 2013 Red Bull RB9 was the dominant car of the second half of the season, but Vettel's execution was flawless. He won 13 of the final 19 races that year, finishing the season with 13 victories total — a record at the time and equaling Schumacher's single-season wins record.
+The 2013 Red Bull RB9 was the dominant car of the second half of the season, but Vettel's execution was flawless. He won 13 of the season's 19 races, equalling Michael Schumacher's record of 13 wins in a season (2004). Verstappen later raised it to 15 in 2022 and 19 in 2023.
 
 ## Rosberg vs Hamilton — 2016: A Rivalry That Consumed Them Both
 
 The 2016 Formula 1 World Championship was a story of two Mercedes teammates — Nico Rosberg and Lewis Hamilton — pushing each other to the absolute limit of the sport and, by the end, beyond it. Rosberg, in his final F1 season though no one knew it, drove with composed aggression. Hamilton was faster on any given day but accumulated more retirements.
 
-The championship went to the final race at Abu Dhabi, with Rosberg leading by 12 points. Hamilton needed to win and needed Rosberg to finish below 3rd. Hamilton won the race. Rosberg finished 5th — enough to secure the championship by 5 points. Five days later, Rosberg announced his immediate retirement, stunning the sport.
+The championship went to the final race at Abu Dhabi, with Rosberg leading by 12 points. Hamilton needed to win and needed Rosberg to finish below 3rd. Hamilton won the race. Rosberg finished 2nd — enough to secure the championship by 5 points. Five days later, Rosberg announced his immediate retirement, stunning the sport.
 
 Rosberg's decision to retire at the pinnacle of his career was rational but shocking. He explained that the emotional and mental cost of the season had been total, and that he had nothing left. His championship is unique in F1 history for the immediacy of the retirement that followed.
 
 ## Verstappen vs Hamilton — Abu Dhabi 2021: The Controversial Finale
 
-The 2021 Abu Dhabi Grand Prix was the single most controversial race finish in modern Formula 1 history. Hamilton and Verstappen entered the final race level on points — the first time the title had gone to the final race with an equal points tie since... it had never happened before.
+The 2021 Abu Dhabi Grand Prix was the single most controversial race finish in modern Formula 1 history. Hamilton and Verstappen entered the final race level on 369.5 points, only the second time two title rivals had done so: Emerson Fittipaldi and Clay Regazzoni went into 1974's last race on 52 points each.
 
 Hamilton controlled the race, building a large lead, seemingly in control of a championship that would have been his record eighth. Then Nicholas Latifi crashed on lap 53 of 58. A safety car was deployed.
 
@@ -94,36 +94,36 @@ Mercedes protested, citing the sporting regulations on safety car procedures. Th
 
 ## Ferrari's Monaco 1-2 — 2017: Vettel Wins at the Pinnacle
 
-The 2017 Monaco Grand Prix produced one of Ferrari's most celebrated results. Sebastian Vettel started from pole position and led a Ferrari 1-2 finish, Kimi Räikkönen completing the pair. Ferrari dominated Monaco in a way the Tifosi had been waiting years to see. Vettel's composure at Monaco — managing tyres, traffic, and the psychological pressure of a street circuit where any error ends the race — showcased the complete F1 driver.
+The 2017 Monaco Grand Prix produced one of Ferrari's most celebrated results. Sebastian Vettel jumped polesitter Kimi Räikkönen through the pit stops and led a Ferrari 1-2 finish, Räikkönen completing the pair. Ferrari dominated Monaco in a way the Tifosi had been waiting years to see. Vettel's composure at Monaco — managing tyres, traffic, and the psychological pressure of a street circuit where any error ends the race — showcased the complete F1 driver.
 
-The 2017 season represented Ferrari's most serious title challenge in years, with Vettel leading the championship at mid-season before the German GP capitulation at the Nürburgring and ultimate defeat to Hamilton's Mercedes.
+The 2017 season represented Ferrari's most serious title challenge in years, with Vettel leading the championship at mid-season before a late-season slump and ultimate defeat to Hamilton's Mercedes.
 
 ## Leclerc's Monza 2019: Victory for Ferrari at the Temple
 
-Charles Leclerc, in only his second season with Ferrari, won the Italian Grand Prix at Monza — Ferrari's home race, at their home circuit, in front of the Tifosi. It was Ferrari's first win at Monza since Alonso in 2010.
+Charles Leclerc, in his first season with Ferrari, won the Italian Grand Prix at Monza — Ferrari's home race, at their home circuit, in front of the Tifosi. It was Ferrari's first win at Monza since Alonso in 2010.
 
-The victory came through brilliant tyre management and strategic positioning that exploited the safety car window. Leclerc defended against Valtteri Bottas and then Lewis Hamilton in the closing laps with composure beyond his years. He had also won at Spa the previous race, making it back-to-back victories for a driver who had barely completed a single F1 season.
+The victory came through tyre management and hard defending. Leclerc held off Lewis Hamilton and then Valtteri Bottas with composure beyond his years. He had also won at Spa the previous race, making it back-to-back victories for a driver who had barely completed a single F1 season.
 
 The scenes of Leclerc celebrating with the Tifosi on the podium — red smoke, tens of thousands of fans — were among the most emotionally charged in recent F1 history.
 
 ## Gasly's Monza 2020: The Shock Result
 
-The 2020 Italian Grand Prix was decided by a combination of chaos and extraordinary circumstance. Lewis Hamilton received a pit lane speed limit violation — he had entered the pit lane under a closed pit lane during the Virtual Safety Car period triggered by Kevin Magnussen's retirement. Hamilton was forced to serve a 10-second stop-and-go penalty.
+The 2020 Italian Grand Prix was decided by a combination of chaos and extraordinary circumstance. Lewis Hamilton pitted while the pit lane was closed, under the safety car called for Kevin Magnussen's stopped car, and had to serve a 10-second stop-and-go penalty.
 
-Pierre Gasly, driving for the small AlphaTauri team (then still called AlphaTauri in its first year), found himself in the lead. When Carlos Sainz crashed in the final laps, the safety car compressed the field but the pit stop sequence left Gasly at the front. He held on to win — AlphaTauri's first Formula 1 victory, and Gasly's personal redemption after a painful demotion from Red Bull in 2019.
+Pierre Gasly, driving for AlphaTauri in the team's first year under that name, had pitted just before the pit lane closed. When Charles Leclerc crashed heavily at the Parabolica, the race was red-flagged; after the restart Hamilton served his penalty and Gasly took the lead. He held off Carlos Sainz to win — AlphaTauri's first Formula 1 victory, and Gasly's personal redemption after a painful demotion from Red Bull in 2019.
 
-The podium: Gasly, Sainz, Räikkönen. None of the "big three" drivers (Hamilton, Verstappen, Bottas) in the top three. Gasly's emotion at the finish — a mix of exhaustion, disbelief, and elation — made for one of the season's most human moments.
+The podium: Gasly, Sainz, Lance Stroll. None of the "big three" drivers (Hamilton, Verstappen, Bottas) in the top three. Gasly's emotion at the finish — a mix of exhaustion, disbelief, and elation — made for one of the season's most human moments.
 
 ## Perez's Sakhir 2020: Last to First
 
 The 2020 Sakhir Grand Prix (run at the outer Bahrain circuit — an ultra-short lap) produced Sergio Perez's first Formula 1 victory in his tenth season of trying. Perez had been without a seat for 2021 at the time of the race, having been dropped by Racing Point. The win dramatically changed his trajectory — Red Bull signed him within weeks.
 
-Perez started from pit lane after a first-lap collision, drove through the entire field on an extraordinary strategy, and won. The podium: Perez, Lance Stroll (Racing Point), Esteban Ocon. Again, none of the top championship contenders featured. Perez's celebrations — crying on the radio, dedicating the win to his family and the people of Mexico — were genuine and moving.
+Pérez was hit by Charles Leclerc on the first lap and fell to last after a pit stop, then drove through the entire field on an extraordinary strategy and won. The podium: Pérez, Esteban Ocon, Lance Stroll (Racing Point). Again, none of the top championship contenders featured. Perez's celebrations — crying on the radio, dedicating the win to his family and the people of Mexico — were genuine and moving.
 
 ## Verstappen's 10 Consecutive Wins — 2023
 
-Max Verstappen's 2023 season was the most dominant in Formula 1 history by raw statistical measure. Starting from the Dutch Grand Prix, Verstappen won 10 consecutive races — breaking Vettel's 2013 record of nine. He ultimately won 19 of 22 races that season, with Red Bull winning the Constructors' Championship by an enormous margin.
+Max Verstappen's 2023 season was the most dominant in Formula 1 history by raw statistical measure. Starting from the Miami Grand Prix, Verstappen won 10 consecutive races — breaking Vettel's 2013 record of nine. He ultimately won 19 of 22 races that season, with Red Bull winning the Constructors' Championship by an enormous margin.
 
 The 2023 Red Bull RB19 was the most comprehensively dominant car since the Brawn GP of 2009, but Verstappen's performances within that superiority were precise and commanding. His ability to manage races, control tyres, and extract performance in non-ideal conditions demonstrated a driver at the absolute peak of his powers.
 
-The streak finally ended at the Singapore Grand Prix, where Carlos Sainz's Ferrari won — the circuit's lack of overtaking making it resistant to Red Bull's strategic superiority. Verstappen finished 5th, the first time he had not won a race since the Azerbaijan Grand Prix in May.
+The streak finally ended at the Singapore Grand Prix, where Carlos Sainz's Ferrari won — the circuit's lack of overtaking making it resistant to Red Bull's strategic superiority. Verstappen finished 5th, the first time he had not won a race since the Azerbaijan Grand Prix in April.

@@ -25,7 +25,7 @@ Hazard ahead. Drivers must slow down, be prepared to change direction, and must 
 Severe hazard — the track may be completely or partially blocked. Drivers must slow down significantly and be prepared to stop if necessary. Overtaking is strictly forbidden. Double yellows are shown when marshals are on the track or when a car is in a dangerous position on the racing surface. The most strictly enforced of the yellow variants.
 
 ### Red Flag
-Session stopped. All drivers must immediately slow down and return to the pit lane. In practice and qualifying, the session is paused and may restart. In a race, a red flag typically triggers a race suspension; the result may be declared at the point of the flag if sufficient laps have been completed, or the race may be restarted with a new formation/standing start. Red flags are displayed when an incident is too dangerous to manage under safety car conditions — major crashes, significant debris, or dangerous weather.
+Session stopped. All drivers must immediately slow down and return to the pit lane. In practice and qualifying, the session is paused and may restart. In a race, a red flag typically triggers a race suspension; if it can't resume, the result is taken at the end of the lap two laps before the one in which the red flag was shown; otherwise the race is restarted with a new formation/standing start. Red flags are displayed when an incident is too dangerous to manage under safety car conditions — major crashes, significant debris, or dangerous weather.
 
 ### Blue Flag
 Shown to a driver who is about to be lapped by a car on the lead lap. The backmarker must allow the leader to pass within three flag presentations (approximately three marshal posts). Failure to comply results in a time penalty for the backmarker. Blue flags are controversial when they appear during close battles between the lapping cars, potentially affecting the outcome of the fight.
@@ -49,7 +49,7 @@ The race or session is finished. Waved at the finish line when the leader comple
 Penalties in F1 are issued by the race stewards — a panel of officials including at least one former racing driver — following investigations. Penalties range from minor time additions to disqualification.
 
 ### 5-Second Time Penalty
-Added to the driver's total race time at the finish. Can also be served during a pit stop by adding 5 seconds to the stop time (the car must remain stationary for an additional 5 seconds before the pit crew is permitted to release it). Common for minor infractions such as:
+Served at the driver's next pit stop: the car must sit stationary for the full 5 seconds before the crew may touch it. A driver who makes no further stop has 5 seconds added to their race time instead. Common for minor infractions such as:
 - Exceeding track limits (multiple violations within a session)
 - Causing a minor collision
 - Unsafe release from the pit box
@@ -62,28 +62,29 @@ Identical mechanism to the 5-second penalty but doubles the time loss. Applied f
 - Certain pit lane infringements
 
 ### Drive-Through Penalty
-The driver must enter the pit lane, drive through at the pit lane speed limit (typically 60-80 km/h depending on circuit) without stopping, and rejoin the race. Must be served within three laps of notification. Typically costs 20-30 seconds in real race time depending on circuit layout. Applied for:
+The driver must enter the pit lane, drive through at the pit lane speed limit (80 km/h at most circuits, 60 km/h at a few tight ones such as Monaco) without stopping, and rejoin the race. After being told, the driver may cross the finish line at most twice before serving it. Typically costs 20-30 seconds in real race time depending on circuit layout. Applied for:
 - Causing a collision (moderate severity)
 - False start / jumping the start
 - Unsafe release (more serious cases)
 - Pit lane speeding (more serious)
 
 ### Stop-and-Go Penalty (10-Second Stop-and-Go)
-The driver must enter the pit lane and stop for 10 seconds before rejoining. No work may be done on the car during this time. Harsher than a drive-through as it combines the pit lane transit time with a mandatory 10-second stationary period. Applied for serious offenses or for drive-through offenses committed too late in the race to serve a drive-through.
+The driver must enter the pit lane and stop for 10 seconds before rejoining. No work may be done on the car during this time. Harsher than a drive-through as it combines the pit lane transit time with a mandatory 10-second stationary period. Applied for serious offenses. A drive-through or stop-and-go given in the last three laps, or after the race, can't be served in the pit lane: 20 seconds (drive-through) or 30 seconds (stop-and-go) are added to the driver's race time instead.
 
 ### Grid Penalties
 Applied to the driver's starting position at the next race (or current race if issued before qualifying). Grid penalties move the driver backward on the grid:
 
-**Component-based grid penalties** arise from exceeding the season allocation of power unit elements. Each driver may use:
-- 3 Internal Combustion Engines (ICE)
-- 3 Turbochargers
-- 3 MGU-H units
+**Component-based grid penalties** arise from exceeding the season allocation of power unit elements. In 2026 each driver may use (the rules' base allowance plus one extra of each, for the new power units' first year):
+- 4 Internal Combustion Engines (ICE)
+- 4 Turbochargers
+- 4 Exhaust sets
 - 3 MGU-K units
 - 3 Energy Stores
 - 3 Control Electronics
-- 8 Exhaust systems
 
-Taking a 4th ICE triggers a 10-place grid penalty. Subsequent additional components incur further 5-place penalties. Teams often "stack" multiple new components in one race to take a single penalty rather than multiple.
+The 2026 power units have no MGU-H. In 2025 the allowance was 4 ICE, 4 turbochargers, 4 MGU-H, 4 MGU-K, 2 Energy Stores and 2 Control Electronics.
+
+Taking a 5th ICE triggers a 10-place grid penalty. Subsequent additional components incur further 5-place penalties. Teams often "stack" multiple new components in one race to take a single penalty rather than multiple.
 
 **Racing-related grid penalties** include drops of 3 or 5 or 10 places for causing collisions in the previous race, impeding in qualifying, or other on-track infractions.
 
@@ -94,7 +95,7 @@ Removal from the race result. Can occur during or after the event. Causes includ
 - Serious safety violations
 - Deliberate interference with a rival
 
-Famous disqualifications: Michael Schumacher's many technical DSQs in the early Benetton years, Hamilton's 2021 Brazilian GP sprint race DSQ (wing legality), Vettel's 2021 Hungarian GP DSQ (insufficient fuel sample).
+Famous disqualifications: Michael Schumacher at the 1994 Belgian GP (skid-block wear), Hamilton from qualifying at the 2021 São Paulo GP (his DRS slot opened too wide; he started the sprint last and finished fifth), Vettel's 2021 Hungarian GP DSQ (insufficient fuel sample).
 
 ---
 
@@ -117,7 +118,7 @@ Assessed by stewards based on whether one driver is predominantly responsible fo
 If a backmarker fails to allow the leading car past within three flag presentations at three consecutive marshaling posts, the stewards investigate. Repeated blue flag violations carry a 5-second time penalty and potentially a reprimand on the Super Licence.
 
 ### Jumping the Start
-Detected by sensors in the grid boxes measuring movement before the five lights go out. Modern detection systems are precise to the millisecond. A clear false start results in a drive-through penalty. Minor movements within the tolerance window are not penalized.
+Detected by sensors in the grid boxes measuring movement before the five lights go out. Modern detection systems are precise to the millisecond. The stewards choose the penalty for a clear false start, from a 5-second penalty to a stop-and-go. Minor movements within the tolerance window are not penalized.
 
 ### Pit Lane Speeding
-GPS and timing sensors monitor car speed in the pit lane. Exceeding the pit lane speed limit (typically 60 km/h in practice/qualifying, 80 km/h at some circuits) triggers automatic notification. Penalties are typically 5-second time additions for minor breaches and drive-through penalties for more significant violations.
+GPS and timing sensors monitor car speed in the pit lane. Exceeding the pit lane speed limit (80 km/h for the whole event at most circuits, lowered to 60 km/h at a few tight ones such as Monaco) triggers automatic notification. Penalties are typically 5-second time additions for minor breaches and drive-through penalties for more significant violations.

@@ -24,8 +24,8 @@ tags:
 **Length:** 5.807 km (3.608 miles)  
 **Race Laps:** 53  
 **Race Distance:** 307.471 km (191.054 miles)  
-**Lap Record:** 1:30.983 — Lewis Hamilton (Mercedes, 2019)  
-**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (back straight after Spoon Curve; DRS zone 2 on main straight)  
+**Lap Record:** 1:30.965 — Kimi Antonelli (Mercedes, 2025)  
+**DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 1 (main straight)  
 **Corners:** 18  
 **Average Speed:** Approximately 220-230 km/h  
 
@@ -38,35 +38,35 @@ Designed by John Hugenholtz (who also designed Zandvoort), Suzuka opened in 1962
 ## Track Layout and Famous Corners
 
 **Turn 1**
-A medium-speed right-hand corner leading into the figure-8 section. Approach from the pit straight offers overtaking potential — the first DRS zone (2011–2025) ended here.
+A medium-speed right-hand corner leading into the figure-8 section. Approach from the pit straight offers overtaking potential — the DRS zone (2011–2025) ended here.
 
-**The Esses (Turns 2-9)**
+**The Esses**
 The defining section of Suzuka. A breathtaking sequence of alternating high-speed left and right sweepers in the first sector, where cars thread through at sustained speeds of 200-270 km/h. The Esses demand absolute precision — the rhythm is essential, and any hesitation or mistake compounds through the entire sequence. Oversteer in the Esses can trigger a snap spin with no run-off and immediate barriers.
 
 This section separates the best drivers and cars from the rest. A lap time set or lost in the Esses defines Suzuka qualifying.
 
-**Dunlop Curve (Turn 10)**
-A fast, sweeping right-hander exiting the Esses sequence. Demands commitment.
+**Dunlop Curve (Turn 7)**
+A long, fast left-hander climbing out of the Esses toward Degner. Demands commitment.
 
-**Degner Curves (Turns 11-12)**
+**Degner Curves**
 A fast right-hander followed by a tighter right, leading under the crossover bridge. Named after Ernst Degner, who crashed heavily here in 1962. The first Degner is taken at high speed; the second tightens, requiring a precise line to set up the crossover.
 
 **Crossover Bridge**
 The unique feature of Suzuka's figure-8 layout. Cars on the upper loop pass over cars on the lower loop via a bridge. A visually iconic element unique to Suzuka in the world of F1.
 
-**Hairpin (Turn 14)**
-The slowest corner at Suzuka — a tight hairpin at the back of the circuit. Preceded by the back straight, a DRS zone through 2025. One of the key overtaking spots: the slipstream (and, through 2025, DRS) helps approaching the hairpin, with a long braking zone into a very slow corner allowing late overtaking attempts.
+**Hairpin**
+The slowest corner at Suzuka — a tight hairpin at the back of the circuit, after Degner and the crossover. One of the key overtaking spots, with a long braking zone into a very slow corner allowing late overtaking attempts.
 
-**Spoon Curve (Turns 13-14 in some mappings, turns 15-16)**
-A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight into the hairpin (a DRS zone through 2025). Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
+**Spoon Curve**
+A long, sweeping double-apex left-hander taken at substantial speed. Getting the line right through Spoon is critical for exit speed onto the long back straight toward 130R. Spoon is a true test of car balance — understeer through the middle of the corner loses exit speed that takes the entire back straight to recover.
 
-**130R (Turn 17)**
+**130R (Turn 15)**
 The fastest corner at Suzuka and one of the fastest in all of Formula 1. Named for its 130-meter radius, it was originally taken flat-out by cars of the 1990s and 2000s at over 300 km/h. Modern F1 cars take it almost or fully flat, generating extreme lateral G-forces. When a driver has a problem through 130R — a tyre failure, a loose wing — the consequences are severe. It is one of the corners that defines a driver's commitment.
 
-**Casio Triangle / Chicane (Turns 18-19-20)**
+**Casio Triangle / Chicane (Turns 16-17)**
 A tight chicane immediately after 130R that requires heavy braking and precision. The transition from 130R's extreme speed to the chicane's very low speed in mere meters is one of the most dramatic deceleration sequences in the sport.
 
-**Suzuka Hairpin**
+**Final Corner (Turn 18)**
 The final corner, a right-hander leading onto the start/finish straight.
 
 ## A Balanced Car's Dream, an Imbalanced Car's Nightmare
@@ -77,7 +77,7 @@ The circuit rewards aerodynamically efficient, mechanically balanced cars and dr
 
 ## Setup Characteristics
 
-Medium-to-high downforce, biased toward cornering performance for the Esses and Spoon rather than straight-line speed. The DRS zones (through 2025) were useful but not dominant. Power unit performance matters on the back straight, but cornering efficiency through the Esses and 130R is more differentiating.
+Medium-to-high downforce, biased toward cornering performance for the Esses and Spoon rather than straight-line speed. The DRS zone (through 2025) was useful but not dominant. Power unit performance matters on the back straight, but cornering efficiency through the Esses and 130R is more differentiating.
 
 Rear stability is particularly important — the Esses require the rear to remain planted as the car switches direction rapidly. Cars that are rear-limited at Suzuka struggle throughout the first sector.
 
@@ -95,8 +95,8 @@ Multiple championships have been decided at Suzuka, making it a venue of profoun
 
 Suzuka is the setting for two of the most significant and controversial moments in F1 history.
 
-**1989:** Senna and Prost, teammates turned bitter rivals at McLaren, collided at the chicane on lap 47. Prost turned in on Senna at the chicane; Senna restarted with marshals' help, pitted for a new nose, rejoined, set the fastest lap, and appeared to win — only to be disqualified for missing the chicane during the incident. Prost was champion. The anger between the two men reached a personal level that never fully healed.
+**1989:** Senna and Prost, teammates turned bitter rivals at McLaren, collided at the chicane on lap 47. Prost turned in on Senna at the chicane; Senna restarted with marshals' help, pitted for a new front wing, rejoined, passed Alessandro Nannini and crossed the line first, only to be disqualified for missing the chicane during the incident. Prost was champion. The anger between the two men reached a personal level that never fully healed.
 
-**1990:** Senna and Prost (now at Ferrari) collided at Turn 1 at the start. Both retired. Senna was champion. Senna later admitted — after Prost had retired from F1 — that the collision was deliberate retaliation for 1989. One of the most shocking admissions in sports history.
+**1990:** Senna and Prost (now at Ferrari) collided at Turn 1 at the start. Both retired. Senna was champion. A year later, after winning the 1991 title, Senna admitted that the collision was deliberate retaliation for 1989. One of the most shocking admissions in sports history.
 
 These two races defined the Senna-Prost rivalry's darkest chapter and remain the defining moments of Suzuka's historical legacy.

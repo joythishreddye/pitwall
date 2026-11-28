@@ -26,7 +26,7 @@ tags:
 
 ## Historical Significance
 
-The Monaco Grand Prix is the oldest and most prestigious race on the Formula 1 calendar, held annually since 1929 (with wartime gaps). It is one of motorsport's three "Triple Crown" events alongside the Indianapolis 500 and the 24 Hours of Le Mans. Winning Monaco is considered a career-defining achievement.
+The Monaco Grand Prix is one of the oldest and most prestigious races on the Formula 1 calendar, first held in 1929 (with gaps, the latest in 2020). It is one of motorsport's three "Triple Crown" events alongside the Indianapolis 500 and the 24 Hours of Le Mans. Winning Monaco is considered a career-defining achievement.
 
 The race has been held on the same streets of Monte Carlo for nearly a century, making it unlike any other circuit. The barriers are inches from the car. There is almost no room for error. The circuit rewards precision and concentration above raw speed.
 
@@ -37,28 +37,28 @@ The circuit runs through the narrow streets, tunnels, and harbourside roads of M
 **Sainte Dévote (Turn 1)**
 The first corner of the lap, a tight right-hander at the bottom of a descent from the grid. One of the most crucial corners — overtaking attempts here often result in contact with the barrier. Getting through cleanly on the opening lap is essential.
 
-**Massenet and Casino Square (Turns 4-5)**
+**Massenet and Casino Square (Turns 3-4)**
 The climb up through Massenet into the famous Casino Square, a left-right sequence past the legendary Casino de Monte Carlo. Medium-speed corners where car balance is critical.
 
-**Mirabeau (Turn 6)**
+**Mirabeau (Turn 5)**
 A slow right-hander leading into an even tighter left. One of the lowest-speed points of the lap. The narrow road here means any mistake sends the car directly into the wall.
 
-**Grand Hotel Hairpin (Turns 8-9)**
-The slowest corner in all of Formula 1 — drivers brake from over 250 km/h to approximately 50 km/h. The tight hairpin at the Grand Hotel (formerly Loews Hairpin) requires precise throttle control on exit to avoid spinning on the steep uphill exit.
+**Fairmont Hairpin (Turn 6)**
+The slowest corner in all of Formula 1 — drivers slow to approximately 50 km/h. The tight hairpin at the Fairmont hotel (formerly the Loews and then the Grand Hotel Hairpin) requires precise throttle control on exit, as the road heads downhill again toward Mirabeau Bas and Portier.
 
 **The Tunnel**
 A unique feature of Monaco — drivers enter the tunnel from bright Mediterranean sunshine into relative darkness, dramatically changing visibility. The fastest section of the lap, with cars reaching over 290 km/h. The exit from the tunnel emerges onto the harbourside and into the chicane.
 
 **Nouvelle Chicane (Turns 10-11)**
-The chicane at the harbour entrance, scene of famous moments including Senna's 1984 accident leading the race, and Verstappen's contact with Leclerc during the 2022 Monaco Grand Prix. A key overtaking point — one of the very few on the circuit.
+The chicane at the harbour entrance, scene of famous moments including Alberto Ascari's 1955 crash into the harbour. A key overtaking point — one of the very few on the circuit.
 
 **Swimming Pool Complex (Turns 13-16)**
 A fast section running alongside the Monaco public pool. A flowing sequence of corners where rhythm is essential. Cars are close to the barriers throughout.
 
-**Rascasse (Turn 17)**
+**Rascasse**
 A slow right-hand hairpin before the final section. Famous for Michael Schumacher's deliberate parking in qualifying at the 2006 Monaco Grand Prix to deny rivals the final flying lap — he was stripped of pole.
 
-**Anthony Noghes (Turn 18)**
+**Anthony Noghes**
 The final corner, a right-hander named after the founder of the Automobile Club de Monaco. Exit leads onto the start/finish straight.
 
 ## Why Overtaking Is Nearly Impossible
@@ -85,7 +85,7 @@ The bumpy surface puts particular demands on the suspension and driver confidenc
 
 ## Weather
 
-Monaco's Mediterranean climate makes rain relatively rare during the May Grand Prix, but rain transforms the race entirely. Wet Monaco is even more treacherous given the barriers' proximity. The 1984 race in the rain — Senna closing on Prost at an extraordinary rate in a much slower car before the safety car ended the race prematurely — is one of F1's most celebrated chapters.
+Monaco's Mediterranean climate makes rain relatively rare during the Grand Prix (late May until 2025, early June from 2026), but rain transforms the race entirely. Wet Monaco is even more treacherous given the barriers' proximity. The 1984 race in the rain — Senna closing on Prost at an extraordinary rate in a much slower car before a red flag stopped the race on lap 32, with the result taken after 31 laps — is one of F1's most celebrated chapters.
 
 ## Notable Records and Moments
 

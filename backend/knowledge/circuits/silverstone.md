@@ -28,7 +28,7 @@ tags:
 
 ## Historical Significance
 
-Silverstone hosted the very first Formula 1 World Championship race on 13 May 1950, making it the oldest circuit in the history of the modern championship. Giuseppe Farina won in an Alfa Romeo, beating Juan Manuel Fangio.
+Silverstone hosted the very first Formula 1 World Championship race on 13 May 1950, making it the oldest circuit in the history of the modern championship. Giuseppe Farina won in an Alfa Romeo, ahead of teammate Luigi Fagioli.
 
 The circuit sits on the remains of a Second World War bomber station — the runways became the track's straights, and the layout still reflects that wartime geometry. Despite multiple revisions and the addition of new sections, Silverstone retains its character as a fast, flowing, aerodynamically demanding circuit.
 
@@ -37,7 +37,7 @@ It is the home of the British Grand Prix and the venue most closely associated w
 ## Track Layout and Famous Corners
 
 **Abbey (Turn 1)**
-The first corner after the start/finish straight, a fast right-hander. Cars approach at over 300 km/h and carry significant speed through. Was rebuilt in 2010 as part of the Arena complex, turning a formerly dangerous flat-out kink into a proper corner. One of the DRS zones (2011–2025) ended here.
+The first corner after the start/finish straight, a fast right-hander. Cars approach at over 300 km/h and carry significant speed through. Was rebuilt in 2010 as part of the Arena complex, turning a formerly dangerous flat-out kink into a proper corner.
 
 **Village/The Loop/Aintree (Turns 2-4)**
 A flowing, multi-apex section through the Arena complex. Medium-speed corners where car balance and mechanical grip are tested. The surface here can be particularly slippery when damp.
@@ -63,7 +63,7 @@ The second DRS zone through 2025. Named after the WWII aircraft hangars that use
 A fast right-hander at the end of the Hangar Straight. Heavy braking, another overtaking zone. Historically a famous corner from the old Silverstone layout where it featured as a very fast bend.
 
 **Club Corner (Turn 18)**
-The final corner, a medium-speed right-hander leading back to the start/finish straight. Exit speed from Club is critical for the main straight (a DRS zone through 2025).
+The final corner, a medium-speed right-hander leading back to the start/finish straight. Exit speed from Club is critical for the main straight.
 
 ## High-Speed Aerodynamic Demands
 
@@ -75,7 +75,7 @@ The circuit is particularly demanding on front tyres, which take significant lat
 
 British summer weather is infamously unpredictable. Silverstone races can be run in blazing sunshine, heavy rain, or — most treacherously — rapidly changing conditions where different parts of the circuit are wet and dry simultaneously.
 
-The 2008 British GP (Hamilton won by over a minute in wet conditions), the 1998 British GP (Schumacher's extraordinary tire change in the pit lane under a safety car period), and multiple other Silverstons have been defined by weather as much as by car performance.
+The 2008 British GP (Hamilton won by over a minute in wet conditions), the 1998 British GP (Schumacher won by crossing the finish line in the pit lane while serving a stop-go penalty), and multiple other Silverstone races have been defined by weather as much as by car performance.
 
 Rain at Silverstone rewards drivers with exceptional wet-weather feel. The wide, flowing layout means standing water can accumulate quickly off the racing line, making the decision of when to switch from intermediate to dry tyres (or vice versa) among the most consequential strategic calls of a race weekend.
 

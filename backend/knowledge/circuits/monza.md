@@ -21,7 +21,7 @@ tags:
 **Length:** 5.793 km (3.600 miles)  
 **Race Laps:** 53  
 **Race Distance:** 306.720 km (190.567 miles)  
-**Lap Record:** 1:21.046 — Rubens Barrichello (Ferrari, 2004)  
+**Lap Record:** 1:20.901 — Lando Norris (McLaren, 2025)  
 **DRS Zones (2011–2025; replaced by active aerodynamics in 2026):** 2 (main straight; between Lesmo 2 and Variante Ascari)  
 **Corners:** 11  
 **Average Speed:** Approximately 255-265 km/h — the fastest average of any F1 race  
@@ -30,7 +30,7 @@ tags:
 
 Monza is Formula 1's fastest circuit, earning its "Temple of Speed" nickname through decades of producing the highest average lap speeds on the calendar. The circuit's combination of three long straights connected by slow chicanes means cars spend the majority of the lap at full throttle, with top speeds regularly exceeding 350 km/h.
 
-The Autodromo Nazionale di Monza opened in 1922 and hosted the first Italian Grand Prix. It has been on the Formula 1 calendar since the championship's inaugural 1950 season and has missed only two Grands Prix (1980 at Imola, 2020 in the Monza park bubble race held at Mugello... actually 2020 was held at Monza as scheduled). Its longevity makes it the spiritual home of Ferrari and Italian motorsport.
+The Autodromo Nazionale di Monza opened in 1922 and hosted the second Italian Grand Prix (the first, in 1921, ran at Montichiari near Brescia). It has been on the Formula 1 calendar since the championship's inaugural 1950 season and has missed only one Italian Grand Prix, in 1980, when the race moved to Imola. Its longevity makes it the spiritual home of Ferrari and Italian motorsport.
 
 ## Track Layout and Famous Corners
 
@@ -43,14 +43,14 @@ A fast, sweeping right-hander taken flat-out or close to it in modern F1 cars. T
 **Variante della Roggia (Turn 4-5)**
 A second chicane in the first sector. Cars bounce over the sausage kerbs that limit cutting. Another heavy braking zone, but shorter approach than Turn 1.
 
-**Lesmo 1 and Lesmo 2 (Turns 7-8)**
+**Lesmo 1 and Lesmo 2 (Turns 6-7)**
 Two flowing medium-to-fast right-hand corners through the park section of the circuit. Lesmo 1 opens up into Lesmo 2; getting the Lesmo 2 exit right is critical for speed onto the back straight. The banking and camber changes make these corners particularly demanding.
 
-**Variante Ascari (Turns 10-11-12)**
+**Variante Ascari (Turns 8-9-10)**
 A high-speed chicane named after Alberto Ascari, the two-time world champion who died here testing a Ferrari in 1955. Entered at approximately 290 km/h, requiring one of the most precise braking points of the lap. The chicane configuration has been modified several times over the decades.
 
 **Curva Parabolica / Curva Alboreto (Turn 11)**
-The final corner — a long, sweeping right-hander leading onto the main start/finish straight. Renamed Curva Alboreto in memory of Michele Alboreto in 2020. Exit speed from the Parabolica is critical: a car exiting 5 km/h faster will be nearly 25m ahead at the end of the main straight, crucial for slipstream positioning (and, through 2025, DRS).
+The final corner — a long, sweeping right-hander leading onto the main start/finish straight. Renamed Curva Alboreto in memory of Michele Alboreto in 2021. Exit speed from the Parabolica is critical: a car exiting 5 km/h faster will be nearly 25m ahead at the end of the main straight, crucial for slipstream positioning (and, through 2025, DRS).
 
 ## Low-Downforce Setup: The Monza Paradox
 
@@ -62,7 +62,7 @@ The trade-off: without downforce, the car is nervous through the Lesmos, unstabl
 
 ## Slipstream Battles and Drag Racing on the Straights
 
-Monza produces some of Formula 1's most exciting qualifying and racing due to slipstream dynamics. In qualifying, drivers jockey for position on the in-lap, deliberately slowing down to get into another car's slipstream for a speed boost on the flying lap. The result is chaotic slow laps with drivers playing cat-and-mouse, sometimes dramatically — Verstappen and Hamilton famously had a confrontation in 2020 qualifying where neither wanted to lead on the final flying lap.
+Monza produces some of Formula 1's most exciting qualifying and racing due to slipstream dynamics. In qualifying, drivers jockey for position on the in-lap, deliberately slowing down to get into another car's slipstream for a speed boost on the flying lap. The result is chaotic slow laps with drivers playing cat-and-mouse, sometimes dramatically — in Q3 in 2019 nobody wanted to go out first, and most of the field ran out of time to start a final flying lap.
 
 In the race, slipstream chains form on the long straights. Multiple cars drafting each other can be significantly faster than a lone car at the front, creating dynamic battles where the lead changes on the straights (through the DRS zones, until 2025).
 
@@ -88,6 +88,6 @@ The emotional weight of racing at Monza for Ferrari is unique in the sport. Ferr
 
 **2019 Italian GP:** Charles Leclerc won for Ferrari at their home circuit, Ferrari's first Monza win since 2010, prompting scenes of mass celebration.
 
-**2020 Italian GP:** Pierre Gasly won with AlphaTauri, one of the most shocking results in recent F1 history, benefiting from Lewis Hamilton's pit lane exit penalty and the unusual circumstances of a race with multiple safety car interventions.
+**2020 Italian GP:** Pierre Gasly won with AlphaTauri, one of the most shocking results in recent F1 history, benefiting from Lewis Hamilton's penalty for pitting while the pit lane was closed and a red flag after Charles Leclerc's crash.
 
-**2023 Italian GP:** Carlos Sainz won for Ferrari at Monza, again producing emotional scenes among the Tifosi.
+**2024 Italian GP:** Charles Leclerc won for Ferrari on a one-stop strategy, again producing emotional scenes among the Tifosi.

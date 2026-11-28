@@ -17,13 +17,13 @@ F1 race strategy is built on one central tension: **track position versus tyre p
 
 ## Tyre Compounds: The Foundation of Strategy
 
-Pirelli supplies three dry tyre compounds per race weekend, selected from a range (C1 to C6, C1 being hardest). They are color-coded:
+Pirelli supplies three dry tyre compounds per race weekend, selected from a range (C1 to C5 in 2026, C1 being hardest; 2025 also had a C6). They are color-coded:
 
 - **Soft (Red):** Fastest compound, highest grip, lowest durability. Provides approximately 0.5-1.0 seconds per lap faster than medium at peak, but degrades quickly (typically 15-25 laps before significant drop-off depending on circuit).
 - **Medium (Yellow):** Balanced compound. The most versatile, often forming the backbone of one-stop strategies. Durable enough for long stints but fast enough to compete.
 - **Hard (White):** Slowest but most durable. Often used in the final long stint of a race. Can last 35-45+ laps at low-degradation circuits, but the pace deficit can be a liability when rivals are on faster compounds.
 
-Pirelli mandates that drivers use at least two different compounds during the race (unless rain or other conditions intervene). This forces pit stops and prevents teams simply starting on the softest tyre and nursing it to the finish.
+The FIA's rules require drivers to use at least two different dry compounds during the race (unless they use intermediate or wet tyres); Pirelli only picks which three compounds each race gets. This forces pit stops and prevents teams simply starting on the softest tyre and nursing it to the finish.
 
 ## One-Stop vs Two-Stop vs Three-Stop
 
@@ -90,7 +90,7 @@ The VSC provides a smaller "free stop" opportunity because speeds are reduced le
 
 ## Fuel Load Considerations
 
-Cars begin the race carrying enough fuel to complete the distance plus a small buffer. Fuel represents dead weight — approximately 0.03 seconds per lap per extra kilogram. A car starting with 100kg of fuel is roughly 3 seconds per lap slower than it will be at the end of the race on fuel load alone.
+Cars begin the race carrying enough fuel to complete the distance plus a small buffer. Fuel represents dead weight — approximately 0.03 seconds per lap per extra kilogram. From 2019 through 2025 a car could start with up to 110kg of fuel; a full load made it roughly 3 seconds per lap slower than at the end of the race on fuel load alone. The 2026 rules limit fuel by energy instead, and cars carry about 70kg.
 
 Teams aim to carry the minimum fuel necessary. If a safety car period reduces racing time, fuel consumption drops, giving a small performance benefit from reduced weight. If the race is more aggressive than planned (more overtaking, more defensive driving), fuel consumption may exceed expectations, requiring lift-and-coast fuel saving.
 
