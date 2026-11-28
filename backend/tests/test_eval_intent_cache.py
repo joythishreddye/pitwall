@@ -145,3 +145,6 @@ def test_the_summary_counts_replays_and_warns_only_when_a_call_failed(
     assert lines[0] == "Intent answers: 64 replayed, 2 asked, 1 failed"
     assert lines[1].startswith("WARNING: 1 intent call failed")
     assert "stand-in" in lines[1]
+
+    cache.failed = 3
+    assert cache.summary_lines()[1].startswith("WARNING: 3 intent calls failed")

@@ -102,8 +102,9 @@ class IntentCache:
             lines.append(
                 f"WARNING: {self.failed} intent {calls} failed, so production "
                 "mode scored the retriever's stand-in for those questions and "
-                "this run doesn't compare with a full one. Run it again once "
-                "Groq's limit resets: the recorded answers are replayed."
+                "this run doesn't compare with a full one. Run it again (after "
+                "Groq's limit resets, if one refused them): only the failed "
+                "questions are asked again."
             )
         return lines
 
