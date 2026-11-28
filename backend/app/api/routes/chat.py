@@ -22,8 +22,9 @@ from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
-from app.rag.race_calendar import race_calendar_note
+from app.rag.race_calendar import race_calendar_note, season_rounds
 from app.rag.retriever import RaceRef, Retriever
+from app.rag.title_note import title_note
 
 logger = logging.getLogger(__name__)
 
@@ -276,8 +277,55 @@ def _race_note(race: RaceRef, name: str | None) -> str:
     )
 
 
+def _season_rounds_run(db: Client, season: int) -> tuple[set[int], set[int]]:
+    """The season's rounds in the races table, and those whose Grand Prix result
+    is stored, read from its winner's row (race_results holds Grand Prix results
+    only). A season has at most about 24 of each, well under PostgREST's cap."""
+    races = db.table("races").select("id, round").eq("season", season).execute().data
+    round_of = {row["id"]: row["round"] for row in races}
+    if not round_of:
+        return set(), set()
+    winners = (
+        db.table("race_results")
+        .select("race_id")
+        .in_("race_id", list(round_of))
+        .eq("position", 1)
+        .execute()
+    ).data
+    return set(round_of.values()), {round_of[row["race_id"]] for row in winners}
+
+
+def _title_line(
+    db: Client,
+    season: int,
+    rnd: int,
+    ranked: list[tuple[str, float]],
+    wins: int,
+) -> str | None:
+    """The title note for the standings after round ``rnd``, or None. A failure
+    here skips only the note, never the standings."""
+    try:
+        schedule = season_rounds(season)
+        if not schedule:
+            return None
+        rounds, with_results = _season_rounds_run(db, season)
+        if rounds - {r.round for r in schedule}:
+            return None  # the races table lists a round the file doesn't: stale
+        done = {r for r in with_results if r <= rnd}
+        # Standings stored after round rnd's sprint carry its number, and stay
+        # one win short of the Grands Prix stored if its result came in first
+        # (the ingest's _has_its_grand_prix check)
+        if rnd in done and wins < len(done):
+            done.discard(rnd)
+        return title_note(season, rnd, ranked, schedule, done)
+    except Exception:
+        logger.warning("Title note skipped for %s round %s", season, rnd, exc_info=True)
+        return None
+
+
 def _fetch_current_standings_sync(db: Client) -> str | None:
-    """Fetch latest driver standings for context injection (sync)."""
+    """Fetch latest driver standings for context injection (sync): every
+    driver with standings, then whether the title is decided."""
     try:
         result = (
             db.table("standings")
@@ -302,7 +350,6 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
             .eq("season", season)
             .eq("round", rnd)
             .order("position")
-            .limit(20)
             .execute()
         )
         if not standings.data:
@@ -319,12 +366,18 @@ def _fetch_current_standings_sync(db: Client) -> str | None:
         driver_map = {d["id"]: d for d in drivers.data}
 
         lines = [f"Season {season}, Round {rnd}:"]
+        ranked: list[tuple[str, float]] = []
         for row in standings.data:
             d = driver_map.get(row["entity_id"], {})
             name = f"{d.get('forename', '?')} {d.get('surname', '?')}"
             lines.append(
                 f"P{row['position']}. {name} — {row['points']} pts ({row['wins']} wins)"
             )
+            ranked.append((name, float(row["points"] or 0)))
+        wins = sum(int(row.get("wins") or 0) for row in standings.data)
+        note = _title_line(db, season, rnd, ranked, wins)
+        if note:
+            lines.append(note)
         return "\n".join(lines)
     except Exception:
         logger.exception("Failed to fetch standings for chat context")
