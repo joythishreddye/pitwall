@@ -103,7 +103,7 @@ export default function StandingsPage() {
   return (
     <>
       {/* ---- Padded content: header + tabs + table ---- */}
-      <div className="px-8 pt-8 pb-0">
+      <div className="px-4 pt-8 pb-0 md:px-8">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-4 flex-wrap">
@@ -161,7 +161,7 @@ export default function StandingsPage() {
 
       {/* ---- Championship Progression — true full-width section ---- */}
       <section className="mt-10 w-full">
-        <div className="flex items-center gap-2 mb-4 px-8">
+        <div className="flex items-center gap-2 mb-4 px-4 md:px-8">
           <TrendingUp className="h-4 w-4 text-f1-muted" aria-hidden="true" />
           <h2 className="text-sm text-f1-muted uppercase tracking-widest">
             Championship Progression
