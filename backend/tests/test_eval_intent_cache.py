@@ -130,3 +130,21 @@ def test_a_closed_run_still_takes_an_answer_that_comes_through() -> None:
     llm.closed = True
     assert asyncio.run(llm.generate([])) == '{"intent": "race"}'
     assert llm.failed is False
+
+
+def test_the_summary_counts_replays_and_warns_only_when_a_call_failed(
+    tmp_path,
+) -> None:
+    cache = ic.IntentCache(tmp_path / "cache.json", "m", "p")
+    cache.hits, cache.misses, cache.failed = 64, 2, 0
+    lines = cache.summary_lines()
+    assert lines == ["Intent answers: 64 replayed, 2 asked, 0 failed"]
+
+    cache.failed = 1
+    lines = cache.summary_lines()
+    assert lines[0] == "Intent answers: 64 replayed, 2 asked, 1 failed"
+    assert lines[1].startswith("WARNING: 1 intent call failed")
+    assert "stand-in" in lines[1]
+
+    cache.failed = 3
+    assert cache.summary_lines()[1].startswith("WARNING: 3 intent calls failed")
