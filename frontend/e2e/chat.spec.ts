@@ -106,17 +106,28 @@ test.describe("the chat", () => {
       await expect(page.getByRole("button", { name, exact: true })).toHaveCount(0);
     }
     // The UI gate photographs only the homepage: the longer labels must
-    // still wrap inside the screen at every width
-    const width = page.viewportSize()?.width ?? 0;
-    for (const box of await page.locator(".freq-preset").evaluateAll((els) =>
-      els.map((el) => el.getBoundingClientRect().toJSON() as DOMRect)
-    )) {
-      expect(box.left).toBeGreaterThanOrEqual(0);
-      expect(box.right).toBeLessThanOrEqual(width);
-    }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
-      width
-    );
+    // still wrap inside their row, and the pane that scrolls the empty
+    // state must not scroll sideways, at every width
+    const fit = await page.locator(".freq-preset").evaluateAll((els) => {
+      const pane = (el: Element): Element => {
+        let node = el.parentElement;
+        while (node && getComputedStyle(node).overflowX === "visible") node = node.parentElement;
+        return node ?? document.documentElement;
+      };
+      const scroller = pane(els[0]);
+      return {
+        count: els.length,
+        spill: els.filter((el) => {
+          const box = el.getBoundingClientRect();
+          const row = el.parentElement!.getBoundingClientRect();
+          return box.left < row.left - 0.5 || box.right > row.right + 0.5;
+        }).length,
+        sideways: scroller.scrollWidth - scroller.clientWidth,
+      };
+    });
+    expect(fit.count).toBe(6);
+    expect(fit.spill, "presets spilling out of their row").toBe(0);
+    expect(fit.sideways, "sideways scroll in the chat pane").toBeLessThanOrEqual(0);
 
     expect(seen.errors, "console errors").toEqual([]);
     expect(seen.chatRequests).toEqual([]);
