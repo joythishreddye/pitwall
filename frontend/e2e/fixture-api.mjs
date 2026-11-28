@@ -16,6 +16,10 @@ const ROUTES = new Map([
   ["/api/v1/standings/2026", "api/standings-2026.json"],
   ["/api/v1/standings/2026/progression", "api/standings-2026-progression.json"],
   ["/api/v1/seasons/2026/races", "api/seasons-2026-races.json"],
+  // One driver's page (saved 2026-11-28, after round 21). The results ignore the query too, so every season
+  // picked on his page answers with his 2026 results.
+  ["/api/v1/drivers/antonelli", "api/drivers-antonelli.json"],
+  ["/api/v1/drivers/antonelli/results", "api/drivers-antonelli-results-2026.json"],
   // An empty driver list: the leader tile shows its no-photo state, as it does when OpenF1 refuses.
   ["/openf1/v1/drivers", "openf1/drivers.json"],
 ]);
