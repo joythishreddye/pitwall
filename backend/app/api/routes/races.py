@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from supabase import Client
 
-from app.db.supabase import get_supabase
+from app.db.supabase import fetch_all, get_supabase
 
 logger = logging.getLogger(__name__)
 
@@ -265,23 +265,23 @@ def get_race_laps(
             )
         driver_id_filter = dr.data[0]["id"]
 
-    # Build lap summaries query
-    query = (
-        db.table("lap_summaries")
-        .select(
-            "lap_number, position, time_millis, sector1_ms, sector2_ms, sector3_ms, "
-            "compound, tyre_life, is_pit_in, is_pit_out, driver_id, "
-            "drivers(id, ref, forename, surname, code, number, nationality)"
+    def laps_query():
+        query = (
+            db.table("lap_summaries")
+            .select(
+                "lap_number, position, time_millis, sector1_ms, sector2_ms, "
+                "sector3_ms, compound, tyre_life, is_pit_in, is_pit_out, driver_id, "
+                "drivers(id, ref, forename, surname, code, number, nationality)"
+            )
+            .eq("race_id", race_id)
         )
-        .eq("race_id", race_id)
-        .order("driver_id")
-        .order("lap_number")
-    )
-    if driver_id_filter is not None:
-        query = query.eq("driver_id", driver_id_filter)
+        if driver_id_filter is not None:
+            query = query.eq("driver_id", driver_id_filter)
+        # (driver, lap) is unique within a race, so pages neither overlap nor skip
+        return query.order("driver_id").order("lap_number")
 
-    laps_result = query.execute()
-    lap_rows = laps_result.data or []
+    # A race is about 20 drivers x 57 laps, past PostgREST's 1,000-row cap
+    lap_rows = fetch_all(laps_query)
 
     # Group by driver
     driver_map: dict[int, dict] = {}
