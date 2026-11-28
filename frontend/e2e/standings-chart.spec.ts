@@ -12,8 +12,8 @@ const PROGRESSION = "**/api/v1/standings/2026/progression";
 const CHART = 'svg[aria-label="Championship points progression"]';
 
 let errors: string[] = [];
-// the browser logs a failed request as a console error; the tests below fail the chart's call on purpose, and any
-// other failed request (a missing fixture, a blocked host) still counts
+// the browser logs a failed request as a console error; the tests below fail the chart's call (and in the last test
+// the standings' call) on purpose, and any other failed request (a missing fixture, a blocked host) still counts
 const FAILED_ON_PURPOSE = /\/api\/v1\/standings\/2026(\/progression)?(\?.*)?$/;
 test.beforeEach(async ({ context, baseURL, page }) => {
   errors = [];
