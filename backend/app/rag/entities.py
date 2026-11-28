@@ -20,6 +20,11 @@ It also enforces the filter rules the eval baseline supports:
   base covers (its race docs start in 2018, so "Suzuka in 1989" lives in
   the history docs);
 * comparisons use no filter, and entity searches cover each side;
+* a corner the question names beats a different circuit the classifier
+  filtered on, unless the question also names the classifier's circuit (weak
+  aliases count for that): "Is Blanchimont taken flat out?" filters to Spa
+  even when the classifier says Monaco. A full circuit name doesn't: "the
+  Japanese GP" names Suzuka with no alias to show it;
 * a scan of the question trusts only unambiguous names: full names, team and
   circuit names, circuit cities, famous corner names (``_CORNER_ALIASES``),
   and refs that aren't also everyday words.
@@ -143,6 +148,14 @@ class _AliasTable:
         if not isinstance(value, str) or not value.strip():
             return None
         return self.to_ref.get(_norm(value))
+
+    def mentions(self, padded: str, ref: str) -> bool:
+        """True when space-padded normalized text holds any alias of ``ref``,
+        weak ones included ("monaco" names the circuit here)."""
+        return any(
+            alias_ref == ref and f" {alias} " in padded
+            for alias, alias_ref in self.to_ref.items()
+        )
 
     def find_and_strip(self, padded: str) -> tuple[list[str], str]:
         """Find whole-word aliases in space-padded normalized text.
@@ -303,8 +316,8 @@ class EntityLinker:
 
         # Circuits first, then teams, then drivers, each on what the previous
         # scan left, so "Red Bull Ring" doesn't also mean the Red Bull team.
-        text = f" {_norm(question)} "
-        found_circuits, text = self.circuits.find_and_strip(text)
+        question_text = f" {_norm(question)} "
+        found_circuits, text = self.circuits.find_and_strip(question_text)
         found_teams, text = self.teams.find_and_strip(text)
         found_drivers, _ = self.drivers.find_and_strip(text)
 
@@ -312,9 +325,21 @@ class EntityLinker:
         teams = _merge(named_teams, found_teams)
         circuits = _merge(named_circuits, found_circuits)
 
-        circuit_ref = self.circuits.resolve(raw_filter.get("circuit_ref")) or (
-            circuits[0] if len(circuits) == 1 else None
-        )
+        circuit_ref = self.circuits.resolve(raw_filter.get("circuit_ref"))
+        if (
+            circuit_ref
+            and len(found_circuits) == 1
+            and found_circuits[0] != circuit_ref
+            and found_circuits[0] in _corner_circuits(question_text)
+            and not self.circuits.mentions(question_text, circuit_ref)
+        ):
+            # The question names one circuit, by a corner the classifier
+            # doesn't know, and never the classifier's circuit ("Is Blanchimont
+            # taken flat out?" filed under Monaco): the corner wins. Only a
+            # corner: "the Japanese GP" names Suzuka with no alias to show it.
+            # Both circuits keep their entity searches.
+            circuit_ref = found_circuits[0]
+        circuit_ref = circuit_ref or (circuits[0] if len(circuits) == 1 else None)
         driver_ref = self.drivers.resolve(raw_filter.get("driver_ref")) or (
             drivers[0] if len(drivers) == 1 else None
         )
@@ -358,6 +383,13 @@ class EntityLinker:
                 "seasons": seasons if isinstance(seasons, list) else [],
             },
         }
+
+
+def _corner_circuits(padded: str) -> set[str]:
+    """Circuits whose corners space-padded normalized text names."""
+    return {
+        ref for alias, ref in _CORNER_ALIASES.items() if f" {_norm(alias)} " in padded
+    }
 
 
 def _resolve_list(table: _AliasTable, values: object) -> list[str]:

@@ -75,6 +75,7 @@ curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true +
   - **Weak aliases** only repair classifier output; a scan skips them. They are country names (including the refs `bahrain` and `monaco`), places that are also people or words (`americas`, `villeneuve`, `rodriguez`, `ricard`, `vegas`), word-like surnames (`stroll`) and `aston`.
   - **Race names:** a weak circuit alias counts inside a race name ("Monaco Grand Prix", "Singapore GP").
   - **Comparisons:** several entities of one kind get no filter, but a targeted search and a guaranteed slot each.
+  - **A named corner wins:** when the scan finds one circuit through a corner name, it replaces a different classifier circuit that the question never names, even weakly. A full circuit name doesn't ("the Japanese GP" names Suzuka with no alias to show it).
   - **Relaxing:** empty filters relax to season-only, then to none, judged on the filtered search alone.
 - **Embeddings:** BAAI/bge-base-en-v1.5 (768 dim). Queries go through the HuggingFace router; ingestion runs locally with sentence-transformers.
 - **Spend guard:** `consume_api_budget()` in Postgres caps HF calls per month (`HF_MONTHLY_CALL_LIMIT`). Without embeddings, retrieval falls back to `search_knowledge_text()` (full-text search).

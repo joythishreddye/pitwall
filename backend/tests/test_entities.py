@@ -532,3 +532,44 @@ def test_a_corner_needs_its_circuit_in_the_knowledge_base() -> None:
     # No Spa doc: the corner must not invent a filter that matches nothing
     out = _corner_linker(("monza",)).link(_intent(), "What is Eau Rouge?")
     assert out["metadata_filter"] == {}
+
+
+def test_a_corner_the_question_names_beats_the_classifiers_other_circuit() -> None:
+    # Gold circ-09: the classifier filed the question under Monaco, so Spa's
+    # page reached the top 5 only through its own slot
+    intent = _intent({"circuit_ref": "monaco", "season": 2024})
+    intent["entities"]["circuits"] = ["monaco"]
+    out = _corner_linker().link(intent, "Was Blanchimont taken flat out in 2024?")
+    assert out["metadata_filter"] == {"circuit_ref": "spa", "season": 2024}
+    # Both circuits keep their searches and slots
+    assert set(out["entities"]["circuits"]) == {"monaco", "spa"}
+
+
+def test_the_classifiers_circuit_stays_when_the_question_names_it_too() -> None:
+    linker = _corner_linker()
+    # A weak alias (the country) still counts as naming it here
+    out = linker.link(
+        _intent({"circuit_ref": "monaco"}), "Is Monaco slower than Eau Rouge?"
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "monaco"}
+    # Two circuits in the question: the classifier's choice stands
+    out = linker.link(
+        _intent({"circuit_ref": "monza"}), "Is Eau Rouge harder than the Rascasse?"
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "monza"}
+
+
+def test_the_classifiers_circuit_stays_when_the_question_names_none() -> None:
+    out = _corner_linker().link(
+        _intent({"circuit_ref": "monaco"}), "Who won the race in the principality?"
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "monaco"}
+
+
+def test_a_full_circuit_name_does_not_beat_the_classifiers_circuit() -> None:
+    # "Japanese" names Suzuka, but no alias says so: only a corner, which the
+    # classifier doesn't know, overrides its circuit
+    out = _corner_linker().link(
+        _intent({"circuit_ref": "suzuka"}), "Was the Japanese GP faster than Monza?"
+    )
+    assert out["metadata_filter"] == {"circuit_ref": "suzuka"}
