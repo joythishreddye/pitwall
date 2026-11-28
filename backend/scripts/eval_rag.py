@@ -6,17 +6,19 @@ Usage (from backend/):
     python scripts/eval_rag.py --embedder hf      # production HF path (uses budget)
     python scripts/eval_rag.py --limit 10         # quick smoke run
 
-Each question runs through five retrieval modes (top 5 chunks each):
+Each question runs through these retrieval modes (top 5 chunks each):
 
     fulltext          Postgres full-text search, no filter
     fulltext+intent   full text with the intent filter (production without embeddings)
     vector            pgvector search, no filter
-    vector+intent     intent filter + entity searches, no rerank
-    full              vector+intent, then cross-encoder rerank (production)
+    vector+intent     intent filter + entity searches, no rerank (production)
+    vector+scan       vector+intent with the intent model down: the linker
+                      builds the filter from the question's names alone
+    full              vector+intent, then cross-encoder rerank
 
 A question with a "race" (asked from a race page: season and round) passes it
-to the modes that run the whole pipeline (vector+intent and full, raw or not),
-as the chat does. The other modes search the question alone.
+to the modes that run the whole pipeline (vector+intent, vector+scan and full,
+raw or not), as the chat does. The other modes search the question alone.
 
 Metrics:
     hit@5     any expected doc appears in the top 5
@@ -45,6 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.config import settings
 from app.db.supabase import get_supabase
+from app.llm.base import LLMError
 from app.llm.factory import create_llm
 from app.rag.entities import EntityLinker
 from app.rag.retriever import RaceRef, RetrievedChunk, Retriever
@@ -63,6 +66,7 @@ MODES = (
     "vector",
     "vector+intent(raw)",
     "vector+intent",
+    "vector+scan",
     "full",
 )
 TOP_K = 5
@@ -70,6 +74,7 @@ TOP_K = 5
 _SECONDS_BETWEEN_INTENT_CALLS = 2.1
 
 logger = logging.getLogger("eval_rag")
+_OUTAGE = "intent model down (eval_rag vector+scan)"
 
 
 @dataclass
@@ -89,7 +94,24 @@ class QuestionResult:
     expected: list[str]
     intent: dict
     raw_filter: dict = field(default_factory=dict)
+    scan_filter: dict = field(default_factory=dict)
     modes: dict[str, ModeResult] = field(default_factory=dict)
+
+
+class DownLLM:
+    """The intent model in an outage: every call fails as Groq's would."""
+
+    model = "down"
+
+    async def generate(self, *_args, **_kwargs) -> str:
+        raise LLMError(_OUTAGE)
+
+
+class _HideOutageWarnings(logging.Filter):
+    """vector+scan fails the model on purpose: one warning per question is noise."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return _OUTAGE not in record.getMessage()
 
 
 def score(sources: list[str], expected: list[str]) -> tuple[bool, float, float]:
@@ -143,6 +165,16 @@ async def run_question(
     base = Retriever(db=db, llm=intent_llm, embedder=embedder)
     intent = await base.classify_intent(question)
     linked = linker.link(intent, question) if linker else intent
+    down = Retriever(
+        db=db,
+        llm=DownLLM(),
+        embedder=embedder,
+        linker=linker,
+        rerank_enabled=False,
+    )
+    # The retriever's own fallback when the model fails, linked as it would be
+    outage = await down.classify_intent(question)
+    scanned = linker.link(outage, question) if linker else outage
     result = QuestionResult(
         id=item["id"],
         kind=item["kind"],
@@ -150,6 +182,7 @@ async def run_question(
         expected=item["expected"],
         intent=linked,
         raw_filter=intent.get("metadata_filter", {}) or {},
+        scan_filter=scanned.get("metadata_filter", {}) or {},
     )
     intent_filter = linked.get("metadata_filter", {}) or {}
 
@@ -191,6 +224,7 @@ async def run_question(
             question, race=race
         ),
         "vector+intent": pipeline(rerank=False).retrieve(question, race=race),
+        "vector+scan": down.retrieve(question, race=race),
         "full": pipeline(rerank=True).retrieve(question, race=race),
     }
     for mode, coro in runs.items():
@@ -246,6 +280,7 @@ async def main() -> None:
     logging.basicConfig(
         level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s"
     )
+    logging.getLogger("app.rag.retriever").addFilter(_HideOutageWarnings())
 
     gold = json.loads(GOLD_PATH.read_text())["questions"]
     if args.limit:
@@ -312,6 +347,7 @@ async def main() -> None:
                         "expected": r.expected,
                         "raw_filter": r.raw_filter,
                         "intent_filter": r.intent.get("metadata_filter", {}),
+                        "scan_filter": r.scan_filter,
                         "modes": {
                             mode: {
                                 "sources": m.sources,
