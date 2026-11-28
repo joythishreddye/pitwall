@@ -44,7 +44,7 @@ The region of reduced air pressure and drag directly behind a fast-moving car. A
 See Slipstream. In qualifying, teams sometimes arrange a tow for a teammate by having them run closely ahead on an out-lap to improve the aerodynamic conditions for the lap.
 
 ## Compound (Soft/Medium/Hard)
-The three dry tyre compounds available at each race weekend, designated by Pirelli as C1-C6. Softer compounds offer more grip and faster lap times but degrade quickly. Harder compounds are more durable but slower. Pirelli selects three specific compounds from their range for each event.
+The three dry tyre compounds available at each race weekend, designated by Pirelli as C1-C5 in 2026 (2025 added a C6, dropped after one season). Softer compounds offer more grip and faster lap times but degrade quickly. Harder compounds are more durable but slower. Pirelli selects three specific compounds from their range for each event.
 
 ## Stint
 A continuous period of racing on one set of tyres, between pit stops. A one-stop race has two stints; a two-stop race has three.
@@ -143,40 +143,40 @@ The aerodynamic element at the car's nose, generating downforce and directing ai
 The large wing at the car's rear, generating downforce over the rear axle. Through 2025 it contained the DRS flap; from 2026 it is an active, variable-geometry wing. High-downforce configurations use steep angles; low-downforce (Monza) configurations use shallow angles.
 
 ## Halo
-The titanium safety structure surrounding the cockpit, mandatory since 2018. Has saved multiple lives including Leclerc at Bahrain 2020 and Zhou Guanyu at Silverstone 2022. Initially controversial aesthetically but universally accepted after safety demonstrations.
+The titanium safety structure surrounding the cockpit, mandatory since 2018. Credited with protecting Leclerc at Spa in 2018 (Alonso's car went over his), Romain Grosjean in his fiery crash at Bahrain in 2020 and Zhou Guanyu at Silverstone in 2022. Initially controversial aesthetically but universally accepted after safety demonstrations.
 
 ## Overtake Mode
 The overtaking aid that replaced DRS in 2026: a driver within one second of the car ahead can use extra electrical energy from the power unit. The draft rules called it Manual Override Mode.
 
 ## DRS Zone
-A designated section of track where DRS could be activated (2011–2025). Usually on long straights; each circuit had one to three.
+A designated section of track where DRS could be activated (2011–2025). Usually on long straights; most circuits had one to three, a few had four.
 
 ## Detection Point
-A timing loop in the road where the 1-second gap between cars is measured. Through 2025 it decided whether the following car could use DRS in the next zone.
+A timing loop in the road where the 1-second gap between cars is measured. Through 2025 it decided whether the following car could use DRS in the next zone; in 2026 the detection line decides whether it can use Overtake Mode.
 
 ## Activation Zone
-The point on track where, through 2025, a driver could press the DRS button to open the rear wing flap. It was after the detection point, at the start of the DRS zone.
+The point on track where, through 2025, a driver could press the DRS button to open the rear wing flap. It was after the detection point, at the start of the DRS zone. In 2026 activation zones remain: they're where active aero's Straight Mode can be switched on.
 
 ## Power Unit
-The complete hybrid propulsion system in modern F1 cars, comprising the Internal Combustion Engine (ICE), turbocharger, MGU-K, MGU-H, Energy Store (battery), and Control Electronics.
+The complete hybrid propulsion system in modern F1 cars, comprising the Internal Combustion Engine (ICE), turbocharger, MGU-K, Energy Store (battery), and Control Electronics. Through 2025 it also had an MGU-H, dropped for 2026.
 
 ## MGU-K (Motor Generator Unit — Kinetic)
-The electrical motor-generator connected to the drivetrain. Harvests energy under braking and deploys it as additional power (up to 120kW) when the driver presses the throttle.
+The electrical motor-generator connected to the drivetrain. Harvests energy under braking and deploys it as additional power (up to 350kW in 2026, 120kW through 2025) when the driver presses the throttle.
 
 ## MGU-H (Motor Generator Unit — Heat)
-Connected to the turbocharger, harvesting energy from exhaust heat to charge the battery or directly spin the turbo. The most complex component in the power unit. Being removed for 2026 regulations.
+Connected to the turbocharger, harvesting energy from exhaust heat to charge the battery or directly spin the turbo. It was the most complex component in the power unit, used from 2014 to 2025; the 2026 power units don't have one.
 
 ## ERS (Energy Recovery System)
-The combined hybrid system (MGU-K + MGU-H + battery) that harvests and deploys electrical energy. Drivers and teams manage ERS deployment tactically throughout a lap.
+The combined hybrid system (MGU-K + battery in 2026; through 2025 the MGU-H as well) that harvests and deploys electrical energy. Drivers and teams manage ERS deployment tactically throughout a lap.
 
 ## Deployment
 Using stored electrical energy from the ERS battery to provide additional power, typically for overtaking or defending on straights.
 
 ## Harvesting
-Recovering kinetic energy under braking or thermal energy from exhaust gases to charge the ERS battery for later deployment.
+Recovering kinetic energy under braking to charge the ERS battery for later deployment. Through 2025 the MGU-H also recovered heat from the exhaust; the 2026 cars can't.
 
 ## ICE (Internal Combustion Engine)
-The conventional 1.6-litre turbocharged V6 petrol engine at the heart of the power unit. Teams are allocated three per driver per season before grid penalties apply.
+The conventional 1.6-litre turbocharged V6 petrol engine at the heart of the power unit. Each driver may use four per season (in 2025 and 2026) before grid penalties apply.
 
 ## Turbo (Turbocharger)
 A compressor driven by exhaust gases that forces more air into the engine, dramatically increasing power output. Modern F1 turbos spin at over 100,000 RPM.
@@ -191,7 +191,7 @@ A management technique where drivers lift off the throttle early or coast into c
 A specific fuel and tyre saving technique where the driver lifts off the throttle significantly earlier than the braking point, coasting to scrub speed rather than using the brakes. Reduces brake temperatures and tyre wear simultaneously.
 
 ## Tyre Blankets
-Electric heated covers placed over tyres before fitting to bring rubber temperature up to operating range before the out-lap. Being phased out by Pirelli to reduce costs, requiring drivers to warm tyres more carefully on out-laps.
+Electric heated covers placed over tyres before fitting to bring rubber temperature up to operating range before the out-lap. A planned ban was dropped in 2023, so blankets are still allowed in 2026.
 
 ## Pit Stop
 The procedure where a car enters the pit lane, is stationary while tyres are changed and any other permitted work is performed, then returns to the track. Modern F1 pit stops take 2-3 seconds.
