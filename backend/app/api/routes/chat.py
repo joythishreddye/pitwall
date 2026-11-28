@@ -22,6 +22,7 @@ from app.rag.budget import ApiBudget, DailyBudget, seconds_to_next_day
 from app.rag.entities import EntityLinker
 from app.rag.prompt import build_rag_prompt
 from app.rag.query_embedder import QueryEmbedder
+from app.rag.race_calendar import race_calendar_note
 from app.rag.retriever import RaceRef, Retriever
 
 logger = logging.getLogger(__name__)
@@ -494,6 +495,10 @@ async def chat(
         db,
     )
 
+    # The weekend's session times, for "When does the race start?" (brief 001's
+    # chips): read from the schedule files, so no wait and no database call
+    calendar_context = race_calendar_note()
+
     race_note = None
     if body.race is not None:
         name = await asyncio.to_thread(_race_name_sync, db, body.race)
@@ -513,6 +518,7 @@ async def chat(
         standings_context=standings_context,
         history=history_messages,
         race_note=race_note,
+        calendar_context=calendar_context,
     )
 
     # 5. Detect knowledge level

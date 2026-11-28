@@ -217,6 +217,19 @@ class TestPromptBuilder:
         )
         assert "Verstappen" in messages[0].content
 
+    def test_calendar_injection(self) -> None:
+        messages = build_rag_prompt(
+            query="When does the race start?",
+            chunks=[{"content": "Chunk one", "source": "a.md"}],
+            standings_context="P1. Verstappen — 400 pts",
+            calendar_context="- Race: Sun 29 Nov 2026, 16:00 UTC",
+        )
+        sys_content = messages[0].content
+        assert "[Race Calendar]\n- Race: Sun 29 Nov 2026, 16:00 UTC" in sys_content
+        # Inside the context fence, after the standings
+        assert sys_content.index("[Race Calendar]") > sys_content.index("Verstappen")
+        assert sys_content.index("[Race Calendar]") < sys_content.index("</context>")
+
     def test_history_included(self) -> None:
         history = [
             Message(role="user", content="Hi"),
