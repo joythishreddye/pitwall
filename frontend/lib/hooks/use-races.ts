@@ -31,6 +31,11 @@ export function useRaceCalendar(year: number) {
   });
 }
 
+/** Whether an id from the URL can name a race: the API takes whole positive numbers only (193.5 or 1e30 get a 422). */
+export function isRaceId(raceId: number): boolean {
+  return Number.isSafeInteger(raceId) && raceId > 0;
+}
+
 export function useRaceDetail(raceId: number) {
   return useQuery<RaceDetail>({
     queryKey: ["race", raceId],
@@ -38,7 +43,7 @@ export function useRaceDetail(raceId: number) {
       const data = await api.get(`/api/v1/races/${raceId}`);
       return RaceDetailSchema.parse(data);
     },
-    enabled: raceId > 0,
+    enabled: isRaceId(raceId),
   });
 }
 
@@ -49,6 +54,6 @@ export function useRaceStrategy(raceId: number) {
       const data = await api.get(`/api/v1/races/${raceId}/strategy`);
       return StrategyResponseSchema.parse(data);
     },
-    enabled: raceId > 0,
+    enabled: isRaceId(raceId),
   });
 }

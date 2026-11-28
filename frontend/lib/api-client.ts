@@ -1,5 +1,16 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+/** A response that came back with an error status; `status` lets a page tell a missing record (404) from a failure. */
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, statusText: string) {
+    super(`API error: ${status} ${statusText}`);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number>;
 }
@@ -36,7 +47,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      throw new ApiError(response.status, response.statusText);
     }
 
     return response.json() as Promise<T>;
@@ -58,7 +69,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      throw new ApiError(response.status, response.statusText);
     }
 
     return response.json() as Promise<T>;
