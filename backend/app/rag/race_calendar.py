@@ -4,24 +4,27 @@ Brief 001's TRY ASKING chips ask "When does the race start?", "When's the next
 race?" and "When does {next season} start?", and nothing else gives the chat a
 date: the knowledge base has race reports only for races already run.
 
-The note names the last race, the weekend whose race hasn't ended yet with each
-of its sessions, the race after it, and next season's first race when the data
-has it. The session times come from the
-schedule files the code ships with (app/schedule.py), and each session is
-tagged by the homepage's own rules (app/briefing/clock.py, session_states), so
-the chat and the page agree on what's done and what's next. No database read:
-the note costs no wait and can't fail with the database.
+The note names the last race, the current or next weekend with each of its
+sessions (a weekend stays current until 2 h 30 after its race starts, when the
+homepage's RACE UNDER WAY ends), the race after it, and next season's first
+race when the data has it. Weekends go in race order, as the homepage's do.
+
+The session times come from the schedule files the code ships with
+(app/schedule.py), and each session is tagged by the homepage's own rules
+(app/briefing/clock.py, session_states), so the chat and the page agree on
+what's done and what's next. No database read: the note costs no wait and
+can't fail with the database.
 """
 
 from __future__ import annotations
 
 import logging
 from collections.abc import Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time
 from functools import cache
 from pathlib import Path
 
-from app.briefing.clock import SESSION_LENGTH, SessionState, session_states
+from app.briefing.clock import RACE_UNDER_WAY_FOR, SessionState, session_states
 from app.briefing.clock import Session as ClockSession
 from app.schedule import DATA_DIR, RoundSchedule, Session, load_schedule
 
@@ -54,13 +57,19 @@ def _when(session: Session) -> str:
     return f"{_day(session.start.date())}, {session.start:%H:%M} UTC"
 
 
+def _race_start(weekend: RoundSchedule) -> datetime:
+    """The race's start; a race with no time counts from its day's start."""
+    race = weekend.race
+    return race.start or datetime.combine(race.date, time.min, tzinfo=UTC)
+
+
 def _race_over(weekend: RoundSchedule, now: datetime) -> bool:
-    """True once the race's scheduled end has passed (a race with no time:
-    once its day has passed in UTC)."""
+    """True once race week's RACE UNDER WAY ends on the homepage, 2 h 30 after
+    the start (a race with no time: once its day has passed in UTC)."""
     race = weekend.race
     if race.start is None:
         return race.date < now.date()
-    return now >= race.start + SESSION_LENGTH["race"]
+    return now >= race.start + RACE_UNDER_WAY_FOR
 
 
 def calendar_note(now: datetime, rounds: Sequence[RoundSchedule]) -> str | None:
@@ -69,7 +78,9 @@ def calendar_note(now: datetime, rounds: Sequence[RoundSchedule]) -> str | None:
     if now.tzinfo is None or now.utcoffset() is None:
         raise ValueError("now must be timezone-aware")
     now = now.astimezone(UTC)
-    ordered = sorted(rounds, key=lambda r: (r.season, r.round))
+    # By race start, as the homepage's clock orders races (a round postponed
+    # past the next one keeps its number)
+    ordered = sorted(rounds, key=lambda r: (_race_start(r), r.season, r.round))
     if not ordered:
         return None
     per_season: dict[int, int] = {}
@@ -127,8 +138,17 @@ def calendar_note(now: datetime, rounds: Sequence[RoundSchedule]) -> str | None:
 
 @cache
 def _season(season: int, data_dir: Path) -> tuple[RoundSchedule, ...]:
-    # The files ship with the code, so each is read once per process
-    return tuple(load_schedule(season, data_dir))
+    """One season's rounds. The files ship with the code, so each is read once
+    per process, and one that can't be read is logged once and left out."""
+    try:
+        return tuple(load_schedule(season, data_dir))
+    except Exception:
+        logger.warning(
+            "The %s schedule file can't be read; the chat's calendar goes without it",
+            season,
+            exc_info=True,
+        )
+        return ()
 
 
 def race_calendar_note(

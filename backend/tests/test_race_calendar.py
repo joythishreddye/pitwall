@@ -95,8 +95,18 @@ def test_the_race_is_on_now_until_its_scheduled_end() -> None:
     assert "Last race: Las Vegas Grand Prix" in note
 
 
+def test_the_weekend_stays_until_race_week_ends_like_the_homepage() -> None:
+    # The race's session ends at 2 h (done), but the homepage's picture says
+    # RACE UNDER WAY until 2 h 30, and a red-flagged race can run on
+    note = calendar_note(_at("2026-11-29T18:10:00Z"), SEASON)
+
+    assert "This race weekend: Qatar Grand Prix" in note
+    assert "- Race: Sun 29 Nov 2026, 16:00 UTC (done)" in note
+    assert "Last race: Las Vegas Grand Prix" in note
+
+
 def test_after_the_race_the_next_weekend_takes_over() -> None:
-    note = calendar_note(_at("2026-11-29T18:00:00Z"), SEASON)
+    note = calendar_note(_at("2026-11-29T18:30:00Z"), SEASON)
 
     assert "Last race: Qatar Grand Prix (2026, round 22 of 3), " in note
     assert "Next race weekend: Abu Dhabi Grand Prix (2026, round 23 of 3):" in note
@@ -149,6 +159,20 @@ def test_next_seasons_opener_is_named_once() -> None:
 
     assert "After that: Australian Grand Prix (2027, round 1 of 1), " in note
     assert "Next season's first race" not in note
+
+
+def test_weekends_go_in_race_order_like_the_homepage() -> None:
+    # A round postponed past the next one keeps its number
+    postponed = _weekend(
+        2026,
+        21,
+        "Postponed Grand Prix",
+        [("race", "2026-12-13T13:00:00Z")],
+    )
+    note = calendar_note(_at("2026-11-28T17:42:00Z"), [postponed, QATAR, ABU_DHABI])
+
+    assert "This race weekend: Qatar Grand Prix" in note
+    assert "After that: Abu Dhabi Grand Prix" in note
 
 
 def test_a_session_with_no_time_shows_its_day() -> None:
@@ -226,10 +250,35 @@ def test_the_note_reads_last_this_and_next_seasons_files(tmp_path: Path) -> None
     assert "Next race weekend: Australian Grand Prix (2027, round 1 of 1):" in note
 
 
-def test_an_unreadable_file_gives_no_note(tmp_path: Path) -> None:
+def test_an_unreadable_file_gives_no_note_and_is_logged_once(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
     (tmp_path / "2026.json").write_text("{not json")
 
-    assert race_calendar_note(datetime(2026, 11, 28, tzinfo=UTC), tmp_path) is None
+    for _ in range(3):
+        assert race_calendar_note(datetime(2026, 11, 28, tzinfo=UTC), tmp_path) is None
+    assert len([r for r in caplog.records if "2026" in r.getMessage()]) == 1
+
+
+def test_one_unreadable_season_leaves_the_others(tmp_path: Path) -> None:
+    (tmp_path / "2027.json").write_text("{not json")
+    _write(
+        tmp_path,
+        2026,
+        [
+            {
+                "round": 23,
+                "race_name": "Abu Dhabi Grand Prix",
+                "circuit_ref": "yas_marina",
+                "sprint": False,
+                "sessions": [_race("2026-12-06", "2026-12-06T13:00:00Z")],
+            }
+        ],
+    )
+
+    note = race_calendar_note(datetime(2026, 11, 28, tzinfo=UTC), tmp_path)
+
+    assert "Next race weekend: Abu Dhabi Grand Prix (2026, round 23 of 1):" in note
 
 
 def test_no_files_give_no_note(tmp_path: Path) -> None:
