@@ -8,6 +8,7 @@ PitWall's **source code** is MIT-licensed (see [LICENSE](LICENSE)). The **race d
 | [OpenF1](https://openf1.org) | Laps, stints, pit stops, weather, race control (from Phase 1) | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
 | [FastF1](https://github.com/theOehrly/Fast-F1) | Timing data loaded before October 2026 | Library: MIT. Data: Formula 1's timing service |
 | julesr0y/f1-circuits-svg | Circuit outlines in `frontend/lib/constants/circuits.ts` | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (the source repository is no longer online) |
+| [bacinger/f1-circuits](https://github.com/bacinger/f1-circuits) | Sepang's circuit outline in `frontend/lib/constants/circuits.ts` | [MIT](https://github.com/bacinger/f1-circuits/blob/master/LICENSE.md), Copyright (c) 2019-2025 Tomislav Bacinger |
 | Formula 1 | Driver headshots, linked from Formula 1's media servers and never copied into this repository | © Formula One World Championship Limited |
 
 ## What this means
