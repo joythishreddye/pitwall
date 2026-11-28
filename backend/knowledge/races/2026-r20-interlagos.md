@@ -54,4 +54,7 @@ tags:
 ## Retirements/DNFs
 
 - Lance Stroll: Retired (started P16)
-- Valtteri Bottas: Did not start (started P17)
+
+## Did not start
+
+- Valtteri Bottas

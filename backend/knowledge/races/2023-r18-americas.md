@@ -57,6 +57,9 @@ tags:
 - Fernando Alonso: Retired (started P19)
 - Oscar Piastri: Retired (started P10)
 - Esteban Ocon: Retired (started P8)
+
+## Disqualified
+
 - Lewis Hamilton: Disqualified (started P3)
 - Charles Leclerc: Disqualified (started P1)
 

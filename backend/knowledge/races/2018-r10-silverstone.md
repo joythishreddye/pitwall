@@ -58,4 +58,4 @@ tags:
 - Carlos Sainz: Collision (started P16)
 - Marcus Ericsson: Accident (started P15)
 - Charles Leclerc: Tyre (started P9)
-- Brendon Hartley: Power Unit (started P0)
+- Brendon Hartley: Power Unit (started from the pit lane)

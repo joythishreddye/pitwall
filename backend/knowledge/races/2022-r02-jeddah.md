@@ -58,7 +58,10 @@ tags:
 - Daniel Ricciardo: Gearbox (started P14)
 - Nicholas Latifi: Accident (started P18)
 - Yuki Tsunoda: Power Unit (started P19)
-- Mick Schumacher: Withdrew (started P0)
+
+## Did not start
+
+- Mick Schumacher
 
 ## Pit Strategy
 

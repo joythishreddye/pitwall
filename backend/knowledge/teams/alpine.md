@@ -24,9 +24,9 @@ tags:
 - **Podiums:** 0
 - **DNFs:** 5
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
-- **Pierre Gasly:** 50 pts, best P5 in 21 races
+- **Pierre Gasly:** 52 pts, best P5 in 21 races
 - **Franco Colapinto:** 35 pts, best P6 in 21 races
 
 ## Statistics since 2018 (not full team history)
@@ -34,4 +34,4 @@ tags:
 - **Race Entries:** 270
 - **Wins:** 1
 - **Podiums:** 6
-- **Total Points:** 603.0
+- **Total Points (including sprints):** 622.0

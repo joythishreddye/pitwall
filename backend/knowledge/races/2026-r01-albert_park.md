@@ -56,8 +56,11 @@ tags:
 - Fernando Alonso: Retired (started P17)
 - Valtteri Bottas: Retired (started P19)
 - Isack Hadjar: Retired (started P3)
-- Oscar Piastri: Did not start (started P5)
-- Nico Hülkenberg: Did not start (started P11)
+
+## Did not start
+
+- Oscar Piastri
+- Nico Hülkenberg
 
 ## Pit Strategy
 

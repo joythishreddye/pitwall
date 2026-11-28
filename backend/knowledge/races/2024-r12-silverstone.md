@@ -53,7 +53,10 @@ tags:
 ## Retirements/DNFs
 
 - George Russell: Retired (started P1)
-- Pierre Gasly: Did not start (started P19)
+
+## Did not start
+
+- Pierre Gasly
 
 ## Pit Strategy
 

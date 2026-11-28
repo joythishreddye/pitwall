@@ -58,7 +58,10 @@ tags:
 - Valtteri Bottas: Retired (started P16)
 - Esteban Ocon: Retired (started P8)
 - Yuki Tsunoda: Retired (started P15)
-- Lance Stroll: Withdrew (started P0)
+
+## Did not start
+
+- Lance Stroll
 
 ## Pit Strategy
 

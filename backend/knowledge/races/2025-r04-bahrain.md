@@ -54,6 +54,9 @@ tags:
 ## Retirements/DNFs
 
 - Carlos Sainz: Retired (started P8)
+
+## Disqualified
+
 - Nico Hülkenberg: Disqualified (started P16)
 
 ## Pit Strategy

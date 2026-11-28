@@ -24,7 +24,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 1
 - **Pole Positions:** 0
-- **Points:** 221.0
+- **Points (including sprints):** 231.0
 - **World Championships since 2018:** 0
 
 ## 2026 Season Performance
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P8
-- **DNFs:** 4
+- **DNFs:** 3
 - **Races Completed:** 21
 
 ## Recent Results (2026)

@@ -59,4 +59,7 @@ tags:
 - Antonio Giovinazzi: Gearbox (started P14)
 - George Russell: Gearbox (started P17)
 - Kimi Räikkönen: Brakes (started P18)
-- Nikita Mazepin: Illness (started P20)
+
+## Did not start
+
+- Nikita Mazepin

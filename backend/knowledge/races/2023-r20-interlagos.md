@@ -59,7 +59,10 @@ tags:
 - Guanyu Zhou: Retired (started P20)
 - Kevin Magnussen: Retired (started P12)
 - Alexander Albon: Retired (started P13)
-- Charles Leclerc: Did not start (started P2)
+
+## Did not start
+
+- Charles Leclerc
 
 ## Pit Strategy
 

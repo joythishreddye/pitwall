@@ -60,4 +60,7 @@ tags:
 - Sergio Pérez: Collision (started P4)
 - Charles Leclerc: Collision (started P7)
 - Lance Stroll: Collision (started P12)
+
+## Disqualified
+
 - Sebastian Vettel: Disqualified (started P10)

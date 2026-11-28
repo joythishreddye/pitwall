@@ -56,7 +56,10 @@ tags:
 - Isack Hadjar: Retired (started P12)
 - Gabriel Bortoleto: Retired (started P16)
 - Liam Lawson: Retired (started P15)
-- Franco Colapinto: Did not start (started P20)
+
+## Did not start
+
+- Franco Colapinto
 
 ## Pit Strategy
 

@@ -53,5 +53,8 @@ tags:
 ## Retirements/DNFs
 
 - Max Verstappen: Brakes (started P5)
+
+## Disqualified
+
 - Daniel Ricciardo: Disqualified (started P16)
 - Nico Hülkenberg: Disqualified (started P15)

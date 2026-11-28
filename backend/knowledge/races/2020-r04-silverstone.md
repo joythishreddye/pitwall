@@ -56,4 +56,7 @@ tags:
 
 - Daniil Kvyat: Accident (started P19)
 - Kevin Magnussen: Collision (started P14)
-- Nico Hülkenberg: Power Unit (started P13)
+
+## Did not start
+
+- Nico Hülkenberg

@@ -58,5 +58,8 @@ tags:
 - Daniel Ricciardo: Battery (started P4)
 - Romain Grosjean: Collision damage (started P8)
 - Fernando Alonso: Collision (started P13)
+
+## Disqualified
+
 - Esteban Ocon: Disqualified (started P6)
 - Kevin Magnussen: Disqualified (started P12)

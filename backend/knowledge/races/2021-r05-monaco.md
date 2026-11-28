@@ -55,4 +55,7 @@ tags:
 ## Retirements/DNFs
 
 - Valtteri Bottas: Wheel nut (started P3)
-- Charles Leclerc: Driveshaft (started P1)
+
+## Did not start
+
+- Charles Leclerc

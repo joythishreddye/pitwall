@@ -24,7 +24,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 2
 - **Pole Positions:** 0
-- **Points:** 313.0
+- **Points (including sprints):** 318.0
 - **World Championships since 2018:** 0
 
 ## 2026 Season Performance
@@ -33,7 +33,7 @@ tags:
 - **Wins:** 0
 - **Podiums:** 0
 - **Best Finish:** P8
-- **DNFs:** 8
+- **DNFs:** 6
 - **Races Completed:** 21
 
 ## Recent Results (2026)
@@ -42,4 +42,4 @@ tags:
 - Round 18 United States Grand Prix: P17 (started P17)
 - Round 19 Mexico City Grand Prix: P11 (started P16)
 - Round 20 Brazilian Grand Prix: P15 (started P9)
-- Round 21 Las Vegas Grand Prix: PW (started P14)
+- Round 21 Las Vegas Grand Prix: did not start

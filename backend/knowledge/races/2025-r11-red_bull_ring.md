@@ -55,7 +55,10 @@ tags:
 - Alexander Albon: Retired (started P12)
 - Max Verstappen: Retired (started P7)
 - Andrea Kimi Antonelli: Retired (started P9)
-- Carlos Sainz: Did not start (started P19)
+
+## Did not start
+
+- Carlos Sainz
 
 ## Pit Strategy
 

@@ -59,4 +59,7 @@ tags:
 - George Russell: Retired (started P1)
 - Fernando Alonso: Retired (started P19)
 - Alexander Albon: Retired (started P18)
-- Arvid Lindblad: Did not start (started P9)
+
+## Did not start
+
+- Arvid Lindblad

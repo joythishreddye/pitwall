@@ -55,10 +55,13 @@ tags:
 ## Retirements/DNFs
 
 - Logan Sargeant: Retired (started P19)
-- Lance Stroll: Collision damage (started P0)
-- Fernando Alonso: Withdrew (started P13)
+- Lance Stroll: Collision damage (started from the pit lane)
 - Kevin Magnussen: Accident (started P16)
 - Sergio Pérez: Collision damage (started P5)
+
+## Did not start
+
+- Fernando Alonso
 
 ## Pit Strategy
 

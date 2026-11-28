@@ -56,10 +56,13 @@ tags:
 - Max Verstappen: Retired (started P8)
 - Fernando Alonso: Retired (started P18)
 - Lance Stroll: Retired (started P20)
-- Oscar Piastri: Did not start (started P5)
-- Lando Norris: Did not start (started P6)
-- Gabriel Bortoleto: Did not start (started P16)
-- Alexander Albon: Did not start (started P22)
+
+## Did not start
+
+- Oscar Piastri
+- Lando Norris
+- Gabriel Bortoleto
+- Alexander Albon
 
 ## Pit Strategy
 

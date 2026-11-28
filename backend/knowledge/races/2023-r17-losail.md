@@ -55,7 +55,10 @@ tags:
 
 - Logan Sargeant: Retired (started P15)
 - Lewis Hamilton: Retired (started P3)
-- Carlos Sainz: Did not start (started P12)
+
+## Did not start
+
+- Carlos Sainz
 
 ## Pit Strategy
 

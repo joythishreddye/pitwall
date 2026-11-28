@@ -24,7 +24,7 @@ tags:
 - **Podiums:** 0
 - **DNFs:** 21
 
-## 2026 Driver Breakdown
+## 2026 Driver Breakdown (points include sprints)
 
 - **Fernando Alonso:** 7 pts, best P8 in 21 races
 - **Lance Stroll:** 0 pts, best P12 in 21 races
@@ -34,4 +34,4 @@ tags:
 - **Race Entries:** 269
 - **Wins:** 0
 - **Podiums:** 9
-- **Total Points:** 579.0
+- **Total Points (including sprints):** 602.0

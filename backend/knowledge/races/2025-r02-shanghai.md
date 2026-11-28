@@ -54,6 +54,9 @@ tags:
 ## Retirements/DNFs
 
 - Fernando Alonso: Retired (started P13)
+
+## Disqualified
+
 - Charles Leclerc: Disqualified (started P6)
 - Lewis Hamilton: Disqualified (started P5)
 - Pierre Gasly: Disqualified (started P16)
