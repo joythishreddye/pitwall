@@ -14,7 +14,7 @@ An AI-powered F1 platform that makes Formula 1 accessible to newcomers while giv
 - Use the LLM provider abstraction (`backend/app/llm/base.py`); model ids come from env, never code
 - Secrets only in env vars; Render holds production env
 - ML models use temporal train/test splits; never leak future data
-- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v5). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-28T0856Z, 100% / 0.822 (gold v5, on #39's regenerated docs; vector+scan, the pipeline with the intent model down: 100% / 0.834).
+- Every chat or retrieval code change re-runs `backend/scripts/eval_rag.py` and must not regress the latest recorded run on the same data in `backend/evals/results/` (gold v5). In production mode (vector+intent), no question may go from hit to miss, and hit@5 and MRR@5 may not drop. Other modes are reported, not gated. Last run: 2026-11-28T1256Z, 100% / 0.822 (gold v5, on #39's regenerated docs; vector+scan, the pipeline with the intent model down: 100% / 0.834). It recorded the intent model's answers in `backend/evals/intent_cache.json`: compare a change with `--intent-cache evals/intent_cache.json`, so both runs score the same classifier answers and spend no Groq tokens (the free tier's 200k a day is shared with production). The key is the model id, the prompt and the question: a change to the intent call itself (its parameters or the reasoning effort) records a fresh file, and a results file whose `intent_cache.failed` isn't 0 scored stand-ins.
 - Every knowledge ingest re-runs the eval too (`ingest_knowledge.py`, including the one after a data refresh), with a data-update bar.
   - **It passes** if, in production mode (vector+intent), no question goes from hit to miss and hit@5 doesn't drop.
   - **An MRR@5 drop is reported to Joythish, not blocking.** New numbers reorder near-tied pages after most refreshes, and the chat reads all five top chunks for each answer (`backend/app/rag/retriever.py`).
@@ -53,7 +53,7 @@ The UI gate (`python3 ~/.claude/gates/bin/gates.py verify-outcome`, from the rep
 (cd frontend && pnpm dev)                                                             # web dev server
 (cd backend && source venv/bin/activate && python scripts/seed_database.py --seasons 2026 --skip-fastf1 --standings-every-round)   # Jolpica refresh; the flag re-reads every round's standings, for the points chart
 (cd backend && source venv/bin/activate && python scripts/ingest_knowledge.py)        # regenerate docs + re-embed locally
-(cd backend && source venv/bin/activate && python scripts/eval_rag.py)                # retrieval eval (66 Qs, local models, 7 min on Nov 27)
+(cd backend && source venv/bin/activate && python scripts/eval_rag.py --intent-cache evals/intent_cache.json)   # retrieval eval (66 Qs, local models, ~7 min; a new or changed question asks Groq once and is recorded)
 curl https://pitwall-api-dfyi.onrender.com/health/ready     # deep: ?deep=true + X-Health-Token header
 ```
 `eval_rag.py` isn't a gate yet: it exits 0 even on a regression. Compare its new file in `backend/evals/results/` with the last recorded run yourself.
