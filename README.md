@@ -23,18 +23,18 @@ Answers come from a retrieval pipeline over 243 knowledge documents (1,250 chunk
 The pipeline degrades instead of failing. Without embeddings (an outage, or the monthly spend ceiling reached), it falls back to Postgres full-text search with the same filters.
 
 ### Retrieval quality, measured
-`python scripts/eval_rag.py` scores retrieval against a hand-written gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits, rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run on its 66-question version 5 (`backend/evals/results/2026-11-28T1335Z-local-local-linked.json`; version 6 adds four questions that name a corner without its circuit) and is scored on the same classifier outputs, recorded once and replayed (`backend/evals/intent_cache.json`), so two runs differ only in what changed.
+`python scripts/eval_rag.py` scores retrieval against a hand-written gold set (`backend/evals/rag_gold.json`) covering drivers, teams, races, circuits (including famous corners named without their circuit), rules, history and head-to-head comparisons. A question counts as a hit when a document holding its answer lands in the top 5. Every row below comes from one run on its 70-question version 6 (`backend/evals/results/2026-11-28T1504Z-local-local-linked.json`) and is scored on the same classifier outputs, recorded once and replayed (`backend/evals/intent_cache.json`), so two runs differ only in what changed.
 
 | Pipeline | hit@5 | MRR@5 |
 |---|---|---|
-| Vector search alone | 92.4% | 0.85 |
-| + the classifier's filters, used as-is | 92.4% | 0.79 |
-| + entity linking (production) | **100%** | **0.86** |
-| + cross-encoder reranking | 98.5% | 0.80 |
-| Full-text fallback (no embeddings), linked filters | 89.4% | 0.76 |
-| Classifier down: the linker's own name scan | 100% | 0.87 |
+| Vector search alone | 92.9% | 0.85 |
+| + the classifier's filters, used as-is | 90.0% | 0.77 |
+| + entity linking (production) | **100%** | **0.87** |
+| + cross-encoder reranking | 98.6% | 0.81 |
+| Full-text fallback (no embeddings), linked filters | 90.0% | 0.78 |
+| Classifier down: the linker's own name scan | 100% | 0.88 |
 
-The classifier's own filters add nothing here: they file five rules questions under the explainers category, which hides the regulations pages, and they rank worse overall (MRR@5 0.79 against 0.85). Entity linking never filters on a category alone, and it takes hit@5 to 100%. With the classifier down, the linker's scan of the question for names still finds every answer. Reranking lost one question and ranked the rest worse, and took the median question from 0.29 to 2.86 seconds on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
+The classifier's own filters cost answers here. They file five rules questions and one corner question ("Who are the Degner curves named after?") under the explainers category, which hides the regulations pages and Suzuka's, they file Blanchimont under Monaco, and they rank worse overall (MRR@5 0.77 against 0.85). Entity linking never filters on a category alone, it maps 24 famous corners to their circuits, and a corner the question names beats a different circuit the classifier guessed; it takes hit@5 to 100%. With the classifier down, the linker's scan of the question for names still finds every answer, and on this set it ranks slightly better (0.88 against 0.87). Reranking lost one question and ranked the rest worse, and took the median question from 0.32 to 2.85 seconds on a laptop CPU, so it ships switched off (`RERANK_ENABLED`).
 
 The biggest jump in plain vector search came from the chunker, not the search. It used to drop any section under 20 words, which was every driver's overview and every race's pit-stop line; joining those to a neighbouring section (Nov 28) took vector search alone from 68% to 92% hit@5.
 
