@@ -14,7 +14,8 @@ Each question runs through these retrieval modes (top 5 chunks each):
     vector+intent     intent filter + entity searches, no rerank (production)
     vector+scan       vector+intent with the intent model down: the linker
                       builds the filter from the question's names alone
-                      (with --no-linker, this is plain unfiltered vector search)
+                      (with --no-linker: no filter, but a question's race
+                      still gets its own search and slot)
     full              vector+intent, then cross-encoder rerank
 
 A question with a "race" (asked from a race page: season and round) passes it
