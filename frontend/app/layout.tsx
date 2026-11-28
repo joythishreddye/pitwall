@@ -35,8 +35,10 @@ const jetbrainsMono = localFont({
   variable: "--font-jetbrains",
 });
 
+// Each section's layout names its tab ("Standings · PitWall"); the home page and
+// any page without a title of its own keep the default.
 export const metadata: Metadata = {
-  title: "PitWall — AI Race Engineer",
+  title: { default: "PitWall — AI Race Engineer", template: "%s · PitWall" },
   description:
     "AI-powered Formula 1 intelligence platform with predictions, live data, and race companion.",
 };

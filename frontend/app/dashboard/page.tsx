@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { Radio, Timer, Gauge, ThermometerSun } from "lucide-react";
+
+export const metadata: Metadata = { title: "Live Dashboard" };
 
 const PANELS = [
   {
