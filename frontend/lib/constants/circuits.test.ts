@@ -24,11 +24,18 @@ describe("circuitPaths", () => {
     expect(missing).toEqual([]);
   });
 
-  it("starts each outline with a move and draws it in the shared 500 by 500 box", () => {
+  it("starts each outline with a move and gives it the shared 500 by 500 viewBox", () => {
     for (const [key, { d, viewBox }] of Object.entries(circuitPaths)) {
       // A first move is absolute in either case (Red Bull Ring's starts with "m")
       expect(d, key).toMatch(/^[Mm]/);
       expect(viewBox, key).toBe("0 0 500 500");
     }
+  });
+
+  it("keeps every point of Sepang's outline inside the 500 by 500 box", () => {
+    // Sepang's path is all absolute moves and lines, so each number is a coordinate
+    const numbers = circuitPaths.sepang.d.match(/-?\d+(\.\d+)?/g)?.map(Number) ?? [];
+    expect(numbers.length).toBeGreaterThan(100);
+    expect(numbers.every((n) => n >= 0 && n <= 500)).toBe(true);
   });
 });

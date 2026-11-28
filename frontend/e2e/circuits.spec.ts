@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
+import { circuitPaths } from "../lib/constants/circuits";
 
 // Circuit drawings and facts are matched on the API's circuit name (lib/constants/circuits.ts). Qatar's circuit
 // comes back as "Lusail International Circuit", while its entry is keyed `losail` (Jolpica's circuit id).
@@ -36,7 +37,8 @@ test("every 2026 race card draws its circuit, Sepang's (round 16) included", asy
   await expect(cards).toHaveCount(23);
   const sepang = cards.filter({ hasText: "R16" });
   await expect(sepang).toContainText("Sepang");
-  await expect(sepang.locator("svg path").first()).toBeAttached();
+  // Sepang's own drawing, not just any path (cards past the sixth draw on scroll, so their stroke can be empty)
+  await expect(sepang.locator("svg path").first()).toHaveAttribute("d", circuitPaths.sepang.d);
   for (const card of await cards.all()) {
     await expect(card.locator("svg path").first()).toBeAttached();
   }

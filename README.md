@@ -110,7 +110,7 @@ Database migrations live in `supabase/migrations/`. Seed data with `python scrip
 
 - Results and standings: [Jolpica F1](https://github.com/jolpica/jolpica-f1) (CC BY-NC-SA 4.0)
 - Timing data: [FastF1](https://github.com/theOehrly/Fast-F1) and [OpenF1](https://openf1.org) (CC BY-NC-SA 4.0)
-- Circuit outlines: julesr0y/f1-circuits-svg (CC BY 4.0)
+- Circuit outlines: julesr0y/f1-circuits-svg (CC BY 4.0); Sepang's from bacinger/f1-circuits (MIT)
 - Driver photos: © Formula 1, linked, not redistributed
 
 The code is MIT-licensed ([LICENSE](LICENSE)). The data and the generated knowledge documents follow their sources' terms ([DATA_LICENSE.md](DATA_LICENSE.md)), so PitWall stays non-commercial.
