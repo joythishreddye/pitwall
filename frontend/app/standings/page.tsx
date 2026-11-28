@@ -125,7 +125,7 @@ export default function StandingsPage() {
             <SeasonSelector value={season} onChange={setSeason} />
           </div>
           <p className="text-f1-muted text-sm mt-1 font-data tabular-nums">
-            {data ? `Round ${data.round} · ${season} season` : "Loading..."}
+            {data ? `Round ${data.round} · ${season} season` : error ? `${season} season` : "Loading..."}
           </p>
         </div>
 
@@ -199,7 +199,7 @@ export default function StandingsPage() {
               </>
             ) : progressions ? (
               <p className="text-f1-muted text-sm py-8 text-center">
-                No round-by-round standings for {season} yet.
+                No round-by-round standings for {season}.
               </p>
             ) : (
               <ErrorState
