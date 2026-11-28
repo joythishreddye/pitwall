@@ -34,7 +34,7 @@ tags:
 
 The 1989 Japanese Grand Prix decided the World Championship in the most bitter fashion imaginable. Ayrton Senna and Alain Prost were McLaren teammates who had grown to despise each other, fighting for the title with the intensity of a genuine personal conflict.
 
-On lap 47 of 53, Senna attempted to pass Prost at the chicane. The two cars touched; Prost climbed out of his stalled Ferrari, believing the race — and his championship — was over. Senna was restarted by marshals, pitted for a new nose, rejoined in 6th, drove to what appeared to be a race victory, and set the fastest lap in the process.
+On lap 47 of 53, Senna attempted to pass Prost at the chicane. The two cars touched; Prost climbed out of his stalled McLaren, believing the race — and his championship — was over. Senna was restarted by marshals, pitted for a new front wing, rejoined behind the new leader, Alessandro Nannini, passed him and crossed the line first.
 
 The stewards disqualified Senna for missing the chicane during the incident and for receiving outside assistance during the restart. Prost was champion. Senna was furious, publicly accusing Prost and FIA President Jean-Marie Balestre of conspiring against him. The FIA fined Senna $100,000 and gave him a suspended race ban.
 
@@ -84,7 +84,7 @@ Rosberg's decision to retire at the pinnacle of his career was rational but shoc
 
 ## Verstappen vs Hamilton — Abu Dhabi 2021: The Controversial Finale
 
-The 2021 Abu Dhabi Grand Prix was the single most controversial race finish in modern Formula 1 history. Hamilton and Verstappen entered the final race level on points — the first time the title had gone to the final race with an equal points tie since... it had never happened before.
+The 2021 Abu Dhabi Grand Prix was the single most controversial race finish in modern Formula 1 history. Hamilton and Verstappen entered the final race level on 369.5 points, only the second time two title rivals had done so: Emerson Fittipaldi and Clay Regazzoni went into 1974's last race on 52 points each.
 
 Hamilton controlled the race, building a large lead, seemingly in control of a championship that would have been his record eighth. Then Nicholas Latifi crashed on lap 53 of 58. A safety car was deployed.
 
