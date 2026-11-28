@@ -241,6 +241,20 @@
    "driver_ref": "lando_norris"
   }
  },
+ "openai/gpt-oss-20b|d40e88282607|Is Blanchimont taken flat out?": {
+  "entities": {
+   "circuits": [
+    "monaco"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "monaco"
+  }
+ },
  "openai/gpt-oss-20b|d40e88282607|Tell me about Oliver Bearman.": {
   "entities": {
    "circuits": [],
@@ -522,6 +536,18 @@
   "intent": "factual",
   "metadata_filter": {
    "driver_ref": "alonso"
+  }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Who are the Degner curves named after?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "category": "explainers"
   }
  },
  "openai/gpt-oss-20b|d40e88282607|Who drives for Audi in 2026?": {
@@ -880,6 +906,20 @@
    "circuit_ref": "monaco"
   }
  },
+ "openai/gpt-oss-20b|d40e88282607|Why does the exit of Lesmo 2 matter?": {
+  "entities": {
+   "circuits": [
+    "lesmo_2"
+   ],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {
+   "circuit_ref": "lesmo_2"
+  }
+ },
  "openai/gpt-oss-20b|d40e88282607|Why is Monza called the Temple of Speed?": {
   "entities": {
    "circuits": [
@@ -893,6 +933,16 @@
   "metadata_filter": {
    "circuit_ref": "monza"
   }
+ },
+ "openai/gpt-oss-20b|d40e88282607|Why is Rascasse famous?": {
+  "entities": {
+   "circuits": [],
+   "drivers": [],
+   "seasons": [],
+   "teams": []
+  },
+  "intent": "explanation",
+  "metadata_filter": {}
  },
  "openai/gpt-oss-20b|d40e88282607|Why is Suzuka hard on tyres for the 2026 cars?": {
   "entities": {
